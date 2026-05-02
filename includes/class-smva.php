@@ -427,7 +427,7 @@ class SMVA_Plugin {
                     if (!e.target.classList.contains('notice-dismiss')) return;
                     jQuery.post(ajaxurl, {
                         action: 'smva_dismiss_trial_notice',
-                        nonce: '<?php echo wp_create_nonce( 'smva_nonce' ); ?>'
+                        nonce: '<?php echo esc_attr( wp_create_nonce( 'smva_nonce' ) ); ?>'
                     });
                 });
             })();
@@ -463,7 +463,7 @@ class SMVA_Plugin {
         wp_enqueue_script( 'smva-admin', SMVA_URL . 'assets/admin.js',  array( 'jquery' ), SMVA_VERSION, true );
         wp_localize_script( 'smva-admin', 'smvaAdmin', array(
             'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
-            'nonce' => esc_attr( wp_create_nonce( 'smva_nonce' ),
+            'nonce' => esc_attr( wp_create_nonce( 'smva_nonce' ) ),
             'apiUrl'     => SMVA_API_URL,
             'pricingUrl' => SMVA_PRICING_URL,
             'siteUrl'    => get_site_url(),
@@ -1418,8 +1418,8 @@ class SMVA_Plugin {
         $license_key = get_option( 'smva_license_key', '' );
         $api_url     = SMVA_API_URL;
         $page        = isset( $_GET['page_num'] ) ? intval( $_GET['page_num'] ) : 1;
-        $date_from   = sanitize_text_field( $_GET['date_from'] ?? '' );
-        $date_to     = sanitize_text_field( $_GET['date_to']   ?? '' );
+        $date_from   = sanitize_text_field( wp_unslash( $_GET['date_from'] ?? '' ) );
+        $date_to     = sanitize_text_field( wp_unslash( $_GET['date_to']   ?? '' ) );
         $query = http_build_query( array_filter( [
             'license_key' => $license_key,
             'page'        => $page,
@@ -1441,7 +1441,7 @@ class SMVA_Plugin {
         if ( ! current_user_can( 'manage_options' ) ) { wp_send_json_error( 'Unauthorized', 403 ); }
         $license_key = get_option( 'smva_license_key', '' );
         $api_url     = SMVA_API_URL;
-        $session_id  = sanitize_text_field( $_GET['session_id'] ?? '' );
+        $session_id  = sanitize_text_field( wp_unslash( $_GET['session_id'] ?? '' ) );
         if ( ! $session_id ) { wp_send_json_error( 'Missing session_id' ); }
         $response = wp_remote_get(
             "{$api_url}/plugin/voice-summary/sessions/{$session_id}/transcript?license_key=" . urlencode( $license_key ),
@@ -1457,7 +1457,7 @@ class SMVA_Plugin {
         if ( ! current_user_can( 'manage_options' ) ) { wp_send_json_error( 'Unauthorized', 403 ); }
         $license_key = get_option( 'smva_license_key', '' );
         $api_url     = SMVA_API_URL;
-        $session_id  = sanitize_text_field( $_POST['session_id'] ?? '' );
+        $session_id  = sanitize_text_field( wp_unslash( $_POST['session_id'] ?? '' ) );
         if ( ! $session_id ) { wp_send_json_error( 'Missing session_id' ); }
         $response = wp_remote_post(
             "{$api_url}/plugin/voice-summary/sessions/{$session_id}/summarize",
@@ -1473,7 +1473,7 @@ class SMVA_Plugin {
         if ( ! current_user_can( 'manage_options' ) ) { wp_send_json_error( 'Unauthorized', 403 ); }
         $license_key = get_option( 'smva_license_key', '' );
         $api_url     = SMVA_API_URL;
-        $session_id  = sanitize_text_field( $_GET['session_id'] ?? '' );
+        $session_id  = sanitize_text_field( wp_unslash( $_GET['session_id'] ?? '' ) );
         if ( ! $session_id ) { wp_send_json_error( 'Missing session_id' ); }
         // Return proxy URL (through WordPress to avoid CORS)
         $proxy_url = admin_url( 'admin-ajax.php' ) . '?action=smva_voice_recording_proxy&nonce=' . wp_create_nonce( 'smva_nonce' ) . '&session_id=' . urlencode( $session_id );
@@ -1485,9 +1485,9 @@ class SMVA_Plugin {
         if ( ! current_user_can( 'manage_options' ) ) { wp_die( 'Unauthorized', 403 ); }
         $license_key = get_option( 'smva_license_key', '' );
         $api_url     = SMVA_API_URL;
-        $session_id  = sanitize_text_field( $_GET['session_id'] ?? '' );
+        $session_id  = sanitize_text_field( wp_unslash( $_GET['session_id'] ?? '' ) );
         if ( ! $session_id ) { wp_die( 'Missing session_id' ); }
-        $track = sanitize_text_field( $_GET['track'] ?? 'main' );
+        $track = sanitize_text_field( wp_unslash( $_GET['track'] ?? 'main' ) );
         $url = "{$api_url}/plugin/voice-summary/sessions/{$session_id}/recording?license_key=" . urlencode( $license_key ) . "&track=" . urlencode( $track );
         $response = wp_remote_get( $url, [ 'timeout' => 30 ] );
         if ( is_wp_error( $response ) ) { wp_die( 'Failed to fetch recording' ); }

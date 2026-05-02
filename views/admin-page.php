@@ -1,6 +1,8 @@
 
 <?php
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound if ( ! defined( 'ABSPATH' ) ) exit; ?>
+if ( ! defined( 'ABSPATH' ) ) exit;
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+?>
 <div class="smva-admin-wrap">
 
     <div class="smva-header">
@@ -274,7 +276,7 @@
                     <label>Language <span>— widget UI &amp; agent default</span></label>
                     <select name="smva_lang" class="smva-select" id="smva-lang-select">
                         <?php foreach ( array( 'en' => '🇺🇸 English', 'fa' => '🇮🇷 فارسی', 'ar' => '🇸🇦 العربية', 'fr' => '🇫🇷 Français', 'es' => '🇪🇸 Español' ) as $val => $label ) : ?>
-                        <option value="<?php echo $val; ?>" <?php selected( get_option('smva_lang','en'), $val ); ?>><?php echo $label; ?></option>
+                        <option value="<?php echo esc_attr( $val ); ?>" <?php selected( get_option('smva_lang','en'), $val ); ?>><?php echo $label; ?></option>
                         <?php endforeach; ?>
                     </select>
                     <p class="smva-hint">Agent auto-detects and switches to the user's language mid-conversation.</p>
@@ -424,7 +426,7 @@
                             'Australia/Sydney'  => 'AEDT — Sydney',
                         );
                         foreach ( $tzones as $val => $label ) : ?>
-                        <option value="<?php echo $val; ?>" <?php selected( $agent['agent_timezone'] ?? 'UTC', $val ); ?>><?php echo $label; ?></option>
+                        <option value="<?php echo esc_attr( $val ); ?>" <?php selected( $agent['agent_timezone'] ?? 'UTC', $val ); ?>><?php echo esc_html( $label ); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -440,9 +442,9 @@
                         );
                         $cur = $agent['response_style'] ?? 'balanced';
                         foreach ( $styles as $val => $s ) : ?>
-                        <label style="flex:1;border:2px solid <?php echo $cur===$val?'#2563eb':'#e5e7eb'; ?>;border-radius:10px;padding:10px;cursor:pointer;text-align:center;transition:all .2s" onclick="smvaSelectStyle('<?php echo $val; ?>')">
-                            <input type="radio" name="response_style" value="<?php echo $val; ?>" <?php checked($cur,$val); ?> style="display:none">
-                            <div style="font-size:20px;margin-bottom:2px"><?php echo $s['icon']; ?></div>
+                        <label style="flex:1;border:2px solid <?php echo $cur===esc_attr($val)?'#2563eb':'#e5e7eb'; ?>;border-radius:10px;padding:10px;cursor:pointer;text-align:center;transition:all .2s" onclick="smvaSelectStyle('<?php echo esc_attr( $val ); ?>')">
+                            <input type="radio" name="response_style" value="<?php echo esc_attr( $val ); ?>" <?php checked($cur,$val); ?> style="display:none">
+                            <div style="font-size:20px;margin-bottom:2px"><?php echo esc_html( $s['icon'] ); ?></div>
                             <div style="font-size:12px;font-weight:600"><?php echo esc_html( $s['title'] ); ?></div>
                             <div style="font-size:10px;color:#6b7280"><?php echo esc_html( $s['desc'] ); ?></div>
                         </label>
@@ -604,7 +606,7 @@
                     $bg = $is_active ? '#eff6ff' : '#fff';
                 ?>
                 <div class="smva-theme-card" data-theme="<?php echo esc_attr($key); ?>"
-                     style="border-radius:12px;padding:10px;cursor:pointer;text-align:center;transition:all .15s;border:<?php echo $border; ?>;background:<?php echo $bg; ?>">
+                     style="border-radius:12px;padding:10px;cursor:pointer;text-align:center;transition:all .15s;border:<?php echo esc_attr( $border ); ?>;background:<?php echo esc_attr( $bg ); ?>">
                     <?php /* Mini widget preview */ ?>
                     <div style="width:100%;border-radius:8px;overflow:hidden;margin-bottom:8px;border:0.5px solid rgba(0,0,0,.08)">
                         <div style="padding:6px 8px;background:<?php echo esc_attr($info[2]); ?>;display:flex;align-items:center;gap:4px">
@@ -748,8 +750,8 @@
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
                     <code style="font-size:13px;font-weight:600"><?php echo esc_html($tool['name'] ?? ''); ?></code>
                     <div style="display:flex;gap:6px">
-                        <button type="button" class="smva-btn" style="padding:4px 10px;font-size:12px;flex:none;background:#e0f2fe;color:#0369a1" onclick="smvaEditTool(<?php echo $i; ?>)">Edit</button>
-                        <button type="button" class="smva-btn smva-btn-danger" style="padding:4px 10px;font-size:12px;flex:none" onclick="smvaRemoveTool(<?php echo $i; ?>)">Remove</button>
+                        <button type="button" class="smva-btn" style="padding:4px 10px;font-size:12px;flex:none;background:#e0f2fe;color:#0369a1" onclick="smvaEditTool(<?php echo (int) $i; ?>)">Edit</button>
+                        <button type="button" class="smva-btn smva-btn-danger" style="padding:4px 10px;font-size:12px;flex:none" onclick="smvaRemoveTool(<?php echo (int) $i; ?>)">Remove</button>
                     </div>
                 </div>
                 <div style="font-size:12px;color:#6b7280"><?php echo esc_html($tool['description'] ?? ''); ?></div>
