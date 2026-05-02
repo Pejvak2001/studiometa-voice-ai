@@ -423,7 +423,7 @@ class SMVA_Plugin {
                 <strong>🎉 StudioMeta AI Trial Active</strong> —
                 You have <strong><?php echo number_format( $voice_left, 1 ); ?> voice minutes</strong>
                 and <strong><?php echo intval( $chat_left ); ?> chat messages</strong> remaining.
-                <a href="<?php echo esc_url( SMVA_PRICING_URL ); ?>" target="_blank" class="button button-primary" style="margin-left:8px">Upgrade Plan</a>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=smva&tab=license' ) ); ?>" class="button button-primary" style="margin-left:8px">⬆ Upgrade Plan</a>
             </p>
             <script>
             (function(){
