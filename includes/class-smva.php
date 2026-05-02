@@ -463,7 +463,7 @@ class SMVA_Plugin {
         wp_enqueue_script( 'smva-admin', SMVA_URL . 'assets/admin.js',  array( 'jquery' ), SMVA_VERSION, true );
         wp_localize_script( 'smva-admin', 'smvaAdmin', array(
             'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
-            'nonce'      => wp_create_nonce( 'smva_nonce' ),
+            'nonce' => esc_attr( wp_create_nonce( 'smva_nonce' ),
             'apiUrl'     => SMVA_API_URL,
             'pricingUrl' => SMVA_PRICING_URL,
             'siteUrl'    => get_site_url(),
@@ -543,12 +543,12 @@ class SMVA_Plugin {
             widgetTheme   : <?php echo wp_json_encode( get_option( 'smva_widget_theme', 'classic' ) ); ?>,
             agentLogo     : <?php echo wp_json_encode( get_option( 'smva_agent_logo', '' ) ); ?>,
             lang          : <?php echo wp_json_encode( get_option( 'smva_lang', 'en' ) ); ?>,
-            extraLangs    : <?php echo get_option( 'smva_extra_langs', '[]' ); ?>,
+            extraLangs    : <?php echo esc_html( get_option( 'smva_extra_langs', '[]' ) ); ?>,
             businessName  : <?php echo wp_json_encode( get_option( 'smva_business_name', '' ) ); ?>,
             greeting      : <?php echo wp_json_encode( get_option( 'smva_greeting', 'Hello! How can I help you?' ) ); ?>,
             defaultTab    : <?php echo wp_json_encode( get_option( 'smva_default_tab', 'voice' ) ); ?>,
-            voiceEnabled  : <?php echo get_option( 'smva_voice_enabled', '1' ) === '1' ? 'true' : 'false'; ?>,
-            chatEnabled   : <?php echo get_option( 'smva_chat_enabled', '1' ) === '1' ? 'true' : 'false'; ?>,
+            voiceEnabled  : <?php echo esc_html( get_option( 'smva_voice_enabled', '1' ) === '1' ? 'true' : 'false'; ?>,
+            chatEnabled   : <?php echo esc_html( get_option( 'smva_chat_enabled', '1' ) === '1' ? 'true' : 'false'; ?>,
             maxCallDuration    : <?php echo intval( get_option( 'smva_max_call_duration', 10 ) ); ?>,
             silenceTimeout     : <?php echo intval( get_option( 'smva_silence_timeout', 60 ) ); ?>,
             callCooldown       : <?php echo intval( get_option( 'smva_call_cooldown', 30 ) ); ?>,
@@ -824,7 +824,7 @@ class SMVA_Plugin {
         $plan           = get_option( 'smva_plan', '' );
         $is_active      = ! empty( $internal_token );
         $is_trial       = ( $plan === 'trial' );
-        $active_tab     = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : ( $is_active ? 'dashboard' : 'license' );
+        $active_tab     = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : ( $is_active ? 'dashboard' : 'license' );
         if ( $active_tab === 'settings' ) $active_tab = 'general';
 
         include SMVA_PATH . 'views/admin-page.php';
@@ -1201,7 +1201,7 @@ class SMVA_Plugin {
         header( 'Content-Type: audio/wav' );
         header( 'Content-Length: ' . strlen( $body ) );
         header( 'Cache-Control: no-store' );
-        echo $body;
+        echo wp_kses_post( $body );
         exit;
     }
 
@@ -1495,7 +1495,7 @@ class SMVA_Plugin {
         header( 'Content-Type: audio/wav' );
         header( 'Content-Length: ' . strlen( $body ) );
         header( 'Accept-Ranges: bytes' );
-        echo $body;
+        echo wp_kses_post( $body );
         exit;
     }
 

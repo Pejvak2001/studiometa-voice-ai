@@ -3,7 +3,7 @@ Contributors: studiometa
 Donate link: https://studiometa.io/
 Tags: chatbot, voice ai, ai assistant, customer support, gemini
 Requires at least: 6.0
-Tested up to: 6.7
+Tested up to: 6.9
 Stable tag: 1.3.32
 Requires PHP: 7.4
 License: GPLv2 or later

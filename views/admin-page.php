@@ -1,5 +1,6 @@
 
-<?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
+<?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <div class="smva-admin-wrap">
 
     <div class="smva-header">
@@ -442,8 +443,8 @@
                         <label style="flex:1;border:2px solid <?php echo $cur===$val?'#2563eb':'#e5e7eb'; ?>;border-radius:10px;padding:10px;cursor:pointer;text-align:center;transition:all .2s" onclick="smvaSelectStyle('<?php echo $val; ?>')">
                             <input type="radio" name="response_style" value="<?php echo $val; ?>" <?php checked($cur,$val); ?> style="display:none">
                             <div style="font-size:20px;margin-bottom:2px"><?php echo $s['icon']; ?></div>
-                            <div style="font-size:12px;font-weight:600"><?php echo $s['title']; ?></div>
-                            <div style="font-size:10px;color:#6b7280"><?php echo $s['desc']; ?></div>
+                            <div style="font-size:12px;font-weight:600"><?php echo esc_html( $s['title'] ); ?></div>
+                            <div style="font-size:10px;color:#6b7280"><?php echo esc_html( $s['desc'] ); ?></div>
                         </label>
                         <?php endforeach; ?>
                     </div>
