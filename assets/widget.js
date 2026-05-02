@@ -518,7 +518,7 @@
             h('smva-end').classList.remove('hide');
             h('smva-voice-status').textContent = t('connecting');
 
-            mediaStream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, sampleRate: 16000 } });
+            mediaStream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, sampleRate: 16000, echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
             ws = new WebSocket(CONFIG.wsUrl + '?token=' + CONFIG.internalToken);
 
             ws.onopen = () => {
@@ -903,9 +903,9 @@ s.textContent='.smva-dt{display:flex;gap:10px;align-items:center;padding:10px 12
     bar.id = 'smva-call-bar';
     bar.innerHTML =
       '<span class="smva-cb-dot"></span>' +
-      '<span class="smva-cb-lbl" id="smva-cb-lbl">در حال مکالمه</span>' +
+      '<span class="smva-cb-lbl" id="smva-cb-lbl">' + t('on_call') + '</span>' +
       '<span class="smva-cb-timer" id="smva-cb-timer"></span>' +
-      '<button class="smva-cb-end" id="smva-cb-end" type="button">پایان تماس</button>';
+      '<button class="smva-cb-end" id="smva-cb-end" type="button">' + t('end_call') + '</button>';
     var msgs = chatContent.querySelector('.smva-msgs');
     var chatFt = chatContent.querySelector('.smva-chat-ft');
     if(chatFt) chatContent.insertBefore(bar, chatFt);
