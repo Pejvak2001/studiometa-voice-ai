@@ -369,8 +369,30 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     );
                     $current_voice = $agent['voice_id'] ?? 'Aoede';
                     ?>
+                    <?php
+                    $voice_gender = array(
+                        'Zephyr'=>'f','Kore'=>'f','Leda'=>'f','Aoede'=>'f','Callirrhoe'=>'f',
+                        'Autonoe'=>'f','Despina'=>'f','Erinome'=>'f','Laomedeia'=>'f','Achernar'=>'f',
+                        'Pulcherrima'=>'f','Vindemiatrix'=>'f','Sadachbia'=>'f','Sulafat'=>'f',
+                        'Puck'=>'m','Charon'=>'m','Fenrir'=>'m','Orus'=>'m','Enceladus'=>'m',
+                        'Iapetus'=>'m','Umbriel'=>'m','Algieba'=>'m','Algenib'=>'m','Rasalgethi'=>'m',
+                        'Alnilam'=>'m','Schedar'=>'m','Gacrux'=>'m','Achird'=>'m',
+                        'Zubenelgenubi'=>'m','Sadaltager'=>'m',
+                    );
+                    $current_gender = $voice_gender[ $current_voice ] ?? 'f';
+                    ?>
+                    <div class="smva-gender-tabs" id="smva-gender-tabs">
+                        <button type="button" class="smva-gender-btn <?php echo $current_gender==='f'?'active':''; ?>" data-gender="f">
+                            <span>♀</span> Female
+                        </button>
+                        <button type="button" class="smva-gender-btn <?php echo $current_gender==='m'?'active':''; ?>" data-gender="m">
+                            <span>♂</span> Male
+                        </button>
+                    </div>
                     <select name="voice_id" class="smva-select" id="smva-voice-select">
-                        <?php foreach ( $voices as $val => $meta ) : ?>
+                        <?php foreach ( $voices as $val => $meta ) :
+                            $g = $voice_gender[$val] ?? 'f';
+                        ?>
                         <option
                             value="<?php echo esc_attr( $val ); ?>"
                             data-label="<?php echo esc_attr( $meta['label'] ); ?>"
@@ -378,13 +400,55 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                             data-best-for="<?php echo esc_attr( $meta['best_for'] ); ?>"
                             data-preview-rate="<?php echo esc_attr( $meta['preview_rate'] ); ?>"
                             data-preview-pitch="<?php echo esc_attr( $meta['preview_pitch'] ); ?>"
+                            data-gender="<?php echo esc_attr( $g ); ?>"
                             <?php selected( $current_voice, $val ); ?>
                         >
                             <?php echo esc_html( $meta['label'] . ' — ' . $meta['tone'] ); ?>
                         </option>
                         <?php endforeach; ?>
                     </select>
-                    <p class="smva-hint">Voice styles are shown with short tone labels so it is easier to compare them quickly.</p>
+                    <style>
+                    .smva-gender-tabs{display:flex;gap:8px;margin-bottom:10px}
+                    .smva-gender-btn{flex:1;padding:8px 12px;border-radius:10px;border:1.5px solid #e5e7eb;background:#fff;font-size:13px;font-weight:600;color:#6b7280;cursor:pointer;transition:all .15s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px}
+                    .smva-gender-btn span{font-size:16px}
+                    .smva-gender-btn:hover{border-color:#3b6eff;color:#3b6eff}
+                    .smva-gender-btn.active{border-color:#3b6eff;background:#eff2ff;color:#3b6eff}
+                    </style>
+                    <script>
+                    (function(){
+                        function filterVoices(gender){
+                            var sel = document.getElementById('smva-voice-select');
+                            if(!sel) return;
+                            var opts = sel.options;
+                            var firstVisible = null;
+                            for(var i=0;i<opts.length;i++){
+                                var show = opts[i].dataset.gender === gender;
+                                opts[i].style.display = show ? '' : 'none';
+                                if(show && firstVisible===null) firstVisible = opts[i].value;
+                            }
+                            // if current selection is hidden, switch to first visible
+                            if(sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].style.display==='none'){
+                                sel.value = firstVisible || sel.options[0].value;
+                                sel.dispatchEvent(new Event('change'));
+                            }
+                        }
+                        document.addEventListener('DOMContentLoaded', function(){
+                            var tabs = document.querySelectorAll('.smva-gender-btn');
+                            var sel  = document.getElementById('smva-voice-select');
+                            // init — hide voices of opposite gender
+                            var initGender = sel ? (sel.options[sel.selectedIndex]?.dataset.gender || 'f') : 'f';
+                            filterVoices(initGender);
+                            tabs.forEach(function(btn){
+                                btn.addEventListener('click', function(){
+                                    tabs.forEach(function(b){b.classList.remove('active');});
+                                    btn.classList.add('active');
+                                    filterVoices(btn.dataset.gender);
+                                });
+                            });
+                        });
+                    })();
+                    </script>
+                    <p class="smva-hint">Filter by gender, then pick a voice. Preview uses Gemini TTS — same as the live widget.</p>
                     <div class="smva-voice-meta-card" id="smva-voice-meta-card">
                         <div class="smva-voice-meta-top">
                             <div>
@@ -661,27 +725,66 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 <h2 class="smva-card-title">Call Limits</h2>
                 <span class="smva-hint-inline">prevent abuse</span>
             </div>
-            <div class="smva-form-grid">
-
-                <div class="smva-field">
-                    <label>Max Call Duration <span style="font-size:11px;color:#9ca3af">minutes · 0 = off</span></label>
-                    <input type="number" name="smva_max_call_duration" class="smva-input" min="0" max="60" value="<?php echo intval( get_option('smva_max_call_duration',10) ); ?>">
+            <div class="smva-limits-grid">
+                <div class="smva-limit-item">
+                    <div class="smva-limit-header">
+                        <label class="smva-limit-label">Max Call Duration</label>
+                        <span class="smva-limit-unit">minutes &middot; 0 = off</span>
+                    </div>
+                    <div class="smva-limit-ctrl">
+                        <button type="button" class="smva-lim-btn" onclick="smvaLimStep('smva_max_call_duration',-1)">&minus;</button>
+                        <input type="number" name="smva_max_call_duration" id="smva_max_call_duration" class="smva-lim-input" min="0" max="60" value="<?php echo intval( get_option('smva_max_call_duration',10) ); ?>">
+                        <button type="button" class="smva-lim-btn" onclick="smvaLimStep('smva_max_call_duration',1)">+</button>
+                    </div>
                     <p class="smva-hint">Auto-disconnect after this many minutes.</p>
                 </div>
-
-                <div class="smva-field">
-                    <label>Silence Timeout <span style="font-size:11px;color:#9ca3af">seconds · 0 = off</span></label>
-                    <input type="number" name="smva_silence_timeout" class="smva-input" min="0" max="300" value="<?php echo intval( get_option('smva_silence_timeout',60) ); ?>">
+                <div class="smva-limit-item">
+                    <div class="smva-limit-header">
+                        <label class="smva-limit-label">Silence Timeout</label>
+                        <span class="smva-limit-unit">seconds &middot; 0 = off</span>
+                    </div>
+                    <div class="smva-limit-ctrl">
+                        <button type="button" class="smva-lim-btn" onclick="smvaLimStep('smva_silence_timeout',-5)">&minus;</button>
+                        <input type="number" name="smva_silence_timeout" id="smva_silence_timeout" class="smva-lim-input" min="0" max="300" value="<?php echo intval( get_option('smva_silence_timeout',60) ); ?>">
+                        <button type="button" class="smva-lim-btn" onclick="smvaLimStep('smva_silence_timeout',5)">+</button>
+                    </div>
                     <p class="smva-hint">Auto-disconnect after this many seconds of silence.</p>
                 </div>
-
-                <div class="smva-field">
-                    <label>Call Cooldown <span style="font-size:11px;color:#9ca3af">seconds · 0 = off</span></label>
-                    <input type="number" name="smva_call_cooldown" class="smva-input" min="0" max="3600" value="<?php echo intval( get_option('smva_call_cooldown',30) ); ?>">
+                <div class="smva-limit-item">
+                    <div class="smva-limit-header">
+                        <label class="smva-limit-label">Call Cooldown</label>
+                        <span class="smva-limit-unit">seconds &middot; 0 = off</span>
+                    </div>
+                    <div class="smva-limit-ctrl">
+                        <button type="button" class="smva-lim-btn" onclick="smvaLimStep('smva_call_cooldown',-10)">&minus;</button>
+                        <input type="number" name="smva_call_cooldown" id="smva_call_cooldown" class="smva-lim-input" min="0" max="3600" value="<?php echo intval( get_option('smva_call_cooldown',30) ); ?>">
+                        <button type="button" class="smva-lim-btn" onclick="smvaLimStep('smva_call_cooldown',10)">+</button>
+                    </div>
                     <p class="smva-hint">Minimum wait between calls to prevent abuse.</p>
                 </div>
-
             </div>
+            <style>
+            .smva-limits-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:4px}
+            .smva-limit-item{background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
+            .smva-limit-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+            .smva-limit-label{font-size:13px;font-weight:600;color:#374151}
+            .smva-limit-unit{font-size:10px;color:#9ca3af}
+            .smva-limit-ctrl{display:flex;align-items:center;border:1.5px solid #d1d5db;border-radius:10px;overflow:hidden;background:#fff}
+            .smva-lim-btn{width:36px;height:36px;border:none;background:transparent;font-size:18px;color:#374151;cursor:pointer;flex-shrink:0;transition:background .15s}
+            .smva-lim-btn:hover{background:#f3f4f6}
+            .smva-lim-input{flex:1;border:none;outline:none;text-align:center;font-size:16px;font-weight:600;color:#111;background:transparent;-moz-appearance:textfield;min-width:0}
+            .smva-lim-input::-webkit-inner-spin-button,.smva-lim-input::-webkit-outer-spin-button{-webkit-appearance:none}
+            </style>
+            <script>
+            function smvaLimStep(id, step) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                var val = parseInt(el.value) || 0;
+                var min = parseInt(el.min) || 0;
+                var max = parseInt(el.max) || 9999;
+                el.value = Math.min(max, Math.max(min, val + step));
+            }
+            </script>
             <div class="smva-card-footer">
                 <button type="submit" class="smva-btn smva-btn-primary">Save Widget Settings</button>
                 <span id="smva-widget-save-msg" class="smva-save-msg"></span>
