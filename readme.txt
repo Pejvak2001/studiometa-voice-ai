@@ -147,11 +147,11 @@ Visit [studiometa.io/support](https://studiometa.io/support) or use the support 
 
 == Screenshots ==
 
-1. The voice & chat widget on a live site
-2. Admin dashboard showing usage and quota
-3. Agent customization (name, voice, knowledge base)
-4. Widget appearance settings (color, position, style)
-5. Custom agent tools (connect to your own webhooks)
+1. Chat widget on a live site showing clickable contact cards (display_text feature)
+2. Voice call in progress — real-time voice conversation with AI agent
+3. Admin dashboard — usage stats, session history, and quota tracking
+4. Agent customization — knowledge base import, system prompt, and suggested questions
+5. Widget appearance — six visual themes to match your brand
 
 == Changelog ==
 
