@@ -3,7 +3,7 @@
  * Plugin Name: StudioMeta Voice AI
  * Plugin URI:  https://studiometa.io
  * Description: Voice & Chat AI Widget with live voice and chat. Includes free trial (30 voice minutes + 100 chat messages).
- * Version:           1.3.20
+ * Version:           1.3.32
  * Author:      StudioMeta
  * Author URI:  https://studiometa.io
  * License:     GPL-2.0+

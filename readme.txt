@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, voice ai, ai assistant, customer support, gemini
 Requires at least: 6.0
 Tested up to: 6.7
-Stable tag: 1.3.18
+Stable tag: 1.3.32
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -154,6 +154,24 @@ Visit [studiometa.io/support](https://studiometa.io/support) or use the support 
 5. Custom agent tools (connect to your own webhooks)
 
 == Changelog ==
+
+= 1.3.32 =
+* New: Feature C — display_text tool: agent now shows clickable cards for email, phone, URL, and address in the chat panel
+* New: Sticky call-bar in chat tab during active voice call (with End Call button and live timer)
+* New: Chat message formatting — URLs rendered as clickable links, bold, italic, and line breaks supported
+* Improved: Auto-switch to chat tab when display_text card arrives
+* Improved: Deduplication guard prevents same card from appearing twice
+
+= 1.3.20 =
+* New: Feature A — auto-close call on goodbye (end_conversation tool)
+* New: Feature B — request_text_input tool: agent can open chat panel to collect typed data during voice call
+* New: Six widget visual themes: Classic, Floating, Soft Round, Dark Modern, Glass, Gradient
+* New: Chat History tab with session grouping, collapsible cards, markdown rendering, and search
+* New: Voice greeting TTS preview in admin panel (30 Gemini voices)
+* New: Response Style selector (Precise / Balanced / Creative)
+* New: Widget i18n supporting en, fa, ar, fr, es
+* Improved: Domain lock and freemium onboarding flow with auto trial registration
+* Improved: Monthly usage report via automated workflow
 
 = 1.3.14 =
 * Single source of truth improvements for quota and dashboard usage.
