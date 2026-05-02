@@ -1,0 +1,204 @@
+=== StudioMeta Voice AI ===
+Contributors: studiometa
+Donate link: https://studiometa.io/
+Tags: chatbot, voice ai, ai assistant, customer support, gemini
+Requires at least: 6.0
+Tested up to: 6.7
+Stable tag: 1.3.18
+Requires PHP: 7.4
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+AI voice & chat widget for your site. Free trial included: 30 voice minutes + 100 chat messages, no credit card required.
+
+== Description ==
+
+**StudioMeta Voice AI** adds a natural, conversational voice and chat assistant to your WordPress site. Visitors can have a real spoken conversation with an AI agent trained on your content, or chat by typing — all from a small floating widget.
+
+The assistant understands context, answers in multiple languages, and can be customized to match your brand.
+
+**Every install includes a free trial automatically — no signup, no credit card.** You get 30 voice minutes and 100 chat messages to try the assistant on your site before deciding on a paid plan.
+
+= Key features =
+
+* **Voice conversations** — visitors talk to your AI agent, the agent talks back (real-time, streaming)
+* **Text chat** — classic chat widget for visitors who prefer typing
+* **Multi-language** — English, Persian (فارسی), Arabic, French, Spanish, and more
+* **Knowledge base import** — auto-crawl your site to train the agent on your content
+* **Customizable widget** — color, position (bottom-left/right), style (FAB or pill)
+* **Suggested questions** — chips that prompt visitors with common questions
+* **Agent customization** — name, voice, response style, system prompt, timezone
+* **Custom tools** — connect your agent to external APIs via webhooks (n8n, Make, Zapier)
+* **Usage dashboard** — see voice minutes used, sessions, and remaining quota
+* **Smart fallback** — when one quota is exhausted, the other stays available
+
+= How the trial works =
+
+1. Activate the plugin — a free trial is created automatically
+2. Use 30 voice minutes and 100 chat messages on real visitor conversations
+3. When the voice quota is exhausted, the chat widget keeps working (and vice versa)
+4. When both are exhausted, the widget shows an upgrade button linking to our pricing page
+
+= Upgrading to a paid plan =
+
+If you want unlimited or higher quotas, visit [studiometa.io/pricing](https://studiometa.io/pricing/). After purchase, your widget reactivates automatically within 5 minutes — no need to copy and paste a license key.
+
+== External services ==
+
+**This plugin connects to external services provided by StudioMeta to function.** This is required because the plugin is an interface to a hosted AI assistant. The following services are used:
+
+= 1. StudioMeta Voice AI API (api2.studiometa.io) =
+
+**What it does:** Hosts the AI agent. Handles license validation, quota tracking, knowledge base storage, agent configuration, voice/chat session orchestration, and dashboard analytics.
+
+**When it is contacted:**
+
+* On plugin activation: to issue a free trial license (sends site URL, admin email, business name, site fingerprint, WordPress version, plugin version, language preference)
+* When you save settings or agent configuration: to sync your changes to the hosted agent
+* When you click "Import KB from Website": to crawl your public pages and build a knowledge base
+* When you click "Optimize with AI": to improve your system prompt
+* When the admin Dashboard loads: to fetch usage statistics
+* Every 5 minutes (cached): to check current quota status (decides whether the widget shows voice, chat, both, or an upgrade button)
+* When a visitor uses the voice or chat widget: a WebSocket connection is opened to `wss://api2.studiometa.io/voice` to stream audio and messages
+
+**Data sent:** site URL, admin email, business name, your custom agent configuration (name, voice, system prompt, knowledge base text, suggested questions, custom tools), and during sessions: visitor audio and chat messages (processed only for the duration of the conversation).
+
+**Data NOT sent:** WordPress user passwords, post content (unless you explicitly import it via "Import KB"), visitor IP addresses, visitor names or accounts.
+
+* Service homepage: [https://studiometa.io](https://studiometa.io)
+* Terms of Service: [https://studiometa.io/terms](https://studiometa.io/terms)
+* Privacy Policy: [https://studiometa.io/privacy](https://studiometa.io/privacy)
+
+= 2. StudioMeta Workflow Webhooks (n8n.studiometa.io) =
+
+**What it does:** Sends transactional emails (welcome email on activation, license key email after purchase, usage alerts at 80% and 100%, monthly usage report).
+
+**When it is contacted:**
+
+* Once on plugin activation: to trigger the welcome email
+* When usage thresholds are crossed (server-side): to trigger usage alert emails
+
+**Data sent:** admin email, site URL, business name, current plan, usage percentages.
+
+* Service homepage: [https://studiometa.io](https://studiometa.io)
+* Terms of Service: [https://studiometa.io/terms](https://studiometa.io/terms)
+* Privacy Policy: [https://studiometa.io/privacy](https://studiometa.io/privacy)
+
+= 3. Google Gemini Live (indirectly, via api2.studiometa.io) =
+
+The AI capabilities are powered by Google's Gemini Live API. The plugin does **not** contact Google directly — all requests go through `api2.studiometa.io`, which forwards them to Google. You do not need a Google account or API key.
+
+* Google Gemini Terms: [https://ai.google.dev/terms](https://ai.google.dev/terms)
+* Google Privacy Policy: [https://policies.google.com/privacy](https://policies.google.com/privacy)
+
+= How to opt out =
+
+If you do not want the plugin to contact these services, simply deactivate and uninstall the plugin. The plugin cannot function without the hosted services because the AI assistant runs on our infrastructure (similar to how an Akismet plugin needs the Akismet service, or a Mailchimp plugin needs Mailchimp).
+
+== Installation ==
+
+1. Upload the `studiometa-voice-ai` folder to `/wp-content/plugins/`, OR install through the WordPress plugin browser
+2. Activate the plugin through the **Plugins** menu in WordPress
+3. A free trial is created automatically — you'll see the **Voice AI** menu item in your WordPress admin sidebar
+4. Click **Voice AI → My Agent** to customize your assistant's name, voice, and knowledge base
+5. The widget appears as a floating button on every page of your site (or use the shortcode `[smva_widget]` to place it manually)
+
+== Frequently Asked Questions ==
+
+= Do I need to create an account? =
+
+No. The plugin auto-issues a free trial when you activate it. You can start using the AI assistant immediately.
+
+= What happens when my trial runs out? =
+
+The widget shows an upgrade button linking to our pricing page. If you've used all your voice minutes but still have chat messages, the widget shows only the chat tab (and vice versa).
+
+= Will the widget reactivate automatically after I purchase? =
+
+Yes. Within 5 minutes of your purchase, the plugin detects the upgrade and the widget switches back to full mode. You don't need to copy and paste a license key.
+
+= Can I customize the voice and personality of the agent? =
+
+Yes. Go to **Voice AI → My Agent** to set the agent's name, voice (multiple voices available), response style (concise / balanced / detailed), system prompt, and knowledge base.
+
+= What languages does the assistant speak? =
+
+English, Persian (فارسی), Arabic, French, Spanish, and more. Set the language under **Voice AI → General**.
+
+= Can I add the widget to specific pages only? =
+
+Yes. By default the widget appears site-wide. You can disable that and use the shortcode `[smva_widget]` to place it manually on selected pages.
+
+= Does this work on mobile? =
+
+Yes. The widget is fully responsive and supports voice on mobile browsers that allow microphone access (most modern browsers do).
+
+= Does the plugin send data anywhere? =
+
+Yes. Because the AI runs on our hosted infrastructure (api2.studiometa.io), the plugin sends configuration data and conversation contents to our servers. See the **External Services** section above for full details.
+
+= Is uninstalling the plugin clean? =
+
+Yes. When you uninstall, the plugin removes all its options, transients, and licensing data from your WordPress database.
+
+= Where can I get support? =
+
+Visit [studiometa.io/support](https://studiometa.io/support) or use the support forum on this plugin's WordPress.org page.
+
+== Screenshots ==
+
+1. The voice & chat widget on a live site
+2. Admin dashboard showing usage and quota
+3. Agent customization (name, voice, knowledge base)
+4. Widget appearance settings (color, position, style)
+5. Custom agent tools (connect to your own webhooks)
+
+== Changelog ==
+
+= 1.3.14 =
+* Single source of truth improvements for quota and dashboard usage.
+
+= 1.3.13 =
+* Expanded the admin voice dropdown to include the full current set of 30 Gemini prebuilt voices.
+
+
+= 1.2.0 =
+* New: Per-site agent isolation — each site now has its own agent settings, knowledge base, and dashboard
+* New: Single-site license model — activating a license on a new site auto-deactivates the previous site (with confirmation dialog)
+* New: Site-replaced admin notice when this site has been auto-deactivated by activation elsewhere
+* Improved: Widget gracefully hides when site is deactivated (HTTP 410 detection)
+* Improved: Agent settings preserved across deactivation/reactivation cycles
+* Security: Token revoked when site is auto-deactivated; another site cannot use this site's token
+
+= 1.1.1 =
+* Fixed: Double-escaping bug — apostrophes and quotes in system prompt, agent name, and other text fields no longer accumulate backslashes on each save
+* Fixed: Same issue in license key, knowledge base, optimize agent, and crawl site forms
+* Fixed: Suggested questions field
+
+= 1.1.0 =
+* New: Free trial activated automatically on install (30 voice minutes + 100 chat messages)
+* New: Smart fallback — when one quota is exhausted, the other stays active
+* New: Auto-upgrade — purchasing a plan reactivates the widget within 5 minutes, no license key paste needed
+* New: Live quota progress bars in admin dashboard
+* New: Trial banner with upgrade CTA
+* New: Multi-language widget messages for limit-reached states
+* Improved: Quota status cached in WordPress transients (reduces backend load)
+* Improved: Site fingerprinting prevents trial-reset abuse from uninstall/reinstall
+
+= 1.0.1 =
+* Improved language sync between widget and backend agent
+* Fixed agent_tools save handling
+
+= 1.0.0 =
+* Initial release
+
+== Upgrade Notice ==
+
+= 1.2.0 =
+Per-site agent isolation. If you have used the same license on multiple sites, please review your active site after upgrade.
+
+= 1.1.1 =
+Critical fix: text fields no longer accumulate backslashes on save. Recommended for all users.
+
+= 1.1.0 =
+Adds free trial, smart quota fallback, and auto-upgrade. Recommended for all users.

@@ -1,0 +1,1013 @@
+/* StudioMeta Voice AI - Admin JS */
+jQuery(function($) {
+    var nonce = window.smvaAdmin ? window.smvaAdmin.nonce : '';
+
+    function showLoading(msg) {
+        $('#smva-agent-loading').show();
+        $('#smva-loading-text').text(msg || 'Processing...');
+        $('#smva-agent-msg').text('').css('color','');
+    }
+    function hideLoading() {
+        $('#smva-agent-loading').hide();
+    }
+    var ajaxUrl = window.smvaAdmin ? window.smvaAdmin.ajaxUrl : '';
+
+    // ── License Activation (with confirm-replace flow) ─────────────────────
+    function performActivation(key, confirmReplace) {
+        var $btn = $('#smva-activate-btn').text('Activating...').prop('disabled', true);
+        var $msg = $('#smva-license-msg').removeClass('smva-msg-success smva-msg-error').hide();
+
+        var payload = {
+            action: 'smva_activate_license',
+            nonce: nonce,
+            license_key: key
+        };
+        if (confirmReplace) payload.confirm_replace = '1';
+
+        $.post(ajaxUrl, payload)
+            .done(function(res) {
+                if (res.success) {
+                    // Backend asks for confirmation (license active elsewhere)
+                    if (res.data && res.data.needs_confirmation) {
+                        showReplaceConfirmDialog(key, res.data);
+                        $btn.text('Activate').prop('disabled', false);
+                        return;
+                    }
+                    // Normal success
+                    $msg.addClass('smva-msg-success').text(res.data.message).show();
+                    if (res.data.reload) setTimeout(function() { location.reload(); }, 1200);
+                } else {
+                    var errData = res.data || {};
+                    $msg.addClass('smva-msg-error').text(errData.message || 'Error').show();
+                    $btn.text('Activate').prop('disabled', false);
+                }
+            })
+            .fail(function() {
+                $msg.addClass('smva-msg-error').text('Connection error.').show();
+                $btn.text('Activate').prop('disabled', false);
+            });
+    }
+
+    $('#smva-activate-btn').on('click', function() {
+        var key = $('#smva-license-input').val().trim();
+        if (!key) return;
+        performActivation(key, false);
+    });
+
+    // ── Dialog: Confirm replacing other site ─────────────────────────────
+    function showReplaceConfirmDialog(key, data) {
+        var currentSite = data.current_active_site || 'another site';
+        var html = ''
+            + '<div class="smva-modal-overlay" id="smva-replace-modal">'
+            + '<div class="smva-modal">'
+            +   '<h3 style="margin:0 0 12px;font-size:18px">⚠ License is in use elsewhere</h3>'
+            +   '<p style="font-size:14px;color:#374151;margin:0 0 12px">'
+            +     'This license is currently active on:'
+            +   '</p>'
+            +   '<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-family:monospace;font-size:13px;color:#111827;word-break:break-all">'
+            +     esc(currentSite)
+            +   '</div>'
+            +   '<p style="font-size:13px;color:#6b7280;margin:0 0 8px">'
+            +     'Activating here will <strong>deactivate the widget on that site</strong>. '
+            +     'The agent settings on this site will start blank.'
+            +   '</p>'
+            +   '<p style="font-size:12px;color:#9ca3af;margin:0 0 20px">'
+            +     'If you need the widget on multiple sites, please purchase additional licenses at '
+            +     '<a href="' + esc(window.smvaAdmin.pricingUrl || 'https://studiometa.io/pricing/') + '" target="_blank">studiometa.io/pricing</a>.'
+            +   '</p>'
+            +   '<div style="display:flex;gap:8px;justify-content:flex-end">'
+            +     '<button type="button" id="smva-cancel-replace" class="smva-btn">Cancel</button>'
+            +     '<button type="button" id="smva-confirm-replace" class="smva-btn smva-btn-danger" style="background:#dc2626;color:#fff;border-color:#dc2626">Yes, deactivate other site</button>'
+            +   '</div>'
+            + '</div></div>';
+
+        $('body').append(html);
+
+        $('#smva-cancel-replace').on('click', function() {
+            $('#smva-replace-modal').remove();
+        });
+        $('#smva-confirm-replace').on('click', function() {
+            $('#smva-replace-modal').remove();
+            performActivation(key, true);
+        });
+    }
+
+    function esc(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    $('#smva-deactivate-btn').on('click', function() {
+        if (!confirm('Remove license from this site?\n\nThis will disconnect the AI widget. Your license key will be removed from this site — you can re-enter it anytime or use it on a different site.\n\nYour agent settings (KB, prompts, voice) are saved in the cloud and will be restored when you re-activate.')) return;
+        $.post(ajaxUrl, {action:'smva_deactivate_license', nonce:nonce}).done(function(res) { if(res.success && res.data.reload) location.reload(); });
+    });
+
+    // Refresh quota (Dashboard / License tabs)
+    $(document).on('click', '#smva-refresh-quota', function() {
+        var $btn = $(this).prop('disabled', true).text('⟳ Refreshing...');
+        $.post(ajaxUrl, { action: 'smva_refresh_quota', nonce: nonce })
+            .done(function(res) {
+                if (!res.success || !res.data) { return; }
+                var q = res.data;
+                var vUsed  = parseFloat(q.voice_minutes_used  || 0);
+                var vLimit = parseInt(q.voice_minutes_limit || 0, 10);
+                var cUsed  = parseInt(q.chat_messages_used  || 0, 10);
+                var cLimit = parseInt(q.chat_messages_limit || 0, 10);
+                var vPct = vLimit > 0 ? Math.min(100, (vUsed / vLimit) * 100) : 0;
+                var cPct = cLimit > 0 ? Math.min(100, (cUsed / cLimit) * 100) : 0;
+
+                $('#smva-voice-fill').css('width', vPct + '%')
+                    .removeClass('warn danger')
+                    .addClass(vPct >= 100 ? 'danger' : (vPct >= 80 ? 'warn' : ''));
+                $('#smva-chat-fill').css('width', cPct + '%')
+                    .removeClass('warn danger')
+                    .addClass(cPct >= 100 ? 'danger' : (cPct >= 80 ? 'warn' : ''));
+                $('#smva-voice-num').text(vUsed.toFixed(1) + ' / ' + vLimit);
+                $('#smva-chat-num').text(cUsed + ' / ' + cLimit);
+
+                // If plan changed (e.g. trial → paid), reload so UI reflects it
+                if (q.plan && window.smvaPlan && q.plan !== window.smvaPlan) {
+                    location.reload();
+                }
+            })
+            .always(function() { $btn.prop('disabled', false).text('⟳ Refresh'); });
+    });
+
+    // Auto-refresh quota every 30s on Dashboard tab
+    if (/[?&]tab=dashboard/.test(window.location.search)) {
+        setInterval(function() { $('#smva-refresh-quota').trigger('click'); }, 30000);
+    }
+
+    // Auto-refresh quota on page load if values appear to be zero/empty
+    // Handles: (a) post-reinstall when cache is empty (b) first-load timing
+    (function() {
+        var $voiceNum = $('#smva-voice-num');
+        var $chatNum  = $('#smva-chat-num');
+        if (!$voiceNum.length || !$chatNum.length) return;
+
+        function looksEmpty() {
+            var v = $voiceNum.text().trim();
+            var c = $chatNum.text().trim();
+            var emptyPatterns = ['0 / 0', '', '0.0 / 0'];
+            return emptyPatterns.indexOf(v) > -1 || emptyPatterns.indexOf(c) > -1;
+        }
+
+        // Try 1: after 800ms (backend should be cached by now)
+        if (looksEmpty()) {
+            setTimeout(function() {
+                $('#smva-refresh-quota').trigger('click');
+                // Try 2: after 3s if still empty (backend still computing)
+                setTimeout(function() {
+                    if (looksEmpty()) $('#smva-refresh-quota').trigger('click');
+                }, 3000);
+            }, 800);
+        }
+    })();
+
+    $('#smva-color-input').on('input', function() { $('#smva-color-val').text($(this).val()); });
+
+
+    var smvaPreviewUtterance = null;
+    var smvaPreviewAudio = null;
+    var smvaPreviewSynth = window.speechSynthesis || null;
+
+    function getSelectedVoiceMeta() {
+        var $opt = $('#smva-voice-select option:selected');
+        return {
+            label: $opt.data('label') || $opt.val() || 'Aoede',
+            tone: $opt.data('tone') || '',
+            bestFor: $opt.data('best-for') || '',
+            previewRate: parseFloat($opt.data('preview-rate') || 1),
+            previewPitch: parseFloat($opt.data('preview-pitch') || 1)
+        };
+    }
+
+    function updateVoiceMetaCard() {
+        if (!$('#smva-voice-meta-card').length) return;
+        var meta = getSelectedVoiceMeta();
+        $('#smva-voice-meta-name').text(meta.label);
+        $('#smva-voice-meta-tone').text(meta.tone);
+        $('#smva-voice-meta-best').text(meta.bestFor);
+    }
+
+    function getPreviewLanguage() {
+        var lang = $('[name=smva_lang]').val() || 'en';
+        if (lang === 'fa') return 'fa-IR';
+        if (lang === 'ar') return 'ar-SA';
+        if (lang === 'fr') return 'fr-FR';
+        if (lang === 'es') return 'es-ES';
+        return 'en-US';
+    }
+
+    function pickBrowserVoice(lang) {
+        if (!smvaPreviewSynth || !smvaPreviewSynth.getVoices) return null;
+        var voices = smvaPreviewSynth.getVoices() || [];
+        if (!voices.length) return null;
+        var base = (lang || 'en').split('-')[0].toLowerCase();
+        var exact = voices.find(function(v){ return (v.lang || '').toLowerCase() === (lang || '').toLowerCase(); });
+        if (exact) return exact;
+        var partial = voices.find(function(v){ return (v.lang || '').toLowerCase().indexOf(base) === 0; });
+        return partial || voices[0] || null;
+    }
+
+    function setPreviewStatus(text, isError) {
+        $('#smva-preview-status').text(text || '').toggleClass('is-error', !!isError);
+    }
+
+    // Pre-load browser voices at page start; Chrome delivers them async via onvoiceschanged.
+    var smvaBrowserVoices = (smvaPreviewSynth && smvaPreviewSynth.getVoices) ? smvaPreviewSynth.getVoices() : [];
+
+    function pickBrowserVoiceFromCache(lang) {
+        var voices = smvaBrowserVoices;
+        if (!voices || !voices.length) return null;
+        var base = (lang || 'en').split('-')[0].toLowerCase();
+        var exact = voices.find(function(v){ return (v.lang || '').toLowerCase() === (lang || '').toLowerCase(); });
+        if (exact) return exact;
+        var partial = voices.find(function(v){ return (v.lang || '').toLowerCase().indexOf(base) === 0; });
+        return partial || voices[0] || null;
+    }
+
+    function loadBrowserVoices(callback) {
+        if (!smvaPreviewSynth || !smvaPreviewSynth.getVoices) {
+            callback([]);
+            return;
+        }
+        var voices = smvaPreviewSynth.getVoices() || [];
+        if (voices.length) {
+            callback(voices);
+            return;
+        }
+        // Voices not ready yet — poll until available (async load in Chrome/Firefox)
+        var tries = 0;
+        function poll() {
+            var v = smvaPreviewSynth.getVoices() || [];
+            if (v.length || tries >= 20) {
+                callback(v);
+                return;
+            }
+            tries += 1;
+            setTimeout(poll, 150);
+        }
+        poll();
+    }
+
+    function stopGreetingPreview() {
+        if (smvaPreviewAudio) {
+            smvaPreviewAudio.pause();
+            smvaPreviewAudio = null;
+        }
+        if (smvaPreviewSynth && smvaPreviewSynth.speaking) {
+            smvaPreviewSynth.cancel();
+        }
+        smvaPreviewUtterance = null;
+        $('#smva-preview-greeting-btn').prop('disabled', false).text('▶ Preview Greeting');
+        $('#smva-stop-preview-btn').hide();
+    }
+
+    function startGreetingPreview() {
+        var $input = $('#smva-first-message');
+        var text = ($input.val() || $input.attr('placeholder') || '').trim();
+        if (!text) {
+            setPreviewStatus('Enter a Voice Greeting first.', true);
+            return;
+        }
+
+        var meta = getSelectedVoiceMeta();
+        var voiceId = $('#smva-voice-select').val() || 'Aoede';
+
+        // Stop any ongoing playback
+        if (smvaPreviewAudio) {
+            smvaPreviewAudio.pause();
+            smvaPreviewAudio = null;
+        }
+
+        setPreviewStatus('Loading preview...', false);
+        $('#smva-preview-greeting-btn').prop('disabled', true).text('Loading...');
+        $('#smva-stop-preview-btn').hide();
+
+        // Use Gemini TTS via backend — supports all languages and all 30 voices
+        $.ajax({
+            url: window.smvaAdmin.ajaxUrl,
+            method: 'POST',
+            data: {
+                action: 'smva_tts_preview',
+                nonce: window.smvaAdmin.nonce,
+                text: text,
+                voice_id: voiceId
+            },
+            xhrFields: { responseType: 'blob' },
+            success: function(blob) {
+                var url = URL.createObjectURL(blob);
+                var audio = new Audio(url);
+                smvaPreviewAudio = audio;
+                audio.onplay = function() {
+                    $('#smva-preview-greeting-btn').prop('disabled', true).text('Playing...');
+                    $('#smva-stop-preview-btn').show();
+                    setPreviewStatus('Previewing ' + meta.label + ' — ' + meta.tone + '.', false);
+                };
+                audio.onended = function() {
+                    smvaPreviewAudio = null;
+                    URL.revokeObjectURL(url);
+                    $('#smva-preview-greeting-btn').prop('disabled', false).text('▶ Preview Greeting');
+                    $('#smva-stop-preview-btn').hide();
+                    setPreviewStatus('Preview finished.', false);
+                };
+                audio.onerror = function() {
+                    smvaPreviewAudio = null;
+                    URL.revokeObjectURL(url);
+                    $('#smva-preview-greeting-btn').prop('disabled', false).text('▶ Preview Greeting');
+                    $('#smva-stop-preview-btn').hide();
+                    setPreviewStatus('Preview could not be played.', true);
+                };
+                audio.play().catch(function(err) {
+                    setPreviewStatus('Playback blocked by browser: ' + err.message, true);
+                    $('#smva-preview-greeting-btn').prop('disabled', false).text('▶ Preview Greeting');
+                });
+            },
+            error: function() {
+                $('#smva-preview-greeting-btn').prop('disabled', false).text('▶ Preview Greeting');
+                setPreviewStatus('Could not load preview. Please try again.', true);
+            }
+        });
+    }
+
+    if ($('#smva-voice-select').length) {
+        updateVoiceMetaCard();
+        $('#smva-voice-select').on('change', function() {
+            updateVoiceMetaCard();
+            setPreviewStatus('', false);
+        });
+    }
+    $(window).on('beforeunload', stopGreetingPreview);
+    $('#smva-preview-greeting-btn').on('click', startGreetingPreview);
+    $('#smva-stop-preview-btn').on('click', function() {
+        stopGreetingPreview();
+        setPreviewStatus('Preview stopped.', false);
+    });
+    if (smvaPreviewSynth && smvaPreviewSynth.onvoiceschanged !== undefined) {
+        smvaPreviewSynth.onvoiceschanged = function() {
+            smvaBrowserVoices = smvaPreviewSynth.getVoices() || [];
+            updateVoiceMetaCard();
+        };
+    }
+
+    window.smvaSelectStyle = function(val) {
+        $('[name=response_style]').each(function() {
+            this.checked = this.value === val;
+            $(this).closest('label').css('border-color', this.value === val ? '#2563eb' : '#e5e7eb');
+        });
+    };
+
+    // Save Agent — never sends agent_tools, only Automation tab manages tools
+    $('#smva-agent-form').on('submit', function(e) {
+        e.preventDefault();
+        var $btn = $(this).find('button[type=submit]').prop('disabled', true).text('Saving...');
+        var $msg = $('#smva-agent-msg').text('').css('color', '');
+        $.post(window.smvaAdmin.ajaxUrl, {
+            action: 'smva_save_agent',
+            nonce: window.smvaAdmin.nonce,
+            agent_name: $('[name=agent_name]').val(),
+            first_message: $('[name=first_message]').val(),
+            system_prompt_b64: btoa(unescape(encodeURIComponent($('[name=system_prompt]').val()||''))),
+            knowledge_base_b64: btoa(unescape(encodeURIComponent($('[name=knowledge_base]').val()||''))),
+            language: $('[name=language]').val(),
+            voice_id: $('[name=voice_id]').val(),
+            response_style: $('[name=response_style]:checked').val(),
+            agent_timezone: $('[name=agent_timezone]').val(),
+            smva_suggested_questions: $('[name=smva_suggested_questions]').val()
+        }).done(function(res) {
+            if (res.success) $msg.text(res.data && res.data.message ? res.data.message : 'Saved').css('color', '#059669');
+            else $msg.text(res.data && res.data.message ? res.data.message : 'Error').css('color', '#dc2626');
+        }).fail(function() { $msg.text('Connection error.').css('color', '#dc2626'); })
+        .always(function() { $btn.prop('disabled', false).text('💾 Save & Sync Agent'); setTimeout(function() { $msg.text('').css('color', ''); }, 4000); });
+    });
+
+    // Save General Settings — never sends agent_tools
+    $('#smva-settings-form').on('submit', function(e) {
+        e.preventDefault();
+        var $btn = $(this).find('button[type=submit]').prop('disabled', true).text('Saving...');
+        var $msg = $('#smva-save-msg').text('').css('color', '');
+
+        // Collect extra languages
+        var extraLangs = [];
+        $('input[name="smva_extra_langs[]"]:checked').each(function() {
+            extraLangs.push($(this).val());
+        });
+
+        // Save agent identity fields (no agent_tools)
+        $.post(window.smvaAdmin.ajaxUrl, {
+            action: 'smva_save_agent',
+            nonce: window.smvaAdmin.nonce,
+            agent_name: $('[name=agent_name]').val(),
+            voice_id: $('[name=voice_id]').val(),
+            agent_timezone: $('[name=agent_timezone]').val(),
+            response_style: $('[name=response_style]:checked').val(),
+            first_message: $('[name=first_message]').val(),
+            extra_langs: JSON.stringify(extraLangs),
+        });
+
+        // Save WordPress settings
+        $.post(window.smvaAdmin.ajaxUrl, {
+            action: 'smva_save_settings',
+            nonce: window.smvaAdmin.nonce,
+            smva_lang: $('[name=smva_lang]').val(),
+            smva_business_name: $('[name=smva_business_name]').val(),
+            smva_greeting: $('[name=smva_greeting]').val(),
+            smva_widget_color: $('[name=smva_widget_color]').val(),
+            smva_widget_position: $('[name=smva_widget_position]').val(),
+            smva_widget_style: $('[name=smva_widget_style]').val(),
+            smva_extra_langs: JSON.stringify(extraLangs),
+        }).done(function(res) {
+            $msg.text(res.success ? 'Saved!' : 'Error').css('color', res.success ? '#059669' : '#dc2626');
+        }).fail(function() { $msg.text('Connection error.').css('color', '#dc2626'); })
+        .always(function() { $btn.prop('disabled', false).text('Save General Settings'); setTimeout(function() { $msg.text(''); }, 3000); });
+    });
+
+    // Save Widget Settings
+    $('#smva-widget-form').on('submit', function(e) {
+        e.preventDefault();
+        var $btn = $(this).find('button[type=submit]').prop('disabled', true).text('Saving...');
+        var $msg = $('#smva-widget-save-msg').text('').css('color', '');
+        $.post(window.smvaAdmin.ajaxUrl, {
+            action: 'smva_save_settings',
+            nonce: window.smvaAdmin.nonce,
+            smva_widget_color: $('[name=smva_widget_color]').val(),
+            smva_widget_style: $('[name=smva_widget_style]').val(),
+            smva_widget_position: $('[name=smva_widget_position]').val(),
+            smva_default_tab: $('[name=smva_default_tab]').val(),
+            smva_voice_enabled: $('[name=smva_voice_enabled]').is(':checked') ? '1' : '0',
+            smva_chat_enabled: $('[name=smva_chat_enabled]').is(':checked') ? '1' : '0',
+            smva_max_call_duration: $('[name=smva_max_call_duration]').val(),
+            smva_silence_timeout: $('[name=smva_silence_timeout]').val(),
+            smva_call_cooldown: $('[name=smva_call_cooldown]').val(),
+            smva_widget_theme: $('#smva_widget_theme').val(),
+            smva_agent_logo: $('[name=smva_agent_logo]').val()
+        }).done(function(res) {
+            $msg.text(res.success ? 'Saved!' : 'Error').css('color', res.success ? '#059669' : '#dc2626');
+        }).fail(function() { $msg.text('Connection error.').css('color', '#dc2626'); })
+        .always(function() { $btn.prop('disabled', false).text('Save Widget Settings'); setTimeout(function() { $msg.text(''); }, 3000); });
+    });
+
+    // Crawl Site
+    $('#smva-crawl-btn').on('click', function() {
+        var $btn = $(this);
+        var $msg = $('#smva-agent-msg');
+        var siteUrl = $('#smva-crawl-url').val().trim() || (window.smvaAdmin && window.smvaAdmin.siteUrl) || window.location.origin;
+        if (!confirm('Import KB from:\n' + siteUrl)) return;
+        $btn.prop('disabled', true).text('🔄 Crawling...');
+        showLoading('Crawling website pages, this may take up to 30 seconds...');
+        $.post(window.smvaAdmin.ajaxUrl, {action:'smva_crawl_site', nonce:window.smvaAdmin.nonce, site_url_b64:btoa(unescape(encodeURIComponent(siteUrl)))})
+        .done(function(res) {
+            if (res.success && res.data.knowledge_base) { $('[name=knowledge_base]').val(res.data.knowledge_base); $msg.text('Imported from ' + (res.data.pages_crawled||'?') + ' pages!').css('color', '#059669'); }
+            else $msg.text('Error: ' + (res.data && res.data.message ? res.data.message : 'Failed')).css('color', '#dc2626');
+        }).fail(function() { hideLoading(); $msg.text('Connection error.').css('color', '#dc2626'); })
+        .always(function() { hideLoading(); $btn.prop('disabled', false).text('🌐 Import KB from Website'); setTimeout(function() { $msg.text('').css('color', ''); }, 6000); });
+    });
+
+    // Optimize
+    $('#smva-optimize-btn').on('click', function() {
+        var $btn = $(this);
+        var $msg = $('#smva-agent-msg');
+        var sp = $('[name=system_prompt]').val();
+        var kb = $('[name=knowledge_base]').val();
+        if (!sp && !kb) { $msg.text('Enter system prompt or KB first.').css('color', '#dc2626'); return; }
+        $btn.prop('disabled', true).text('✨ Optimizing...');
+        showLoading('AI is analyzing and improving your system prompt and knowledge base...');
+        $.post(window.smvaAdmin.ajaxUrl, {action:'smva_optimize_agent', nonce:window.smvaAdmin.nonce, system_prompt_b64:btoa(unescape(encodeURIComponent(sp||''))), knowledge_base_b64:btoa(unescape(encodeURIComponent(kb||'')))})
+        .done(function(res) {
+            if (res.success) {
+                if (res.data.system_prompt) $('[name=system_prompt]').val(res.data.system_prompt);
+                if (res.data.knowledge_base) $('[name=knowledge_base]').val(res.data.knowledge_base);
+                $msg.text('Optimized!').css('color', '#059669');
+            } else $msg.text('Error: ' + (res.data && res.data.message ? res.data.message : 'Failed')).css('color', '#dc2626');
+        }).fail(function() { hideLoading(); $msg.text('Connection error.').css('color', '#dc2626'); })
+        .always(function() { hideLoading(); $btn.prop('disabled', false).text('✨ Optimize System Prompt & KB'); setTimeout(function() { $msg.text('').css('color', ''); }, 6000); });
+    });
+
+    // Webhook
+    $('#smva-save-webhook-btn').on('click', function() {
+        var $btn = $(this).prop('disabled', true).text('Saving...');
+        var $msg = $('#smva-webhook-msg').text('').css('color', '');
+        $.post(window.smvaAdmin.ajaxUrl, {action:'smva_save_agent', nonce:window.smvaAdmin.nonce, webhook_url:$('#smva-webhook-url').val()})
+        .done(function(res) { $msg.text(res.success ? 'Saved!' : 'Error').css('color', res.success ? '#059669' : '#dc2626'); })
+        .fail(function() { $msg.text('Connection error.').css('color', '#dc2626'); })
+        .always(function() { $btn.prop('disabled', false).text('Save Webhook'); setTimeout(function() { $msg.text(''); }, 3000); });
+    });
+
+    // Tools
+    var toolsList = [];
+    try { toolsList = JSON.parse($('#smva-tools-json').val() || '[]'); } catch(e) { toolsList = []; }
+    if (toolsList.length && $('#smva-tools-list').length) renderTools();
+
+    window.smvaRemoveTool = function(idx) { toolsList.splice(idx, 1); renderTools(); };
+
+    function renderTools() {
+        $('#smva-tools-json').val(JSON.stringify(toolsList));
+        var html = '';
+        if (!toolsList.length) {
+            html = '<p style="color:#9ca3af;font-size:13px;text-align:center;padding:16px 0">No tools defined yet.</p>';
+        } else {
+            for (var i = 0; i < toolsList.length; i++) {
+                var t = toolsList[i];
+                html += '<div style="background:#f9fafb;border-radius:8px;padding:12px;margin-bottom:8px">';
+                html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+                html += '<code style="font-size:13px;font-weight:600">' + t.name + '</code>';
+                html += '<div style="display:flex;gap:6px">';
+                html += '<button type="button" class="smva-btn" style="padding:4px 10px;font-size:12px;flex:none;background:#e0f2fe;color:#0369a1" onclick="smvaEditTool(' + i + ')">Edit</button>';
+                html += '<button type="button" class="smva-btn smva-btn-danger" style="padding:4px 10px;font-size:12px;flex:none" onclick="smvaRemoveTool(' + i + ')">Remove</button>';
+                html += '</div>';
+                html += '</div><div style="font-size:12px;color:#6b7280">' + (t.description || '') + '</div></div>';
+            }
+        }
+        $('#smva-tools-list').html(html);
+    }
+
+    // Tool Modal
+    var editParams = [];
+
+    window.smvaRemoveParam = function(idx) { editParams.splice(idx, 1); renderParams(); };
+
+    function renderParams() {
+        var html = '';
+        if (!editParams.length) {
+            html = '<p style="color:#9ca3af;font-size:12px;margin:0">No parameters yet.</p>';
+        } else {
+            for (var i = 0; i < editParams.length; i++) {
+                var p = editParams[i];
+                html += '<div style="display:flex;gap:8px;margin-bottom:6px;align-items:center">';
+                html += '<input type="text" class="smva-input param-name" style="flex:2" placeholder="param_name" data-i="' + i + '" value="' + (p.name || '') + '">';
+                html += '<select class="smva-select param-type" style="flex:1" data-i="' + i + '">';
+                html += '<option value="string"' + (p.type === 'string' ? ' selected' : '') + '>string</option>';
+                html += '<option value="number"' + (p.type === 'number' ? ' selected' : '') + '>number</option>';
+                html += '<option value="boolean"' + (p.type === 'boolean' ? ' selected' : '') + '>boolean</option>';
+                html += '</select>';
+                html += '<button type="button" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:18px" onclick="smvaRemoveParam(' + i + ')">x</button>';
+                html += '</div>';
+            }
+        }
+        $('#smva-params-list').html(html);
+    }
+
+    $(document).on('change', '.param-name', function() { var i = parseInt($(this).data('i')); if(editParams[i]) editParams[i].name = $(this).val(); });
+    $(document).on('change', '.param-type', function() { var i = parseInt($(this).data('i')); if(editParams[i]) editParams[i].type = $(this).val(); });
+
+    var editIndex = -1;
+
+    window.smvaEditTool = function(idx) {
+        editIndex = idx;
+        var t = toolsList[idx];
+        $('#smva-tool-name').val(t.name || '');
+        $('#smva-tool-desc').val(t.description || '');
+        $('#smva-tool-thinking').val(t.thinking_message || '');
+        editParams = [];
+        if (t.parameters && t.parameters.properties) {
+            var req = t.parameters.required || [];
+            $.each(t.parameters.properties, function(pname, pval) {
+                editParams.push({name: pname, type: pval.type || 'string'});
+            });
+        }
+        renderParams();
+        $('#smva-save-tool-btn').text('Update Tool');
+        $('#smva-tool-modal').css('display', 'flex');
+    };
+
+    $('#smva-add-tool-btn').on('click', function() {
+        editIndex = -1;
+        $('#smva-save-tool-btn').text('Save Tool');
+        editParams = [];
+        $('#smva-tool-name, #smva-tool-desc, #smva-tool-thinking').val('');
+        renderParams();
+        $('#smva-tool-modal').css('display', 'flex');
+    });
+
+    $('#smva-cancel-tool-btn').on('click', function() { editIndex=-1; $('#smva-save-tool-btn').text('Save Tool'); $('#smva-tool-modal').css('display', 'none'); });
+    $('#smva-tool-modal').on('click', function(e) { if (e.target === this) $('#smva-tool-modal').css('display', 'none'); });
+
+    $('#smva-add-param-btn').on('click', function() { editParams.push({name:'', type:'string'}); renderParams(); });
+
+    $('#smva-save-tool-btn').on('click', function() {
+        var name = $('#smva-tool-name').val().trim().replace(/\s+/g, '_').toLowerCase();
+        var desc = $('#smva-tool-desc').val().trim();
+        var thinking = $('#smva-tool-thinking').val().trim();
+        if (!name) { alert('Tool name required'); return; }
+        // Read current values from DOM
+        $('#smva-params-list .param-name').each(function() { var i=parseInt($(this).data('i')); if(editParams[i]) editParams[i].name=$(this).val(); });
+        $('#smva-params-list .param-type').each(function() { var i=parseInt($(this).data('i')); if(editParams[i]) editParams[i].type=$(this).val(); });
+        var props = {}, req = [];
+        for (var i = 0; i < editParams.length; i++) {
+            var p = editParams[i];
+            if (p.name) { props[p.name] = {type: p.type || 'string'}; req.push(p.name); }
+        }
+        var toolData = {name:name, description:desc, thinking_message:thinking||'Let me check...', parameters:{type:'object', properties:props, required:req}};
+        if (editIndex >= 0) { toolsList[editIndex] = toolData; }
+        else { toolsList.push(toolData); }
+        editIndex = -1;
+        renderTools();
+        $('#smva-tool-modal').css('display', 'none');
+    });
+
+
+    // ── Upgrade Modal ────────────────────────────────────────────────────
+
+    var smvaPlansCache = null;
+
+    function smvaOpenUpgradeModal() {
+        jQuery('#smva-upgrade-modal').show();
+        if (smvaPlansCache) return;
+
+        // Load plans via WordPress AJAX (avoids CORS)
+        jQuery.post(window.smvaAdmin.ajaxUrl, {
+            action: 'smva_get_plans',
+            nonce: window.smvaAdmin.nonce,
+        }).done(function(res) {
+            if (res.success && res.data && res.data.plans) {
+                smvaPlansCache = res.data.plans;
+                smvaRenderPlans(res.data.plans);
+            } else {
+                jQuery('#smva-plans-grid').html('<div style="grid-column:1/-1;text-align:center;padding:20px;color:#dc2626">Could not load plans. Please try again.</div>');
+            }
+        }).fail(function() {
+            jQuery('#smva-plans-grid').html('<div style="grid-column:1/-1;text-align:center;padding:20px;color:#dc2626">Could not load plans. Please try again.</div>');
+        });
+    }
+
+    function smvaRenderPlans(plans) {
+        var planDesigns = {
+            voice_starter:  { icon: '🎙️', color: '#2563eb', bg: '#eff6ff' },
+            voice_pro:      { icon: '🎙️', color: '#1d4ed8', bg: '#dbeafe', popular: false },
+            chat_starter:   { icon: '💬', color: '#059669', bg: '#ecfdf5' },
+            chat_pro:       { icon: '💬', color: '#047857', bg: '#d1fae5' },
+            bundle_starter: { icon: '⚡', color: '#7c3aed', bg: '#f5f3ff' },
+            bundle_pro:     { icon: '⚡', color: '#6d28d9', bg: '#ede9fe', popular: true },
+        };
+
+        var html = '';
+        plans.forEach(function(plan) {
+            var d = planDesigns[plan.id] || { icon: '📦', color: '#374151', bg: '#f9fafb' };
+            var minutesRow = plan.minutes > 0
+                ? '<div style="font-size:12px;color:#475569;margin-bottom:4px">🎙️ ' + plan.minutes + ' voice minutes/mo</div>'
+                : '';
+            var popular = d.popular
+                ? '<div style="font-size:10px;font-weight:700;background:' + d.color + ';color:#fff;padding:2px 8px;border-radius:99px;display:inline-block;margin-bottom:8px;letter-spacing:.05em">MOST POPULAR</div>'
+                : '';
+
+            html += '<div style="border:' + (d.popular ? '2px solid ' + d.color : '1.5px solid #e2e8f0') + ';border-radius:12px;padding:16px;background:#fff;display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:box-shadow .15s" class="smva-plan-card" data-plan="' + plan.id + '">';
+            html += popular;
+            html += '<div style="font-size:22px;margin-bottom:4px">' + d.icon + '</div>';
+            html += '<div style="font-size:14px;font-weight:700;color:#0f172a">' + plan.label + '</div>';
+            html += '<div style="font-size:22px;font-weight:800;color:' + d.color + ';margin:6px 0">$' + (plan.price_usd || plan.price_cad) + '<span style="font-size:12px;font-weight:500;color:#94a3b8"> USD/mo</span></div>';
+            html += minutesRow;
+            html += '<div style="font-size:12px;color:#475569;margin-bottom:8px">💬 ' + plan.chat.toLocaleString() + ' chat messages/mo</div>';
+            html += '<button class="smva-btn smva-btn-primary smva-plan-select-btn" data-plan="' + plan.id + '" style="width:100%;justify-content:center;margin-top:auto">Select →</button>';
+            html += '</div>';
+        });
+
+        jQuery('#smva-plans-grid').html(html);
+    }
+
+    function smvaSelectPlan(planId) {
+        var $btn = jQuery('.smva-plan-select-btn[data-plan="' + planId + '"]');
+        $btn.prop('disabled', true).text('Loading...');
+
+        jQuery.post(window.smvaAdmin.ajaxUrl, {
+            action: 'smva_stripe_checkout',
+            nonce: window.smvaAdmin.nonce,
+            plan_id: planId,
+            success_url: window.location.origin + window.location.pathname + '?page=smva&tab=license&upgraded=1',
+            cancel_url: window.location.origin + window.location.pathname + '?page=smva&tab=license',
+        }).done(function(res) {
+            if (res.success && res.data && res.data.url) {
+                window.location.href = res.data.url;
+            } else {
+                alert('Could not start checkout. Please try again.');
+                $btn.prop('disabled', false).text('Select →');
+            }
+        }).fail(function() {
+            alert('Connection error. Please try again.');
+            $btn.prop('disabled', false).text('Select →');
+        });
+    }
+
+    jQuery(document).on('click', '#smva-upgrade-btn', smvaOpenUpgradeModal);
+
+    // Theme card selection
+    jQuery(document).on('click', '.smva-theme-card', function() {
+        var theme = jQuery(this).data('theme');
+        jQuery('#smva_widget_theme').val(theme);
+        jQuery('.smva-theme-card').each(function() {
+            jQuery(this)[0].style.setProperty('border', '1.5px solid #e2e8f0', 'important');
+            jQuery(this)[0].style.setProperty('background', '#fff', 'important');
+            jQuery(this).find('.smva-theme-check').hide();
+        });
+        jQuery(this)[0].style.setProperty('border', '2px solid #2563eb', 'important');
+        jQuery(this)[0].style.setProperty('background', '#eff6ff', 'important');
+        jQuery(this).find('.smva-theme-check').show();
+    });
+
+    // Manage Subscription → Stripe Customer Portal
+    jQuery(document).on('click', '#smva-manage-subscription-btn', function() {
+        var $btn = jQuery(this).prop('disabled', true).text('Loading...');
+        jQuery.post(window.smvaAdmin.ajaxUrl, {
+            action: 'smva_manage_subscription',
+            nonce: window.smvaAdmin.nonce,
+            return_url: window.location.origin + window.location.pathname + '?page=smva&tab=license',
+        }).done(function(res) {
+            if (res.success && res.data && res.data.url) {
+                window.location.href = res.data.url;
+            } else {
+                alert(res.data && res.data.message ? res.data.message : 'Could not open subscription portal. Please try again.');
+                $btn.prop('disabled', false).text('⚙️ Manage Subscription');
+            }
+        }).fail(function() {
+            alert('Connection error. Please try again.');
+            $btn.prop('disabled', false).text('⚙️ Manage Subscription');
+        });
+    });
+    jQuery('#smva-upgrade-modal-close').on('click', function() { jQuery('#smva-upgrade-modal').hide(); });
+    jQuery('#smva-upgrade-modal').on('click', function(e) {
+        if (jQuery(e.target).is('#smva-upgrade-modal')) jQuery('#smva-upgrade-modal').hide();
+    });
+    jQuery(document).on('click', '.smva-plan-select-btn', function() {
+        smvaSelectPlan(jQuery(this).data('plan'));
+    });
+
+    // After successful payment, poll backend for new license key and auto-activate
+    (function() {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('upgraded') !== '1') return;
+
+        // Clean URL immediately
+        window.history.replaceState({}, '', window.location.pathname + '?page=smva&tab=license');
+
+        var $banner = jQuery('<div id="smva-auto-activating" style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:14px 20px;margin-bottom:16px;font-size:14px;color:#1d4ed8;font-weight:500">⏳ Payment received! Activating your license...</div>');
+        jQuery('.smva-tab-content').prepend($banner);
+
+        function checkForNewLicense() {
+            jQuery.post(window.smvaAdmin.ajaxUrl, {
+                action: 'smva_poll_new_license',
+                nonce: window.smvaAdmin.nonce,
+            }).done(function(res) {
+                if (res.success && res.data && res.data.license_key) {
+                    $banner.html('⏳ Activating your new license...').css({'background':'#eff6ff','border-color':'#bfdbfe','color':'#1d4ed8'});
+                    jQuery.post(window.smvaAdmin.ajaxUrl, {
+                        action: 'smva_activate_license',
+                        nonce: window.smvaAdmin.nonce,
+                        license_key: res.data.license_key,
+                    }).done(function(r) {
+                        if (r.success) {
+                            $banner.html('✅ License activated! Loading your dashboard...').css({'background':'#d1fae5','border-color':'#6ee7b7','color':'#065f46'});
+                            setTimeout(function() {
+                                window.location.href = window.location.pathname + '?page=smva&tab=dashboard';
+                            }, 1500);
+                        } else {
+                            showManualFallback(res.data.license_key);
+                        }
+                    }).fail(function() { showManualFallback(res.data.license_key); });
+                } else {
+                    // Webhook not arrived yet — try once more after 5s, then fallback
+                    setTimeout(function() {
+                        jQuery.post(window.smvaAdmin.ajaxUrl, {
+                            action: 'smva_poll_new_license',
+                            nonce: window.smvaAdmin.nonce,
+                        }).done(function(res2) {
+                            if (res2.success && res2.data && res2.data.license_key) {
+                                checkForNewLicense(); // reuse activate logic
+                            } else {
+                                showEmailFallback();
+                            }
+                        }).fail(showEmailFallback);
+                    }, 5000);
+                }
+            }).fail(showEmailFallback);
+        }
+
+        function showManualFallback(key) {
+            $banner.html('✅ Payment successful! Your key: <strong>' + key + '</strong> — paste it below and click Upgrade.').css({'background':'#fffbeb','border-color':'#fde68a','color':'#92400e'});
+            jQuery('#smva-license-input').val(key);
+        }
+
+        function showEmailFallback() {
+            $banner.html('✅ Payment successful! Your license key has been sent to your email. Paste it below and click Upgrade.').css({'background':'#fffbeb','border-color':'#fde68a','color':'#92400e'});
+        }
+
+        // Wait 5s for webhook to arrive, then check once
+        setTimeout(checkForNewLicense, 5000);
+    })();
+
+    // Language chip toggle
+    $(document).on('change', '.smva-lang-chip input[type=checkbox]', function() {
+        var $label = $(this).closest('.smva-lang-chip');
+        $label.css('border-color', this.checked ? '#2563eb' : '#e5e7eb');
+    });
+
+    $('#smva-save-tools-btn').on('click', function() {
+        var $btn = $(this).prop('disabled', true).text('Saving...');
+        var $msg = $('#smva-tools-msg').text('').css('color', '');
+        $.post(window.smvaAdmin.ajaxUrl, {
+            action: 'smva_save_agent',
+            nonce: window.smvaAdmin.nonce,
+            agent_tools: JSON.stringify(toolsList),
+            webhook_url: $('#smva-webhook-url').val(),
+            agent_name: $('[name=agent_name]').val() || '',
+            voice_id: $('[name=voice_id]').val() || '',
+        })
+        .done(function(res) { $msg.text(res.success ? 'Tools saved!' : 'Error').css('color', res.success ? '#059669' : '#dc2626'); })
+        .fail(function() { $msg.text('Connection error.').css('color', '#dc2626'); })
+        .always(function() { $btn.prop('disabled', false).text('Save & Sync Tools'); setTimeout(function() { $msg.text(''); }, 3000); });
+    });
+
+});
+
+/* ── Agent Logo Media Uploader ─────────────────────────────────────────────── */
+(function($) {
+    $(document).ready(function() {
+        $('#smva-logo-upload').on('click', function(e) {
+            e.preventDefault();
+            var frame = wp.media({
+                title: 'Select Agent Logo',
+                button: { text: 'Use this image' },
+                multiple: false,
+                library: { type: 'image' }
+            });
+            frame.on('select', function() {
+                var attachment = frame.state().get('selection').first().toJSON();
+                $('#smva_agent_logo').val(attachment.url);
+                var preview = $('#smva-logo-preview');
+                preview.html('<img src="' + attachment.url + '" style="width:100%;height:100%;object-fit:cover;" id="smva-logo-img" />');
+                if (!$('#smva-logo-remove').length) {
+                    $('#smva-logo-upload').after('<button type="button" id="smva-logo-remove" class="button" style="margin-left:6px;color:#dc2626;">Remove</button>');
+                    bindRemove();
+                }
+            });
+            frame.open();
+        });
+
+        function bindRemove() {
+            $(document).on('click', '#smva-logo-remove', function() {
+                $('#smva_agent_logo').val('');
+                $('#smva-logo-preview').html('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>');
+                $(this).remove();
+            });
+        }
+        bindRemove();
+    });
+}(jQuery));
+
+/* ── Voice Summary Tab ────────────────────────────────────────────────────── */
+(function ($) {
+  'use strict';
+
+  var VS = { currentPage: 1, totalPages: 1, activeSession: null };
+
+  function vsInit() {
+    $('#smva-vs-search-btn').on('click', function () { VS.currentPage = 1; vsLoadSessions(); });
+    $(document).on('click', '#smva-vs-modal-close, #smva-vs-overlay', vsCloseModal);
+    $(document).on('click', '#smva-vs-summarize-btn', vsGenerateSummary);
+    var today = new Date(), from = new Date();
+    from.setDate(today.getDate() - 30);
+    $('#smva-vs-date-to').val(today.toISOString().split('T')[0]);
+    $('#smva-vs-date-from').val(from.toISOString().split('T')[0]);
+  }
+
+  function vsLoadSessions() {
+    var $tbody = $('#smva-vs-tbody');
+    $tbody.html('<tr><td colspan="5" style="text-align:center;padding:20px;">Loading…</td></tr>');
+    $.ajax({
+      url: smvaAdmin.ajaxUrl,
+      data: { action: 'smva_voice_sessions', nonce: smvaAdmin.nonce, page_num: VS.currentPage, date_from: $('#smva-vs-date-from').val(), date_to: $('#smva-vs-date-to').val() },
+      success: function (res) {
+        if (!res.success) { $tbody.html('<tr><td colspan="5">' + (res.data || 'Error') + '</td></tr>'); return; }
+        var sessions = res.data.sessions || [], pagination = res.data.pagination || {};
+        VS.totalPages = pagination.pages || 1;
+        if (!sessions.length) { $tbody.html('<tr><td colspan="5" style="text-align:center;padding:20px;">No sessions found.</td></tr>'); vsBuildPagination(pagination); return; }
+        var rows = '';
+        sessions.forEach(function (s) {
+          var date = new Date(s.started_at).toLocaleString();
+          var dur = parseFloat(s.duration_minutes || 0).toFixed(1) + ' min';
+          var turns = s.turn_count || 0;
+          var summBadge = s.ai_summary ? '<span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;">✓ Summary</span>' : '<span style="background:#e9ecef;color:#6c757d;padding:2px 8px;border-radius:10px;font-size:11px;">No summary</span>';
+          var btns = '';
+          if (s.has_transcript) { btns += '<button class="button smva-vs-view-btn" data-session="' + s.session_id + '" data-summary="' + escAttr(s.ai_summary || '') + '">View</button> '; }
+          if (s.has_recording) { btns += '<button class="button smva-vs-play-btn" data-session="' + s.session_id + '">&#9654; Play</button>'; }
+          if (!btns) { btns = '<span style="color:#999;font-size:12px;">No data</span>'; }
+          rows += '<tr data-session-id="' + s.session_id + '"><td>' + date + '</td><td>' + dur + '</td><td>' + turns + '</td><td>' + summBadge + '</td><td>' + btns + '</td></tr>';
+        });
+        $tbody.html(rows);
+        vsBuildPagination(pagination);
+        $('.smva-vs-view-btn').on('click', function () { vsOpenModal($(this).data('session'), $(this).data('summary')); });
+        $('.smva-vs-play-btn').on('click', function () { vsPlayRecording($(this).data('session')); });
+      },
+      error: function () { $tbody.html('<tr><td colspan="5">Request failed.</td></tr>'); }
+    });
+  }
+
+  function vsBuildPagination(p) {
+    var $pag = $('#smva-vs-pagination');
+    if (!p || p.pages <= 1) { $pag.empty(); return; }
+    var html = '<div style="margin-top:12px;display:flex;gap:4px;align-items:center;flex-wrap:wrap;">';
+    for (var i = 1; i <= p.pages; i++) {
+      var style = i === VS.currentPage ? 'background:#2271b1;color:#fff;border-color:#2271b1;' : '';
+      html += '<button class="button smva-page-btn" data-page="' + i + '" style="min-width:34px;' + style + '">' + i + '</button>';
+    }
+    html += '<span style="margin-left:8px;color:#666;font-size:13px;">Page ' + p.page + ' of ' + p.pages + ' (' + p.total + ' sessions)</span></div>';
+    $pag.html(html);
+    $('.smva-page-btn').on('click', function () { VS.currentPage = parseInt($(this).data('page')); vsLoadSessions(); });
+  }
+
+  function vsOpenModal(sessionId, existingSummary) {
+    VS.activeSession = sessionId;
+    $('#smva-vs-modal-title').text('Session: ' + sessionId.substring(0, 8) + '…');
+    $('#smva-vs-transcript-body').html('<p>Loading transcript…</p>');
+    $('#smva-vs-summarize-btn').prop('disabled', false).text(existingSummary ? 'Regenerate Summary' : 'Generate Summary');
+    $('#smva-vs-summary-text').html(existingSummary ? '<p>' + escHtml(existingSummary) + '</p>' : '<em>No summary yet.</em>');
+    $('#smva-vs-modal').css('display', 'flex');
+    $('#smva-vs-overlay').show();
+    $.ajax({
+      url: smvaAdmin.ajaxUrl,
+      data: { action: 'smva_voice_transcript', nonce: smvaAdmin.nonce, session_id: sessionId },
+      success: function (res) {
+        if (!res.success) { $('#smva-vs-transcript-body').html('<p>Error: ' + (res.data || 'Failed') + '</p>'); return; }
+        var turns = res.data.transcript || [];
+        if (!turns.length) { $('#smva-vs-transcript-body').html('<p><em>No transcript recorded.</em></p>'); return; }
+        var html = '<div style="display:flex;flex-direction:column;gap:10px;">';
+        turns.forEach(function (t) {
+          var isUser = t.role === 'user';
+          var align = isUser ? 'flex-end' : 'flex-start';
+          var bg = isUser ? '#dbeafe' : '#f0f0f1';
+          var radius = isUser ? '12px 12px 0 12px' : '12px 12px 12px 0';
+          html += '<div style="display:flex;flex-direction:column;align-items:' + align + ';max-width:85%;">';
+          html += '<span style="font-size:11px;font-weight:600;color:#888;margin-bottom:3px;">' + (isUser ? 'User' : 'Assistant') + '</span>';
+          html += '<p style="margin:0;padding:8px 12px;background:' + bg + ';border-radius:' + radius + ';font-size:13px;line-height:1.5;">' + escHtml(t.text) + '</p></div>';
+        });
+        html += '</div>';
+        $('#smva-vs-transcript-body').html(html);
+      },
+      error: function () { $('#smva-vs-transcript-body').html('<p>Request failed.</p>'); }
+    });
+  }
+
+  function vsPlayRecording(sessionId) {
+    var key = window.smvaAdmin ? window.smvaAdmin.apiUrl || 'https://api2.studiometa.io' : 'https://api2.studiometa.io';
+    var licKey = '';
+    // Get license key from nonce call - use direct URL
+    var url = 'https://api2.studiometa.io/plugin/voice-summary/sessions/' + sessionId + '/recording?license_key=' + encodeURIComponent(licKey);
+    // Use AJAX to get the recording URL with proper auth
+    $.ajax({
+      url: smvaAdmin.ajaxUrl,
+      data: { action: 'smva_voice_recording_url', nonce: smvaAdmin.nonce, session_id: sessionId },
+      success: function(res) {
+        if (!res.success) { alert('Recording not available'); return; }
+        var $popup = $('<div style="position:fixed;bottom:20px;right:20px;background:#fff;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.2);padding:16px;z-index:999999;min-width:340px;">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">' +
+          '<strong style="font-size:13px;">Recording: ' + sessionId.substring(0,8) + '…</strong>' +
+          '<button class="smva-close-player" style="background:none;border:none;cursor:pointer;font-size:18px;">&times;</button></div>' +
+          '<div style="font-size:11px;color:#666;margin-bottom:6px;">🤖 Agent (left) · 👤 User (right)</div>' +
+          '<audio controls style="width:100%;" src="' + res.data.url + '"></audio>' +
+          '</div>');
+        $('#smva-audio-player').remove();
+        $popup.attr('id', 'smva-audio-player').appendTo('body');
+        $popup.find('.smva-close-player').on('click', function() { $popup.remove(); });
+      },
+      error: function() { alert('Failed to load recording'); }
+    });
+  }
+
+  function vsCloseModal() {
+    $('#smva-vs-modal').hide();
+    $('#smva-vs-overlay').hide();
+    VS.activeSession = null;
+  }
+
+  function vsGenerateSummary() {
+    if (!VS.activeSession) return;
+    var $btn = $('#smva-vs-summarize-btn');
+    $btn.prop('disabled', true).text('Generating…');
+    $('#smva-vs-summary-text').html('<em>Generating summary with AI…</em>');
+    $.ajax({
+      url: smvaAdmin.ajaxUrl, method: 'POST',
+      data: { action: 'smva_voice_summarize', nonce: smvaAdmin.nonce, session_id: VS.activeSession },
+      success: function (res) {
+        if (!res.success) { $('#smva-vs-summary-text').html('<p style="color:red;">Error: ' + (res.data || 'Failed') + '</p>'); $btn.prop('disabled', false).text('Retry'); return; }
+        var summary = res.data.summary || '';
+        $('#smva-vs-summary-text').html('<p>' + escHtml(summary) + '</p>');
+        $btn.prop('disabled', false).text('Regenerate Summary');
+        $('[data-session-id="' + VS.activeSession + '"] td:nth-child(4)').html('<span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;">✓ Summary</span>');
+        $('[data-session-id="' + VS.activeSession + '"] .smva-vs-view-btn').data('summary', summary);
+      },
+      error: function () { $('#smva-vs-summary-text').html('<p style="color:red;">Request failed.</p>'); $btn.prop('disabled', false).text('Retry'); }
+    });
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function escAttr(str) {
+    return String(str).replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  $(document).ready(function () {
+    if ($('#smva-vs-search-btn').length) { vsInit(); vsLoadSessions(); }
+  });
+
+}(jQuery));
