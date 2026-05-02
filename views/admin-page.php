@@ -155,16 +155,16 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         $dv_pct = ( $dv_limit > 0 ) ? min( 100, ( $dv_used / $dv_limit ) * 100 ) : 0;
         $dc_pct = ( $dc_limit > 0 ) ? min( 100, ( $dc_used / $dc_limit ) * 100 ) : 0;
         $plan_label = esc_html( $quota['plan'] ?? $license['plan_type'] ?? 'basic' );
-        $expires_at = ! empty( $quota['expires_at'] ) ? date('M j, Y', strtotime($quota['expires_at'])) : null;
+        $expires_at = ! empty( $quota['expires_at'] ) ? gmdate('M j, Y', strtotime($quota['expires_at'])) : null;
         ?>
         <div class="smva-card" style="margin-bottom:16px">
             <div class="smva-card-header">
                 <h2 class="smva-card-title">Usage This Month</h2>
                 <span class="smva-badge <?php echo $is_trial ? 'smva-badge-trial' : 'smva-badge-success'; ?>">
-                    <?php echo $is_trial ? 'TRIAL' : ucfirst(str_replace('_',' ',$plan_label)); ?>
+                    <?php echo $is_trial ? 'TRIAL' : esc_html( ucfirst(str_replace('_',' ',$plan_label)) ); ?>
                 </span>
                 <?php if ( $expires_at ) : ?>
-                <span class="smva-hint-inline">Renews <?php echo $expires_at; ?></span>
+                <span class="smva-hint-inline">Renews <?php echo esc_html( $expires_at ); ?></span>
                 <?php endif; ?>
             </div>
 
@@ -175,7 +175,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                         <div>
                             <div class="smva-stat-label" style="font-size:12px">🎙️ Voice Minutes</div>
                             <div class="smva-stat-value" style="font-size:22px"><?php echo number_format($dv_used,1); ?></div>
-                            <div class="smva-stat-sub">of <?php echo $dv_limit; ?> min</div>
+                            <div class="smva-stat-sub">of <?php echo (int) $dv_limit; ?> min</div>
                         </div>
                     </div>
                     <div class="smva-quota-bar"><div class="smva-quota-fill <?php echo $dv_pct > 90 ? 'danger' : ($dv_pct > 70 ? 'warn' : ''); ?>" style="width:<?php echo esc_attr($dv_pct); ?>%"></div></div>
@@ -197,7 +197,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 </div>
                 <div class="smva-stat-card">
                     <div class="smva-stat-icon">📅</div>
-                    <div class="smva-stat-value"><?php echo $usage['days_remaining'] ?? '∞'; ?></div>
+                    <div class="smva-stat-value"><?php echo esc_html( $usage['days_remaining'] ?? '∞' ); ?></div>
                     <div class="smva-stat-label">Days Remaining</div>
                     <div class="smva-stat-sub"><?php echo esc_html($license['status'] ?? 'active'); ?></div>
                 </div>
@@ -220,7 +220,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 <tbody>
                 <?php foreach ( array_slice($sessions, 0, 10) as $s ) : ?>
                 <tr>
-                    <td><?php echo esc_html( date('M d, H:i', strtotime($s['started_at'])) ); ?></td>
+                    <td><?php echo esc_html( gmdate('M d, H:i', strtotime($s['started_at'])) ); ?></td>
                     <td><?php echo esc_html( ucfirst($s['session_type'] ?? 'voice') ); ?></td>
                     <td><?php 
                         $type = $s['session_type'] ?? 'voice';
@@ -276,7 +276,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     <label>Language <span>— widget UI &amp; agent default</span></label>
                     <select name="smva_lang" class="smva-select" id="smva-lang-select">
                         <?php foreach ( array( 'en' => '🇺🇸 English', 'fa' => '🇮🇷 فارسی', 'ar' => '🇸🇦 العربية', 'fr' => '🇫🇷 Français', 'es' => '🇪🇸 Español' ) as $val => $label ) : ?>
-                        <option value="<?php echo esc_attr( $val ); ?>" <?php selected( get_option('smva_lang','en'), $val ); ?>><?php echo $label; ?></option>
+                        <option value="<?php echo esc_attr( $val ); ?>" <?php selected( get_option('smva_lang','en'), $val ); ?>><?php echo esc_html( $label ); ?></option>
                         <?php endforeach; ?>
                     </select>
                     <p class="smva-hint">Agent auto-detects and switches to the user's language mid-conversation.</p>
