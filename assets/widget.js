@@ -321,9 +321,10 @@
         h('smva-x').addEventListener('click', function() { h('smva-panel').classList.add('hide'); });
     }
 
+    window.smvaCallBarI18n = {on_call:'On call', end_call:'End Call'};
     function buildWidget() {
         // expose call-bar i18n for use outside closure
-        smvaCallBarI18n = { on_call: t('on_call'), end_call: t('end_call') };
+        window.smvaCallBarI18n = { on_call: t('on_call'), end_call: t('end_call') };
         if (!caps.voice && !caps.chat) { buildCTA(); return; }
 
         const questions = Array.isArray(CONFIG.suggestedQuestions) ? CONFIG.suggestedQuestions : [];
@@ -818,6 +819,8 @@
     }
 
     injectStyles();
+    // expose t() for use outside closure
+    window.smvaT = t;
     buildWidget();
     injectThemeStyles(CONFIG.widgetTheme, CONFIG.primaryColor);
 
@@ -893,7 +896,7 @@ s.textContent='.smva-dt{display:flex;gap:10px;align-items:center;padding:10px 12
 
 /* === Feature C addon: sticky call-bar in chat tab === */
 // expose i18n strings for call-bar (outside closure)
-var smvaCallBarI18n = {on_call:'On call', end_call:'End Call'}; // updated by initCallBarI18n()
+// smvaCallBarI18n is set inside closure by buildWidget()
 (function(){
   function initCallBar(){
     var chatContent = null;
@@ -905,7 +908,8 @@ var smvaCallBarI18n = {on_call:'On call', end_call:'End Call'}; // updated by in
     // inject bar before smva-msgs
     var bar = document.createElement('div');
     bar.id = 'smva-call-bar';
-    var _cbI18n = (typeof smvaCallBarI18n !== 'undefined') ? smvaCallBarI18n : {on_call:'On call', end_call:'End Call'};
+    var _t = window.smvaT || function(k){return k;};
+    var _cbI18n = {on_call: _t('on_call'), end_call: _t('end_call')};
     bar.innerHTML =
       '<span class="smva-cb-dot"></span>' +
       '<span class="smva-cb-lbl" id="smva-cb-lbl">' + _cbI18n.on_call + '</span>' +
