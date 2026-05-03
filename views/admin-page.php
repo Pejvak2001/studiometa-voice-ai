@@ -4,137 +4,26 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 ?>
 <div class="smva-admin-wrap">
-<style>
-/* ── SMVA Modern Admin Layout ── */
-.smva-admin-wrap{display:flex;flex-direction:row-reverse;min-height:calc(100vh - 32px);background:#f0f2f5;margin:-10px -20px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 
-/* SIDEBAR */
-.smva-sidebar{width:220px;flex-shrink:0;background:#1e1f2e;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:9}
-.smva-sidebar-brand{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
-.smva-sidebar-brand-inner{display:flex;align-items:center;gap:10px}
-.smva-sb-logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#3b6eff);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.smva-sb-name{font-size:14px;font-weight:700;color:#fff;line-height:1.2}
-.smva-sb-sub{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px}
-
-/* NAV ITEMS */
-.smva-sidenav{padding:12px 0;flex:1}
-.smva-sidenav-group{padding:0 10px;margin-bottom:4px}
-.smva-sidenav-label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.25);padding:8px 8px 4px}
-.smva-sidenav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:rgba(255,255,255,.55);transition:all .15s;margin-bottom:2px;direction:ltr}
-.smva-sidenav a:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9)}
-.smva-sidenav a.active{background:rgba(99,102,241,.25);color:#a5b4fc}
-.smva-sidenav a.active .smva-nav-icon{opacity:1}
-.smva-nav-icon{font-size:15px;width:20px;text-align:center;opacity:.6;flex-shrink:0}
-.smva-nav-label{flex:1}
-.smva-nav-badge{font-size:10px;background:rgba(99,102,241,.4);color:#a5b4fc;padding:2px 6px;border-radius:10px}
-
-/* SIDEBAR FOOTER */
-.smva-sb-footer{padding:14px;border-top:1px solid rgba(255,255,255,.07)}
-.smva-sb-plan{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,.05);border-radius:8px}
-.smva-sb-plan-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:smva-sb-pulse 2s ease-in-out infinite;flex-shrink:0}
-@keyframes smva-sb-pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.smva-sb-plan-info{flex:1;min-width:0}
-.smva-sb-plan-name{font-size:12px;font-weight:600;color:#fff;text-transform:capitalize}
-.smva-sb-plan-sub{font-size:10px;color:rgba(255,255,255,.4)}
-
-/* MAIN CONTENT */
-.smva-main{flex:1;min-width:0;padding:28px 32px;max-width:1100px}
-.smva-main-wide{max-width:none}
-.smva-main-header{margin-bottom:24px}
-.smva-main-title{font-size:22px;font-weight:700;color:#111827;margin:0 0 4px}
-.smva-main-sub{font-size:13px;color:#6b7280}
-
-/* hide old header elements */
-.smva-header{display:none!important}
-.smva-tab-content{all:unset;display:block}
-
-/* responsive */
-@media(max-width:782px){
-  .smva-admin-wrap{flex-direction:column;margin:0}
-  .smva-sidebar{width:100%;height:auto;position:static;flex-direction:row;flex-wrap:wrap}
-  .smva-sidebar-brand{display:none}
-  .smva-sidenav{display:flex;flex-wrap:wrap;padding:6px}
-  .smva-sidenav-group{padding:0}
-  .smva-sidenav-label{display:none}
-  .smva-sidenav a{padding:6px 10px;font-size:12px}
-  .smva-sb-footer{display:none}
-  .smva-main{padding:16px}
-}
-</style>
-
-    <!-- SIDEBAR -->
-    <aside class="smva-sidebar">
-        <div class="smva-sidebar-brand">
-            <div class="smva-sidebar-brand-inner">
-                <div class="smva-sb-logo">🎙️</div>
-                <div>
-                    <div class="smva-sb-name">StudioMeta AI</div>
-                    <div class="smva-sb-sub">Voice &amp; Chat</div>
-                </div>
-            </div>
+    <div class="smva-header">
+        <div class="smva-header-logo">🎙️</div>
+        <div class="smva-header-brand">
+            <h1>StudioMeta AI</h1>
+            <p>Voice &amp; Chat Assistant</p>
         </div>
+    </div>
 
-        <nav class="smva-sidenav">
-            <div class="smva-sidenav-group">
-                <div class="smva-sidenav-label">Account</div>
-                <a href="?page=smva&tab=license" class="<?php echo $active_tab==='license' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">🔑</span>
-                    <span class="smva-nav-label">License</span>
-                </a>
-                <a href="?page=smva&tab=dashboard" class="<?php echo $active_tab==='dashboard' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">📊</span>
-                    <span class="smva-nav-label">Dashboard</span>
-                </a>
-            </div>
-            <div class="smva-sidenav-group">
-                <div class="smva-sidenav-label">Configuration</div>
-                <a href="?page=smva&tab=general" class="<?php echo $active_tab==='general' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">⚙️</span>
-                    <span class="smva-nav-label">General</span>
-                </a>
-                <a href="?page=smva&tab=agent" class="<?php echo $active_tab==='agent' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">🤖</span>
-                    <span class="smva-nav-label">My Agent</span>
-                </a>
-                <a href="?page=smva&tab=widget" class="<?php echo $active_tab==='widget' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">🎨</span>
-                    <span class="smva-nav-label">Widget</span>
-                </a>
-                <a href="?page=smva&tab=automation" class="<?php echo $active_tab==='automation' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">⚡</span>
-                    <span class="smva-nav-label">Automation</span>
-                </a>
-            </div>
-            <div class="smva-sidenav-group">
-                <div class="smva-sidenav-label">History</div>
-                <a href="?page=smva&tab=history" class="<?php echo $active_tab==='history' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">💬</span>
-                    <span class="smva-nav-label">Chat History</span>
-                </a>
-                <a href="?page=smva&tab=voice_summary" class="<?php echo $active_tab==='voice_summary' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">🎙️</span>
-                    <span class="smva-nav-label">Voice Summary</span>
-                </a>
-            </div>
-        </nav>
+    <nav class="smva-tabs">
+        <a href="?page=smva&tab=license"    class="smva-tab <?php echo $active_tab === 'license'    ? 'active' : ''; ?>">License</a>
+        <a href="?page=smva&tab=dashboard"  class="smva-tab <?php echo $active_tab === 'dashboard'  ? 'active' : ''; ?>">Dashboard</a>
+        <a href="?page=smva&tab=general"    class="smva-tab <?php echo $active_tab === 'general'    ? 'active' : ''; ?>">General</a>
+        <a href="?page=smva&tab=agent"      class="smva-tab <?php echo $active_tab === 'agent'      ? 'active' : ''; ?>">My Agent</a>
+        <a href="?page=smva&tab=widget"     class="smva-tab <?php echo $active_tab === 'widget'     ? 'active' : ''; ?>">Widget</a>
+        <a href="?page=smva&tab=automation" class="smva-tab <?php echo $active_tab === 'automation' ? 'active' : ''; ?>">Automation</a>
+        <a href="?page=smva&tab=history"    class="smva-tab <?php echo $active_tab === 'history'    ? 'active' : ''; ?>">Chat History</a>
+        <a href="?page=smva&tab=voice_summary" class="smva-tab <?php echo $active_tab === 'voice_summary' ? 'active' : ''; ?>">Voice Summary</a>
+    </nav>
 
-        <div class="smva-sb-footer">
-            <?php
-            $sb_plan = get_option('smva_plan_type', get_option('smva_license_plan','trial'));
-            $sb_key  = get_option('smva_license_key','');
-            ?>
-            <div class="smva-sb-plan">
-                <span class="smva-sb-plan-dot"></span>
-                <div class="smva-sb-plan-info">
-                    <div class="smva-sb-plan-name"><?php echo esc_html( ucfirst($sb_plan) ); ?> Plan</div>
-                    <div class="smva-sb-plan-sub"><?php echo $sb_key ? esc_html( substr($sb_key,0,16) ).'…' : 'Not activated'; ?></div>
-                </div>
-            </div>
-        </div>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <div class="smva-main<?php echo $active_tab === 'agent' ? ' smva-main-wide' : ''; ?>">
     <div class="smva-tab-content">
 
     <?php // ── LICENSE TAB ─────────────────────────────────────────────── ?>
@@ -1180,6 +1069,4 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             </p>
         </div>
     </div>
-</div><!-- .smva-tab-content -->
-</div><!-- .smva-main -->
 </div><!-- .smva-admin-wrap -->
