@@ -322,6 +322,8 @@
     }
 
     function buildWidget() {
+        // expose call-bar i18n for use outside closure
+        smvaCallBarI18n = { on_call: t('on_call'), end_call: t('end_call') };
         if (!caps.voice && !caps.chat) { buildCTA(); return; }
 
         const questions = Array.isArray(CONFIG.suggestedQuestions) ? CONFIG.suggestedQuestions : [];
@@ -891,10 +893,7 @@ s.textContent='.smva-dt{display:flex;gap:10px;align-items:center;padding:10px 12
 
 /* === Feature C addon: sticky call-bar in chat tab === */
 // expose i18n strings for call-bar (outside closure)
-var smvaCallBarI18n = {
-  on_call:  (document.documentElement.lang && document.documentElement.lang.startsWith('fa')) ? 'در حال مکالمه' : 'On call',
-  end_call: (document.documentElement.lang && document.documentElement.lang.startsWith('fa')) ? 'پایان تماس' : 'End Call'
-};
+var smvaCallBarI18n = {on_call:'On call', end_call:'End Call'}; // updated by initCallBarI18n()
 (function(){
   function initCallBar(){
     var chatContent = null;
