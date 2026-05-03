@@ -46,6 +46,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /* hide old header elements */
 .smva-header{display:none!important}
 .smva-tab-content{all:unset;display:block}
+/* hide WP footer on plugin page */
+#wpfooter{display:none!important}
+#wpcontent{padding-bottom:0!important}
 
 /* responsive */
 @media(max-width:782px){
