@@ -13,7 +13,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SMVA_VERSION',        '1.3.35' );
+define( 'SMVA_VERSION',        '1.3.36' );
 define( 'SMVA_PATH',           plugin_dir_path( __FILE__ ) );
 define( 'SMVA_URL',            plugin_dir_url( __FILE__ ) );
 define( 'SMVA_WS_URL',         'wss://api2.studiometa.io/voice' );

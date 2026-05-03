@@ -907,16 +907,14 @@ s.textContent='.smva-dt{display:flex;gap:10px;align-items:center;padding:10px 12
       '<span class="smva-cb-timer" id="smva-cb-timer"></span>' +
       '<button class="smva-cb-end" id="smva-cb-end" type="button">' + t('end_call') + '</button>';
     var msgs = chatContent.querySelector('.smva-msgs');
-    var chatFt = chatContent.querySelector('.smva-chat-ft');
-    if(chatFt) chatContent.insertBefore(bar, chatFt);
-    else chatContent.appendChild(bar);
+    chatContent.appendChild(bar);
 
     // style
     if(!document.getElementById('smva-cb-css')){
       var st = document.createElement('style');
       st.id = 'smva-cb-css';
       st.textContent =
-        '#smva-call-bar{display:none;align-items:center;gap:8px;padding:8px 12px;' +
+        '#smva-call-bar{display:none;align-items:center;gap:8px;padding:8px 12px;position:sticky;bottom:0;z-index:10;' +
         'background:rgba(220,38,38,.08);border-bottom:1px solid rgba(220,38,38,.15);' +
         'font-size:13px;flex-shrink:0;}' +
         '#smva-call-bar.active{display:flex;}' +
