@@ -890,6 +890,11 @@ s.textContent='.smva-dt{display:flex;gap:10px;align-items:center;padding:10px 12
 
 
 /* === Feature C addon: sticky call-bar in chat tab === */
+// expose i18n strings for call-bar (outside closure)
+var smvaCallBarI18n = {
+  on_call:  (document.documentElement.lang && document.documentElement.lang.startsWith('fa')) ? 'در حال مکالمه' : 'On call',
+  end_call: (document.documentElement.lang && document.documentElement.lang.startsWith('fa')) ? 'پایان تماس' : 'End Call'
+};
 (function(){
   function initCallBar(){
     var chatContent = null;
@@ -901,11 +906,12 @@ s.textContent='.smva-dt{display:flex;gap:10px;align-items:center;padding:10px 12
     // inject bar before smva-msgs
     var bar = document.createElement('div');
     bar.id = 'smva-call-bar';
+    var _cbI18n = (typeof smvaCallBarI18n !== 'undefined') ? smvaCallBarI18n : {on_call:'On call', end_call:'End Call'};
     bar.innerHTML =
       '<span class="smva-cb-dot"></span>' +
-      '<span class="smva-cb-lbl" id="smva-cb-lbl">' + t('on_call') + '</span>' +
+      '<span class="smva-cb-lbl" id="smva-cb-lbl">' + _cbI18n.on_call + '</span>' +
       '<span class="smva-cb-timer" id="smva-cb-timer"></span>' +
-      '<button class="smva-cb-end" id="smva-cb-end" type="button">' + t('end_call') + '</button>';
+      '<button class="smva-cb-end" id="smva-cb-end" type="button">' + _cbI18n.end_call + '</button>';
     var msgs = chatContent.querySelector('.smva-msgs');
     chatContent.appendChild(bar);
 
