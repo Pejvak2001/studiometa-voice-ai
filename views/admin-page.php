@@ -277,7 +277,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     <?php echo $is_trial ? 'TRIAL' : esc_html( ucfirst(str_replace('_',' ',$plan_label)) ); ?>
                 </span>
                 <?php if ( $expires_at ) : ?>
-                <span class="smva-hint-inline">Renews <?php echo esc_html( $expires_at ); ?></span>
+                <span class="smva-hint-inline"><?php echo $is_trial ? 'Expires' : 'Renews'; ?> <?php echo esc_html( $expires_at ); ?></span>
                 <?php endif; ?>
             </div>
 

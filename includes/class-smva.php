@@ -466,6 +466,11 @@ class SMVA_Plugin {
         if ( strpos( $hook, 'smva' ) === false ) return;
         wp_enqueue_media();
         wp_enqueue_style( 'smva-admin',  SMVA_URL . 'assets/admin.css', array(), SMVA_VERSION );
+        // Hide WP footer and adjust layout on plugin page
+        $screen = get_current_screen();
+        if ( $screen && $screen->id === 'toplevel_page_smva' ) {
+            wp_add_inline_style( 'smva-admin', '#wpfooter{display:none!important}#wpcontent{padding-bottom:0!important}' );
+        }
         wp_enqueue_script( 'smva-admin', SMVA_URL . 'assets/admin.js',  array( 'jquery' ), SMVA_VERSION, true );
         wp_localize_script( 'smva-admin', 'smvaAdmin', array(
             'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
