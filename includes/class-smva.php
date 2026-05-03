@@ -1515,10 +1515,14 @@ class SMVA_Plugin {
         $response = wp_remote_get( $url, [ 'timeout' => 30 ] );
         if ( is_wp_error( $response ) ) { wp_die( 'Failed to fetch recording' ); }
         $body = wp_remote_retrieve_body( $response );
+        $code = wp_remote_retrieve_response_code( $response );
+        if ( $code !== 200 ) { wp_die( 'Recording not found', $code ); }
         header( 'Content-Type: audio/wav' );
         header( 'Content-Length: ' . strlen( $body ) );
         header( 'Accept-Ranges: bytes' );
-        echo wp_kses_post( $body );
+        header( 'Cache-Control: no-cache' );
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        echo $body;
         exit;
     }
 
