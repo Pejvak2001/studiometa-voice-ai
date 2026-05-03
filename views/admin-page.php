@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 <div class="smva-admin-wrap">
 <style>
 /* ── SMVA Modern Admin Layout ── */
-.smva-admin-wrap{display:flex;min-height:100vh;background:#f0f2f5;margin:-20px -20px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.smva-admin-wrap{display:flex;min-height:100vh;background:#f0f2f5;margin:-20px -20px -20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 
 /* SIDEBAR */
 .smva-sidebar{width:220px;flex-shrink:0;background:#1e1f2e;display:flex;flex-direction:column;position:sticky;top:32px;height:calc(100vh - 32px);overflow-y:auto}
