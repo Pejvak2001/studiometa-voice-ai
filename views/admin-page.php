@@ -6,10 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 <div class="smva-admin-wrap">
 <style>
 /* ── SMVA Modern Admin Layout ── */
-.smva-admin-wrap{display:flex;min-height:100vh;background:#f0f2f5;margin:-20px -20px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.smva-admin-wrap{display:flex;flex-direction:row-reverse;min-height:calc(100vh - 32px);background:#f0f2f5;margin:-10px -20px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 
 /* SIDEBAR */
-.smva-sidebar{width:220px;flex-shrink:0;background:#1e1f2e;display:flex;flex-direction:column;position:sticky;top:32px;height:calc(100vh - 32px);overflow-y:auto}
+.smva-sidebar{width:220px;flex-shrink:0;background:#1e1f2e;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:9}
 .smva-sidebar-brand{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
 .smva-sidebar-brand-inner{display:flex;align-items:center;gap:10px}
 .smva-sb-logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#3b6eff);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 .smva-sidenav{padding:12px 0;flex:1}
 .smva-sidenav-group{padding:0 10px;margin-bottom:4px}
 .smva-sidenav-label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.25);padding:8px 8px 4px}
-.smva-sidenav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:rgba(255,255,255,.55);transition:all .15s;margin-bottom:2px}
+.smva-sidenav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:rgba(255,255,255,.55);transition:all .15s;margin-bottom:2px;direction:ltr}
 .smva-sidenav a:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9)}
 .smva-sidenav a.active{background:rgba(99,102,241,.25);color:#a5b4fc}
 .smva-sidenav a.active .smva-nav-icon{opacity:1}
@@ -38,7 +38,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 .smva-sb-plan-sub{font-size:10px;color:rgba(255,255,255,.4)}
 
 /* MAIN CONTENT */
-.smva-main{flex:1;min-width:0;padding:28px 32px;max-width:900px}
+.smva-main{flex:1;min-width:0;padding:28px 32px;max-width:1100px}
+.smva-main-wide{max-width:none}
 .smva-main-header{margin-bottom:24px}
 .smva-main-title{font-size:22px;font-weight:700;color:#111827;margin:0 0 4px}
 .smva-main-sub{font-size:13px;color:#6b7280}
@@ -133,7 +134,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     </aside>
 
     <!-- MAIN CONTENT -->
-    <div class="smva-main">
+    <div class="smva-main<?php echo $active_tab === 'agent' ? ' smva-main-wide' : ''; ?>">
     <div class="smva-tab-content">
 
     <?php // ── LICENSE TAB ─────────────────────────────────────────────── ?>
