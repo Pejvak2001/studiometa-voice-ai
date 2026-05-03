@@ -117,6 +117,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     <span class="smva-nav-icon">🎙️</span>
                     <span class="smva-nav-label">Voice Summary</span>
                 </a>
+                <a href="?page=smva&tab=leads" class="<?php echo $active_tab==='leads' ? 'active' : ''; ?>">
+                    <span class="smva-nav-icon">🎯</span>
+                    <span class="smva-nav-label">Leads</span>
+                </a>
             </div>
         </nav>
 
@@ -1158,6 +1162,71 @@ if ( ! defined( 'ABSPATH' ) ) exit;
   </div>
   <div id="smva-vs-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99998;"></div>
 </div>
+<?php elseif ( $active_tab === 'leads' ) : ?>
+<div class="smva-card">
+    <div class="smva-card-header">
+        <h2 class="smva-card-title">🎯 Leads</h2>
+        <div style="display:flex;gap:8px;align-items:center">
+            <span id="smva-leads-count" class="smva-hint-inline"></span>
+            <button type="button" class="smva-btn" id="smva-leads-export-btn">⬇ Export CSV</button>
+        </div>
+    </div>
+    <table class="widefat striped" style="margin-top:12px">
+        <thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Phone</th><th>Source</th><th>Notes</th><th></th></tr></thead>
+        <tbody id="smva-leads-tbody"><tr><td colspan="7" style="text-align:center;padding:24px;color:#9ca3af">Loading...</td></tr></tbody>
+    </table>
+    <div id="smva-leads-pagination" style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end"></div>
+</div>
+<script>
+(function(){
+    var page=1,total=0,limit=20,allLeads=[];
+    function load(p){
+        page=p||1;
+        jQuery.post(ajaxurl,{action:'smva_get_leads',nonce:smvaAdmin.nonce,page:page,limit:limit},function(r){
+            if(!r.success){return;}
+            allLeads=r.data.leads||[];total=r.data.total||0;
+            render(allLeads);renderPagination();
+            document.getElementById('smva-leads-count').textContent=total+' leads total';
+        });
+    }
+    function render(leads){
+        var tb=document.getElementById('smva-leads-tbody');
+        if(!leads||!leads.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:#9ca3af">No leads yet.</td></tr>';return;}
+        tb.innerHTML=leads.map(function(l){
+            return '<tr><td style="font-size:12px;white-space:nowrap">'+new Date(l.created_at).toLocaleString()+'</td>'+
+            '<td>'+(l.name||'—')+'</td>'+
+            '<td>'+(l.email?'<a href="mailto:'+l.email+'">'+l.email+'</a>':'—')+'</td>'+
+            '<td>'+(l.phone?'<a href="tel:'+l.phone+'">'+l.phone+'</a>':'—')+'</td>'+
+            '<td><span style="font-size:11px;padding:2px 8px;background:#eff6ff;color:#1d4ed8;border-radius:10px">'+(l.source||'voice')+'</span></td>'+
+            '<td style="font-size:12px;color:#6b7280;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(l.notes||'—')+'</td>'+
+            '<td><button class="button button-small smva-lead-del" data-id="'+l.id+'">Delete</button></td></tr>';
+        }).join('');
+        document.querySelectorAll('.smva-lead-del').forEach(function(b){
+            b.addEventListener('click',function(){
+                if(!confirm('Delete this lead?'))return;
+                var id=this.dataset.id;
+                jQuery.post(ajaxurl,{action:'smva_delete_lead',nonce:smvaAdmin.nonce,lead_id:id},function(r){if(r.success)load(page);});
+            });
+        });
+    }
+    function renderPagination(){
+        var pages=Math.ceil(total/limit),el=document.getElementById('smva-leads-pagination');
+        if(pages<=1){el.innerHTML='';return;}
+        var h='';for(var i=1;i<=pages;i++)h+='<button type="button" class="button'+(i===page?' button-primary':'')+'" onclick="smvaLP('+i+')">'+i+'</button>';
+        el.innerHTML=h;
+    }
+    window.smvaLP=function(p){load(p);};
+    document.getElementById('smva-leads-export-btn').addEventListener('click',function(){
+        if(!allLeads.length){alert('No leads to export');return;}
+        var csv=['Date,Name,Email,Phone,Source,Notes'];
+        allLeads.forEach(function(l){csv.push(['"'+(l.created_at||'')+'"','"'+(l.name||'')+'"','"'+(l.email||'')+'"','"'+(l.phone||'')+'"','"'+(l.source||'')+'"','"'+(l.notes||'').replace(/"/g,"'")+'"'].join(','));});
+        var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv.join('
+')],{type:'text/csv'}));
+        a.download='leads-'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+    });
+    load(1);
+})();
+</script>
     <?php endif; ?>
     </div><!-- .smva-tab-content -->
 

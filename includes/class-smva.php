@@ -63,6 +63,8 @@ class SMVA_Plugin {
         add_action( 'wp_ajax_smva_poll_new_license',   array( $this, 'ajax_poll_new_license' ) );
         add_action( 'wp_ajax_smva_manage_subscription', array( $this, 'ajax_manage_subscription' ) );
         add_action( 'wp_ajax_smva_dismiss_trial_notice', array( $this, 'ajax_dismiss_trial_notice' ) );
+        add_action( 'wp_ajax_smva_get_leads',   array( $this, 'ajax_get_leads' ) );
+        add_action( 'wp_ajax_smva_delete_lead', array( $this, 'ajax_delete_lead' ) );
         add_action( 'wp_ajax_smva_reactivate_here',     array( $this, 'ajax_reactivate_here' ) );
 
         // AJAX — public (widget quota check)
@@ -1526,5 +1528,32 @@ class SMVA_Plugin {
         exit;
     }
 
-}
+    public function ajax_get_leads() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) { wp_send_json_error( 'Unauthorized' ); return; }
+        $license_key = get_option( 'smva_license_key', '' );
+        $page  = max( 1, intval( isset( $_POST['page'] )  ? $_POST['page']  : 1 ) );
+        $limit = min( 100, intval( isset( $_POST['limit'] ) ? $_POST['limit'] : 20 ) );
+        $url = SMVA_API_URL . '/plugin/leads?license_key=' . urlencode( $license_key ) . '&page=' . $page . '&limit=' . $limit;
+        $response = wp_remote_get( $url, array( 'timeout' => 15 ) );
+        if ( is_wp_error( $response ) ) { wp_send_json_error( 'Failed to fetch leads' ); return; }
+        $data = json_decode( wp_remote_retrieve_body( $response ), true );
+        wp_send_json_success( $data );
+    }
 
+    public function ajax_delete_lead() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) { wp_send_json_error( 'Unauthorized' ); return; }
+        $license_key = get_option( 'smva_license_key', '' );
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $lead_id = sanitize_text_field( wp_unslash( isset( $_POST['lead_id'] ) ? $_POST['lead_id'] : '' ) );
+        if ( ! $lead_id ) { wp_send_json_error( 'Missing lead_id' ); return; }
+        $response = wp_remote_request(
+            SMVA_API_URL . '/plugin/leads/' . urlencode( $lead_id ) . '?license_key=' . urlencode( $license_key ),
+            array( 'method' => 'DELETE', 'timeout' => 15 )
+        );
+        if ( is_wp_error( $response ) ) { wp_send_json_error( 'Failed to delete lead' ); return; }
+        wp_send_json_success();
+    }
+
+}
