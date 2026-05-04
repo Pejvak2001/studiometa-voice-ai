@@ -24,9 +24,10 @@ class SMVA_Plugin {
         // Returned raw bytes are sanitized by the caller after base64_decode (cannot sanitize encoded blob).
         // phpcs:ignore WordPress.Security.NonceVerification.Missing
         if ( isset( $_POST[ $key . '_b64' ] ) ) {
-            // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-            $raw = wp_unslash( $_POST[ $key . '_b64' ] );
-            return base64_decode( $raw );
+            // phpcs:ignore WordPress.Security.NonceVerification.Missing
+            $raw = sanitize_text_field( wp_unslash( $_POST[ $key . '_b64' ] ) );
+            $decoded = base64_decode( $raw, true );
+            return false === $decoded ? null : $decoded;
         }
         // phpcs:ignore WordPress.Security.NonceVerification.Missing
         if ( isset( $_POST[ $key ] ) ) {
@@ -34,6 +35,100 @@ class SMVA_Plugin {
             return wp_unslash( $_POST[ $key ] );
         }
         return null;
+    }
+
+    /**
+     * Ensure only site administrators can run admin-only AJAX handlers.
+     */
+    private function require_admin_capability() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => 'Unauthorized' ), 403 );
+        }
+    }
+
+    /**
+     * Very small public rate limit for widget quota checks.
+     */
+    private function check_public_rate_limit( $action, $ttl = 5 ) {
+        $ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : 'unknown';
+        $key = 'smva_rl_' . md5( $action . '|' . $ip );
+        if ( get_transient( $key ) ) {
+            wp_send_json_error( array( 'message' => 'Too many requests. Please try again shortly.' ), 429 );
+        }
+        set_transient( $key, 1, absint( $ttl ) );
+    }
+
+    private function get_local_leads() {
+        $leads = get_option( 'smva_local_leads', array() );
+        return is_array( $leads ) ? $leads : array();
+    }
+
+    private function save_local_leads( $leads ) {
+        if ( ! is_array( $leads ) ) {
+            $leads = array();
+        }
+        // Keep the local fallback lightweight.
+        $leads = array_slice( array_values( $leads ), -200 );
+        update_option( 'smva_local_leads', $leads, false );
+    }
+
+    private function normalize_lead_field_key( $field, $label, $value ) {
+        $haystack = strtolower( trim( (string) $field . ' ' . (string) $label ) );
+        $value_l  = strtolower( trim( (string) $value ) );
+
+        if ( false !== strpos( $haystack, 'email' ) || is_email( $value ) ) return 'email';
+        if ( preg_match( '/phone|tel|mobile|cell|number|شماره|تلفن|موبایل/', $haystack ) || preg_match( '/^[+()\-\s0-9]{7,}$/', $value_l ) ) return 'phone';
+        if ( preg_match( '/name|full_name|firstname|last_name|نام/', $haystack ) ) return 'name';
+        if ( preg_match( '/company|business|clinic|شرکت|کسب/', $haystack ) ) return 'company';
+        if ( preg_match( '/project|service|message|note|needs|goal|work|پروژه|خدمت|کار|نیاز|پیام/', $haystack ) ) return 'notes';
+        return 'notes';
+    }
+
+    private function upsert_local_lead_fragment( $session_id, $field, $label, $value, $source = 'widget' ) {
+        $session_id = sanitize_key( $session_id ? $session_id : 'session_' . wp_generate_uuid4() );
+        $field      = sanitize_text_field( $field );
+        $label      = sanitize_text_field( $label );
+        $value      = sanitize_text_field( $value );
+        $source     = sanitize_text_field( $source );
+
+        if ( '' === $value ) {
+            return false;
+        }
+
+        $key   = $this->normalize_lead_field_key( $field, $label, $value );
+        $id    = 'local_' . md5( $session_id );
+        $leads = $this->get_local_leads();
+        $found = false;
+
+        foreach ( $leads as &$lead ) {
+            if ( isset( $lead['id'] ) && $lead['id'] === $id ) {
+                $found = true;
+                $lead[ $key ] = 'notes' === $key && ! empty( $lead['notes'] ) ? trim( $lead['notes'] . "\n" . $value ) : $value;
+                $lead['updated_at'] = current_time( 'mysql' );
+                $lead['source'] = $source ?: ( $lead['source'] ?? 'Widget local fallback' );
+                break;
+            }
+        }
+        unset( $lead );
+
+        if ( ! $found ) {
+            $leads[] = array(
+                'id'         => $id,
+                'created_at' => current_time( 'mysql' ),
+                'updated_at' => current_time( 'mysql' ),
+                'name'       => 'name' === $key ? $value : '',
+                'email'      => 'email' === $key ? $value : '',
+                'phone'      => 'phone' === $key ? $value : '',
+                'company'    => 'company' === $key ? $value : '',
+                'notes'      => 'notes' === $key ? $value : '',
+                'source'     => $source ?: 'Widget local fallback',
+                'session_id' => $session_id,
+                'local'      => true,
+            );
+        }
+
+        $this->save_local_leads( $leads );
+        return $id;
     }
 
     private function __construct() {
@@ -44,7 +139,7 @@ class SMVA_Plugin {
         add_shortcode( 'smva_widget',        array( $this, 'render_widget_shortcode' ) );
         add_action( 'admin_notices',         array( $this, 'maybe_trial_notice' ) );
 
-        // Auto-trial retry hook (runs on every admin load until trial succeeds)
+        // Existing-license maintenance hook: refreshes quota/settings without starting a trial automatically.
         add_action( 'admin_init',            array( $this, 'maybe_retry_trial_activation' ) );
 
         // AJAX — admin only
@@ -63,9 +158,15 @@ class SMVA_Plugin {
         add_action( 'wp_ajax_smva_poll_new_license',   array( $this, 'ajax_poll_new_license' ) );
         add_action( 'wp_ajax_smva_manage_subscription', array( $this, 'ajax_manage_subscription' ) );
         add_action( 'wp_ajax_smva_dismiss_trial_notice', array( $this, 'ajax_dismiss_trial_notice' ) );
+        add_action( 'wp_ajax_smva_start_trial', array( $this, 'ajax_start_trial' ) );
         add_action( 'wp_ajax_smva_get_leads',   array( $this, 'ajax_get_leads' ) );
         add_action( 'wp_ajax_smva_delete_lead', array( $this, 'ajax_delete_lead' ) );
+        add_action( 'wp_ajax_smva_capture_lead_fragment', array( $this, 'ajax_capture_lead_fragment' ) );
+        add_action( 'wp_ajax_nopriv_smva_capture_lead_fragment', array( $this, 'ajax_capture_lead_fragment' ) );
         add_action( 'wp_ajax_smva_reactivate_here',     array( $this, 'ajax_reactivate_here' ) );
+        add_action( 'wp_ajax_smva_health_check',       array( $this, 'ajax_health_check' ) );
+        add_action( 'wp_ajax_smva_get_event_logs',     array( $this, 'ajax_get_event_logs' ) );
+        add_action( 'wp_ajax_smva_clear_event_logs',   array( $this, 'ajax_clear_event_logs' ) );
 
         // AJAX — public (widget quota check)
         add_action( 'wp_ajax_nopriv_smva_widget_quota', array( $this, 'ajax_widget_quota' ) );
@@ -99,6 +200,14 @@ class SMVA_Plugin {
         add_option( 'smva_silence_timeout', 60 );
         add_option( 'smva_call_cooldown', 30 );
         add_option( 'smva_display_mode', 'sitewide' );
+        add_option( 'smva_lazy_load_widget', '1' );
+        add_option( 'smva_debug_events', '1' );
+        add_option( 'smva_workflow_buttons', wp_json_encode( array(
+            array( 'label' => 'Book Appointment', 'message' => 'I would like to book an appointment.' ),
+            array( 'label' => 'Request Callback', 'message' => 'Please help me request a callback.' ),
+            array( 'label' => 'Ask About Services', 'message' => 'Can you tell me about your services?' ),
+        ) ) );
+        add_option( 'smva_event_logs', array() );
 
         // Trial state
         add_option( 'smva_trial_attempted', '0' );
@@ -109,10 +218,8 @@ class SMVA_Plugin {
         add_option( 'smva_site_replaced_notice', '0' );
         add_option( 'smva_site_replaced_message', '' );
 
-        // Try to activate trial immediately. If backend is unreachable,
-        // we retry in maybe_retry_trial_activation() on admin page loads.
-        $self = self::get_instance();
-        $self->auto_trial_activate();
+        // Do not call the licensing server during plugin activation.
+        // Trial activation is started by the admin from the plugin page so external data sharing is explicit.
     }
 
     public static function deactivate() {
@@ -238,8 +345,8 @@ class SMVA_Plugin {
     }
 
     /**
-     * If trial activation failed during activate(), retry on admin page loads
-     * (throttled to once every 10 minutes).
+     * Maintain existing activations on admin page loads.
+     * Does not start a trial automatically; trial activation requires an admin click.
      */
     /**
      * Sync language, suggested_questions, and other agent settings from backend.
@@ -332,12 +439,8 @@ class SMVA_Plugin {
             }
             return;
         }
-        if ( get_option( 'smva_trial_attempted', '0' ) === '1' ) return;
-
-        $last = (int) get_option( 'smva_trial_last_attempt', 0 );
-        if ( $last && ( time() - $last ) < 600 ) return; // 10 min cooldown
-
-        $this->auto_trial_activate();
+        // No token yet: wait for an explicit admin action to start the free trial.
+        return;
     }
 
     /**
@@ -446,8 +549,25 @@ class SMVA_Plugin {
 
     public function ajax_dismiss_trial_notice() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
         update_option( 'smva_trial_notice_dismissed', '1' );
         wp_send_json_success();
+    }
+
+    public function ajax_start_trial() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+
+        if ( get_option( 'smva_internal_token', '' ) ) {
+            wp_send_json_success( array( 'message' => 'Trial is already active.', 'reload' => true ) );
+        }
+
+        $started = $this->auto_trial_activate();
+        if ( $started ) {
+            wp_send_json_success( array( 'message' => '✓ Free trial activated.', 'reload' => true ) );
+        }
+
+        wp_send_json_error( array( 'message' => 'Could not reach the licensing server. Please try again or enter a license key.' ) );
     }
 
     // ── Admin Menu ──────────────────────────────────────────────────────────
@@ -474,12 +594,18 @@ class SMVA_Plugin {
             wp_add_inline_style( 'smva-admin', '#wpfooter{display:none!important}#wpcontent{padding-bottom:0!important}' );
         }
         wp_enqueue_script( 'smva-admin', SMVA_URL . 'assets/admin.js',  array( 'jquery' ), SMVA_VERSION, true );
+        $smva_admin_timezone = get_option( 'smva_agent_timezone', '' );
+        if ( empty( $smva_admin_timezone ) ) {
+            $smva_admin_timezone = wp_timezone_string();
+        }
         wp_localize_script( 'smva-admin', 'smvaAdmin', array(
-            'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
-            'nonce' => esc_attr( wp_create_nonce( 'smva_nonce' ) ),
-            'apiUrl'     => SMVA_API_URL,
-            'pricingUrl' => SMVA_PRICING_URL,
-            'siteUrl'    => get_site_url(),
+            'ajaxUrl'       => admin_url( 'admin-ajax.php' ),
+            'nonce'         => esc_attr( wp_create_nonce( 'smva_nonce' ) ),
+            'apiUrl'        => SMVA_API_URL,
+            'pricingUrl'    => SMVA_PRICING_URL,
+            'siteUrl'       => get_site_url(),
+            'timezone'      => $smva_admin_timezone ?: 'UTC',
+            'dateRangeDays' => 30,
         ) );
     }
 
@@ -546,6 +672,7 @@ class SMVA_Plugin {
             wsUrl         : <?php echo wp_json_encode( SMVA_WS_URL ); ?>,
             apiUrl        : <?php echo wp_json_encode( SMVA_API_URL ); ?>,
             ajaxUrl       : <?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>,
+            widgetNonce   : <?php echo wp_json_encode( wp_create_nonce( 'smva_widget_nonce' ) ); ?>,
             pricingUrl    : <?php echo wp_json_encode( SMVA_PRICING_URL ); ?>,
             widgetMode    : <?php echo wp_json_encode( $mode ); ?>,
             plan          : <?php echo wp_json_encode( get_option( 'smva_plan', '' ) ); ?>,
@@ -554,7 +681,7 @@ class SMVA_Plugin {
             position      : <?php echo wp_json_encode( get_option( 'smva_widget_position', 'bottom-right' ) ); ?>,
             widgetStyle   : <?php echo wp_json_encode( get_option( 'smva_widget_style', 'fab' ) ); ?>,
             widgetTheme   : <?php echo wp_json_encode( get_option( 'smva_widget_theme', 'classic' ) ); ?>,
-            agentLogo     : <?php echo wp_json_encode( get_option( 'smva_agent_logo', '' ) ); ?>,
+            agentLogo     : <?php echo wp_json_encode( esc_url( get_option( 'smva_agent_logo', '' ) ) ); ?>,
             lang          : <?php echo wp_json_encode( get_option( 'smva_lang', 'en' ) ); ?>,
             extraLangs    : <?php echo esc_html( get_option( 'smva_extra_langs', '[]' ) ); ?>,
             businessName  : <?php echo wp_json_encode( get_option( 'smva_business_name', '' ) ); ?>,
@@ -570,6 +697,11 @@ class SMVA_Plugin {
                 $sq_arr = json_decode( $sq, true );
                 echo wp_json_encode( is_array( $sq_arr ) ? $sq_arr : array() );
             ?>,
+            workflowButtons : <?php
+                $wb = json_decode( get_option( 'smva_workflow_buttons', '[]' ), true );
+                echo wp_json_encode( is_array( $wb ) ? $wb : array() );
+            ?>,
+            lazyLoadWidget : <?php echo esc_html( get_option( 'smva_lazy_load_widget', '1' ) === '1' ? 'true' : 'false' ); ?>,
         };
         </script>
         <?php return ob_get_clean();
@@ -751,6 +883,7 @@ class SMVA_Plugin {
 
     public function ajax_refresh_quota() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
         $quota = $this->get_quota_status( true );
         wp_send_json_success( $quota );
     }
@@ -759,6 +892,7 @@ class SMVA_Plugin {
 
     public function ajax_reactivate_here() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
 
         $license_key = get_option( 'smva_license_key', '' );
         if ( empty( $license_key ) ) {
@@ -812,6 +946,7 @@ class SMVA_Plugin {
     // more than once per QUOTA_CACHE_TTL.
 
     public function ajax_widget_quota() {
+        $this->check_public_rate_limit( 'widget_quota', 5 );
         $quota = $this->get_quota_status();
         if ( empty( $quota ) || ! empty( $quota['error'] ) ) {
             wp_send_json_error( array( 'message' => $quota['error'] ?? 'Unavailable' ) );
@@ -827,6 +962,73 @@ class SMVA_Plugin {
             'chat_limit'      => intval(   $quota['chat_messages_limit'] ?? 0 ),
             'plan'            => sanitize_text_field( $quota['plan'] ?? '' ),
         ) );
+    }
+
+
+    // ── Health / Event Logs ──────────────────────────────────────────────────
+
+    private function add_event_log( $type, $message, $context = array() ) {
+        if ( get_option( 'smva_debug_events', '1' ) !== '1' ) { return; }
+        $logs = get_option( 'smva_event_logs', array() );
+        if ( ! is_array( $logs ) ) { $logs = array(); }
+        array_unshift( $logs, array(
+            'time'    => current_time( 'mysql' ),
+            'type'    => sanitize_key( $type ),
+            'message' => sanitize_text_field( $message ),
+            'context' => array_map( 'sanitize_text_field', is_array( $context ) ? $context : array() ),
+        ) );
+        $logs = array_slice( $logs, 0, 50 );
+        update_option( 'smva_event_logs', $logs, false );
+    }
+
+    public function ajax_get_event_logs() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+        $logs = get_option( 'smva_event_logs', array() );
+        wp_send_json_success( is_array( $logs ) ? $logs : array() );
+    }
+
+    public function ajax_clear_event_logs() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+        update_option( 'smva_event_logs', array(), false );
+        wp_send_json_success( array( 'message' => 'Logs cleared.' ) );
+    }
+
+    public function ajax_health_check() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+
+        $started = microtime( true );
+        $license_key    = get_option( 'smva_license_key', '' );
+        $internal_token = get_option( 'smva_internal_token', '' );
+        $result = array(
+            'plugin' => array( 'ok' => true, 'label' => 'Plugin loaded', 'detail' => SMVA_VERSION ),
+            'license' => array( 'ok' => ! empty( $internal_token ), 'label' => 'License token', 'detail' => empty( $internal_token ) ? 'Missing' : 'Present' ),
+            'quota_api' => array( 'ok' => false, 'label' => 'License / Quota API', 'detail' => 'Not checked' ),
+            'voice_ws' => array( 'ok' => ! empty( $internal_token ), 'label' => 'Voice WebSocket config', 'detail' => SMVA_WS_URL ),
+            'site' => array( 'ok' => true, 'label' => 'WordPress site', 'detail' => get_site_url() ),
+        );
+
+        if ( $license_key && $internal_token ) {
+            $r = wp_remote_post( SMVA_API_URL . '/plugin/license/quota-status', array(
+                'headers' => array( 'Content-Type' => 'application/json' ),
+                'body'    => wp_json_encode( array( 'license_key' => $license_key, 'internal_token' => $internal_token ) ),
+                'timeout' => 8,
+            ) );
+            if ( is_wp_error( $r ) ) {
+                $result['quota_api']['detail'] = $r->get_error_message();
+            } else {
+                $code = wp_remote_retrieve_response_code( $r );
+                $result['quota_api']['ok'] = ( $code >= 200 && $code < 300 );
+                $result['quota_api']['detail'] = 'HTTP ' . $code . ' · ' . round( ( microtime( true ) - $started ) * 1000 ) . 'ms';
+            }
+        } else {
+            $result['quota_api']['detail'] = 'No active license yet';
+        }
+
+        $this->add_event_log( 'health_check', 'Health check completed.', array( 'api' => $result['quota_api']['detail'] ) );
+        wp_send_json_success( $result );
     }
 
     // ── Admin Page ──────────────────────────────────────────────────────────
@@ -849,6 +1051,7 @@ class SMVA_Plugin {
 
     public function ajax_activate() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
         $key = sanitize_text_field( wp_unslash( $_POST['license_key'] ?? '' ) );
         if ( empty( $key ) ) wp_send_json_error( array( 'message' => 'License key required.' ) );
 
@@ -920,6 +1123,7 @@ class SMVA_Plugin {
 
     public function ajax_deactivate() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
         $key      = get_option( 'smva_license_key', '' );
         $site_url = get_site_url();
 
@@ -941,6 +1145,7 @@ class SMVA_Plugin {
 
     public function ajax_save_settings() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
 
         $fields = array(
             'smva_widget_color'      => 'smva_widget_color',
@@ -955,6 +1160,8 @@ class SMVA_Plugin {
         'smva_max_call_duration' => 'smva_max_call_duration',
             'smva_silence_timeout'   => 'smva_silence_timeout',
             'smva_call_cooldown'     => 'smva_call_cooldown',
+            'smva_lazy_load_widget'   => 'smva_lazy_load_widget',
+            'smva_debug_events'       => 'smva_debug_events',
         );
 
         foreach ( $fields as $post_key => $option_key ) {
@@ -993,6 +1200,23 @@ class SMVA_Plugin {
             }
         }
 
+        if ( isset( $_POST['smva_workflow_buttons'] ) ) {
+            $raw_buttons = sanitize_textarea_field( wp_unslash( $_POST['smva_workflow_buttons'] ) );
+            $buttons = array();
+            foreach ( preg_split( '/\r?\n/', $raw_buttons ) as $line ) {
+                $line = trim( $line );
+                if ( '' === $line ) { continue; }
+                $parts = array_map( 'trim', explode( '|', $line, 2 ) );
+                $buttons[] = array(
+                    'label' => sanitize_text_field( $parts[0] ),
+                    'message' => sanitize_text_field( $parts[1] ?? $parts[0] ),
+                );
+                if ( count( $buttons ) >= 6 ) { break; }
+            }
+            update_option( 'smva_workflow_buttons', wp_json_encode( $buttons ) );
+        }
+
+        $this->add_event_log( 'settings_saved', 'Plugin settings saved.' );
         wp_send_json_success( array( 'message' => 'Settings saved.' ) );
     }
 
@@ -1000,6 +1224,7 @@ class SMVA_Plugin {
 
     public function ajax_save_agent() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
 
         $license_key    = get_option( 'smva_license_key', '' );
         $internal_token = get_option( 'smva_internal_token', '' );
@@ -1095,6 +1320,7 @@ class SMVA_Plugin {
 
     public function ajax_crawl_site() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
         $license_key    = get_option( 'smva_license_key', '' );
         $internal_token = get_option( 'smva_internal_token', '' );
         $site_url_raw   = sanitize_text_field( $this->decode_b64_field( 'site_url' ) ?? get_site_url() );
@@ -1125,6 +1351,7 @@ class SMVA_Plugin {
 
     public function ajax_optimize_agent() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
         $license_key    = get_option( 'smva_license_key', '' );
         $internal_token = get_option( 'smva_internal_token', '' );
 
@@ -1187,6 +1414,7 @@ class SMVA_Plugin {
 
     public function ajax_tts_preview() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
 
         $license_key    = get_option( 'smva_license_key', '' );
         $internal_token = get_option( 'smva_internal_token', '' );
@@ -1222,11 +1450,24 @@ class SMVA_Plugin {
             wp_send_json_error( array( 'message' => 'TTS API error.', 'code' => $code ) );
         }
 
-        // Stream audio back to browser
+        // Stream verified WAV audio back to browser. Do not escape binary audio bytes.
+        if ( strlen( $body ) < 12 || 'RIFF' !== substr( $body, 0, 4 ) || 'WAVE' !== substr( $body, 8, 4 ) ) {
+            wp_send_json_error( array( 'message' => 'Invalid TTS audio returned by API.' ) );
+        }
+
+        while ( ob_get_level() ) {
+            ob_end_clean();
+        }
+
+        status_header( 200 );
         header( 'Content-Type: audio/wav' );
         header( 'Content-Length: ' . strlen( $body ) );
-        header( 'Cache-Control: no-store' );
-        echo wp_kses_post( $body );
+        header( 'Cache-Control: no-store, no-cache, must-revalidate, max-age=0' );
+        header( 'Pragma: no-cache' );
+        header( 'X-Content-Type-Options: nosniff' );
+
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Binary WAV audio must be streamed unchanged.
+        echo $body;
         exit;
     }
 
@@ -1235,6 +1476,7 @@ class SMVA_Plugin {
 
     public function ajax_get_agent_tools() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
 
         $license_key    = get_option( 'smva_license_key', '' );
         $internal_token = get_option( 'smva_internal_token', '' );
@@ -1268,6 +1510,7 @@ class SMVA_Plugin {
 
     public function ajax_stripe_checkout() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
 
         $license_key    = get_option( 'smva_license_key', '' );
         $internal_token = get_option( 'smva_internal_token', '' );
@@ -1310,6 +1553,7 @@ class SMVA_Plugin {
 
     public function ajax_get_plans() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
 
         $response = wp_remote_get( SMVA_API_URL . '/stripe/plans', array( 'timeout' => 10 ) );
 
@@ -1333,6 +1577,7 @@ class SMVA_Plugin {
 
     public function ajax_poll_new_license() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
 
         $license_key    = get_option( 'smva_license_key', '' );
         $internal_token = get_option( 'smva_internal_token', '' );
@@ -1370,6 +1615,7 @@ class SMVA_Plugin {
 
     public function ajax_manage_subscription() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
 
         $license_key    = get_option( 'smva_license_key', '' );
         $internal_token = get_option( 'smva_internal_token', '' );
@@ -1410,6 +1656,7 @@ class SMVA_Plugin {
     // ── AJAX: Chat History ───────────────────────────────────────────────
     public function ajax_chat_history() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
         $license_key    = get_option( 'smva_license_key', '' );
         $internal_token = get_option( 'smva_internal_token', '' );
         $limit          = intval( $_POST['limit'] ?? 100 );
@@ -1440,25 +1687,40 @@ class SMVA_Plugin {
     public function ajax_voice_sessions() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
         if ( ! current_user_can( 'manage_options' ) ) { wp_send_json_error( 'Unauthorized', 403 ); }
-        $license_key = get_option( 'smva_license_key', '' );
-        $api_url     = SMVA_API_URL;
+        $license_key    = get_option( 'smva_license_key', '' );
+        $internal_token = get_option( 'smva_internal_token', '' );
+        $api_url        = SMVA_API_URL;
         $page        = isset( $_GET['page_num'] ) ? intval( $_GET['page_num'] ) : 1;
         $date_from   = sanitize_text_field( wp_unslash( $_GET['date_from'] ?? '' ) );
         $date_to     = sanitize_text_field( wp_unslash( $_GET['date_to']   ?? '' ) );
         $query = http_build_query( array_filter( [
-            'license_key' => $license_key,
-            'page'        => $page,
+            'license_key'    => $license_key,
+            'internal_token' => $internal_token,
+            'page'           => $page,
             'per_page'    => 20,
             'date_from'   => $date_from,
             'date_to'     => $date_to,
+            'timezone'    => get_option( 'smva_agent_timezone', wp_timezone_string() ),
         ] ) );
         $response = wp_remote_get( "{$api_url}/plugin/voice-summary/sessions?{$query}", [
             'timeout' => 15,
-            'headers' => [ 'x-license-key' => $license_key ],
+            'headers' => [ 'x-license-key' => $license_key, 'x-internal-token' => $internal_token ],
         ] );
         if ( is_wp_error( $response ) ) { wp_send_json_error( $response->get_error_message() ); }
         $body = json_decode( wp_remote_retrieve_body( $response ), true );
-        wp_send_json_success( $body );
+        if ( ! is_array( $body ) ) { $body = array(); }
+        $sessions = array();
+        if ( isset( $body['sessions'] ) && is_array( $body['sessions'] ) ) { $sessions = $body['sessions']; }
+        elseif ( isset( $body['data']['sessions'] ) && is_array( $body['data']['sessions'] ) ) { $sessions = $body['data']['sessions']; }
+        elseif ( isset( $body['items'] ) && is_array( $body['items'] ) ) { $sessions = $body['items']; }
+        elseif ( isset( $body['data'] ) && is_array( $body['data'] ) && array_keys( $body['data'] ) === range( 0, count( $body['data'] ) - 1 ) ) { $sessions = $body['data']; }
+        elseif ( array_keys( $body ) === range( 0, count( $body ) - 1 ) ) { $sessions = $body; }
+        $pagination = isset( $body['pagination'] ) && is_array( $body['pagination'] ) ? $body['pagination'] : array(
+            'page'  => $page,
+            'pages' => isset( $body['pages'] ) ? absint( $body['pages'] ) : 1,
+            'total' => isset( $body['total'] ) ? absint( $body['total'] ) : count( $sessions ),
+        );
+        wp_send_json_success( array( 'sessions' => $sessions, 'pagination' => $pagination, 'raw' => $body ) );
     }
 
     public function ajax_voice_transcript() {
@@ -1496,36 +1758,149 @@ class SMVA_Plugin {
     public function ajax_voice_recording_url() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
         if ( ! current_user_can( 'manage_options' ) ) { wp_send_json_error( 'Unauthorized', 403 ); }
-        $license_key = get_option( 'smva_license_key', '' );
-        $api_url     = SMVA_API_URL;
-        $session_id  = sanitize_text_field( wp_unslash( $_GET['session_id'] ?? '' ) );
-        if ( ! $session_id ) { wp_send_json_error( 'Missing session_id' ); }
-        // Return proxy URL (through WordPress to avoid CORS)
-        $proxy_url = admin_url( 'admin-ajax.php' ) . '?action=smva_voice_recording_proxy&nonce=' . wp_create_nonce( 'smva_nonce' ) . '&session_id=' . urlencode( $session_id );
-        wp_send_json_success( [ 'url' => $proxy_url ] );
+
+        $session_id    = sanitize_text_field( wp_unslash( $_GET['session_id'] ?? '' ) );
+        $recording_url = esc_url_raw( wp_unslash( $_GET['recording_url'] ?? '' ) );
+
+        if ( ! $session_id ) {
+            wp_send_json_error( array( 'message' => 'Missing session_id' ) );
+        }
+
+        // If the session already includes a direct HTTPS recording URL, return it to the admin UI.
+        // Direct browser playback avoids unnecessary server-side proxying and supports signed storage URLs.
+        if ( $this->is_safe_direct_playback_url( $recording_url ) ) {
+            wp_send_json_success( array(
+                'url'    => esc_url_raw( $recording_url ),
+                'direct' => true,
+            ) );
+        }
+
+        // Otherwise return a same-origin WordPress proxy URL. The JS now fetches this URL first
+        // and shows a friendly message if the backend does not have an audio file for the session.
+        $args = array(
+            'action'     => 'smva_voice_recording_proxy',
+            'nonce'      => wp_create_nonce( 'smva_nonce' ),
+            'session_id' => $session_id,
+        );
+
+        if ( $this->is_allowed_api_url( $recording_url ) ) {
+            $args['source_url'] = rawurlencode( $recording_url );
+        }
+
+        wp_send_json_success( array(
+            'url'    => add_query_arg( $args, admin_url( 'admin-ajax.php' ) ),
+            'direct' => false,
+        ) );
+    }
+
+    private function is_safe_direct_playback_url( $url ) {
+        if ( empty( $url ) ) {
+            return false;
+        }
+
+        $scheme = wp_parse_url( $url, PHP_URL_SCHEME );
+        $host   = wp_parse_url( $url, PHP_URL_HOST );
+
+        if ( 'https' !== $scheme || empty( $host ) ) {
+            return false;
+        }
+
+        $host = strtolower( $host );
+        if ( in_array( $host, array( 'localhost', '127.0.0.1', '::1' ), true ) || '.local' === substr( $host, -6 ) ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function is_allowed_api_url( $url ) {
+        if ( empty( $url ) ) {
+            return false;
+        }
+
+        $api_host = wp_parse_url( SMVA_API_URL, PHP_URL_HOST );
+        $url_host = wp_parse_url( $url, PHP_URL_HOST );
+        $scheme   = wp_parse_url( $url, PHP_URL_SCHEME );
+
+        return 'https' === $scheme && $api_host && $url_host && strtolower( $api_host ) === strtolower( $url_host );
+    }
+
+    private function voice_recording_candidates( $session_id, $track, $source_url = '' ) {
+        $license_key    = get_option( 'smva_license_key', '' );
+        $internal_token = get_option( 'smva_internal_token', '' );
+        $api_url        = untrailingslashit( SMVA_API_URL );
+        $session_id_enc = rawurlencode( $session_id );
+        $track_enc      = rawurlencode( $track );
+        $license_qs     = 'license_key=' . rawurlencode( $license_key ) . '&internal_token=' . rawurlencode( $internal_token );
+
+        $candidates = array();
+        if ( $this->is_allowed_api_url( $source_url ) ) {
+            $candidates[] = $source_url;
+        }
+
+        $candidates[] = "{$api_url}/plugin/voice-summary/sessions/{$session_id_enc}/recording?{$license_qs}&track={$track_enc}";
+        $candidates[] = "{$api_url}/plugin/voice-summary/sessions/{$session_id_enc}/recording?{$license_qs}";
+        $candidates[] = "{$api_url}/plugin/voice-summary/sessions/{$session_id_enc}/audio?{$license_qs}&track={$track_enc}";
+        $candidates[] = "{$api_url}/plugin/voice-summary/sessions/{$session_id_enc}/audio?{$license_qs}";
+        $candidates[] = "{$api_url}/plugin/voice-summary/recordings/{$session_id_enc}?{$license_qs}&track={$track_enc}";
+        $candidates[] = "{$api_url}/plugin/voice-sessions/{$session_id_enc}/recording?{$license_qs}&track={$track_enc}";
+        $candidates[] = "{$api_url}/plugin/voice-sessions/{$session_id_enc}/audio?{$license_qs}";
+
+        return array_values( array_unique( $candidates ) );
     }
 
     public function ajax_voice_recording_proxy() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
-        if ( ! current_user_can( 'manage_options' ) ) { wp_die( 'Unauthorized', 403 ); }
-        $license_key = get_option( 'smva_license_key', '' );
-        $api_url     = SMVA_API_URL;
-        $session_id  = sanitize_text_field( wp_unslash( $_GET['session_id'] ?? '' ) );
-        if ( ! $session_id ) { wp_die( 'Missing session_id' ); }
-        $track = sanitize_text_field( wp_unslash( $_GET['track'] ?? 'main' ) );
-        $url = "{$api_url}/plugin/voice-summary/sessions/{$session_id}/recording?license_key=" . urlencode( $license_key ) . "&track=" . urlencode( $track );
-        $response = wp_remote_get( $url, [ 'timeout' => 30 ] );
-        if ( is_wp_error( $response ) ) { wp_die( 'Failed to fetch recording' ); }
-        $body = wp_remote_retrieve_body( $response );
-        $code = wp_remote_retrieve_response_code( $response );
-        if ( $code !== 200 ) { wp_die( 'Recording not found', $code ); }
-        header( 'Content-Type: audio/wav' );
-        header( 'Content-Length: ' . strlen( $body ) );
-        header( 'Accept-Ranges: bytes' );
-        header( 'Cache-Control: no-cache' );
-        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-        echo $body;
-        exit;
+        if ( ! current_user_can( 'manage_options' ) ) { wp_die( 'Unauthorized', '', array( 'response' => 403 ) ); }
+
+        $license_key    = get_option( 'smva_license_key', '' );
+        $internal_token = get_option( 'smva_internal_token', '' );
+        $session_id     = sanitize_text_field( wp_unslash( $_GET['session_id'] ?? '' ) );
+        $track          = sanitize_text_field( wp_unslash( $_GET['track'] ?? 'main' ) );
+        $source_url     = esc_url_raw( rawurldecode( wp_unslash( $_GET['source_url'] ?? '' ) ) );
+
+        if ( ! $session_id ) { wp_die( 'Missing session_id', '', array( 'response' => 400 ) ); }
+
+        $last_code = 404;
+        $last_body = '';
+        $headers   = array(
+            'x-license-key'    => $license_key,
+            'x-internal-token' => $internal_token,
+        );
+
+        foreach ( $this->voice_recording_candidates( $session_id, $track, $source_url ) as $url ) {
+            $response = wp_remote_get( $url, array( 'timeout' => 30, 'headers' => $headers ) );
+            if ( is_wp_error( $response ) ) {
+                continue;
+            }
+
+            $code      = (int) wp_remote_retrieve_response_code( $response );
+            $body      = wp_remote_retrieve_body( $response );
+            $last_code = $code;
+            $last_body = $body;
+
+            if ( 200 === $code && ! empty( $body ) ) {
+                $content_type = wp_remote_retrieve_header( $response, 'content-type' );
+                if ( empty( $content_type ) ) {
+                    $content_type = 'audio/wav';
+                }
+
+                header( 'Content-Type: ' . sanitize_text_field( $content_type ) );
+                header( 'Content-Length: ' . strlen( $body ) );
+                header( 'Accept-Ranges: bytes' );
+                header( 'Cache-Control: no-cache' );
+                // Binary audio output. Escaping would corrupt the recording stream.
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                echo $body;
+                exit;
+            }
+        }
+
+        $message = 'Recording not found. The session exists, but the backend did not return an audio file for this session yet.';
+        if ( ! empty( $last_body ) && strlen( $last_body ) < 500 ) {
+            $message .= ' Backend response: ' . wp_strip_all_tags( $last_body );
+        }
+        wp_die( esc_html( $message ), '', array( 'response' => max( 404, absint( $last_code ) ) ) );
     }
 
     public function ajax_get_leads() {
@@ -1535,10 +1910,52 @@ class SMVA_Plugin {
         $page  = max( 1, intval( isset( $_POST['page'] )  ? $_POST['page']  : 1 ) );
         $limit = min( 100, intval( isset( $_POST['limit'] ) ? $_POST['limit'] : 20 ) );
         $url = SMVA_API_URL . '/plugin/leads?license_key=' . urlencode( $license_key ) . '&page=' . $page . '&limit=' . $limit;
+
+        $remote_leads = array();
+        $remote_total = 0;
+        $remote_error = '';
         $response = wp_remote_get( $url, array( 'timeout' => 15 ) );
-        if ( is_wp_error( $response ) ) { wp_send_json_error( 'Failed to fetch leads' ); return; }
-        $data = json_decode( wp_remote_retrieve_body( $response ), true );
-        wp_send_json_success( $data );
+        if ( is_wp_error( $response ) ) {
+            $remote_error = $response->get_error_message();
+        } else {
+            $data = json_decode( wp_remote_retrieve_body( $response ), true );
+            if ( is_array( $data ) ) {
+                $remote_leads = $data['leads'] ?? $data['items'] ?? ( isset( $data['data'] ) && is_array( $data['data'] ) ? $data['data'] : array() );
+                $remote_total = absint( $data['total'] ?? count( $remote_leads ) );
+            }
+        }
+
+        $local_leads = array_reverse( $this->get_local_leads() );
+        $all_leads   = array_merge( is_array( $local_leads ) ? $local_leads : array(), is_array( $remote_leads ) ? $remote_leads : array() );
+
+        wp_send_json_success( array(
+            'leads'        => array_slice( $all_leads, 0, $limit ),
+            'total'        => count( $local_leads ) + $remote_total,
+            'local_total'  => count( $local_leads ),
+            'remote_total' => $remote_total,
+            'remote_error' => $remote_error,
+        ) );
+    }
+
+    public function ajax_capture_lead_fragment() {
+        check_ajax_referer( 'smva_widget_nonce', 'nonce' );
+        $this->check_public_rate_limit( 'capture_lead_fragment', 2 );
+
+        $session_id = sanitize_text_field( wp_unslash( $_POST['session_id'] ?? '' ) );
+        $field      = sanitize_text_field( wp_unslash( $_POST['field'] ?? '' ) );
+        $label      = sanitize_text_field( wp_unslash( $_POST['label'] ?? '' ) );
+        $value      = sanitize_text_field( wp_unslash( $_POST['value'] ?? '' ) );
+        $source     = sanitize_text_field( wp_unslash( $_POST['source'] ?? 'Widget local fallback' ) );
+
+        if ( '' === $value ) {
+            wp_send_json_error( array( 'message' => 'Missing value' ), 400 );
+        }
+
+        $lead_id = $this->upsert_local_lead_fragment( $session_id, $field, $label, $value, $source );
+        if ( ! $lead_id ) {
+            wp_send_json_error( array( 'message' => 'Could not store lead fragment' ), 500 );
+        }
+        wp_send_json_success( array( 'lead_id' => $lead_id ) );
     }
 
     public function ajax_delete_lead() {
@@ -1548,6 +1965,15 @@ class SMVA_Plugin {
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $lead_id = sanitize_text_field( wp_unslash( isset( $_POST['lead_id'] ) ? $_POST['lead_id'] : '' ) );
         if ( ! $lead_id ) { wp_send_json_error( 'Missing lead_id' ); return; }
+
+        if ( 0 === strpos( $lead_id, 'local_' ) ) {
+            $leads = array_values( array_filter( $this->get_local_leads(), function( $lead ) use ( $lead_id ) {
+                return ! isset( $lead['id'] ) || $lead['id'] !== $lead_id;
+            } ) );
+            $this->save_local_leads( $leads );
+            wp_send_json_success();
+        }
+
         $response = wp_remote_request(
             SMVA_API_URL . '/plugin/leads/' . urlencode( $lead_id ) . '?license_key=' . urlencode( $license_key ),
             array( 'method' => 'DELETE', 'timeout' => 15 )

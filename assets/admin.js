@@ -1,5 +1,11 @@
 /* StudioMeta Voice AI - Admin JS */
 jQuery(function($) {
+    window.SMVAAdminDebug = window.SMVAAdminDebug || {};
+    window.SMVAAdminDebug.version = '1.3.59';
+    window.SMVAAdminDebug.context = 'wp-admin';
+    window.SMVAAdminDebug.loadedAt = Date.now();
+    window.SMVAAdminDebug.hasAdminConfig = !!window.smvaAdmin;
+
     var nonce = window.smvaAdmin ? window.smvaAdmin.nonce : '';
 
     function showLoading(msg) {
@@ -11,6 +17,8 @@ jQuery(function($) {
         $('#smva-agent-loading').hide();
     }
     var ajaxUrl = window.smvaAdmin ? window.smvaAdmin.ajaxUrl : '';
+    window.SMVAAdminDebug.ajaxUrl = ajaxUrl;
+    window.SMVAAdminDebug.hasNonce = !!nonce;
 
     // ── License Activation (with confirm-replace flow) ─────────────────────
     function performActivation(key, confirmReplace) {
@@ -52,6 +60,27 @@ jQuery(function($) {
         var key = $('#smva-license-input').val().trim();
         if (!key) return;
         performActivation(key, false);
+    });
+
+
+    $('#smva-start-trial-btn').on('click', function() {
+        var $btn = $(this).text('Starting trial...').prop('disabled', true);
+        var $msg = $('#smva-trial-msg').removeClass('smva-msg-success smva-msg-error').hide();
+        $.post(ajaxUrl, { action: 'smva_start_trial', nonce: nonce })
+            .done(function(res) {
+                if (res.success) {
+                    $msg.addClass('smva-msg-success').text((res.data && res.data.message) || 'Trial activated.').show();
+                    if (res.data && res.data.reload) setTimeout(function() { location.reload(); }, 1000);
+                } else {
+                    var errData = res.data || {};
+                    $msg.addClass('smva-msg-error').text(errData.message || 'Could not start trial.').show();
+                    $btn.text('Start Free Trial').prop('disabled', false);
+                }
+            })
+            .fail(function() {
+                $msg.addClass('smva-msg-error').text('Connection error.').show();
+                $btn.text('Start Free Trial').prop('disabled', false);
+            });
     });
 
     // ── Dialog: Confirm replacing other site ─────────────────────────────
@@ -298,6 +327,16 @@ jQuery(function($) {
             },
             xhrFields: { responseType: 'blob' },
             success: function(blob) {
+                if (!blob || !blob.size) {
+                    $('#smva-preview-greeting-btn').prop('disabled', false).text('▶ Preview Greeting');
+                    setPreviewStatus('Preview returned an empty audio file.', true);
+                    return;
+                }
+                if (blob.type && blob.type.indexOf('audio/') !== 0) {
+                    $('#smva-preview-greeting-btn').prop('disabled', false).text('▶ Preview Greeting');
+                    setPreviewStatus('Preview returned a non-audio response. Please check the backend TTS settings.', true);
+                    return;
+                }
                 var url = URL.createObjectURL(blob);
                 var audio = new Audio(url);
                 smvaPreviewAudio = audio;
@@ -858,47 +897,136 @@ jQuery(function($) {
 (function ($) {
   'use strict';
 
+  window.SMVAAdminDebug = window.SMVAAdminDebug || {};
+  window.SMVAAdminDebug.voiceSummary = window.SMVAAdminDebug.voiceSummary || { loadedAt: Date.now() };
+
   var VS = { currentPage: 1, totalPages: 1, activeSession: null };
+  var smvaVoiceSummaryTimezone = (window.smvaAdmin && smvaAdmin.timezone) || (Intl.DateTimeFormat().resolvedOptions().timeZone) || 'UTC';
+  var smvaVoiceSummaryRangeDays = parseInt((window.smvaAdmin && smvaAdmin.dateRangeDays) || 30, 10);
+  if (!smvaVoiceSummaryRangeDays || smvaVoiceSummaryRangeDays < 1) smvaVoiceSummaryRangeDays = 30;
+
+  function smvaPad2(n) { return String(n).padStart(2, '0'); }
+
+  function smvaDatePartsInTimezone(date, timezone) {
+    try {
+      var parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: timezone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).formatToParts(date);
+      var out = {};
+      parts.forEach(function (p) { if (p.type !== 'literal') out[p.type] = p.value; });
+      return { year: out.year, month: out.month, day: out.day };
+    } catch (e) {
+      return { year: date.getFullYear(), month: smvaPad2(date.getMonth() + 1), day: smvaPad2(date.getDate()) };
+    }
+  }
+
+  function smvaLocalDateInputValue(date) {
+    var p = smvaDatePartsInTimezone(date, smvaVoiceSummaryTimezone);
+    return p.year + '-' + p.month + '-' + p.day;
+  }
+
+  function smvaFormatSessionDate(rawDate) {
+    if (!rawDate) return '—';
+    var value = String(rawDate).trim();
+    var d;
+
+    if (/^\d+$/.test(value)) {
+      var num = parseInt(value, 10);
+      d = new Date(num < 100000000000 ? num * 1000 : num);
+    } else {
+      // Convert common MySQL UTC datetime values to ISO-ish values before parsing.
+      // If the backend already sends a timezone (Z or +/-hh:mm), leave it intact.
+      if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(value)) {
+        value = value.replace(' ', 'T');
+        if (!/[zZ]|[+-]\d{2}:?\d{2}$/.test(value)) value += 'Z';
+      }
+      d = new Date(value);
+    }
+
+    return d && !isNaN(d.getTime()) ? d.toLocaleString([], { timeZone: smvaVoiceSummaryTimezone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : escHtml(String(rawDate));
+  }
 
   function vsInit() {
     $('#smva-vs-search-btn').on('click', function () { VS.currentPage = 1; vsLoadSessions(); });
     $(document).on('click', '#smva-vs-modal-close, #smva-vs-overlay', vsCloseModal);
     $(document).on('click', '#smva-vs-summarize-btn', vsGenerateSummary);
-    var today = new Date(), from = new Date();
-    from.setDate(today.getDate() - 30);
-    $('#smva-vs-date-to').val(today.toISOString().split('T')[0]);
-    $('#smva-vs-date-from').val(from.toISOString().split('T')[0]);
+    var today = new Date();
+    var from = new Date(today.getTime() - (smvaVoiceSummaryRangeDays * 24 * 60 * 60 * 1000));
+    $('#smva-vs-date-to').val(smvaLocalDateInputValue(today));
+    $('#smva-vs-date-from').val(smvaLocalDateInputValue(from));
+    $('#smva-vs-timezone-label').text('Timezone: ' + smvaVoiceSummaryTimezone);
+    $('#smva-vs-range-label').text('Showing last ' + smvaVoiceSummaryRangeDays + ' days by default');
+    window.SMVAAdminDebug.voiceSummary.timezone = smvaVoiceSummaryTimezone;
+    window.SMVAAdminDebug.voiceSummary.rangeDays = smvaVoiceSummaryRangeDays;
+    window.SMVAAdminDebug.voiceSummary.localToday = smvaLocalDateInputValue(today);
+    window.SMVAAdminDebug.voiceSummary.localDateFrom = smvaLocalDateInputValue(from);
+    window.SMVAAdminDebug.voiceSummary.timezoneOffsetMinutes = today.getTimezoneOffset();
+    if ($('#smva-vs-tbody').length) { vsLoadSessions(); }
   }
 
   function vsLoadSessions() {
     var $tbody = $('#smva-vs-tbody');
     $tbody.html('<tr><td colspan="5" style="text-align:center;padding:20px;">Loading…</td></tr>');
+    window.SMVAAdminDebug.voiceSummary.lastRequest = {
+      action: 'smva_voice_sessions',
+      page_num: VS.currentPage,
+      date_from: $('#smva-vs-date-from').val(),
+      date_to: $('#smva-vs-date-to').val(),
+      timezone: smvaVoiceSummaryTimezone,
+      requestedAt: Date.now()
+    };
     $.ajax({
       url: smvaAdmin.ajaxUrl,
-      data: { action: 'smva_voice_sessions', nonce: smvaAdmin.nonce, page_num: VS.currentPage, date_from: $('#smva-vs-date-from').val(), date_to: $('#smva-vs-date-to').val() },
+      data: { action: 'smva_voice_sessions', nonce: smvaAdmin.nonce, page_num: VS.currentPage, date_from: $('#smva-vs-date-from').val(), date_to: $('#smva-vs-date-to').val(), timezone: smvaVoiceSummaryTimezone },
       success: function (res) {
+        window.SMVAAdminDebug.voiceSummary.lastResponse = res;
+        window.SMVAAdminDebug.voiceSummary.lastResponseAt = Date.now();
         if (!res.success) { $tbody.html('<tr><td colspan="5">' + (res.data || 'Error') + '</td></tr>'); return; }
-        var sessions = res.data.sessions || [], pagination = res.data.pagination || {};
+        var payload = res.data || {};
+        var sessions = payload.sessions || (payload.data && payload.data.sessions) || payload.items || payload.records || payload.results || payload.conversations || (Array.isArray(payload.data) ? payload.data : []) || [];
+        if (!Array.isArray(sessions) && sessions && typeof sessions === 'object') { sessions = Object.keys(sessions).map(function(k){ return sessions[k]; }); }
+        var pagination = payload.pagination || payload.meta || payload.paging || {};
+        window.SMVAAdminDebug.voiceSummary.parsedSessionCount = sessions.length;
+        window.SMVAAdminDebug.voiceSummary.parsedPagination = pagination;
         VS.totalPages = pagination.pages || 1;
-        if (!sessions.length) { $tbody.html('<tr><td colspan="5" style="text-align:center;padding:20px;">No sessions found.</td></tr>'); vsBuildPagination(pagination); return; }
+        if (!sessions.length) { $tbody.html('<tr><td colspan="5" style="text-align:center;padding:20px;">No sessions found. Open Console and run <code>JSON.stringify(window.SMVAAdminDebug, null, 2)</code> to inspect the API response.</td></tr>'); vsBuildPagination(pagination); return; }
         var rows = '';
         sessions.forEach(function (s) {
-          var date = new Date(s.started_at).toLocaleString();
-          var dur = parseFloat(s.duration_minutes || 0).toFixed(1) + ' min';
-          var turns = s.turn_count || 0;
-          var summBadge = s.ai_summary ? '<span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;">✓ Summary</span>' : '<span style="background:#e9ecef;color:#6c757d;padding:2px 8px;border-radius:10px;font-size:11px;">No summary</span>';
+          var rawDate = s.started_at || s.created_at || s.startedAt || s.createdAt || s.timestamp || s.date || s.created || s.time || '';
+          var date = smvaFormatSessionDate(rawDate);
+          var durVal = s.duration_minutes || s.durationMinutes || (s.duration_seconds ? (parseFloat(s.duration_seconds) / 60) : 0) || (s.durationSeconds ? (parseFloat(s.durationSeconds) / 60) : 0);
+          var dur = parseFloat(durVal || 0).toFixed(1) + ' min';
+          var turns = s.turn_count || s.turns || s.message_count || s.messageCount || 0;
+          var summaryText = s.ai_summary || s.summary || s.aiSummary || '';
+          var summBadge = summaryText ? '<span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;">✓ Summary</span>' : '<span style="background:#e9ecef;color:#6c757d;padding:2px 8px;border-radius:10px;font-size:11px;">No summary</span>';
           var btns = '';
-          if (s.has_transcript) { btns += '<button class="button smva-vs-view-btn" data-session="' + s.session_id + '" data-summary="' + escAttr(s.ai_summary || '') + '">View</button> '; }
-          if (s.has_recording) { btns += '<button class="button smva-vs-play-btn" data-session="' + s.session_id + '">&#9654; Play</button>'; }
-          if (!btns) { btns = '<span style="color:#999;font-size:12px;">No data</span>'; }
-          rows += '<tr data-session-id="' + s.session_id + '"><td>' + date + '</td><td>' + dur + '</td><td>' + turns + '</td><td>' + summBadge + '</td><td>' + btns + '</td></tr>';
+          var sid = s.session_id || s.id || s.sessionId || s.uuid || s.call_id || s.callId || '';
+          var recordingUrl = s.recording_url || s.recordingUrl || s.audio_url || s.audioUrl || s.recording || s.recording_link || s.recordingLink || '';
+          function smvaTruthyFlag(v) {
+            return v === true || v === 1 || v === '1' || String(v).toLowerCase() === 'true' || String(v).toLowerCase() === 'yes';
+          }
+          var hasRecording = !!recordingUrl || smvaTruthyFlag(s.has_recording) || smvaTruthyFlag(s.hasRecording) || smvaTruthyFlag(s.recording_available) || smvaTruthyFlag(s.recordingAvailable);
+          if (sid) { btns += '<button class="button smva-vs-view-btn" data-session="' + escAttr(sid) + '" data-summary="' + escAttr(summaryText) + '">View</button> '; }
+          if (sid && hasRecording) {
+            btns += '<button class="button smva-vs-play-btn" data-session="' + escAttr(sid) + '" data-recording-url="' + escAttr(recordingUrl) + '">&#9654; Play</button>';
+          } else if (sid) {
+            btns += '<span style="color:#8c8f94;font-size:12px;">No recording</span>';
+          }
+          if (!btns) { btns = '<span style="color:#999;font-size:12px;">No session id</span>'; }
+          rows += '<tr data-session-id="' + escAttr(sid) + '" data-raw-date="' + escAttr(rawDate) + '"><td>' + date + '<div style="font-size:11px;color:#8c8f94;">Raw: ' + escHtml(String(rawDate || '—')) + '</div></td><td>' + dur + '</td><td>' + turns + '</td><td>' + summBadge + '</td><td>' + btns + '</td></tr>';
         });
         $tbody.html(rows);
         vsBuildPagination(pagination);
         $('.smva-vs-view-btn').on('click', function () { vsOpenModal($(this).data('session'), $(this).data('summary')); });
-        $('.smva-vs-play-btn').on('click', function () { vsPlayRecording($(this).data('session')); });
+        $('.smva-vs-play-btn').on('click', function () { vsPlayRecording($(this).data('session'), $(this).attr('data-recording-url') || ''); });
       },
-      error: function () { $tbody.html('<tr><td colspan="5">Request failed.</td></tr>'); }
+      error: function (xhr, status, err) {
+        window.SMVAAdminDebug.voiceSummary.lastError = { status: status, error: err, httpStatus: xhr && xhr.status, responseText: xhr && xhr.responseText, at: Date.now() };
+        $tbody.html('<tr><td colspan="5">Request failed.</td></tr>');
+      }
     });
   }
 
@@ -927,6 +1055,8 @@ jQuery(function($) {
       url: smvaAdmin.ajaxUrl,
       data: { action: 'smva_voice_transcript', nonce: smvaAdmin.nonce, session_id: sessionId },
       success: function (res) {
+        window.SMVAAdminDebug.voiceSummary.lastTranscriptResponse = res;
+        window.SMVAAdminDebug.voiceSummary.lastTranscriptAt = Date.now();
         if (!res.success) { $('#smva-vs-transcript-body').html('<p>Error: ' + (res.data || 'Failed') + '</p>'); return; }
         var turns = res.data.transcript || [];
         if (!turns.length) { $('#smva-vs-transcript-body').html('<p><em>No transcript recorded.</em></p>'); return; }
@@ -943,33 +1073,114 @@ jQuery(function($) {
         html += '</div>';
         $('#smva-vs-transcript-body').html(html);
       },
-      error: function () { $('#smva-vs-transcript-body').html('<p>Request failed.</p>'); }
+      error: function (xhr, status, err) { window.SMVAAdminDebug.voiceSummary.lastTranscriptError = { status: status, error: err, httpStatus: xhr && xhr.status, at: Date.now() }; $('#smva-vs-transcript-body').html('<p>Request failed.</p>'); }
     });
   }
 
-  function vsPlayRecording(sessionId) {
-    var key = window.smvaAdmin ? window.smvaAdmin.apiUrl || 'https://api2.studiometa.io' : 'https://api2.studiometa.io';
-    var licKey = '';
-    // Get license key from nonce call - use direct URL
-    var url = 'https://api2.studiometa.io/plugin/voice-summary/sessions/' + sessionId + '/recording?license_key=' + encodeURIComponent(licKey);
-    // Use AJAX to get the recording URL with proper auth
+  function vsShowRecordingPlayer(sessionId, audioUrl, statusText) {
+    var $popup = $('<div style="position:fixed;bottom:20px;right:20px;background:#fff;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.2);padding:16px;z-index:999999;min-width:340px;max-width:420px;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">' +
+      '<strong style="font-size:13px;">Recording: ' + escHtml(sessionId.substring(0,8)) + '…</strong>' +
+      '<button class="smva-close-player" style="background:none;border:none;cursor:pointer;font-size:18px;">&times;</button></div>' +
+      '<div class="smva-player-status" style="font-size:12px;color:#666;margin-bottom:8px;">' + escHtml(statusText || 'Ready to play.') + '</div>' +
+      '<audio controls preload="metadata" style="width:100%;" src="' + escAttr(audioUrl) + '"></audio>' +
+      '<div class="smva-player-error" style="display:none;margin-top:8px;color:#b32d2e;font-size:12px;line-height:1.45;"></div>' +
+      '</div>');
+    $('#smva-audio-player').remove();
+    $popup.attr('id', 'smva-audio-player').appendTo('body');
+    var audio = $popup.find('audio').get(0);
+    audio.addEventListener('loadedmetadata', function(){ $popup.find('.smva-player-status').text('Ready to play.'); });
+    audio.addEventListener('error', function(){
+      var text = 'Recording could not be played. The browser could not read the returned audio file.';
+      $popup.find('.smva-player-status').text('Recording failed.');
+      $popup.find('.smva-player-error').text(text).show();
+      window.SMVAAdminDebug.voiceSummary.lastAudioError = { sessionId: sessionId, src: audio.currentSrc || audioUrl, at: Date.now() };
+    });
+    $popup.find('.smva-close-player').on('click', function() {
+      if (audioUrl && audioUrl.indexOf('blob:') === 0) { URL.revokeObjectURL(audioUrl); }
+      $popup.remove();
+    });
+  }
+
+  function vsShowRecordingError(sessionId, message, detail) {
+    var $popup = $('<div style="position:fixed;bottom:20px;right:20px;background:#fff;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.2);padding:16px;z-index:999999;min-width:340px;max-width:420px;border-left:4px solid #d63638;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+      '<strong style="font-size:13px;">Recording unavailable</strong>' +
+      '<button class="smva-close-player" style="background:none;border:none;cursor:pointer;font-size:18px;">&times;</button></div>' +
+      '<p style="margin:0 0 8px;color:#3c434a;font-size:13px;line-height:1.45;">' + escHtml(message || 'No audio recording was returned for this session.') + '</p>' +
+      '<p style="margin:0;color:#646970;font-size:11px;line-height:1.45;">Session: ' + escHtml(sessionId) + '</p>' +
+      (detail ? '<pre style="white-space:pre-wrap;background:#f6f7f7;border:1px solid #dcdcde;padding:8px;margin:8px 0 0;max-height:120px;overflow:auto;font-size:11px;">' + escHtml(detail) + '</pre>' : '') +
+      '</div>');
+    $('#smva-audio-player').remove();
+    $popup.attr('id', 'smva-audio-player').appendTo('body');
+    $popup.find('.smva-close-player').on('click', function() { $popup.remove(); });
+  }
+
+  function vsPlayRecording(sessionId, recordingUrl) {
+    window.SMVAAdminDebug.voiceSummary.lastPlayRequest = {
+      sessionId: sessionId,
+      recordingUrl: recordingUrl || '',
+      requestedAt: Date.now()
+    };
+
     $.ajax({
       url: smvaAdmin.ajaxUrl,
-      data: { action: 'smva_voice_recording_url', nonce: smvaAdmin.nonce, session_id: sessionId },
-      success: function(res) {
-        if (!res.success) { alert('Recording not available'); return; }
-        var $popup = $('<div style="position:fixed;bottom:20px;right:20px;background:#fff;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.2);padding:16px;z-index:999999;min-width:340px;">' +
-          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">' +
-          '<strong style="font-size:13px;">Recording: ' + sessionId.substring(0,8) + '…</strong>' +
-          '<button class="smva-close-player" style="background:none;border:none;cursor:pointer;font-size:18px;">&times;</button></div>' +
-          '<div style="font-size:11px;color:#666;margin-bottom:6px;">🤖 Agent (left) · 👤 User (right)</div>' +
-          '<audio controls style="width:100%;" src="' + res.data.url + '"></audio>' +
-          '</div>');
-        $('#smva-audio-player').remove();
-        $popup.attr('id', 'smva-audio-player').appendTo('body');
-        $popup.find('.smva-close-player').on('click', function() { $popup.remove(); });
+      data: {
+        action: 'smva_voice_recording_url',
+        nonce: smvaAdmin.nonce,
+        session_id: sessionId,
+        recording_url: recordingUrl || ''
       },
-      error: function() { alert('Failed to load recording'); }
+      success: function(res) {
+        window.SMVAAdminDebug.voiceSummary.lastRecordingUrlResponse = res;
+        window.SMVAAdminDebug.voiceSummary.lastRecordingUrlAt = Date.now();
+        if (!res.success || !res.data || !res.data.url) {
+          var msg = (res.data && (res.data.message || res.data)) || 'Recording not available for this session yet.';
+          vsShowRecordingError(sessionId, msg, '');
+          return;
+        }
+
+        // If the backend/session gave us a direct recording URL, let the browser play it directly.
+        // This avoids CORS issues that can happen when fetching signed storage URLs in JS first.
+        if (res.data.direct) {
+          window.SMVAAdminDebug.voiceSummary.lastRecordingDirectUrl = res.data.url;
+          vsShowRecordingPlayer(sessionId, res.data.url, 'Loading direct recording…');
+          return;
+        }
+
+        // For the WordPress proxy URL, fetch first so a missing backend recording shows a friendly
+        // admin message instead of only a red 404 in the browser console/audio element.
+        window.SMVAAdminDebug.voiceSummary.lastRecordingFetchStart = Date.now();
+        fetch(res.data.url, { credentials: 'same-origin', cache: 'no-store' })
+          .then(function(response) {
+            window.SMVAAdminDebug.voiceSummary.lastRecordingFetchStatus = response.status;
+            window.SMVAAdminDebug.voiceSummary.lastRecordingFetchContentType = response.headers.get('content-type') || '';
+            if (!response.ok) {
+              return response.text().then(function(text) {
+                throw { status: response.status, text: text };
+              });
+            }
+            return response.blob();
+          })
+          .then(function(blob) {
+            window.SMVAAdminDebug.voiceSummary.lastRecordingBlob = { size: blob.size, type: blob.type || '', at: Date.now() };
+            if (!blob || !blob.size) {
+              throw { status: 0, text: 'The recording response was empty.' };
+            }
+            var blobUrl = URL.createObjectURL(blob);
+            vsShowRecordingPlayer(sessionId, blobUrl, 'Recording loaded.');
+          })
+          .catch(function(error) {
+            var detail = error && error.text ? String(error.text).substring(0, 1000) : '';
+            var msg = 'Recording was not returned by the voice backend for this session. This usually means call recording is not being stored/enabled on the backend, or this session has no saved audio file yet.';
+            window.SMVAAdminDebug.voiceSummary.lastRecordingFetchError = { sessionId: sessionId, status: error && error.status, text: detail, at: Date.now() };
+            vsShowRecordingError(sessionId, msg, detail);
+          });
+      },
+      error: function(xhr, status, err) {
+        window.SMVAAdminDebug.voiceSummary.lastRecordingUrlError = { status: status, error: err, httpStatus: xhr && xhr.status, responseText: xhr && xhr.responseText, at: Date.now() };
+        vsShowRecordingError(sessionId, 'Failed to prepare recording playback URL.', xhr && xhr.responseText ? xhr.responseText : '');
+      }
     });
   }
 

@@ -50,6 +50,38 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 #wpfooter{display:none!important}
 #wpcontent{padding-bottom:0!important}
 
+
+
+/* ── Product polish v1.3.55 ───────────────────────────────────────────── */
+.smva-main-header-pro{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px;padding:18px 20px;border:1px solid #e5e7eb;border-radius:18px;background:linear-gradient(135deg,#ffffff 0%,#f8fbff 55%,#eef2ff 100%);box-shadow:0 10px 28px rgba(15,23,42,.06)}
+.smva-main-kicker{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#6366f1;margin-bottom:6px}
+.smva-main-title-pro{font-size:24px;font-weight:800;letter-spacing:-.04em;color:#0f172a;margin:0;line-height:1.1}
+.smva-main-sub-pro{font-size:13px;color:#64748b;margin-top:6px;max-width:620px;line-height:1.5}
+.smva-main-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.smva-status-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid #e5e7eb;border-radius:999px;padding:8px 11px;background:#fff;color:#475569;font-size:12px;font-weight:700;white-space:nowrap}
+.smva-status-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.13)}
+.smva-status-dot.off{background:#ef4444;box-shadow:0 0 0 4px rgba(239,68,68,.13)}
+.smva-wizard{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
+.smva-wizard-step{position:relative;display:flex;gap:10px;align-items:flex-start;text-decoration:none;color:#0f172a;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:13px 14px;box-shadow:0 1px 2px rgba(15,23,42,.04);transition:all .18s ease}
+.smva-wizard-step:hover{transform:translateY(-1px);border-color:#a5b4fc;box-shadow:0 8px 20px rgba(99,102,241,.11)}
+.smva-wizard-step.is-done{background:linear-gradient(135deg,#f0fdf4,#ffffff);border-color:#bbf7d0}
+.smva-wizard-num{width:26px;height:26px;border-radius:10px;background:#eef2ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0}
+.smva-wizard-step.is-done .smva-wizard-num{background:#dcfce7;color:#15803d}
+.smva-wizard-title{font-size:13px;font-weight:800;margin-bottom:3px;color:#111827}
+.smva-wizard-copy{font-size:11px;color:#64748b;line-height:1.35}
+.smva-status-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.smva-status-card{border:1px solid #e5e7eb;border-radius:16px;background:#fff;padding:15px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.smva-status-card-top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
+.smva-status-card-label{font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.08em}
+.smva-status-card-value{font-size:15px;font-weight:800;color:#0f172a;line-height:1.25}
+.smva-status-card-sub{font-size:12px;color:#64748b;margin-top:3px;line-height:1.35}
+.smva-dot-ok,.smva-dot-warn,.smva-dot-bad{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}.smva-dot-ok{background:#22c55e}.smva-dot-warn{background:#f59e0b}.smva-dot-bad{background:#ef4444}
+.smva-action-bar{position:sticky;bottom:0;z-index:5;background:rgba(248,250,252,.92);backdrop-filter:blur(10px);border:1px solid #e5e7eb;border-radius:16px;padding:12px;margin:16px 0 18px;display:flex;justify-content:flex-end;gap:10px;align-items:center;box-shadow:0 -4px 18px rgba(15,23,42,.05)}
+.smva-health-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.smva-health-item{border:1px solid #e5e7eb;border-radius:15px;padding:14px;background:#fff;display:flex;gap:12px;align-items:flex-start}.smva-health-item.ok{border-color:#bbf7d0;background:#f0fdf4}.smva-health-item.bad{border-color:#fecaca;background:#fef2f2}.smva-health-icon{width:30px;height:30px;border-radius:11px;background:#eef2ff;display:flex;align-items:center;justify-content:center;flex-shrink:0}.smva-health-title{font-size:13px;font-weight:800;color:#0f172a}.smva-health-detail{font-size:12px;color:#64748b;margin-top:3px;line-height:1.4}.smva-health-state{font-size:11px;font-weight:800;margin-left:auto}.smva-health-item.ok .smva-health-state{color:#15803d}.smva-health-item.bad .smva-health-state{color:#b91c1c}
+@media(max-width:980px){.smva-status-grid,.smva-wizard{grid-template-columns:repeat(2,minmax(0,1fr))}.smva-main-header-pro{align-items:flex-start;flex-direction:column}.smva-main-actions{justify-content:flex-start}.smva-health-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.smva-status-grid,.smva-wizard{grid-template-columns:1fr}.smva-action-bar{position:static;justify-content:stretch}.smva-action-bar .smva-btn{flex:1}}
+
 /* responsive */
 @media(max-width:782px){
   .smva-admin-wrap{flex-direction:column;margin:0}
@@ -122,6 +154,13 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     <span class="smva-nav-label">Leads</span>
                 </a>
             </div>
+            <div class="smva-sidenav-group">
+                <div class="smva-sidenav-label">System</div>
+                <a href="?page=smva&tab=health" class="<?php echo $active_tab==='health' ? 'active' : ''; ?>">
+                    <span class="smva-nav-icon">🩺</span>
+                    <span class="smva-nav-label">Health Check</span>
+                </a>
+            </div>
         </nav>
 
         <div class="smva-sb-footer">
@@ -141,6 +180,35 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
     <!-- MAIN CONTENT -->
     <div class="smva-main">
+    <?php
+        $smva_tab_titles = array(
+            'license'       => array( 'License Setup', 'Activate or manage your StudioMeta subscription.' ),
+            'dashboard'     => array( 'Command Center', 'Monitor usage, setup progress, system status, and recent activity.' ),
+            'general'       => array( 'General Settings', 'Choose the agent language, voice profile, timezone, and greeting.' ),
+            'agent'         => array( 'Agent Personality', 'Tune how your AI agent responds and represents your business.' ),
+            'widget'        => array( 'Widget Experience', 'Customize the floating widget, display behavior, and performance options.' ),
+            'automation'    => array( 'Workflow Buttons', 'Create quick actions that help visitors trigger useful workflows.' ),
+            'history'       => array( 'Chat History', 'Review recent conversations and visitor interactions.' ),
+            'voice_summary' => array( 'Voice Summary', 'Review voice sessions and usage details.' ),
+            'leads'         => array( 'Leads', 'See captured visitor leads and contact requests.' ),
+            'health'        => array( 'System Health', 'Check license, quota API, WebSocket configuration, and plugin logs.' ),
+        );
+        $smva_current_header = $smva_tab_titles[ $active_tab ] ?? array( 'StudioMeta Voice AI', 'Manage your voice and chat AI widget.' );
+        $smva_voice_on = get_option( 'smva_voice_enabled', '1' ) === '1';
+        $smva_chat_on  = get_option( 'smva_chat_enabled', '1' ) === '1';
+    ?>
+    <div class="smva-main-header-pro">
+        <div>
+            <div class="smva-main-kicker">StudioMeta Voice AI</div>
+            <h1 class="smva-main-title-pro"><?php echo esc_html( $smva_current_header[0] ); ?></h1>
+            <div class="smva-main-sub-pro"><?php echo esc_html( $smva_current_header[1] ); ?></div>
+        </div>
+        <div class="smva-main-actions">
+            <span class="smva-status-pill"><span class="smva-status-dot <?php echo $is_active ? '' : 'off'; ?>"></span><?php echo $is_active ? 'License active' : 'License inactive'; ?></span>
+            <span class="smva-status-pill">🎙️ <?php echo $smva_voice_on ? 'Voice on' : 'Voice off'; ?></span>
+            <span class="smva-status-pill">💬 <?php echo $smva_chat_on ? 'Chat on' : 'Chat off'; ?></span>
+        </div>
+    </div>
     <div class="smva-tab-content">
 
     <?php // ── LICENSE TAB ─────────────────────────────────────────────── ?>
@@ -216,14 +284,17 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
         <?php else : ?>
 
-            <?php // No internal token — trial activation likely failed. Offer retry + manual paste. ?>
+            <?php // No internal token — ask the administrator to explicitly start a trial or paste a license key. ?>
             <?php $last_attempt = (int) get_option( 'smva_trial_last_attempt', 0 ); ?>
-            <div class="smva-notice smva-notice-warning">
-                <strong>⚠ Trial activation pending.</strong>
-                We could not reach our licensing server<?php echo $last_attempt ? ' (last tried ' . esc_html( human_time_diff( $last_attempt ) ) . ' ago)' : ''; ?>.
-                The plugin will retry automatically, or you can paste a license key manually below.
+            <div class="smva-notice smva-notice-info">
+                <strong>Start your free trial.</strong>
+                To activate the AI widget, StudioMeta will securely send your site URL, admin email, WordPress version, and plugin version to the StudioMeta licensing server.
+                <?php echo $last_attempt ? ' Last attempt: ' . esc_html( human_time_diff( $last_attempt ) ) . ' ago.' : ''; ?>
             </div>
-            <p style="color:#6b7280;font-size:13px;margin-bottom:16px">Enter your license key to activate the plugin.</p>
+            <button id="smva-start-trial-btn" class="smva-btn smva-btn-primary" style="margin-bottom:16px">Start Free Trial</button>
+            <span id="smva-trial-msg" style="display:block;margin:0 0 14px;font-size:13px"></span>
+
+            <p style="color:#6b7280;font-size:13px;margin-bottom:16px">Already have a license key? Enter it below.</p>
             <div style="display:flex;gap:8px">
                 <input type="text" id="smva-license-input" class="smva-input" placeholder="VOICEAI-XXXX-XXXX-XXXX" style="flex:1">
                 <button id="smva-activate-btn" class="smva-btn smva-btn-primary" style="flex:none">Activate</button>
@@ -231,7 +302,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             <span id="smva-license-msg" style="display:block;margin-top:8px;font-size:13px"></span>
 
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid #f3f4f6">
-                <p style="font-size:13px;color:#6b7280;margin:0 0 8px">Don't have a key yet?</p>
+                <p style="font-size:13px;color:#6b7280;margin:0 0 8px">Want to compare plans?</p>
                 <a href="<?php echo esc_url( SMVA_PRICING_URL ); ?>" target="_blank" rel="noopener" class="smva-btn smva-btn-primary">💎 View Pricing</a>
             </div>
 
@@ -263,6 +334,29 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     <?php if ( $error ) : ?>
         <div class="smva-notice smva-notice-error"><?php echo esc_html( $error ); ?></div>
     <?php else : ?>
+
+        <?php
+        $voice_enabled = get_option( 'smva_voice_enabled', '1' ) === '1';
+        $chat_enabled  = get_option( 'smva_chat_enabled', '1' ) === '1';
+        $widget_mode   = get_option( 'smva_display_mode', 'sitewide' );
+        $agent_voice   = get_option( 'smva_voice_name', get_option( 'smva_voice', 'Aoede' ) );
+        ?>
+        <div class="smva-card" style="margin-bottom:16px">
+            <div class="smva-card-header"><h2 class="smva-card-title">Setup Wizard</h2><span class="smva-hint-inline">recommended launch path</span></div>
+            <div class="smva-wizard">
+                <a class="smva-wizard-step <?php echo $is_active ? 'is-done' : ''; ?>" href="?page=smva&tab=license"><span class="smva-wizard-num"><?php echo $is_active ? '✓' : '1'; ?></span><span><span class="smva-wizard-title">Activate License</span><span class="smva-wizard-copy">Connect this site to StudioMeta.</span></span></a>
+                <a class="smva-wizard-step <?php echo $agent_voice ? 'is-done' : ''; ?>" href="?page=smva&tab=general"><span class="smva-wizard-num"><?php echo $agent_voice ? '✓' : '2'; ?></span><span><span class="smva-wizard-title">Choose Voice</span><span class="smva-wizard-copy">Pick gender, tone, and greeting.</span></span></a>
+                <a class="smva-wizard-step <?php echo $widget_mode ? 'is-done' : ''; ?>" href="?page=smva&tab=widget"><span class="smva-wizard-num"><?php echo $widget_mode ? '✓' : '3'; ?></span><span><span class="smva-wizard-title">Customize Widget</span><span class="smva-wizard-copy">Set display mode and styling.</span></span></a>
+                <a class="smva-wizard-step" href="?page=smva&tab=health"><span class="smva-wizard-num">4</span><span><span class="smva-wizard-title">Test System</span><span class="smva-wizard-copy">Run health, chat, and voice checks.</span></span></a>
+            </div>
+        </div>
+
+        <div class="smva-status-grid">
+            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label">License</div><span class="<?php echo $is_active ? 'smva-dot-ok' : 'smva-dot-bad'; ?>"></span></div><div class="smva-status-card-value"><?php echo $is_active ? 'Active' : 'Not activated'; ?></div><div class="smva-status-card-sub"><?php echo $is_active ? 'Ready to serve visitors.' : 'Activate to unlock chat and voice.'; ?></div></div>
+            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label">Voice</div><span class="<?php echo $voice_enabled ? 'smva-dot-ok' : 'smva-dot-warn'; ?>"></span></div><div class="smva-status-card-value"><?php echo $voice_enabled ? 'Enabled' : 'Disabled'; ?></div><div class="smva-status-card-sub"><?php echo esc_html( $agent_voice ?: 'Default voice' ); ?></div></div>
+            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label">Chat</div><span class="<?php echo $chat_enabled ? 'smva-dot-ok' : 'smva-dot-warn'; ?>"></span></div><div class="smva-status-card-value"><?php echo $chat_enabled ? 'Enabled' : 'Disabled'; ?></div><div class="smva-status-card-sub">Text assistant availability.</div></div>
+            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label">Widget</div><span class="<?php echo $widget_mode ? 'smva-dot-ok' : 'smva-dot-warn'; ?>"></span></div><div class="smva-status-card-value"><?php echo esc_html( ucfirst( str_replace( '_', ' ', $widget_mode ?: 'shortcode' ) ) ); ?></div><div class="smva-status-card-sub">Frontend display mode.</div></div>
+        </div>
 
         <?php
         $dv_used  = floatval( $usage['voice_minutes_used']  ?? 0 );
@@ -638,7 +732,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
         <div class="smva-action-bar">
             <span id="smva-save-msg" class="smva-save-msg"></span>
-            <button type="submit" class="smva-btn smva-btn-primary">Save General Settings</button>
+            <a href="?page=smva&tab=health" class="smva-btn">🩺 Test System</a>
+            <button type="button" class="smva-btn" id="smva-preview-greeting-btn-quick">▶ Test Voice</button>
+            <button type="submit" class="smva-btn smva-btn-primary">💾 Save General Settings</button>
         </div>
 
         <div class="smva-card">
@@ -649,6 +745,17 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             </div>
         </div>
     </form>
+    <script>
+    document.addEventListener('DOMContentLoaded', function(){
+        var quick = document.getElementById('smva-preview-greeting-btn-quick');
+        if (quick) {
+            quick.addEventListener('click', function(){
+                var preview = document.getElementById('smva-preview-greeting-btn');
+                if (preview) { preview.click(); }
+            });
+        }
+    });
+    </script>
 
     <?php // ── AGENT TAB ────────────────────────────────────────────────── ?>
     <?php elseif ( $active_tab === 'agent' ) :
@@ -834,6 +941,32 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     </div>
                 </div>
 
+            </div>
+        </div>
+
+        <div class="smva-card" style="margin-top:16px">
+            <div class="smva-card-header"><h2 class="smva-card-title">Performance &amp; Workflow Buttons</h2></div>
+            <div class="smva-form-grid">
+                <div class="smva-field">
+                    <label>Frontend Loading</label>
+                    <input type="hidden" name="smva_lazy_load_widget" value="0"><label class="smva-toggle-label"><input type="checkbox" name="smva_lazy_load_widget" value="1" <?php checked( get_option('smva_lazy_load_widget','1'), '1' ); ?>> Lazy-load interaction-heavy logic</label>
+                    <p class="smva-hint">Keeps the widget shell light. Voice/audio still starts only after the visitor clicks voice.</p>
+                </div>
+                <div class="smva-field">
+                    <label>Event Debug Log</label>
+                    <input type="hidden" name="smva_debug_events" value="0"><label class="smva-toggle-label"><input type="checkbox" name="smva_debug_events" value="1" <?php checked( get_option('smva_debug_events','1'), '1' ); ?>> Keep recent plugin events</label>
+                    <p class="smva-hint">Stores last 50 non-sensitive plugin events for troubleshooting.</p>
+                </div>
+                <div class="smva-field smva-field-full">
+                    <label>Workflow Trigger Buttons <span>— one per line: Label | message sent to agent</span></label>
+                    <textarea name="smva_workflow_buttons" class="smva-textarea" rows="4" placeholder="Book Appointment | I would like to book an appointment.&#10;Request Callback | Please help me request a callback."><?php
+                        $wb = json_decode( get_option('smva_workflow_buttons','[]'), true );
+                        if ( is_array( $wb ) ) {
+                            echo esc_textarea( implode( "
+", array_map( function( $b ) { return ( $b['label'] ?? '' ) . ' | ' . ( $b['message'] ?? $b['label'] ?? '' ); }, $wb ) ) );
+                        }
+                    ?></textarea>
+                </div>
             </div>
         </div>
 
@@ -1130,6 +1263,45 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     });
     </script>
 
+<?php elseif ( $active_tab === 'health' ) : ?>
+<div class="smva-card">
+    <div class="smva-card-header">
+        <h2 class="smva-card-title">🩺 Health Check</h2>
+        <button type="button" class="smva-btn smva-btn-primary" id="smva-run-health">Run Check</button>
+    </div>
+    <p class="smva-desc">Checks plugin configuration, license/quota API connectivity, and WebSocket configuration. Browser microphone playback still needs a frontend test.</p>
+    <div id="smva-health-results" style="display:grid;gap:10px;margin-top:14px">
+        <div style="padding:14px;border:1px solid #e5e7eb;border-radius:12px;color:#64748b">Click Run Check to start.</div>
+    </div>
+</div>
+<div class="smva-card" style="margin-top:16px">
+    <div class="smva-card-header">
+        <h2 class="smva-card-title">Recent Plugin Events</h2>
+        <div style="display:flex;gap:8px"><button type="button" class="smva-btn" id="smva-refresh-logs">Refresh</button><button type="button" class="smva-btn" id="smva-clear-logs">Clear</button></div>
+    </div>
+    <div id="smva-event-logs" style="display:grid;gap:8px;margin-top:10px"></div>
+</div>
+<script>
+jQuery(function($){
+    function esc(s){return $('<div>').text(s || '').html();}
+    function renderHealth(data){
+        var html=''; Object.keys(data||{}).forEach(function(k){var it=data[k]||{}; var cls=it.ok?'ok':'bad'; var icon=it.ok?'✓':'!'; html+='<div class="smva-health-item '+cls+'"><div class="smva-health-icon">'+icon+'</div><div><div class="smva-health-title">'+esc(it.label)+'</div><div class="smva-health-detail">'+esc(it.detail)+'</div></div><div class="smva-health-state">'+(it.ok?'OK':'Check')+'</div></div>';});
+        $('#smva-health-results').attr('class','smva-health-grid').html(html || '<div>No result.</div>');
+    }
+    function loadLogs(){
+        $('#smva-event-logs').html('<div style="color:#94a3b8">Loading...</div>');
+        $.post(smvaAdmin.ajaxUrl,{action:'smva_get_event_logs',nonce:smvaAdmin.nonce},function(r){
+            var logs=(r.success&&r.data)||[]; if(!logs.length){$('#smva-event-logs').html('<div style="color:#94a3b8">No events yet.</div>');return;}
+            $('#smva-event-logs').html(logs.map(function(l){return '<div style="border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px"><strong style="font-size:12px;color:#334155">'+esc(l.type)+'</strong><span style="float:right;color:#94a3b8;font-size:11px">'+esc(l.time)+'</span><div style="font-size:13px;color:#475569;margin-top:3px">'+esc(l.message)+'</div></div>';}).join(''));
+        });
+    }
+    $('#smva-run-health').on('click',function(){var b=$(this);b.prop('disabled',true).text('Checking...');$.post(smvaAdmin.ajaxUrl,{action:'smva_health_check',nonce:smvaAdmin.nonce},function(r){if(r.success)renderHealth(r.data);else $('#smva-health-results').html('<div style="color:#b91c1c">Health check failed.</div>');loadLogs();}).always(function(){b.prop('disabled',false).text('Run Check');});});
+    $('#smva-refresh-logs').on('click',loadLogs);
+    $('#smva-clear-logs').on('click',function(){if(!confirm('Clear event logs?'))return;$.post(smvaAdmin.ajaxUrl,{action:'smva_clear_event_logs',nonce:smvaAdmin.nonce},loadLogs);});
+    loadLogs();
+});
+</script>
+
 <?php elseif ( $active_tab === 'voice_summary' ) : ?>
 <div class="smva-vs-wrap">
   <h2>Voice Summary</h2>
@@ -1137,6 +1309,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     <label>From <input type="date" id="smva-vs-date-from" /></label>
     <label>To <input type="date" id="smva-vs-date-to" /></label>
     <button class="button button-primary" id="smva-vs-search-btn">Search</button>
+    <span id="smva-vs-timezone-label" style="font-size:12px;color:#64748b;margin-left:8px;"></span>
+    <span id="smva-vs-range-label" style="font-size:12px;color:#64748b;margin-left:8px;"></span>
   </div>
   <table class="widefat smva-vs-table">
     <thead><tr><th>Date</th><th>Duration</th><th>Turns</th><th>Summary</th><th>Actions</th></tr></thead>
@@ -1180,32 +1354,47 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 <script>
 (function(){
     var page=1,total=0,limit=20,allLeads=[];
+    var smvaLeadsAjaxUrl = <?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>;
+    var smvaLeadsNonce   = <?php echo wp_json_encode( wp_create_nonce( 'smva_nonce' ) ); ?>;
     function load(p){
         page=p||1;
-        jQuery.post(ajaxurl,{action:'smva_get_leads',nonce:smvaAdmin.nonce,page:page,limit:limit},function(r){
-            if(!r.success){return;}
-            allLeads=r.data.leads||[];total=r.data.total||0;
+        jQuery.post(smvaLeadsAjaxUrl,{action:'smva_get_leads',nonce:smvaLeadsNonce,page:page,limit:limit},function(r){
+            if(!r || !r.success){
+                var tb=document.getElementById('smva-leads-tbody');
+                if(tb){ tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:#b91c1c">Could not load leads.</td></tr>'; }
+                return;
+            }
+            allLeads=(r.data&&r.data.leads)?r.data.leads:[];total=(r.data&&r.data.total)?r.data.total:0;
             render(allLeads);renderPagination();
             document.getElementById('smva-leads-count').textContent=total+' leads total';
+        }).fail(function(){
+            var tb=document.getElementById('smva-leads-tbody');
+            if(tb){ tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:#b91c1c">Could not load leads.</td></tr>'; }
         });
+    }
+    function esc(v){
+        return String(v == null ? '' : v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];});
     }
     function render(leads){
         var tb=document.getElementById('smva-leads-tbody');
         if(!leads||!leads.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:#9ca3af">No leads yet.</td></tr>';return;}
         tb.innerHTML=leads.map(function(l){
-            return '<tr><td style="font-size:12px;white-space:nowrap">'+new Date(l.created_at).toLocaleString()+'</td>'+
-            '<td>'+(l.name||'—')+'</td>'+
-            '<td>'+(l.email?'<a href="mailto:'+l.email+'">'+l.email+'</a>':'—')+'</td>'+
-            '<td>'+(l.phone?'<a href="tel:'+l.phone+'">'+l.phone+'</a>':'—')+'</td>'+
-            '<td><span style="font-size:11px;padding:2px 8px;background:#eff6ff;color:#1d4ed8;border-radius:10px">'+(l.source||'voice')+'</span></td>'+
-            '<td style="font-size:12px;color:#6b7280;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(l.notes||'—')+'</td>'+
-            '<td><button class="button button-small smva-lead-del" data-id="'+l.id+'">Delete</button></td></tr>';
+            var created = l.created_at ? new Date(l.created_at).toLocaleString() : '—';
+            var email = l.email ? String(l.email) : '';
+            var phone = l.phone ? String(l.phone) : '';
+            return '<tr><td style="font-size:12px;white-space:nowrap">'+esc(created)+'</td>'+ 
+            '<td>'+esc(l.name||'—')+'</td>'+ 
+            '<td>'+(email?'<a href="mailto:'+esc(email)+'">'+esc(email)+'</a>':'—')+'</td>'+ 
+            '<td>'+(phone?'<a href="tel:'+esc(phone)+'">'+esc(phone)+'</a>':'—')+'</td>'+ 
+            '<td><span style="font-size:11px;padding:2px 8px;background:#eff6ff;color:#1d4ed8;border-radius:10px">'+esc(l.source||'voice')+'</span></td>'+ 
+            '<td style="font-size:12px;color:#6b7280;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(l.notes||'—')+'</td>'+ 
+            '<td><button class="button button-small smva-lead-del" data-id="'+esc(l.id||'')+'">Delete</button></td></tr>';
         }).join('');
         document.querySelectorAll('.smva-lead-del').forEach(function(b){
             b.addEventListener('click',function(){
                 if(!confirm('Delete this lead?'))return;
                 var id=this.dataset.id;
-                jQuery.post(ajaxurl,{action:'smva_delete_lead',nonce:smvaAdmin.nonce,lead_id:id},function(r){if(r.success)load(page);});
+                jQuery.post(smvaLeadsAjaxUrl,{action:'smva_delete_lead',nonce:smvaLeadsNonce,lead_id:id},function(r){if(r.success)load(page);});
             });
         });
     }
@@ -1220,9 +1409,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         if(!allLeads.length){alert('No leads to export');return;}
         var csv=['Date,Name,Email,Phone,Source,Notes'];
         allLeads.forEach(function(l){csv.push(['"'+(l.created_at||'')+'"','"'+(l.name||'')+'"','"'+(l.email||'')+'"','"'+(l.phone||'')+'"','"'+(l.source||'')+'"','"'+(l.notes||'').replace(/"/g,"'")+'"'].join(','));});
-        var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv.join('
-')],{type:'text/csv'}));
-        a.download='leads-'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+        var a=document.createElement('a');
+        a.href=URL.createObjectURL(new Blob([csv.join('\n')],{type:'text/csv'}));
+        a.download='leads-'+new Date().toISOString().slice(0,10)+'.csv';
+        a.click();
     });
     load(1);
 })();

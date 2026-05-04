@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, voice ai, ai assistant, customer support, gemini
 Requires at least: 6.0
 Tested up to: 6.9
-Stable tag: 1.3.32
+Stable tag: 1.3.59
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -154,6 +154,11 @@ Visit [studiometa.io/support](https://studiometa.io/support) or use the support 
 5. Widget appearance — six visual themes to match your brand
 
 == Changelog ==
+
+= 1.3.65 =
+* Voice Summary: hide Play button for sessions that do not have a saved recording.
+* Voice Summary: show clear No recording status for sessions without audio files.
+
 
 = 1.3.32 =
 * New: Feature C — display_text tool: agent now shows clickable cards for email, phone, URL, and address in the chat panel

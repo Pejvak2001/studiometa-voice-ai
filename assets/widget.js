@@ -1,8 +1,15 @@
 (async function() {
     'use strict';
 
+    window.SMVAAudioDebug = window.SMVAAudioDebug || {};
+    window.SMVAAudioDebug.version = '1.3.59';
+    window.SMVAAudioDebug.context = 'frontend-widget';
+    window.SMVAAudioDebug.loadedAt = Date.now();
+
     const cfg = window.smvaConfig || {};
-    if (!cfg.internalToken) { console.warn('[SMVA] No token'); return; }
+    window.SMVAAudioDebug.hasConfig = !!window.smvaConfig;
+    window.SMVAAudioDebug.hasInternalToken = !!cfg.internalToken;
+    if (!cfg.internalToken) { window.SMVAAudioDebug.loadError = 'Missing internalToken'; console.warn('[SMVA] No token'); return; }
 
     const CONFIG = {
         internalToken: cfg.internalToken,
@@ -10,6 +17,7 @@
         wsUrl: cfg.wsUrl || 'wss://api2.studiometa.io/voice',
         apiUrl: cfg.apiUrl || 'https://api2.studiometa.io',
         ajaxUrl: cfg.ajaxUrl || '',
+        widgetNonce: cfg.widgetNonce || '',
         pricingUrl: cfg.pricingUrl || 'https://studiometa.io/pricing/',
         widgetMode: cfg.widgetMode || 'full',
         plan: cfg.plan || '',
@@ -150,6 +158,8 @@
     let ws = null;
     let chatWs = null;
     let audioContext = null;
+    let audioCaptureSource = null;
+    let audioCaptureNode = null;
     let mediaStream = null;
     let activeTab = CONFIG.defaultTab;
     if (activeTab === 'voice' && !caps.voice) activeTab = 'chat';
@@ -166,10 +176,15 @@
     let chatSavedCount = 0;
     let audioQueue = [];
     let isPlayingAudio = false;
+    let playbackAudioContext = null;
+    let playbackSources = [];
     let currentPlaybackSource = null;
+    let nextPlaybackTime = 0;
     let playbackGeneration = 0;
     let suggestionsShown = true;
     let agentEndedCall = false;
+    const widgetSessionId = 'smva_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+    window.SMVAAudioDebug.widgetSessionId = widgetSessionId;
 
     const MIC = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
     const CHAT_IC = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
@@ -180,6 +195,27 @@
 
     function h(id) { return document.getElementById(id); }
     function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    function saveLeadFragment(field, label, value, source) {
+        if (!CONFIG.ajaxUrl || !CONFIG.widgetNonce || !value) return;
+        const body = new URLSearchParams();
+        body.append('action', 'smva_capture_lead_fragment');
+        body.append('nonce', CONFIG.widgetNonce);
+        body.append('session_id', widgetSessionId);
+        body.append('field', field || 'message');
+        body.append('label', label || field || 'Message');
+        body.append('value', value);
+        body.append('source', source || 'Voice widget');
+        fetch(CONFIG.ajaxUrl, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString() })
+            .then(function(r){ return r.json().catch(function(){ return null; }); })
+            .then(function(json){
+                window.SMVAAudioDebug.lastLeadFragmentSavedAt = Date.now();
+                window.SMVAAudioDebug.lastLeadFragmentResponse = json;
+            })
+            .catch(function(err){
+                window.SMVAAudioDebug.lastLeadFragmentError = String(err && err.message || err);
+            });
+    }
     function setSt(txt) { const e = h('smva-status'); if(e) e.textContent = txt; }
 
     function saveChatHistory() {
@@ -409,12 +445,65 @@
             if (textSendBtn && textInput) {
                 function submitTextInput() {
                     const val = textInput.value.trim();
-                    console.log('[SUBMIT] val:', val, 'ws:', ws ? ws.readyState : 'null');
                     if (!val || !ws || ws.readyState !== WebSocket.OPEN) return;
-                    ws.send(JSON.stringify({ type: 'text_input', text: val, field: textInput.dataset.field || '' }));
+                    const field = textInput.dataset.field || '';
+                    const label = textInput.dataset.label || '';
+                    const eventId = 'txt_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+                    window.SMVAAudioDebug = window.SMVAAudioDebug || {};
+                    window.SMVAAudioDebug.lastTextInputSentAt = Date.now();
+                    window.SMVAAudioDebug.lastTextInputField = field;
+                    window.SMVAAudioDebug.lastTextInputLabel = label;
+                    window.SMVAAudioDebug.lastTextInputEventId = eventId;
+
+                    saveLeadFragment(field, label, val, 'Voice typed response');
+
+                    // Compatibility payload: send the semantic event most voice backends expect.
+                    // The legacyType field keeps compatibility with older handlers that called it text_input.
+                    const textPayload = {
+                        type: 'text_response',
+                        legacyType: 'text_input',
+                        eventId: eventId,
+                        sessionId: widgetSessionId,
+                        text: val,
+                        value: val,
+                        response: val,
+                        input: val,
+                        field: field,
+                        fieldName: field,
+                        label: label,
+                        source: 'widget_text_panel'
+                    };
+                    const wsMessageBefore = window.SMVAAudioDebug.lastWsMessageAt || 0;
+                    ws.send(JSON.stringify(textPayload));
+                    // Fallback for older backends that only listen for `text_input`.
+                    setTimeout(function() {
+                        if (!ws || ws.readyState !== WebSocket.OPEN) return;
+                        const lastAck = window.SMVAAudioDebug.lastTextInputAckAt || 0;
+                        const lastMsg = window.SMVAAudioDebug.lastWsMessageAt || 0;
+                        if (lastAck < Date.now() - 500 && lastMsg <= wsMessageBefore) {
+                            const legacyPayload = Object.assign({}, textPayload, { type: 'text_input', fallback: true });
+                            ws.send(JSON.stringify(legacyPayload));
+                            window.SMVAAudioDebug.lastTextInputFallbackAt = Date.now();
+                        }
+                    }, 900);
+
                     textInput.value = '';
                     textInput.disabled = true;
                     textSendBtn.disabled = true;
+                    const vs = h('smva-voice-status');
+                    if (vs) vs.textContent = 'Thanks — one moment…';
+
+                    // If the backend does not acknowledge, do not leave the visitor stuck forever.
+                    setTimeout(function() {
+                        if (!textInput || !textSendBtn) return;
+                        if (textInput.disabled && ws && ws.readyState === WebSocket.OPEN) {
+                            textInput.disabled = false;
+                            textSendBtn.disabled = false;
+                            const status = h('smva-voice-status');
+                            if (status && voiceState === 'active') status.textContent = t('on_call');
+                            window.SMVAAudioDebug.textInputAckTimeouts = (window.SMVAAudioDebug.textInputAckTimeouts || 0) + 1;
+                        }
+                    }, 8000);
                 }
                 textSendBtn.addEventListener('click', submitTextInput);
                 textInput.addEventListener('keydown', (e) => {
@@ -525,7 +614,7 @@
             ws = new WebSocket(CONFIG.wsUrl + '?token=' + CONFIG.internalToken);
 
             ws.onopen = () => {
-                ws.send(JSON.stringify({ type: 'start', licenseKey: CONFIG.internalToken, sessionType: 'voice', isChatOnly: false, callCooldown: CONFIG.callCooldown || 20, maxCallDuration: CONFIG.maxCallDuration || 10, silenceTimeout: CONFIG.silenceTimeout || 60 }));
+                ws.send(JSON.stringify({ type: 'start', licenseKey: CONFIG.internalToken, sessionId: widgetSessionId, sessionType: 'voice', isChatOnly: false, callCooldown: CONFIG.callCooldown || 20, maxCallDuration: CONFIG.maxCallDuration || 10, silenceTimeout: CONFIG.silenceTimeout || 60 }));
                 voiceState = 'active';
                 setSt(t('on_call'));
                 h('smva-voice-status').textContent = t('on_call');
@@ -542,6 +631,9 @@
             ws.onmessage = async (e) => {
                 try {
                     const data = JSON.parse(e.data);
+                    window.SMVAAudioDebug = window.SMVAAudioDebug || {};
+                    window.SMVAAudioDebug.lastWsMessageType = data.type || '';
+                    window.SMVAAudioDebug.lastWsMessageAt = Date.now();
 
                     if (data.type === 'thinking') {
                         const el = h('smva-voice-status');
@@ -579,6 +671,7 @@
                             label.textContent   = data.label       || t('type_response');
                             input.placeholder   = data.placeholder || '';
                             input.dataset.field = data.field       || '';
+                            input.dataset.label = data.label       || '';
                             input.disabled      = false;
                             if (sendBtn) sendBtn.disabled = false;
                             panel.classList.add('show');
@@ -586,14 +679,24 @@
                         }
 
                     // ── Feature B: backend confirmed receipt → re-enable input ──
-                    } else if (data.type === 'display_text') { renderDisplayText(data); } else if (data.type === 'text_input_received') {
+                    } else if (data.type === 'display_text') { renderDisplayText(data); } else if (data.type === 'text_input_received' || data.type === 'text_response_received' || data.type === 'lead_captured') {
+                        if (data.type === 'lead_captured' && data.lead) {
+                            const lead = data.lead || {};
+                            if (lead.email) saveLeadFragment('email', 'Email', lead.email, 'Backend lead capture');
+                            if (lead.phone) saveLeadFragment('phone', 'Phone', lead.phone, 'Backend lead capture');
+                            if (lead.name) saveLeadFragment('name', 'Name', lead.name, 'Backend lead capture');
+                            if (lead.notes || lead.message) saveLeadFragment('notes', 'Notes', lead.notes || lead.message, 'Backend lead capture');
+                        }
                         const input   = h('smva-text-input');
                         const sendBtn = h('smva-text-send');
                         if (input)   { input.disabled = false; input.value = ''; }
                         if (sendBtn) sendBtn.disabled = false;
-                        // Uncomment to auto-close panel after submit:
-                        // const panel = h('smva-text-panel');
-                        // if (panel) panel.classList.remove('show');
+                        const panel = h('smva-text-panel');
+                        if (panel && (data.type === 'lead_captured' || data.closePanel)) panel.classList.remove('show');
+                        const vs = h('smva-voice-status');
+                        if (vs && voiceState === 'active') vs.textContent = data.message || t('on_call');
+                        window.SMVAAudioDebug.lastTextInputAckAt = Date.now();
+                        window.SMVAAudioDebug.lastTextInputAckType = data.type;
 
                     } else if (data.type === 'error' && data.code === 'quota_exceeded') {
                         endCall();
@@ -663,78 +766,345 @@
         if (callTimer) { clearInterval(callTimer); callTimer = null; }
         stopPlayback();
         if (ws) { try { ws.send(JSON.stringify({ type: 'stop' })); } catch(e){} try { ws.close(); } catch(e){} ws = null; }
+        if (audioCaptureNode) { try { audioCaptureNode.disconnect(); } catch(e) {} if (audioCaptureNode.port) { try { audioCaptureNode.port.onmessage = null; } catch(e) {} } audioCaptureNode = null; }
+        if (audioCaptureSource) { try { audioCaptureSource.disconnect(); } catch(e) {} audioCaptureSource = null; }
         if (mediaStream) { mediaStream.getTracks().forEach(tr => tr.stop()); mediaStream = null; }
         if (audioContext) { try { audioContext.suspend(); } catch(e) {} try { audioContext.close(); } catch(e) {} audioContext = null; }
         callSeconds = 0;
         setTimeout(refreshQuota, 1500);
     }
 
-    function startAudioCapture() {
+    async function startAudioCapture() {
         if (!mediaStream || !ws || ws.readyState !== WebSocket.OPEN) return;
-        audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
-        const source = audioContext.createMediaStreamSource(mediaStream);
-        const processor = audioContext.createScriptProcessor(4096, 1, 1);
-        processor.onaudioprocess = (e) => {
-            if (!ws || ws.readyState !== WebSocket.OPEN) return;
-            const inputData = e.inputBuffer.getChannelData(0);
-            const pcm16 = new Int16Array(inputData.length);
-            for (let i = 0; i < inputData.length; i++) { const s = Math.max(-1, Math.min(1, inputData[i])); pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF; }
-            const base64 = btoa(String.fromCharCode.apply(null, new Uint8Array(pcm16.buffer)));
-            ws.send(JSON.stringify({ type: 'audio', audio: base64 }));
-            let maxVal = 0;
-            for (let j = 0; j < pcm16.length; j++) { const v = Math.abs(pcm16[j]); if (v > maxVal) maxVal = v; }
+        if (audioCaptureNode) return;
+
+        const TARGET_SAMPLE_RATE = 16000;
+        const TARGET_CHUNK_SIZE = 320; // 20ms at 16kHz. Keeps WebSocket audio packets stable.
+
+        audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: TARGET_SAMPLE_RATE });
+        if (audioContext.state === 'suspended') { try { await audioContext.resume(); } catch(e) {} }
+        audioCaptureSource = audioContext.createMediaStreamSource(mediaStream);
+
+        // Exposed for troubleshooting from the browser console:
+        // window.SMVAAudioDebug
+        window.SMVAAudioDebug = window.SMVAAudioDebug || {};
+        window.SMVAAudioDebug.inputSampleRate = audioContext.sampleRate;
+        window.SMVAAudioDebug.targetSampleRate = TARGET_SAMPLE_RATE;
+        window.SMVAAudioDebug.targetChunkSize = TARGET_CHUNK_SIZE;
+        window.SMVAAudioDebug.chunksSent = 0;
+        window.SMVAAudioDebug.lastChunkLength = 0;
+        window.SMVAAudioDebug.lastMaxVal = 0;
+
+        const handleCapturedAudio = (pcmBuffer, maxVal, samplesLength) => {
+            if (!ws || ws.readyState !== WebSocket.OPEN || !pcmBuffer) return;
+            window.SMVAAudioDebug.chunksSent += 1;
+            window.SMVAAudioDebug.lastChunkLength = samplesLength || (pcmBuffer.byteLength / 2);
+            window.SMVAAudioDebug.lastMaxVal = maxVal || 0;
+            window.SMVAAudioDebug.lastSentAt = Date.now();
+
+            const bytes = new Uint8Array(pcmBuffer);
+            let binary = '';
+            const chunkSize = 0x8000;
+            for (let i = 0; i < bytes.length; i += chunkSize) {
+                binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+            }
+            ws.send(JSON.stringify({ type: 'audio', audio: btoa(binary), sampleRate: TARGET_SAMPLE_RATE }));
             if (maxVal > 800) {
                 if (isPlayingAudio) { stopPlayback(); try { if (ws) ws.send(JSON.stringify({ type: 'interrupt' })); } catch(e) {} }
                 const hint = h('smva-speak-hint');
                 if (hint && hint.style.display !== 'none') { hint.style.opacity = '0'; setTimeout(function(){ hint.style.display = 'none'; }, 1000); }
             }
         };
-        source.connect(processor);
-        processor.connect(audioContext.destination);
+
+        if (audioContext.audioWorklet && window.AudioWorkletNode) {
+            const workletCode = `
+                class SMVARecorderProcessor extends AudioWorkletProcessor {
+                    constructor() {
+                        super();
+                        this.targetSampleRate = 16000;
+                        this.targetChunkSize = 320;
+                        this.inputSampleRate = sampleRate;
+                        this.ratio = this.inputSampleRate / this.targetSampleRate;
+                        this.sourceOffset = 0;
+                        this.pending = [];
+                    }
+                    flush(maxVal) {
+                        while (this.pending.length >= this.targetChunkSize) {
+                            const pcm16 = new Int16Array(this.targetChunkSize);
+                            for (let i = 0; i < this.targetChunkSize; i++) {
+                                pcm16[i] = this.pending.shift();
+                            }
+                            this.port.postMessage({ pcm: pcm16.buffer, maxVal, samples: pcm16.length, inputSampleRate: this.inputSampleRate }, [pcm16.buffer]);
+                        }
+                    }
+                    process(inputs) {
+                        const input = inputs && inputs[0] && inputs[0][0];
+                        if (!input || !input.length) return true;
+
+                        let maxVal = 0;
+                        // Downsample from the real AudioContext rate (often 48kHz) to 16kHz.
+                        while (this.sourceOffset < input.length) {
+                            const idx = Math.floor(this.sourceOffset);
+                            const sample = Math.max(-1, Math.min(1, input[idx] || 0));
+                            const value = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+                            const intVal = value | 0;
+                            this.pending.push(intVal);
+                            const abs = Math.abs(intVal);
+                            if (abs > maxVal) maxVal = abs;
+                            this.sourceOffset += this.ratio;
+                        }
+                        this.sourceOffset -= input.length;
+                        this.flush(maxVal);
+                        return true;
+                    }
+                }
+                registerProcessor('smva-recorder-processor', SMVARecorderProcessor);
+            `;
+            const blob = new Blob([workletCode], { type: 'application/javascript' });
+            const workletUrl = URL.createObjectURL(blob);
+            try {
+                await audioContext.audioWorklet.addModule(workletUrl);
+                audioCaptureNode = new AudioWorkletNode(audioContext, 'smva-recorder-processor');
+                audioCaptureNode.port.onmessage = (event) => {
+                    const data = event.data || {};
+                    if (data.inputSampleRate) window.SMVAAudioDebug.inputSampleRate = data.inputSampleRate;
+                    handleCapturedAudio(data.pcm, data.maxVal || 0, data.samples || 0);
+                };
+                const silentGain = audioContext.createGain();
+                silentGain.gain.value = 0;
+                audioCaptureSource.connect(audioCaptureNode);
+                audioCaptureNode.connect(silentGain);
+                silentGain.connect(audioContext.destination);
+                audioCaptureNode._smvaSilentGain = silentGain;
+            } catch (err) {
+                window.SMVAAudioDebug.workletError = err && err.message ? err.message : String(err);
+                try { if (audioCaptureNode) audioCaptureNode.disconnect(); } catch(e) {}
+                audioCaptureNode = null;
+            } finally {
+                URL.revokeObjectURL(workletUrl);
+            }
+            if (audioCaptureNode) return;
+        }
+
+        // Legacy fallback for older browsers only. Modern browsers use AudioWorkletNode above.
+        const downsampleTo16k = (inputData, inputRate) => {
+            const ratio = inputRate / TARGET_SAMPLE_RATE;
+            const outputLength = Math.floor(inputData.length / ratio);
+            const pcm16 = new Int16Array(outputLength);
+            let maxVal = 0;
+            for (let i = 0; i < outputLength; i++) {
+                const start = Math.floor(i * ratio);
+                const end = Math.min(Math.floor((i + 1) * ratio), inputData.length);
+                let sum = 0;
+                let count = 0;
+                for (let j = start; j < end; j++) { sum += inputData[j]; count++; }
+                const sample = Math.max(-1, Math.min(1, count ? (sum / count) : inputData[start] || 0));
+                const value = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+                pcm16[i] = value;
+                const abs = Math.abs(value);
+                if (abs > maxVal) maxVal = abs;
+            }
+            return { pcm16, maxVal };
+        };
+        let fallbackPending = [];
+        audioCaptureNode = audioContext.createScriptProcessor(4096, 1, 1);
+        audioCaptureNode.onaudioprocess = (e) => {
+            const inputData = e.inputBuffer.getChannelData(0);
+            const converted = downsampleTo16k(inputData, audioContext.sampleRate);
+            for (let i = 0; i < converted.pcm16.length; i++) fallbackPending.push(converted.pcm16[i]);
+            while (fallbackPending.length >= TARGET_CHUNK_SIZE) {
+                const chunk = new Int16Array(TARGET_CHUNK_SIZE);
+                for (let i = 0; i < TARGET_CHUNK_SIZE; i++) chunk[i] = fallbackPending.shift();
+                handleCapturedAudio(chunk.buffer, converted.maxVal, chunk.length);
+            }
+        };
+        const silentGain = audioContext.createGain();
+        silentGain.gain.value = 0;
+        audioCaptureSource.connect(audioCaptureNode);
+        audioCaptureNode.connect(silentGain);
+        silentGain.connect(audioContext.destination);
+        audioCaptureNode._smvaSilentGain = silentGain;
     }
 
     async function playNextAudio() {
-        if (audioQueue.length === 0) { isPlayingAudio = false; return; }
+        if (!audioQueue.length) {
+            if (!playbackSources.length) isPlayingAudio = false;
+            return;
+        }
+
         isPlayingAudio = true;
         const generationAtStart = playbackGeneration;
-        const item = audioQueue.shift();
-        const base64Audio = (item && typeof item === 'object') ? item.audio : item;
-        const mimeType = (item && typeof item === 'object' && item.mimeType) ? item.mimeType : 'audio/pcm;rate=24000';
-        const rateMatch = /rate=(\d+)/i.exec(String(mimeType || ''));
-        const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : 24000;
-        if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate });
-        if (audioContext.state === 'suspended') { try { await audioContext.resume(); } catch (e) {} }
-        try {
-            const binaryString = atob(base64Audio);
+
+        if (!playbackAudioContext) {
+            // Dedicated playback context for Gemini Live output.
+            // Gemini returns PCM16 output at 24kHz; keep mic capture and playback separate.
+            playbackAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+            nextPlaybackTime = 0;
+        }
+        if (playbackAudioContext.state === 'suspended') {
+            try { await playbackAudioContext.resume(); } catch (e) {}
+        }
+
+        window.SMVAAudioDebug = window.SMVAAudioDebug || {};
+        window.SMVAAudioDebug.playbackContextSampleRate = playbackAudioContext.sampleRate;
+
+        const OUTPUT_RATE_DEFAULT = 24000;
+        const START_BUFFER_SECONDS = 0.24;      // stable jitter buffer; prevents choppy starts
+        const MAX_SCHEDULE_AHEAD_SECONDS = 1.20; // cap latency without cutting every small burst
+        const HARD_RESET_DELAY_SECONDS = 2.50;   // only recover from truly bad backlog
+        const MAX_COMBINED_MS = 480;             // combine chunks into fewer BufferSource nodes
+        const MIN_FADE_SECONDS = 0.006;          // tiny fade to prevent clicks between chunks
+
+        const decodeItem = (item) => {
+            const base64Audio = (item && typeof item === 'object') ? item.audio : item;
+            const mimeType = (item && typeof item === 'object' && item.mimeType) ? item.mimeType : 'audio/pcm;rate=24000';
+            const rateMatch = /rate=(\d+)/i.exec(String(mimeType || ''));
+            const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : OUTPUT_RATE_DEFAULT;
+            const binaryString = atob(base64Audio || '');
+            if (!binaryString) return null;
             const bytes = new Uint8Array(binaryString.length);
             for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
-            const pcm16 = new Int16Array(bytes.buffer);
-            if (pcm16.length === 0 || generationAtStart !== playbackGeneration) { playNextAudio(); return; }
-            const audioBuffer = audioContext.createBuffer(1, pcm16.length, sampleRate);
-            const channelData = audioBuffer.getChannelData(0);
-            for (let i = 0; i < pcm16.length; i++) channelData[i] = pcm16[i] / 32768.0;
-            const source = audioContext.createBufferSource();
-            currentPlaybackSource = source;
-            source.buffer = audioBuffer;
-            source.connect(audioContext.destination);
-            source.onended = () => {
-                if (currentPlaybackSource === source) currentPlaybackSource = null;
-                if (generationAtStart !== playbackGeneration) { isPlayingAudio = false; return; }
-                playNextAudio();
-            };
-            source.start(0);
-        } catch (err) { console.error('[SMVA] Audio error:', err); if (generationAtStart === playbackGeneration) playNextAudio(); }
+            const cleanBuffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
+            const pcm16 = new Int16Array(cleanBuffer);
+            if (!pcm16.length) return null;
+            return { pcm16, sampleRate, bytesLength: bytes.byteLength };
+        };
+
+        try {
+            const now = playbackAudioContext.currentTime;
+
+            // If the previous schedule somehow drifted too far into the future, reset timing.
+            // Important: do NOT drop audio for normal small jitter; dropping caused the "tr-tr" sound.
+            if (!nextPlaybackTime || nextPlaybackTime < now) {
+                nextPlaybackTime = now + START_BUFFER_SECONDS;
+            } else if ((nextPlaybackTime - now) > HARD_RESET_DELAY_SECONDS) {
+                nextPlaybackTime = now + START_BUFFER_SECONDS;
+                window.SMVAAudioDebug.playbackHardResets = (window.SMVAAudioDebug.playbackHardResets || 0) + 1;
+            }
+
+            // Keep scheduling until we have enough lookahead. Combine queued chunks by sample rate
+            // so the browser plays fewer, longer buffers instead of many tiny BufferSource nodes.
+            while (audioQueue.length && generationAtStart === playbackGeneration) {
+                const currentNow = playbackAudioContext.currentTime;
+                if ((nextPlaybackTime - currentNow) > MAX_SCHEDULE_AHEAD_SECONDS) break;
+
+                const first = decodeItem(audioQueue.shift());
+                if (!first) continue;
+
+                const sampleRate = first.sampleRate || OUTPUT_RATE_DEFAULT;
+                const maxCombinedSamples = Math.max(first.pcm16.length, Math.floor(sampleRate * (MAX_COMBINED_MS / 1000)));
+                const parts = [first.pcm16];
+                let totalSamples = first.pcm16.length;
+                let totalBytes = first.bytesLength;
+
+                while (audioQueue.length && totalSamples < maxCombinedSamples) {
+                    const peek = audioQueue[0];
+                    const mimeType = (peek && typeof peek === 'object' && peek.mimeType) ? peek.mimeType : 'audio/pcm;rate=24000';
+                    const rateMatch = /rate=(\d+)/i.exec(String(mimeType || ''));
+                    const peekRate = rateMatch ? parseInt(rateMatch[1], 10) : OUTPUT_RATE_DEFAULT;
+                    if (peekRate !== sampleRate) break;
+                    const decoded = decodeItem(audioQueue.shift());
+                    if (!decoded) continue;
+                    parts.push(decoded.pcm16);
+                    totalSamples += decoded.pcm16.length;
+                    totalBytes += decoded.bytesLength;
+                }
+
+                const merged = new Int16Array(totalSamples);
+                let offset = 0;
+                for (let i = 0; i < parts.length; i++) {
+                    merged.set(parts[i], offset);
+                    offset += parts[i].length;
+                }
+
+                const audioBuffer = playbackAudioContext.createBuffer(1, merged.length, sampleRate);
+                const channelData = audioBuffer.getChannelData(0);
+                for (let i = 0; i < merged.length; i++) {
+                    channelData[i] = Math.max(-1, Math.min(1, merged[i] / 32768));
+                }
+
+                const source = playbackAudioContext.createBufferSource();
+                source.buffer = audioBuffer;
+
+                // Small fade-in/out prevents boundary clicks without causing audible gaps.
+                const gain = playbackAudioContext.createGain();
+                const startAt = Math.max(playbackAudioContext.currentTime + 0.03, nextPlaybackTime);
+                const duration = audioBuffer.duration;
+                const fade = Math.min(MIN_FADE_SECONDS, duration / 4);
+                try {
+                    gain.gain.setValueAtTime(0.0001, startAt);
+                    gain.gain.linearRampToValueAtTime(1, startAt + fade);
+                    gain.gain.setValueAtTime(1, Math.max(startAt + fade, startAt + duration - fade));
+                    gain.gain.linearRampToValueAtTime(0.0001, startAt + duration);
+                } catch (e) {
+                    gain.gain.value = 1;
+                }
+
+                source.connect(gain);
+                gain.connect(playbackAudioContext.destination);
+
+                nextPlaybackTime = startAt + duration;
+                currentPlaybackSource = source;
+                playbackSources.push(source);
+
+                window.SMVAAudioDebug.outputSampleRate = sampleRate;
+                window.SMVAAudioDebug.lastOutputSamples = merged.length;
+                window.SMVAAudioDebug.lastOutputBytes = totalBytes;
+                window.SMVAAudioDebug.lastOutputDurationMs = Math.round(duration * 1000);
+                window.SMVAAudioDebug.playbackQueueDepth = audioQueue.length;
+                window.SMVAAudioDebug.playbackScheduledSources = playbackSources.length;
+                window.SMVAAudioDebug.nextPlaybackDelayMs = Math.round(Math.max(0, startAt - playbackAudioContext.currentTime) * 1000);
+                window.SMVAAudioDebug.playbackLookaheadMs = Math.round(Math.max(0, nextPlaybackTime - playbackAudioContext.currentTime) * 1000);
+                window.SMVAAudioDebug.playbackCombinedChunks = parts.length;
+                window.SMVAAudioDebug.playbackDroppedChunks = window.SMVAAudioDebug.playbackDroppedChunks || 0;
+
+                source.onended = () => {
+                    playbackSources = playbackSources.filter(s => s !== source);
+                    try { source.disconnect(); } catch (e) {}
+                    try { gain.disconnect(); } catch (e) {}
+                    if (currentPlaybackSource === source) currentPlaybackSource = null;
+                    if (generationAtStart !== playbackGeneration) return;
+                    if (audioQueue.length) playNextAudio();
+                    else if (!playbackSources.length) isPlayingAudio = false;
+                };
+
+                source.start(startAt);
+            }
+
+            if (audioQueue.length && generationAtStart === playbackGeneration) {
+                setTimeout(function(){ playNextAudio(); }, 80);
+            }
+        } catch (err) {
+            console.error('[SMVA] Audio playback error:', err);
+            window.SMVAAudioDebug.playbackError = err && err.message ? err.message : String(err);
+            if (audioQueue.length) setTimeout(function(){ playNextAudio(); }, 80);
+            else if (!playbackSources.length) isPlayingAudio = false;
+        }
     }
 
     function stopPlayback() {
         playbackGeneration++;
         audioQueue = [];
         isPlayingAudio = false;
+        nextPlaybackTime = 0;
+
+        playbackSources.forEach(function(source) {
+            try { source.onended = null; } catch (e) {}
+            try { source.stop(0); } catch (e) {}
+            try { source.disconnect(); } catch (e) {}
+        });
+        playbackSources = [];
+
         if (currentPlaybackSource) {
             try { currentPlaybackSource.onended = null; } catch (e) {}
             try { currentPlaybackSource.stop(0); } catch (e) {}
             try { currentPlaybackSource.disconnect(); } catch (e) {}
             currentPlaybackSource = null;
+        }
+
+        if (playbackAudioContext) {
+            try { playbackAudioContext.close(); } catch (e) {}
+            playbackAudioContext = null;
         }
     }
 
