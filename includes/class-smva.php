@@ -1857,6 +1857,7 @@ class SMVA_Plugin {
         $internal_token = get_option( 'smva_internal_token', '' );
         $session_id     = sanitize_text_field( wp_unslash( $_GET['session_id'] ?? '' ) );
         $track          = sanitize_text_field( wp_unslash( $_GET['track'] ?? 'main' ) );
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $source_url     = esc_url_raw( rawurldecode( wp_unslash( $_GET['source_url'] ?? '' ) ) );
 
         if ( ! $session_id ) { wp_die( 'Missing session_id', '', array( 'response' => 400 ) ); }
@@ -1900,6 +1901,7 @@ class SMVA_Plugin {
         if ( ! empty( $last_body ) && strlen( $last_body ) < 500 ) {
             $message .= ' Backend response: ' . wp_strip_all_tags( $last_body );
         }
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         wp_die( esc_html( $message ), '', array( 'response' => max( 404, absint( $last_code ) ) ) );
     }
 
