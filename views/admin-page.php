@@ -160,6 +160,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     <span class="smva-nav-icon">🩺</span>
                     <span class="smva-nav-label">Health Check</span>
                 </a>
+                <a href="?page=smva&tab=integrations" class="<?php echo $active_tab==='integrations' ? 'active' : ''; ?>">
+                    <span class="smva-nav-icon">&#128279;</span>
+                    <span class="smva-nav-label">Integrations</span>
+                </a>
             </div>
         </nav>
 
@@ -192,6 +196,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             'voice_summary' => array( 'Voice Summary', 'Review voice sessions and usage details.' ),
             'leads'         => array( 'Leads', 'See captured visitor leads and contact requests.' ),
             'health'        => array( 'System Health', 'Check license, quota API, WebSocket configuration, and plugin logs.' ),
+            'integrations'  => array( 'Integrations', 'Connect your CRM and external tools.' ),
         );
         $smva_current_header = $smva_tab_titles[ $active_tab ] ?? array( 'StudioMeta Voice AI', 'Manage your voice and chat AI widget.' );
         $smva_voice_on = get_option( 'smva_voice_enabled', '1' ) === '1';
@@ -1417,6 +1422,7 @@ jQuery(function($){
     load(1);
 })();
 </script>
+<?php elseif ( $active_tab === 'integrations' ) : include __DIR__ . '/integrations-tab.php'; ?>
     <?php endif; ?>
     </div><!-- .smva-tab-content -->
 

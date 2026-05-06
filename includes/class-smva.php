@@ -176,6 +176,11 @@ class SMVA_Plugin {
         add_action( 'wp_ajax_smva_voice_summarize',  array( $this, 'ajax_voice_summarize' ) );
         add_action( 'wp_ajax_smva_voice_recording_url', array( $this, 'ajax_voice_recording_url' ) );
         add_action( 'wp_ajax_smva_voice_recording_proxy', array( $this, 'ajax_voice_recording_proxy' ) );
+
+        // ── HubSpot Integration ──────────────────────────────────────────────
+        add_action( 'wp_ajax_smva_hubspot_save_token', array( $this, 'ajax_hubspot_save_token' ) );
+        add_action( 'wp_ajax_smva_hubspot_disconnect', array( $this, 'ajax_hubspot_disconnect' ) );
+        add_action( 'wp_ajax_smva_hubspot_status',     array( $this, 'ajax_hubspot_status' ) );
     }
 
     // ── Activation / Auto-Trial ─────────────────────────────────────────────
@@ -1959,6 +1964,35 @@ class SMVA_Plugin {
         if ( ! $lead_id ) {
             wp_send_json_error( array( 'message' => 'Could not store lead fragment' ), 500 );
         }
+
+        // Push to HubSpot if connected (non-blocking, best-effort)
+        $hs_token = get_option( 'smva_hubspot_token', '' );
+        if ( $hs_token && get_option( 'smva_hubspot_connected', '0' ) === '1' ) {
+            $hs_prop = '';
+            if ( $field === 'email' )     $hs_prop = 'email';
+            elseif ( $field === 'phone' ) $hs_prop = 'phone';
+            elseif ( $field === 'name' )  $hs_prop = 'firstname';
+
+            if ( $hs_prop ) {
+                if ( $field === 'email' ) {
+                    $hs_endpoint = 'https://api.hubapi.com/contacts/v1/contact/createOrUpdate/email/' . rawurlencode( $value );
+                    $hs_body     = array( 'properties' => array( array( 'property' => 'email', 'value' => $value ) ) );
+                } else {
+                    $hs_endpoint = 'https://api.hubapi.com/crm/v3/objects/contacts';
+                    $hs_body     = array( 'properties' => array( $hs_prop => $value ) );
+                }
+                wp_remote_post( $hs_endpoint, array(
+                    'headers'  => array(
+                        'Content-Type'  => 'application/json',
+                        'Authorization' => 'Bearer ' . $hs_token,
+                    ),
+                    'body'     => wp_json_encode( $hs_body ),
+                    'timeout'  => 5,
+                    'blocking' => false,
+                ) );
+            }
+        }
+
         wp_send_json_success( array( 'lead_id' => $lead_id ) );
     }
 
@@ -1984,6 +2018,66 @@ class SMVA_Plugin {
         );
         if ( is_wp_error( $response ) ) { wp_send_json_error( 'Failed to delete lead' ); return; }
         wp_send_json_success();
+    }
+
+    // ── HubSpot Integration ─────────────────────────────────────────────────
+
+    public function ajax_hubspot_save_token() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) { wp_send_json_error( 'Unauthorized' ); return; }
+
+        $token = sanitize_text_field( wp_unslash( $_POST['token'] ?? '' ) );
+        if ( empty( $token ) ) {
+            wp_send_json_error( array( 'message' => 'Token is required.' ) );
+            return;
+        }
+
+        // Verify token works by calling HubSpot API
+        $response = wp_remote_get( 'https://api.hubapi.com/crm/v3/objects/contacts?limit=1', array(
+            'headers' => array(
+                'Authorization' => 'Bearer ' . $token,
+                'Content-Type'  => 'application/json',
+            ),
+            'timeout' => 10,
+        ) );
+
+        if ( is_wp_error( $response ) ) {
+            wp_send_json_error( array( 'message' => 'Could not reach HubSpot. Check your internet connection.' ) );
+            return;
+        }
+
+        $code = wp_remote_retrieve_response_code( $response );
+        if ( $code === 401 ) {
+            wp_send_json_error( array( 'message' => 'Invalid token. Please check and try again.' ) );
+            return;
+        }
+        if ( $code !== 200 ) {
+            wp_send_json_error( array( 'message' => 'HubSpot returned an error (code ' . $code . '). Try again.' ) );
+            return;
+        }
+
+        update_option( 'smva_hubspot_token',     $token );
+        update_option( 'smva_hubspot_connected', '1' );
+
+        wp_send_json_success( array( 'message' => 'HubSpot connected successfully.' ) );
+    }
+
+    public function ajax_hubspot_disconnect() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) { wp_send_json_error( 'Unauthorized' ); return; }
+
+        update_option( 'smva_hubspot_connected', '0' );
+        delete_option( 'smva_hubspot_token' );
+        wp_send_json_success( array( 'message' => 'HubSpot disconnected.' ) );
+    }
+
+    public function ajax_hubspot_status() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) { wp_send_json_error( 'Unauthorized' ); return; }
+
+        wp_send_json_success( array(
+            'connected' => get_option( 'smva_hubspot_connected', '0' ) === '1',
+        ) );
     }
 
 }

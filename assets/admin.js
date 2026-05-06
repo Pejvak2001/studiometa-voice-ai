@@ -1221,4 +1221,80 @@ jQuery(function($) {
     if ($('#smva-vs-search-btn').length) { vsInit(); vsLoadSessions(); }
   });
 
+
+  // ── HubSpot Integration ──────────────────────────────────────────────────
+  (function () {
+
+    // Save token
+    var saveBtn = document.getElementById('smva-hubspot-save');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function () {
+        var token = (document.getElementById('smva-hubspot-token') || {}).value || '';
+        var msg   = document.getElementById('smva-hs-msg');
+        var label = saveBtn.querySelector('.smva-hs-label');
+        var spin  = saveBtn.querySelector('.smva-hs-spinner');
+
+        if (!token) { msg.className = 'smva-int-msg err'; msg.textContent = 'Please enter your Private App Token.'; return; }
+
+        label.style.display = 'none';
+        spin.style.display  = '';
+        saveBtn.disabled    = true;
+        msg.className       = 'smva-int-msg';
+        msg.textContent     = '';
+
+        fetch(smvaAdmin.ajaxUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ action: 'smva_hubspot_save_token', nonce: smvaAdmin.nonce, token: token }),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.success) {
+            msg.className   = 'smva-int-msg ok';
+            msg.textContent = 'Connected successfully! Reloading...';
+            setTimeout(function() { window.location.reload(); }, 1200);
+          } else {
+            msg.className   = 'smva-int-msg err';
+            msg.textContent = (data.data && data.data.message) || 'Connection failed. Check your token.';
+            label.style.display = '';
+            spin.style.display  = 'none';
+            saveBtn.disabled    = false;
+          }
+        })
+        .catch(function() {
+          msg.className   = 'smva-int-msg err';
+          msg.textContent = 'Network error. Please try again.';
+          label.style.display = '';
+          spin.style.display  = 'none';
+          saveBtn.disabled    = false;
+        });
+      });
+    }
+
+    // Disconnect
+    var disconnectBtn = document.getElementById('smva-hubspot-disconnect');
+    if (disconnectBtn) {
+      disconnectBtn.addEventListener('click', function () {
+        if (!confirm('Disconnect HubSpot? Leads will no longer sync automatically.')) return;
+        disconnectBtn.textContent = 'Disconnecting...';
+        disconnectBtn.disabled    = true;
+        fetch(smvaAdmin.ajaxUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ action: 'smva_hubspot_disconnect', nonce: smvaAdmin.nonce }),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.success) { window.location.reload(); }
+          else {
+            alert('Error disconnecting. Please try again.');
+            disconnectBtn.textContent = 'Disconnect';
+            disconnectBtn.disabled    = false;
+          }
+        });
+      });
+    }
+
+  })();
+
 }(jQuery));
