@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, voice ai, ai assistant, customer support, gemini
 Requires at least: 6.0
 Tested up to: 6.9
-Stable tag: 1.3.66
+Stable tag: 1.3.67
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -160,6 +160,9 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.3.67 =
+* fix: remove debug message from voice sessions empty state
 
 = 1.3.66 =
 * fix: WordPress.org review compliance - moved inline scripts/styles to enqueued files
