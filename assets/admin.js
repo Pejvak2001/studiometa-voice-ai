@@ -1,5 +1,15 @@
 /* StudioMeta Voice AI - Admin JS */
 jQuery(function($) {
+  function smvaLimStep(id, step) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var val = parseInt(el.value) || 0;
+    var min = parseInt(el.min) || 0;
+    var max = parseInt(el.max) || 9999;
+    el.value = Math.min(max, Math.max(min, val + step));
+  }
+  window.smvaLimStep = smvaLimStep;
+
     window.SMVAAdminDebug = window.SMVAAdminDebug || {};
     window.SMVAAdminDebug.version = '1.3.59';
     window.SMVAAdminDebug.context = 'wp-admin';
@@ -1411,14 +1421,6 @@ function smvaSelectStyle(val) {
         });
     }
 
-function smvaLimStep(id, step) {
-                var el = document.getElementById(id);
-                if (!el) return;
-                var val = parseInt(el.value) || 0;
-                var min = parseInt(el.min) || 0;
-                var max = parseInt(el.max) || 9999;
-                el.value = Math.min(max, Math.max(min, val + step));
-            }
 
 jQuery(function($){
         var allSessions = {};
