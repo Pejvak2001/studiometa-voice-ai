@@ -1356,4 +1356,277 @@ jQuery(function($) {
     });
   })();
 
+
+
+  // ── Migrated from admin-page.php ──────────────────────────────────────────
+
+(function(){
+                        function filterVoices(gender){
+                            var sel = document.getElementById('smva-voice-select');
+                            if(!sel) return;
+                            var opts = sel.options;
+                            var firstVisible = null;
+                            for(var i=0;i<opts.length;i++){
+                                var show = opts[i].dataset.gender === gender;
+                                opts[i].style.display = show ? '' : 'none';
+                                if(show && firstVisible===null) firstVisible = opts[i].value;
+                            }
+                            // if current selection is hidden, switch to first visible
+                            if(sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].style.display==='none'){
+                                sel.value = firstVisible || sel.options[0].value;
+                                sel.dispatchEvent(new Event('change'));
+                            }
+                        }
+                        document.addEventListener('DOMContentLoaded', function(){
+                            var tabs = document.querySelectorAll('.smva-gender-btn');
+                            var sel  = document.getElementById('smva-voice-select');
+                            // init — hide voices of opposite gender
+                            var initGender = sel ? (sel.options[sel.selectedIndex]?.dataset.gender || 'f') : 'f';
+                            filterVoices(initGender);
+                            tabs.forEach(function(btn){
+                                btn.addEventListener('click', function(){
+                                    tabs.forEach(function(b){b.classList.remove('active');});
+                                    btn.classList.add('active');
+                                    filterVoices(btn.dataset.gender);
+                                });
+                            });
+                        });
+                    })();
+
+document.addEventListener('DOMContentLoaded', function(){
+        var quick = document.getElementById('smva-preview-greeting-btn-quick');
+        if (quick) {
+            quick.addEventListener('click', function(){
+                var preview = document.getElementById('smva-preview-greeting-btn');
+                if (preview) { preview.click(); }
+            });
+        }
+    });
+
+function smvaSelectStyle(val) {
+        document.querySelectorAll('[name=response_style]').forEach(function(r) {
+            r.checked = r.value === val;
+            var lbl = r.closest('label');
+            if (lbl) lbl.style.borderColor = r.value === val ? '#2563eb' : '#e5e7eb';
+        });
+    }
+
+function smvaLimStep(id, step) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                var val = parseInt(el.value) || 0;
+                var min = parseInt(el.min) || 0;
+                var max = parseInt(el.max) || 9999;
+                el.value = Math.min(max, Math.max(min, val + step));
+            }
+
+jQuery(function($){
+        var allSessions = {};
+        function loadHistory(){
+            $('#smva-history-loading').show();
+            $('#smva-history-list, #smva-history-empty').hide();
+            $.post(smvaAdmin.ajaxUrl,{action:'smva_chat_history',nonce:smvaAdmin.nonce,limit:100})
+            .done(function(res){
+                $('#smva-history-loading').hide();
+                if(!res.success||!res.data||!res.data.sessions){$('#smva-history-empty').show();return;}
+                allSessions = res.data.sessions;
+                renderSessions(allSessions);
+            }).fail(function(){$('#smva-history-loading').hide();$('#smva-history-empty').text('Error.').show();});
+        }
+        function esc(s){return $('<div>').text(s).html();}
+        function parseMarkdown(text) {
+            return esc(text)
+                .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g,'<em>$1</em>')
+                .replace(/^\* (.+)$/gm,'<li style="margin-left:16px">$1</li>')
+                .replace(/\n/g,'<br>');
+        }
+        function renderSessions(sessions){
+            var keys=Object.keys(sessions);
+            if(!keys.length){$('#smva-history-empty').show();$('#smva-history-list').hide();return;}
+            // Sort sessions by most recent first
+            keys.sort(function(a,b){
+                var aDate=sessions[a][0]?new Date(sessions[a][0].created_at):0;
+                var bDate=sessions[b][0]?new Date(sessions[b][0].created_at):0;
+                return bDate-aDate;
+            });
+            var html='';
+            keys.forEach(function(sid,idx){
+                var msgs=sessions[sid];
+                // Sort messages by created_at ascending
+                var sorted=msgs.slice().sort(function(a,b){return new Date(a.created_at)-new Date(b.created_at);});
+                var firstUser=sorted.find(function(m){return m.role==='user';});
+                var preview=firstUser?firstUser.content:'(no user message)';
+                var date=new Date(sorted[0].created_at).toLocaleString();
+                var bubbles='';
+                sorted.forEach(function(m){
+                    var isUser=m.role==='user';
+                    var time=new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+                    var content=isUser?esc(m.content):parseMarkdown(m.content);
+                    bubbles+='<div class="smva-bubble-wrap" style="align-items:'+(isUser?'flex-end':'flex-start')+';display:flex;flex-direction:column;margin-bottom:4px">'
+                        +'<div class="smva-bubble smva-bubble-'+(isUser?'user':'bot')+'">'+content+'</div>'
+                        +'<div class="smva-bubble-time" style="text-align:'+(isUser?'right':'left')+'">'+time+'</div></div>';
+                });
+                var isFirst = idx === 0;
+                html+='<div class="smva-session-card">'
+                    +'<div class="smva-session-hdr" data-idx="'+idx+'">'
+                    +'<div style="flex:1;min-width:0"><div class="smva-session-preview">'+esc(preview)+'</div>'
+                    +'<div class="smva-session-meta">'+date+' · '+sorted.length+' messages</div></div>'
+                    +'<span class="smva-tog" style="color:#9ca3af;font-size:18px;transition:transform .2s;flex-shrink:0">'+(isFirst?'▴':'▾')+'</span></div>'
+                    +'<div class="smva-session-msgs'+(isFirst?' open':'')+'" id="smva-msgs-'+idx+'">'+bubbles+'</div></div>';
+            });
+            $('#smva-history-list').html(html).css('display','flex').show();
+        }
+        $(document).on('click','.smva-session-hdr',function(){
+            var idx=$(this).data('idx');
+            var m=$('#smva-msgs-'+idx);
+            m.toggleClass('open');
+            $(this).find('.smva-tog').css('transform',m.hasClass('open')?'rotate(180deg)':'');
+        });
+        $('#smva-history-search').on('input',function(){
+            var q=$(this).val().toLowerCase();
+            if(!q){renderSessions(allSessions);return;}
+            var f={};
+            Object.keys(allSessions).forEach(function(sid){
+                if(allSessions[sid].some(function(m){return m.content.toLowerCase().indexOf(q)>-1;}))f[sid]=allSessions[sid];
+            });
+            renderSessions(f);
+        });
+        $('#smva-history-refresh').on('click',loadHistory);
+        loadHistory();
+    });
+
+jQuery(function($){
+    function esc(s){return $('<div>').text(s || '').html();}
+    function renderHealth(data){
+        var html=''; Object.keys(data||{}).forEach(function(k){var it=data[k]||{}; var cls=it.ok?'ok':'bad'; var icon=it.ok?'✓':'!'; html+='<div class="smva-health-item '+cls+'"><div class="smva-health-icon">'+icon+'</div><div><div class="smva-health-title">'+esc(it.label)+'</div><div class="smva-health-detail">'+esc(it.detail)+'</div></div><div class="smva-health-state">'+(it.ok?'OK':'Check')+'</div></div>';});
+        $('#smva-health-results').attr('class','smva-health-grid').html(html || '<div>No result.</div>');
+    }
+    function loadLogs(){
+        $('#smva-event-logs').html('<div style="color:#94a3b8">Loading...</div>');
+        $.post(smvaAdmin.ajaxUrl,{action:'smva_get_event_logs',nonce:smvaAdmin.nonce},function(r){
+            var logs=(r.success&&r.data)||[]; if(!logs.length){$('#smva-event-logs').html('<div style="color:#94a3b8">No events yet.</div>');return;}
+            $('#smva-event-logs').html(logs.map(function(l){return '<div style="border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px"><strong style="font-size:12px;color:#334155">'+esc(l.type)+'</strong><span style="float:right;color:#94a3b8;font-size:11px">'+esc(l.time)+'</span><div style="font-size:13px;color:#475569;margin-top:3px">'+esc(l.message)+'</div></div>';}).join(''));
+        });
+    }
+    $('#smva-run-health').on('click',function(){var b=$(this);b.prop('disabled',true).text('Checking...');$.post(smvaAdmin.ajaxUrl,{action:'smva_health_check',nonce:smvaAdmin.nonce},function(r){if(r.success)renderHealth(r.data);else $('#smva-health-results').html('<div style="color:#b91c1c">Health check failed.</div>');loadLogs();}).always(function(){b.prop('disabled',false).text('Run Check');});});
+    $('#smva-refresh-logs').on('click',loadLogs);
+    $('#smva-clear-logs').on('click',function(){if(!confirm('Clear event logs?'))return;$.post(smvaAdmin.ajaxUrl,{action:'smva_clear_event_logs',nonce:smvaAdmin.nonce},loadLogs);});
+    loadLogs();
+});
+
+
+
+  // ── Leads tab ───────────────────────────────────────────────────────────────
+  (function(){
+      var page=1,total=0,limit=20,allLeads=[];
+      var smvaLeadsAjaxUrl = smvaAdmin.ajaxUrl;
+      var smvaLeadsNonce   = smvaAdmin.nonce;
+      function load(p){
+          page=p||1;
+          jQuery.post(smvaLeadsAjaxUrl,{action:'smva_get_leads',nonce:smvaLeadsNonce,page:page,limit:limit},function(r){
+              if(!r || !r.success){
+                  var tb=document.getElementById('smva-leads-tbody');
+                  if(tb){ tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:#b91c1c">Could not load leads.</td></tr>'; }
+                  return;
+              }
+              allLeads=(r.data&&r.data.leads)?r.data.leads:[];total=(r.data&&r.data.total)?r.data.total:0;
+              render(allLeads);renderPagination();
+              document.getElementById('smva-leads-count').textContent=total+' leads total';
+          }).fail(function(){
+              var tb=document.getElementById('smva-leads-tbody');
+              if(tb){ tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:#b91c1c">Could not load leads.</td></tr>'; }
+          });
+      }
+      function esc(v){
+          return String(v == null ? '' : v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];});
+      }
+      function render(leads){
+          var tb=document.getElementById('smva-leads-tbody');
+          if(!leads||!leads.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:#9ca3af">No leads yet.</td></tr>';return;}
+          tb.innerHTML=leads.map(function(l){
+              var created = l.created_at ? new Date(l.created_at).toLocaleString() : '—';
+              var email = l.email ? String(l.email) : '';
+              var phone = l.phone ? String(l.phone) : '';
+              return '<tr><td style="font-size:12px;white-space:nowrap">'+esc(created)+'</td>'+ 
+              '<td>'+esc(l.name||'—')+'</td>'+ 
+              '<td>'+(email?'<a href="mailto:'+esc(email)+'">'+esc(email)+'</a>':'—')+'</td>'+ 
+              '<td>'+(phone?'<a href="tel:'+esc(phone)+'">'+esc(phone)+'</a>':'—')+'</td>'+ 
+              '<td><span style="font-size:11px;padding:2px 8px;background:#eff6ff;color:#1d4ed8;border-radius:10px">'+esc(l.source||'voice')+'</span></td>'+ 
+              '<td style="font-size:12px;color:#6b7280;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(l.notes||'—')+'</td>'+ 
+              '<td><button class="button button-small smva-lead-del" data-id="'+esc(l.id||'')+'">Delete</button></td></tr>';
+          }).join('');
+          document.querySelectorAll('.smva-lead-del').forEach(function(b){
+              b.addEventListener('click',function(){
+                  if(!confirm('Delete this lead?'))return;
+                  var id=this.dataset.id;
+                  jQuery.post(smvaLeadsAjaxUrl,{action:'smva_delete_lead',nonce:smvaLeadsNonce,lead_id:id},function(r){if(r.success)load(page);});
+              });
+          });
+      }
+      function renderPagination(){
+          var pages=Math.ceil(total/limit),el=document.getElementById('smva-leads-pagination');
+          if(pages<=1){el.innerHTML='';return;}
+          var h='';for(var i=1;i<=pages;i++)h+='<button type="button" class="button'+(i===page?' button-primary':'')+'" onclick="smvaLP('+i+')">'+i+'</button>';
+          el.innerHTML=h;
+      }
+      window.smvaLP=function(p){load(p);};
+      document.getElementById('smva-leads-export-btn').addEventListener('click',function(){
+          if(!allLeads.length){alert('No leads to export');return;}
+          var csv=['Date,Name,Email,Phone,Source,Notes'];
+          allLeads.forEach(function(l){csv.push(['"'+(l.created_at||'')+'"','"'+(l.name||'')+'"','"'+(l.email||'')+'"','"'+(l.phone||'')+'"','"'+(l.source||'')+'"','"'+(l.notes||'').replace(/"/g,"'")+'"'].join(','));});
+          var a=document.createElement('a');
+          a.href=URL.createObjectURL(new Blob([csv.join('\n')],{type:'text/csv'}));
+          a.download='leads-'+new Date().toISOString().slice(0,10)+'.csv';
+          a.click();
+      });
+      load(1);
+  })();
+
+
+  // ── Reactivate license on this site ─────────────────────────────────────
+  (function(){
+    var btn = document.getElementById('smva-reactivate-here-btn');
+    if (!btn) return;
+    btn.addEventListener('click', function() {
+      btn.disabled = true;
+      btn.textContent = 'Reactivating...';
+      var msg = document.getElementById('smva-reactivate-msg');
+      var params = new URLSearchParams({
+        action: 'smva_reactivate_here',
+        nonce: smvaAdmin.nonce
+      });
+      fetch(smvaAdmin.ajaxUrl, { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: params })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data.success) {
+          if (msg) { msg.style.color='#16a34a'; msg.textContent='✓ Reactivated! Reloading...'; }
+          setTimeout(function(){ location.reload(); }, 1200);
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Reactivate on this site';
+          if (msg) { msg.style.color='#dc2626'; msg.textContent = (data.data && data.data.message) ? data.data.message : 'Error. Please try again.'; }
+        }
+      })
+      .catch(function(){
+        btn.disabled = false;
+        btn.textContent = 'Reactivate on this site';
+        if (msg) { msg.style.color='#dc2626'; msg.textContent='Connection error.'; }
+      });
+    });
+  })();
+
+  // ── Dismiss trial notice ─────────────────────────────────────────────────
+  (function(){
+    var n = document.getElementById('smva-trial-notice');
+    if (!n) return;
+    n.addEventListener('click', function(e){
+      if (!e.target.classList.contains('notice-dismiss')) return;
+      jQuery.post(smvaAdmin.ajaxUrl, {
+        action: 'smva_dismiss_trial_notice',
+        nonce: smvaAdmin.nonce
+      });
+    });
+  })();
+
 }(jQuery));

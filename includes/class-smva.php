@@ -484,38 +484,7 @@ class SMVA_Plugin {
                     <span id="smva-reactivate-msg" style="margin-left:10px;font-style:italic;color:#6b7280"></span>
                 </p>
             </div>
-            <script>
-            (function(){
-                var btn = document.getElementById('smva-reactivate-here-btn');
-                if (!btn) return;
-                btn.addEventListener('click', function() {
-                    btn.disabled = true;
-                    btn.textContent = 'Reactivating...';
-                    var msg = document.getElementById('smva-reactivate-msg');
-                    var params = new URLSearchParams({
-                        action: 'smva_reactivate_here',
-                        nonce: '<?php echo esc_js( wp_create_nonce( 'smva_nonce' ) ); ?>'
-                    });
-                    fetch(ajaxurl, { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: params })
-                    .then(function(r){ return r.json(); })
-                    .then(function(data){
-                        if (data.success) {
-                            if (msg) { msg.style.color='#16a34a'; msg.textContent='✓ Reactivated! Reloading...'; }
-                            setTimeout(function(){ location.reload(); }, 1200);
-                        } else {
-                            btn.disabled = false;
-                            btn.textContent = 'Reactivate on this site';
-                            if (msg) { msg.style.color='#dc2626'; msg.textContent = (data.data && data.data.message) ? data.data.message : 'Error. Please try again.'; }
-                        }
-                    })
-                    .catch(function(){
-                        btn.disabled = false;
-                        btn.textContent = 'Reactivate on this site';
-                        if (msg) { msg.style.color='#dc2626'; msg.textContent='Connection error.'; }
-                    });
-                });
-            })();
-            </script>
+
             <?php
             return; // Don't show trial notice on top
         }
@@ -538,19 +507,7 @@ class SMVA_Plugin {
                 and <strong><?php echo intval( $chat_left ); ?> chat messages</strong> remaining.
                 <a href="<?php echo esc_url( admin_url( 'admin.php?page=smva&tab=license' ) ); ?>" class="button button-primary" style="margin-left:8px">⬆ Upgrade Plan</a>
             </p>
-            <script>
-            (function(){
-                var n = document.getElementById('smva-trial-notice');
-                if (!n) return;
-                n.addEventListener('click', function(e){
-                    if (!e.target.classList.contains('notice-dismiss')) return;
-                    jQuery.post(ajaxurl, {
-                        action: 'smva_dismiss_trial_notice',
-                        nonce: '<?php echo esc_attr( wp_create_nonce( 'smva_nonce' ) ); ?>'
-                    });
-                });
-            })();
-            </script>
+
         </div>
         <?php
     }
@@ -671,48 +628,42 @@ class SMVA_Plugin {
         $mode = $this->get_widget_mode();
         if ( $mode === 'hidden' ) return '';
 
-        $quota = $this->get_quota_status();
-        ob_start(); ?>
-        <script>
-        window.smvaConfig = {
-            internalToken : <?php echo wp_json_encode( $token ); ?>,
-            licenseKey    : <?php echo wp_json_encode( get_option( 'smva_license_key', '' ) ); ?>,
-            wsUrl         : <?php echo wp_json_encode( SMVA_WS_URL ); ?>,
-            apiUrl        : <?php echo wp_json_encode( SMVA_API_URL ); ?>,
-            ajaxUrl       : <?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>,
-            widgetNonce   : <?php echo wp_json_encode( wp_create_nonce( 'smva_widget_nonce' ) ); ?>,
-            pricingUrl    : <?php echo wp_json_encode( SMVA_PRICING_URL ); ?>,
-            widgetMode    : <?php echo wp_json_encode( $mode ); ?>,
-            plan          : <?php echo wp_json_encode( get_option( 'smva_plan', '' ) ); ?>,
-            quota         : <?php echo wp_json_encode( is_array( $quota ) && empty( $quota['error'] ) ? $quota : null ); ?>,
-            primaryColor  : <?php echo wp_json_encode( get_option( 'smva_widget_color', '#2563eb' ) ); ?>,
-            position      : <?php echo wp_json_encode( get_option( 'smva_widget_position', 'bottom-right' ) ); ?>,
-            widgetStyle   : <?php echo wp_json_encode( get_option( 'smva_widget_style', 'fab' ) ); ?>,
-            widgetTheme   : <?php echo wp_json_encode( get_option( 'smva_widget_theme', 'classic' ) ); ?>,
-            agentLogo     : <?php echo wp_json_encode( esc_url( get_option( 'smva_agent_logo', '' ) ) ); ?>,
-            lang          : <?php echo wp_json_encode( get_option( 'smva_lang', 'en' ) ); ?>,
-            extraLangs    : <?php echo esc_html( get_option( 'smva_extra_langs', '[]' ) ); ?>,
-            businessName  : <?php echo wp_json_encode( get_option( 'smva_business_name', '' ) ); ?>,
-            greeting      : <?php echo wp_json_encode( get_option( 'smva_greeting', 'Hello! How can I help you?' ) ); ?>,
-            defaultTab    : <?php echo wp_json_encode( get_option( 'smva_default_tab', 'voice' ) ); ?>,
-            voiceEnabled  : <?php echo esc_html( get_option( 'smva_voice_enabled', '1' ) === '1' ? 'true' : 'false' ); ?>,
-            chatEnabled   : <?php echo esc_html( get_option( 'smva_chat_enabled', '1' ) === '1' ? 'true' : 'false' ); ?>,
-            maxCallDuration    : <?php echo intval( get_option( 'smva_max_call_duration', 10 ) ); ?>,
-            silenceTimeout     : <?php echo intval( get_option( 'smva_silence_timeout', 60 ) ); ?>,
-            callCooldown       : <?php echo intval( get_option( 'smva_call_cooldown', 30 ) ); ?>,
-            suggestedQuestions : <?php
-                $sq = get_option( 'smva_suggested_questions', '[]' );
-                $sq_arr = json_decode( $sq, true );
-                echo wp_json_encode( is_array( $sq_arr ) ? $sq_arr : array() );
-            ?>,
-            workflowButtons : <?php
-                $wb = json_decode( get_option( 'smva_workflow_buttons', '[]' ), true );
-                echo wp_json_encode( is_array( $wb ) ? $wb : array() );
-            ?>,
-            lazyLoadWidget : <?php echo esc_html( get_option( 'smva_lazy_load_widget', '1' ) === '1' ? 'true' : 'false' ); ?>,
-        };
-        </script>
-        <?php return ob_get_clean();
+        $quota    = $this->get_quota_status();
+        $sq       = get_option( 'smva_suggested_questions', '[]' );
+        $sq_arr   = json_decode( $sq, true );
+        $wb       = json_decode( get_option( 'smva_workflow_buttons', '[]' ), true );
+
+        wp_localize_script( 'smva-widget', 'smvaConfig', array(
+            'internalToken'     => $token,
+            'licenseKey'        => get_option( 'smva_license_key', '' ),
+            'wsUrl'             => SMVA_WS_URL,
+            'apiUrl'            => SMVA_API_URL,
+            'ajaxUrl'           => admin_url( 'admin-ajax.php' ),
+            'widgetNonce'       => wp_create_nonce( 'smva_widget_nonce' ),
+            'pricingUrl'        => SMVA_PRICING_URL,
+            'widgetMode'        => $mode,
+            'plan'              => get_option( 'smva_plan', '' ),
+            'quota'             => ( is_array( $quota ) && empty( $quota['error'] ) ) ? $quota : null,
+            'primaryColor'      => get_option( 'smva_widget_color', '#2563eb' ),
+            'position'          => get_option( 'smva_widget_position', 'bottom-right' ),
+            'widgetStyle'       => get_option( 'smva_widget_style', 'fab' ),
+            'widgetTheme'       => get_option( 'smva_widget_theme', 'classic' ),
+            'agentLogo'         => esc_url( get_option( 'smva_agent_logo', '' ) ),
+            'lang'              => get_option( 'smva_lang', 'en' ),
+            'extraLangs'        => json_decode( get_option( 'smva_extra_langs', '[]' ), true ) ?: array(),
+            'businessName'      => get_option( 'smva_business_name', '' ),
+            'greeting'          => get_option( 'smva_greeting', 'Hello! How can I help you?' ),
+            'defaultTab'        => get_option( 'smva_default_tab', 'voice' ),
+            'voiceEnabled'      => get_option( 'smva_voice_enabled', '1' ) === '1',
+            'chatEnabled'       => get_option( 'smva_chat_enabled', '1' ) === '1',
+            'maxCallDuration'   => intval( get_option( 'smva_max_call_duration', 10 ) ),
+            'silenceTimeout'    => intval( get_option( 'smva_silence_timeout', 60 ) ),
+            'callCooldown'      => intval( get_option( 'smva_call_cooldown', 30 ) ),
+            'suggestedQuestions' => is_array( $sq_arr ) ? $sq_arr : array(),
+            'workflowButtons'   => is_array( $wb ) ? $wb : array(),
+            'lazyLoadWidget'    => get_option( 'smva_lazy_load_widget', '1' ) === '1',
+        ) );
+        return '';
     }
 
     public function inject_widget() {
@@ -1284,9 +1235,14 @@ class SMVA_Plugin {
         }
 
         if ( isset( $_POST['agent_tools'] ) ) {
-            // JSON blob forwarded to remote API which validates schema; structure is preserved as-is by design.
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-            $payload['agent_tools'] = json_decode( wp_unslash( $_POST['agent_tools'] ), true );
+            $tools_raw = json_decode( wp_unslash( $_POST['agent_tools'] ), true );
+            if ( is_array( $tools_raw ) ) {
+                $payload['agent_tools'] = array_map( function( $tool ) {
+                    if ( ! is_array( $tool ) ) return array();
+                    return array_map( 'sanitize_text_field', array_filter( $tool, 'is_string' ) );
+                }, $tools_raw );
+            }
         }
 
         // Only send suggested_questions if explicitly provided (Agent tab only)
@@ -1294,7 +1250,7 @@ class SMVA_Plugin {
             // Multi-line text input — split by newline, trimmed, and filtered below.
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
             $raw = wp_unslash( $_POST['smva_suggested_questions'] );
-            $payload['suggested_questions'] = array_values( array_filter( array_map( 'trim', explode( "\n", $raw ) ) ) );
+            $payload['suggested_questions'] = array_values( array_filter( array_map( 'sanitize_text_field', explode( "\n", $raw ) ) ) );
         }
 
         $response = wp_remote_post( SMVA_API_URL . '/plugin/license/agent/settings', array(

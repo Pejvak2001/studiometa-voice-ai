@@ -4,97 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 ?>
 <div class="smva-admin-wrap">
-<style>
-/* ── SMVA Modern Admin Layout ── */
-.smva-admin-wrap{display:flex;min-height:100vh;background:#f0f2f5;margin:-20px -20px -20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 
-/* SIDEBAR */
-.smva-sidebar{width:220px;flex-shrink:0;background:#1e1f2e;display:flex;flex-direction:column;position:sticky;top:32px;height:calc(100vh - 32px);overflow-y:auto}
-.smva-sidebar-brand{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
-.smva-sidebar-brand-inner{display:flex;align-items:center;gap:10px}
-.smva-sb-logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#3b6eff);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.smva-sb-name{font-size:14px;font-weight:700;color:#fff;line-height:1.2}
-.smva-sb-sub{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px}
-
-/* NAV ITEMS */
-.smva-sidenav{padding:12px 0;flex:1}
-.smva-sidenav-group{padding:0 10px;margin-bottom:4px}
-.smva-sidenav-label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.25);padding:8px 8px 4px}
-.smva-sidenav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:rgba(255,255,255,.55);transition:all .15s;margin-bottom:2px}
-.smva-sidenav a:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9)}
-.smva-sidenav a.active{background:rgba(99,102,241,.25);color:#a5b4fc}
-.smva-sidenav a.active .smva-nav-icon{opacity:1}
-.smva-nav-icon{font-size:15px;width:20px;text-align:center;opacity:.6;flex-shrink:0}
-.smva-nav-label{flex:1}
-.smva-nav-badge{font-size:10px;background:rgba(99,102,241,.4);color:#a5b4fc;padding:2px 6px;border-radius:10px}
-
-/* SIDEBAR FOOTER */
-.smva-sb-footer{padding:14px;border-top:1px solid rgba(255,255,255,.07)}
-.smva-sb-plan{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,.05);border-radius:8px}
-.smva-sb-plan-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:smva-sb-pulse 2s ease-in-out infinite;flex-shrink:0}
-@keyframes smva-sb-pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.smva-sb-plan-info{flex:1;min-width:0}
-.smva-sb-plan-name{font-size:12px;font-weight:600;color:#fff;text-transform:capitalize}
-.smva-sb-plan-sub{font-size:10px;color:rgba(255,255,255,.4)}
-
-/* MAIN CONTENT */
-.smva-main{flex:1;min-width:0;padding:28px 32px;max-width:900px}
-.smva-main-header{margin-bottom:24px}
-.smva-main-title{font-size:22px;font-weight:700;color:#111827;margin:0 0 4px}
-.smva-main-sub{font-size:13px;color:#6b7280}
-
-/* hide old header elements */
-.smva-header{display:none!important}
-.smva-tab-content{all:unset;display:block}
-/* hide WP footer on plugin page */
-#wpfooter{display:none!important}
-#wpcontent{padding-bottom:0!important}
-
-
-
-/* ── Product polish v1.3.55 ───────────────────────────────────────────── */
-.smva-main-header-pro{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px;padding:18px 20px;border:1px solid #e5e7eb;border-radius:18px;background:linear-gradient(135deg,#ffffff 0%,#f8fbff 55%,#eef2ff 100%);box-shadow:0 10px 28px rgba(15,23,42,.06)}
-.smva-main-kicker{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#6366f1;margin-bottom:6px}
-.smva-main-title-pro{font-size:24px;font-weight:800;letter-spacing:-.04em;color:#0f172a;margin:0;line-height:1.1}
-.smva-main-sub-pro{font-size:13px;color:#64748b;margin-top:6px;max-width:620px;line-height:1.5}
-.smva-main-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
-.smva-status-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid #e5e7eb;border-radius:999px;padding:8px 11px;background:#fff;color:#475569;font-size:12px;font-weight:700;white-space:nowrap}
-.smva-status-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.13)}
-.smva-status-dot.off{background:#ef4444;box-shadow:0 0 0 4px rgba(239,68,68,.13)}
-.smva-wizard{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
-.smva-wizard-step{position:relative;display:flex;gap:10px;align-items:flex-start;text-decoration:none;color:#0f172a;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:13px 14px;box-shadow:0 1px 2px rgba(15,23,42,.04);transition:all .18s ease}
-.smva-wizard-step:hover{transform:translateY(-1px);border-color:#a5b4fc;box-shadow:0 8px 20px rgba(99,102,241,.11)}
-.smva-wizard-step.is-done{background:linear-gradient(135deg,#f0fdf4,#ffffff);border-color:#bbf7d0}
-.smva-wizard-num{width:26px;height:26px;border-radius:10px;background:#eef2ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0}
-.smva-wizard-step.is-done .smva-wizard-num{background:#dcfce7;color:#15803d}
-.smva-wizard-title{font-size:13px;font-weight:800;margin-bottom:3px;color:#111827}
-.smva-wizard-copy{font-size:11px;color:#64748b;line-height:1.35}
-.smva-status-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
-.smva-status-card{border:1px solid #e5e7eb;border-radius:16px;background:#fff;padding:15px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
-.smva-status-card-top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
-.smva-status-card-label{font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.08em}
-.smva-status-card-value{font-size:15px;font-weight:800;color:#0f172a;line-height:1.25}
-.smva-status-card-sub{font-size:12px;color:#64748b;margin-top:3px;line-height:1.35}
-.smva-dot-ok,.smva-dot-warn,.smva-dot-bad{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}.smva-dot-ok{background:#22c55e}.smva-dot-warn{background:#f59e0b}.smva-dot-bad{background:#ef4444}
-.smva-action-bar{position:sticky;bottom:0;z-index:5;background:rgba(248,250,252,.92);backdrop-filter:blur(10px);border:1px solid #e5e7eb;border-radius:16px;padding:12px;margin:16px 0 18px;display:flex;justify-content:flex-end;gap:10px;align-items:center;box-shadow:0 -4px 18px rgba(15,23,42,.05)}
-.smva-health-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
-.smva-health-item{border:1px solid #e5e7eb;border-radius:15px;padding:14px;background:#fff;display:flex;gap:12px;align-items:flex-start}.smva-health-item.ok{border-color:#bbf7d0;background:#f0fdf4}.smva-health-item.bad{border-color:#fecaca;background:#fef2f2}.smva-health-icon{width:30px;height:30px;border-radius:11px;background:#eef2ff;display:flex;align-items:center;justify-content:center;flex-shrink:0}.smva-health-title{font-size:13px;font-weight:800;color:#0f172a}.smva-health-detail{font-size:12px;color:#64748b;margin-top:3px;line-height:1.4}.smva-health-state{font-size:11px;font-weight:800;margin-left:auto}.smva-health-item.ok .smva-health-state{color:#15803d}.smva-health-item.bad .smva-health-state{color:#b91c1c}
-@media(max-width:980px){.smva-status-grid,.smva-wizard{grid-template-columns:repeat(2,minmax(0,1fr))}.smva-main-header-pro{align-items:flex-start;flex-direction:column}.smva-main-actions{justify-content:flex-start}.smva-health-grid{grid-template-columns:1fr}}
-@media(max-width:600px){.smva-status-grid,.smva-wizard{grid-template-columns:1fr}.smva-action-bar{position:static;justify-content:stretch}.smva-action-bar .smva-btn{flex:1}}
-
-/* responsive */
-@media(max-width:782px){
-  .smva-admin-wrap{flex-direction:column;margin:0}
-  .smva-sidebar{width:100%;height:auto;position:static;flex-direction:row;flex-wrap:wrap}
-  .smva-sidebar-brand{display:none}
-  .smva-sidenav{display:flex;flex-wrap:wrap;padding:6px}
-  .smva-sidenav-group{padding:0}
-  .smva-sidenav-label{display:none}
-  .smva-sidenav a{padding:6px 10px;font-size:12px}
-  .smva-sb-footer{display:none}
-  .smva-main{padding:16px}
-}
-</style>
 
     <!-- SIDEBAR -->
     <aside class="smva-sidebar">
@@ -623,47 +533,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                         </option>
                         <?php endforeach; ?>
                     </select>
-                    <style>
-                    .smva-gender-tabs{display:flex;gap:8px;margin-bottom:10px}
-                    .smva-gender-btn{flex:1;padding:8px 12px;border-radius:10px;border:1.5px solid #e5e7eb;background:#fff;font-size:13px;font-weight:600;color:#6b7280;cursor:pointer;transition:all .15s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px}
-                    .smva-gender-btn span{font-size:16px}
-                    .smva-gender-btn:hover{border-color:#3b6eff;color:#3b6eff}
-                    .smva-gender-btn.active{border-color:#3b6eff;background:#eff2ff;color:#3b6eff}
-                    </style>
-                    <script>
-                    (function(){
-                        function filterVoices(gender){
-                            var sel = document.getElementById('smva-voice-select');
-                            if(!sel) return;
-                            var opts = sel.options;
-                            var firstVisible = null;
-                            for(var i=0;i<opts.length;i++){
-                                var show = opts[i].dataset.gender === gender;
-                                opts[i].style.display = show ? '' : 'none';
-                                if(show && firstVisible===null) firstVisible = opts[i].value;
-                            }
-                            // if current selection is hidden, switch to first visible
-                            if(sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].style.display==='none'){
-                                sel.value = firstVisible || sel.options[0].value;
-                                sel.dispatchEvent(new Event('change'));
-                            }
-                        }
-                        document.addEventListener('DOMContentLoaded', function(){
-                            var tabs = document.querySelectorAll('.smva-gender-btn');
-                            var sel  = document.getElementById('smva-voice-select');
-                            // init — hide voices of opposite gender
-                            var initGender = sel ? (sel.options[sel.selectedIndex]?.dataset.gender || 'f') : 'f';
-                            filterVoices(initGender);
-                            tabs.forEach(function(btn){
-                                btn.addEventListener('click', function(){
-                                    tabs.forEach(function(b){b.classList.remove('active');});
-                                    btn.classList.add('active');
-                                    filterVoices(btn.dataset.gender);
-                                });
-                            });
-                        });
-                    })();
-                    </script>
+                    
+                    
                     <p class="smva-hint">Filter by gender, then pick a voice. Preview uses Gemini TTS — same as the live widget.</p>
                     <div class="smva-voice-meta-card" id="smva-voice-meta-card">
                         <div class="smva-voice-meta-top">
@@ -750,17 +621,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             </div>
         </div>
     </form>
-    <script>
-    document.addEventListener('DOMContentLoaded', function(){
-        var quick = document.getElementById('smva-preview-greeting-btn-quick');
-        if (quick) {
-            quick.addEventListener('click', function(){
-                var preview = document.getElementById('smva-preview-greeting-btn');
-                if (preview) { preview.click(); }
-            });
-        }
-    });
-    </script>
+    
 
     <?php // ── AGENT TAB ────────────────────────────────────────────────── ?>
     <?php elseif ( $active_tab === 'agent' ) :
@@ -851,15 +712,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         </div>
 
     </form>
-    <script>
-    function smvaSelectStyle(val) {
-        document.querySelectorAll('[name=response_style]').forEach(function(r) {
-            r.checked = r.value === val;
-            var lbl = r.closest('label');
-            if (lbl) lbl.style.borderColor = r.value === val ? '#2563eb' : '#e5e7eb';
-        });
-    }
-    </script>
+    
 
     <?php // ── WIDGET TAB ───────────────────────────────────────────────── ?>
     <?php elseif ( $active_tab === 'widget' ) : ?>
@@ -1030,28 +883,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     <p class="smva-hint">Minimum wait between calls to prevent abuse.</p>
                 </div>
             </div>
-            <style>
-            .smva-limits-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:4px}
-            .smva-limit-item{background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
-            .smva-limit-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
-            .smva-limit-label{font-size:13px;font-weight:600;color:#374151}
-            .smva-limit-unit{font-size:10px;color:#9ca3af}
-            .smva-limit-ctrl{display:flex;align-items:center;border:1.5px solid #d1d5db;border-radius:10px;overflow:hidden;background:#fff}
-            .smva-lim-btn{width:36px;height:36px;border:none;background:transparent;font-size:18px;color:#374151;cursor:pointer;flex-shrink:0;transition:background .15s}
-            .smva-lim-btn:hover{background:#f3f4f6}
-            .smva-lim-input{flex:1;border:none;outline:none;text-align:center;font-size:16px;font-weight:600;color:#111;background:transparent;-moz-appearance:textfield;min-width:0}
-            .smva-lim-input::-webkit-inner-spin-button,.smva-lim-input::-webkit-outer-spin-button{-webkit-appearance:none}
-            </style>
-            <script>
-            function smvaLimStep(id, step) {
-                var el = document.getElementById(id);
-                if (!el) return;
-                var val = parseInt(el.value) || 0;
-                var min = parseInt(el.min) || 0;
-                var max = parseInt(el.max) || 9999;
-                el.value = Math.min(max, Math.max(min, val + step));
-            }
-            </script>
+            
+            
             <div class="smva-card-footer">
                 <button type="submit" class="smva-btn smva-btn-primary">Save Widget Settings</button>
                 <span id="smva-widget-save-msg" class="smva-save-msg"></span>
@@ -1187,98 +1020,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         <div id="smva-history-list" style="display:none;flex-direction:column;gap:12px;margin-top:8px"></div>
     </div>
 
-    <style>
-    .smva-session-card{border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:8px}
-    .smva-session-hdr{padding:12px 16px;background:#f8fafc;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
-    .smva-session-hdr:hover{background:#f1f5f9}
-    .smva-session-preview{font-size:13px;color:#374151;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:420px}
-    .smva-session-meta{font-size:11px;color:#9ca3af;margin-top:2px}
-    .smva-session-msgs{display:none;padding:16px;flex-direction:column;gap:8px;border-top:1px solid #f0f0f0}
-    .smva-session-msgs.open{display:flex}
-    .smva-bubble{padding:8px 12px;border-radius:10px;font-size:13px;line-height:1.5;max-width:80%;word-break:break-word}
-    .smva-bubble-user{background:#2563eb;color:#fff;align-self:flex-end;border-bottom-right-radius:3px}
-    .smva-bubble-bot{background:#f3f4f6;color:#111827;align-self:flex-start;border-bottom-left-radius:3px}
-    .smva-bubble-wrap{display:flex;flex-direction:column}
-    .smva-bubble-time{font-size:10px;color:#9ca3af;margin-top:2px}
-    </style>
+    
 
-    <script>
-    jQuery(function($){
-        var allSessions = {};
-        function loadHistory(){
-            $('#smva-history-loading').show();
-            $('#smva-history-list, #smva-history-empty').hide();
-            $.post(smvaAdmin.ajaxUrl,{action:'smva_chat_history',nonce:smvaAdmin.nonce,limit:100})
-            .done(function(res){
-                $('#smva-history-loading').hide();
-                if(!res.success||!res.data||!res.data.sessions){$('#smva-history-empty').show();return;}
-                allSessions = res.data.sessions;
-                renderSessions(allSessions);
-            }).fail(function(){$('#smva-history-loading').hide();$('#smva-history-empty').text('Error.').show();});
-        }
-        function esc(s){return $('<div>').text(s).html();}
-        function parseMarkdown(text) {
-            return esc(text)
-                .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-                .replace(/\*(.+?)\*/g,'<em>$1</em>')
-                .replace(/^\* (.+)$/gm,'<li style="margin-left:16px">$1</li>')
-                .replace(/\n/g,'<br>');
-        }
-        function renderSessions(sessions){
-            var keys=Object.keys(sessions);
-            if(!keys.length){$('#smva-history-empty').show();$('#smva-history-list').hide();return;}
-            // Sort sessions by most recent first
-            keys.sort(function(a,b){
-                var aDate=sessions[a][0]?new Date(sessions[a][0].created_at):0;
-                var bDate=sessions[b][0]?new Date(sessions[b][0].created_at):0;
-                return bDate-aDate;
-            });
-            var html='';
-            keys.forEach(function(sid,idx){
-                var msgs=sessions[sid];
-                // Sort messages by created_at ascending
-                var sorted=msgs.slice().sort(function(a,b){return new Date(a.created_at)-new Date(b.created_at);});
-                var firstUser=sorted.find(function(m){return m.role==='user';});
-                var preview=firstUser?firstUser.content:'(no user message)';
-                var date=new Date(sorted[0].created_at).toLocaleString();
-                var bubbles='';
-                sorted.forEach(function(m){
-                    var isUser=m.role==='user';
-                    var time=new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-                    var content=isUser?esc(m.content):parseMarkdown(m.content);
-                    bubbles+='<div class="smva-bubble-wrap" style="align-items:'+(isUser?'flex-end':'flex-start')+';display:flex;flex-direction:column;margin-bottom:4px">'
-                        +'<div class="smva-bubble smva-bubble-'+(isUser?'user':'bot')+'">'+content+'</div>'
-                        +'<div class="smva-bubble-time" style="text-align:'+(isUser?'right':'left')+'">'+time+'</div></div>';
-                });
-                var isFirst = idx === 0;
-                html+='<div class="smva-session-card">'
-                    +'<div class="smva-session-hdr" data-idx="'+idx+'">'
-                    +'<div style="flex:1;min-width:0"><div class="smva-session-preview">'+esc(preview)+'</div>'
-                    +'<div class="smva-session-meta">'+date+' · '+sorted.length+' messages</div></div>'
-                    +'<span class="smva-tog" style="color:#9ca3af;font-size:18px;transition:transform .2s;flex-shrink:0">'+(isFirst?'▴':'▾')+'</span></div>'
-                    +'<div class="smva-session-msgs'+(isFirst?' open':'')+'" id="smva-msgs-'+idx+'">'+bubbles+'</div></div>';
-            });
-            $('#smva-history-list').html(html).css('display','flex').show();
-        }
-        $(document).on('click','.smva-session-hdr',function(){
-            var idx=$(this).data('idx');
-            var m=$('#smva-msgs-'+idx);
-            m.toggleClass('open');
-            $(this).find('.smva-tog').css('transform',m.hasClass('open')?'rotate(180deg)':'');
-        });
-        $('#smva-history-search').on('input',function(){
-            var q=$(this).val().toLowerCase();
-            if(!q){renderSessions(allSessions);return;}
-            var f={};
-            Object.keys(allSessions).forEach(function(sid){
-                if(allSessions[sid].some(function(m){return m.content.toLowerCase().indexOf(q)>-1;}))f[sid]=allSessions[sid];
-            });
-            renderSessions(f);
-        });
-        $('#smva-history-refresh').on('click',loadHistory);
-        loadHistory();
-    });
-    </script>
+    
 
 <?php elseif ( $active_tab === 'health' ) : ?>
 <div class="smva-card">
@@ -1298,26 +1042,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     </div>
     <div id="smva-event-logs" style="display:grid;gap:8px;margin-top:10px"></div>
 </div>
-<script>
-jQuery(function($){
-    function esc(s){return $('<div>').text(s || '').html();}
-    function renderHealth(data){
-        var html=''; Object.keys(data||{}).forEach(function(k){var it=data[k]||{}; var cls=it.ok?'ok':'bad'; var icon=it.ok?'✓':'!'; html+='<div class="smva-health-item '+cls+'"><div class="smva-health-icon">'+icon+'</div><div><div class="smva-health-title">'+esc(it.label)+'</div><div class="smva-health-detail">'+esc(it.detail)+'</div></div><div class="smva-health-state">'+(it.ok?'OK':'Check')+'</div></div>';});
-        $('#smva-health-results').attr('class','smva-health-grid').html(html || '<div>No result.</div>');
-    }
-    function loadLogs(){
-        $('#smva-event-logs').html('<div style="color:#94a3b8">Loading...</div>');
-        $.post(smvaAdmin.ajaxUrl,{action:'smva_get_event_logs',nonce:smvaAdmin.nonce},function(r){
-            var logs=(r.success&&r.data)||[]; if(!logs.length){$('#smva-event-logs').html('<div style="color:#94a3b8">No events yet.</div>');return;}
-            $('#smva-event-logs').html(logs.map(function(l){return '<div style="border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px"><strong style="font-size:12px;color:#334155">'+esc(l.type)+'</strong><span style="float:right;color:#94a3b8;font-size:11px">'+esc(l.time)+'</span><div style="font-size:13px;color:#475569;margin-top:3px">'+esc(l.message)+'</div></div>';}).join(''));
-        });
-    }
-    $('#smva-run-health').on('click',function(){var b=$(this);b.prop('disabled',true).text('Checking...');$.post(smvaAdmin.ajaxUrl,{action:'smva_health_check',nonce:smvaAdmin.nonce},function(r){if(r.success)renderHealth(r.data);else $('#smva-health-results').html('<div style="color:#b91c1c">Health check failed.</div>');loadLogs();}).always(function(){b.prop('disabled',false).text('Run Check');});});
-    $('#smva-refresh-logs').on('click',loadLogs);
-    $('#smva-clear-logs').on('click',function(){if(!confirm('Clear event logs?'))return;$.post(smvaAdmin.ajaxUrl,{action:'smva_clear_event_logs',nonce:smvaAdmin.nonce},loadLogs);});
-    loadLogs();
-});
-</script>
+
 
 <?php elseif ( $active_tab === 'voice_summary' ) : ?>
 <div class="smva-vs-wrap">
@@ -1368,72 +1093,7 @@ jQuery(function($){
     </table>
     <div id="smva-leads-pagination" style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end"></div>
 </div>
-<script>
-(function(){
-    var page=1,total=0,limit=20,allLeads=[];
-    var smvaLeadsAjaxUrl = <?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>;
-    var smvaLeadsNonce   = <?php echo wp_json_encode( wp_create_nonce( 'smva_nonce' ) ); ?>;
-    function load(p){
-        page=p||1;
-        jQuery.post(smvaLeadsAjaxUrl,{action:'smva_get_leads',nonce:smvaLeadsNonce,page:page,limit:limit},function(r){
-            if(!r || !r.success){
-                var tb=document.getElementById('smva-leads-tbody');
-                if(tb){ tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:#b91c1c">Could not load leads.</td></tr>'; }
-                return;
-            }
-            allLeads=(r.data&&r.data.leads)?r.data.leads:[];total=(r.data&&r.data.total)?r.data.total:0;
-            render(allLeads);renderPagination();
-            document.getElementById('smva-leads-count').textContent=total+' leads total';
-        }).fail(function(){
-            var tb=document.getElementById('smva-leads-tbody');
-            if(tb){ tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:#b91c1c">Could not load leads.</td></tr>'; }
-        });
-    }
-    function esc(v){
-        return String(v == null ? '' : v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];});
-    }
-    function render(leads){
-        var tb=document.getElementById('smva-leads-tbody');
-        if(!leads||!leads.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:#9ca3af">No leads yet.</td></tr>';return;}
-        tb.innerHTML=leads.map(function(l){
-            var created = l.created_at ? new Date(l.created_at).toLocaleString() : '—';
-            var email = l.email ? String(l.email) : '';
-            var phone = l.phone ? String(l.phone) : '';
-            return '<tr><td style="font-size:12px;white-space:nowrap">'+esc(created)+'</td>'+ 
-            '<td>'+esc(l.name||'—')+'</td>'+ 
-            '<td>'+(email?'<a href="mailto:'+esc(email)+'">'+esc(email)+'</a>':'—')+'</td>'+ 
-            '<td>'+(phone?'<a href="tel:'+esc(phone)+'">'+esc(phone)+'</a>':'—')+'</td>'+ 
-            '<td><span style="font-size:11px;padding:2px 8px;background:#eff6ff;color:#1d4ed8;border-radius:10px">'+esc(l.source||'voice')+'</span></td>'+ 
-            '<td style="font-size:12px;color:#6b7280;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(l.notes||'—')+'</td>'+ 
-            '<td><button class="button button-small smva-lead-del" data-id="'+esc(l.id||'')+'">Delete</button></td></tr>';
-        }).join('');
-        document.querySelectorAll('.smva-lead-del').forEach(function(b){
-            b.addEventListener('click',function(){
-                if(!confirm('Delete this lead?'))return;
-                var id=this.dataset.id;
-                jQuery.post(smvaLeadsAjaxUrl,{action:'smva_delete_lead',nonce:smvaLeadsNonce,lead_id:id},function(r){if(r.success)load(page);});
-            });
-        });
-    }
-    function renderPagination(){
-        var pages=Math.ceil(total/limit),el=document.getElementById('smva-leads-pagination');
-        if(pages<=1){el.innerHTML='';return;}
-        var h='';for(var i=1;i<=pages;i++)h+='<button type="button" class="button'+(i===page?' button-primary':'')+'" onclick="smvaLP('+i+')">'+i+'</button>';
-        el.innerHTML=h;
-    }
-    window.smvaLP=function(p){load(p);};
-    document.getElementById('smva-leads-export-btn').addEventListener('click',function(){
-        if(!allLeads.length){alert('No leads to export');return;}
-        var csv=['Date,Name,Email,Phone,Source,Notes'];
-        allLeads.forEach(function(l){csv.push(['"'+(l.created_at||'')+'"','"'+(l.name||'')+'"','"'+(l.email||'')+'"','"'+(l.phone||'')+'"','"'+(l.source||'')+'"','"'+(l.notes||'').replace(/"/g,"'")+'"'].join(','));});
-        var a=document.createElement('a');
-        a.href=URL.createObjectURL(new Blob([csv.join('\n')],{type:'text/csv'}));
-        a.download='leads-'+new Date().toISOString().slice(0,10)+'.csv';
-        a.click();
-    });
-    load(1);
-})();
-</script>
+
 <?php elseif ( $active_tab === 'integrations' ) : include __DIR__ . '/integrations-tab.php'; ?>
     <?php endif; ?>
     </div><!-- .smva-tab-content -->

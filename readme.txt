@@ -1,5 +1,5 @@
 === StudioMeta Voice AI ===
-Contributors: studiometa
+Contributors: studiometa, stdmeta
 Donate link: https://studiometa.io/
 Tags: chatbot, voice ai, ai assistant, customer support, gemini
 Requires at least: 6.0
@@ -66,7 +66,7 @@ If you want unlimited or higher quotas, visit [studiometa.io/pricing](https://st
 **Data NOT sent:** WordPress user passwords, post content (unless you explicitly import it via "Import KB"), visitor IP addresses, visitor names or accounts.
 
 * Service homepage: [https://studiometa.io](https://studiometa.io)
-* Terms of Service: [https://studiometa.io/terms](https://studiometa.io/terms)
+* Terms of Service: [https://studiometa.io/privacy-policy/](https://studiometa.io/privacy-policy/)
 * Privacy Policy: [https://studiometa.io/privacy](https://studiometa.io/privacy)
 
 = 2. StudioMeta Workflow Webhooks (n8n.studiometa.io) =
@@ -81,7 +81,7 @@ If you want unlimited or higher quotas, visit [studiometa.io/pricing](https://st
 **Data sent:** admin email, site URL, business name, current plan, usage percentages.
 
 * Service homepage: [https://studiometa.io](https://studiometa.io)
-* Terms of Service: [https://studiometa.io/terms](https://studiometa.io/terms)
+* Terms of Service: [https://studiometa.io/privacy-policy/](https://studiometa.io/privacy-policy/)
 * Privacy Policy: [https://studiometa.io/privacy](https://studiometa.io/privacy)
 
 = 3. Google Gemini Live (indirectly, via api2.studiometa.io) =
@@ -152,6 +152,12 @@ Visit [studiometa.io/support](https://studiometa.io/support) or use the support 
 3. Admin dashboard — usage stats, session history, and quota tracking
 4. Agent customization — knowledge base import, system prompt, and suggested questions
 5. Widget appearance — six visual themes to match your brand
+
+== Source Code ==
+
+The full source code of this plugin, including the unminified version of widget.js and all build tools, is publicly available on GitHub:
+
+https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
 
