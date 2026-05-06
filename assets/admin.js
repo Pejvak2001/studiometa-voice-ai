@@ -1002,7 +1002,7 @@ jQuery(function($) {
         window.SMVAAdminDebug.voiceSummary.parsedSessionCount = sessions.length;
         window.SMVAAdminDebug.voiceSummary.parsedPagination = pagination;
         VS.totalPages = pagination.pages || 1;
-        if (!sessions.length) { $tbody.html('<tr><td colspan="5" style="text-align:center;padding:20px;">No sessions found. Open Console and run <code>JSON.stringify(window.SMVAAdminDebug, null, 2)</code> to inspect the API response.</td></tr>'); vsBuildPagination(pagination); return; }
+        if (!sessions.length) { $tbody.html('<tr><td colspan="5" style="text-align:center;padding:20px;">No sessions found for the selected date range.</td></tr>'); vsBuildPagination(pagination); return; }
         var rows = '';
         sessions.forEach(function (s) {
           var rawDate = s.started_at || s.created_at || s.startedAt || s.createdAt || s.timestamp || s.date || s.created || s.time || '';
