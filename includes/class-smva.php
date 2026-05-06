@@ -177,6 +177,9 @@ class SMVA_Plugin {
         add_action( 'wp_ajax_smva_voice_recording_url', array( $this, 'ajax_voice_recording_url' ) );
         add_action( 'wp_ajax_smva_voice_recording_proxy', array( $this, 'ajax_voice_recording_proxy' ) );
 
+        // ── Knowledge Base Upload ────────────────────────────────────────────
+        add_action( 'wp_ajax_smva_upload_knowledge_file', array( $this, 'ajax_upload_knowledge_file' ) );
+
         // ── HubSpot Integration ──────────────────────────────────────────────
         add_action( 'wp_ajax_smva_hubspot_save_token', array( $this, 'ajax_hubspot_save_token' ) );
         add_action( 'wp_ajax_smva_hubspot_disconnect', array( $this, 'ajax_hubspot_disconnect' ) );
@@ -2018,6 +2021,72 @@ class SMVA_Plugin {
         );
         if ( is_wp_error( $response ) ) { wp_send_json_error( 'Failed to delete lead' ); return; }
         wp_send_json_success();
+    }
+
+    // ── Knowledge Base File Upload ──────────────────────────────────────────
+
+    public function ajax_upload_knowledge_file() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+
+        if ( empty( $_FILES['file'] ) ) {
+            wp_send_json_error( array( 'message' => 'No file uploaded.' ) );
+            return;
+        }
+
+        $file     = $_FILES['file'];
+        $ext      = strtolower( pathinfo( $file['name'], PATHINFO_EXTENSION ) );
+        $allowed  = array( 'pdf', 'docx', 'csv', 'txt' );
+
+        if ( ! in_array( $ext, $allowed, true ) ) {
+            wp_send_json_error( array( 'message' => 'File type not allowed. Use PDF, DOCX, CSV, or TXT.' ) );
+            return;
+        }
+
+        if ( $file['size'] > 10 * 1024 * 1024 ) {
+            wp_send_json_error( array( 'message' => 'File too large. Maximum size is 10MB.' ) );
+            return;
+        }
+
+        $license_key    = get_option( 'smva_license_key', '' );
+        $internal_token = get_option( 'smva_internal_token', '' );
+
+        if ( empty( $license_key ) ) {
+            wp_send_json_error( array( 'message' => 'No active license found.' ) );
+            return;
+        }
+
+        // Read file contents and encode as base64
+        $file_data = base64_encode( file_get_contents( $file['tmp_name'] ) );
+
+        $response = wp_remote_post( SMVA_API_URL . '/plugin/knowledge/upload', array(
+            'headers' => array( 'Content-Type' => 'application/json' ),
+            'body'    => wp_json_encode( array(
+                'license_key'    => $license_key,
+                'internal_token' => $internal_token,
+                'filename'       => sanitize_file_name( $file['name'] ),
+                'filetype'       => $ext,
+                'filedata'       => $file_data,
+            ) ),
+            'timeout' => 60,
+        ) );
+
+        if ( is_wp_error( $response ) ) {
+            wp_send_json_error( array( 'message' => 'Connection error. Please try again.' ) );
+            return;
+        }
+
+        $data   = json_decode( wp_remote_retrieve_body( $response ), true );
+        $status = wp_remote_retrieve_response_code( $response );
+
+        if ( $status === 200 && ! empty( $data['success'] ) ) {
+            wp_send_json_success( array(
+                'message'      => $data['message'] ?? 'File processed successfully.',
+                'chars_added'  => $data['chars_added'] ?? 0,
+            ) );
+        } else {
+            wp_send_json_error( array( 'message' => $data['error'] ?? 'Failed to process file.' ) );
+        }
     }
 
     // ── HubSpot Integration ─────────────────────────────────────────────────

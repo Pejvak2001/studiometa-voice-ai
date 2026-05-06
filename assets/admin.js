@@ -1297,4 +1297,63 @@ jQuery(function($) {
 
   })();
 
+
+  // ── Knowledge Base File Upload ───────────────────────────────────────────
+  (function () {
+    var uploadBtn = document.getElementById('smva-kb-upload-btn');
+    if (!uploadBtn) return;
+
+    uploadBtn.addEventListener('click', function () {
+      var fileInput = document.getElementById('smva-kb-file');
+      var msgEl     = document.getElementById('smva-kb-upload-msg');
+      var label     = document.getElementById('smva-kb-upload-label');
+      var spinner   = document.getElementById('smva-kb-upload-spinner');
+
+      if (!fileInput.files || !fileInput.files[0]) {
+        msgEl.style.display = 'block';
+        msgEl.style.color   = '#b91c1c';
+        msgEl.textContent   = 'Please select a file first.';
+        return;
+      }
+
+      var formData = new FormData();
+      formData.append('action', 'smva_upload_knowledge_file');
+      formData.append('nonce', smvaAdmin.nonce);
+      formData.append('file', fileInput.files[0]);
+
+      label.style.display   = 'none';
+      spinner.style.display = '';
+      uploadBtn.disabled    = true;
+      msgEl.style.display   = 'none';
+
+      fetch(smvaAdmin.ajaxUrl, {
+        method: 'POST',
+        body: formData,
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        msgEl.style.display = 'block';
+        if (data.success) {
+          msgEl.style.color = '#15803d';
+          msgEl.textContent = (data.data && data.data.message) || 'File processed successfully.';
+          fileInput.value   = '';
+        } else {
+          msgEl.style.color = '#b91c1c';
+          msgEl.textContent = (data.data && data.data.message) || 'Upload failed. Please try again.';
+        }
+        label.style.display   = '';
+        spinner.style.display = 'none';
+        uploadBtn.disabled    = false;
+      })
+      .catch(function() {
+        msgEl.style.display = 'block';
+        msgEl.style.color   = '#b91c1c';
+        msgEl.textContent   = 'Network error. Please try again.';
+        label.style.display   = '';
+        spinner.style.display = 'none';
+        uploadBtn.disabled    = false;
+      });
+    });
+  })();
+
 }(jQuery));

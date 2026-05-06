@@ -790,9 +790,21 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 <div style="display:flex;gap:8px">
                     <input type="text" id="smva-crawl-url" class="smva-input" placeholder="<?php echo esc_attr( get_site_url() ); ?>" value="<?php echo esc_attr( get_site_url() ); ?>" style="flex:1">
                     <button type="button" id="smva-crawl-btn" class="smva-btn smva-btn-green" style="flex:none" title="Crawl your website and build knowledge base automatically">
-                        🌐 Import from Website
+                        &#127760; Import from Website
                     </button>
                 </div>
+            </div>
+            <div class="smva-field smva-field-full" style="margin-bottom:12px">
+                <label style="font-size:12px;color:#6b7280;margin-bottom:4px;display:block">Upload a file to add to knowledge base:</label>
+                <div style="display:flex;gap:8px;align-items:center">
+                    <input type="file" id="smva-kb-file" accept=".pdf,.docx,.csv,.txt" style="flex:1;font-size:13px;padding:6px;border:1px solid #d1d5db;border-radius:8px;background:#fff">
+                    <button type="button" id="smva-kb-upload-btn" class="smva-btn smva-btn-primary" style="flex:none">
+                        <span id="smva-kb-upload-label">&#128196; Upload File</span>
+                        <span id="smva-kb-upload-spinner" style="display:none">Processing...</span>
+                    </button>
+                </div>
+                <div id="smva-kb-upload-msg" style="font-size:12px;margin-top:6px;display:none"></div>
+                <div style="font-size:11px;color:#9ca3af;margin-top:4px">Supported: PDF, DOCX, CSV, TXT &mdash; Max 10MB</div>
             </div>
 
             <textarea name="knowledge_base" class="smva-textarea" rows="8" placeholder="## Business Name&#10;Your Company&#10;&#10;## Services&#10;- Service 1&#10;- Service 2&#10;&#10;## Hours&#10;Mon-Fri: 9am-5pm&#10;&#10;## Contact&#10;Email: info@example.com"><?php echo esc_textarea( $agent['knowledge_base'] ?? '' ); ?></textarea>
