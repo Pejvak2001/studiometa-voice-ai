@@ -353,10 +353,6 @@ class SMVA_Plugin {
     }
 
     /**
-     * Maintain existing activations on admin page loads.
-     * Does not start a trial automatically; trial activation requires an admin click.
-     */
-    /**
      * Sync language, suggested_questions, and other agent settings from backend.
      * Called after reinstall to restore settings that were stored only in WP options.
      */
@@ -1990,8 +1986,19 @@ class SMVA_Plugin {
             return;
         }
 
-        $file     = $_FILES['file'];
-        $ext      = strtolower( pathinfo( $file['name'], PATHINFO_EXTENSION ) );
+        $uploaded = $_FILES['file']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- validated and sanitized below
+        if ( ! isset( $uploaded['name'], $uploaded['type'], $uploaded['tmp_name'], $uploaded['error'], $uploaded['size'] ) ) {
+            wp_send_json_error( array( 'message' => 'Incomplete file upload data.' ) );
+            return;
+        }
+        $file = array(
+            'name'     => sanitize_file_name( wp_unslash( $uploaded['name'] ) ),
+            'type'     => sanitize_mime_type( wp_unslash( $uploaded['type'] ) ),
+            'tmp_name' => sanitize_text_field( wp_unslash( $uploaded['tmp_name'] ) ),
+            'error'    => (int) $uploaded['error'],
+            'size'     => (int) $uploaded['size'],
+        );
+        $ext = strtolower( pathinfo( $file['name'], PATHINFO_EXTENSION ) );
         $allowed  = array( 'pdf', 'docx', 'csv', 'txt' );
 
         if ( ! in_array( $ext, $allowed, true ) ) {

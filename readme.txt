@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, voice ai, ai assistant, customer support, gemini
 Requires at least: 6.0
 Tested up to: 6.9
-Stable tag: 1.3.67
+Stable tag: 1.3.68
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -17,7 +17,7 @@ AI voice & chat widget for your site. Free trial included: 30 voice minutes + 10
 
 The assistant understands context, answers in multiple languages, and can be customized to match your brand.
 
-**Every install includes a free trial automatically — no signup, no credit card.** You get 30 voice minutes and 100 chat messages to try the assistant on your site before deciding on a paid plan.
+**Every install includes a free trial — no signup, no credit card required.** Click "Start Free Trial" in the admin panel to activate 30 voice minutes and 100 chat messages before deciding on a paid plan.
 
 = Key features =
 
@@ -34,7 +34,7 @@ The assistant understands context, answers in multiple languages, and can be cus
 
 = How the trial works =
 
-1. Activate the plugin — a free trial is created automatically
+1. Activate the plugin, then click **Start Free Trial** in the admin panel
 2. Use 30 voice minutes and 100 chat messages on real visitor conversations
 3. When the voice quota is exhausted, the chat widget keeps working (and vice versa)
 4. When both are exhausted, the widget shows an upgrade button linking to our pricing page
@@ -99,7 +99,7 @@ If you do not want the plugin to contact these services, simply deactivate and u
 
 1. Upload the `studiometa-voice-ai` folder to `/wp-content/plugins/`, OR install through the WordPress plugin browser
 2. Activate the plugin through the **Plugins** menu in WordPress
-3. A free trial is created automatically — you'll see the **Voice AI** menu item in your WordPress admin sidebar
+3. Click **Start Free Trial** in the admin notice to activate your free trial — you'll see the **Voice AI** menu item in your WordPress admin sidebar
 4. Click **Voice AI → My Agent** to customize your assistant's name, voice, and knowledge base
 5. The widget appears as a floating button on every page of your site (or use the shortcode `[smva_widget]` to place it manually)
 
@@ -107,7 +107,7 @@ If you do not want the plugin to contact these services, simply deactivate and u
 
 = Do I need to create an account? =
 
-No. The plugin auto-issues a free trial when you activate it. You can start using the AI assistant immediately.
+No. Click **Start Free Trial** in the admin panel after activation. No account or credit card needed.
 
 = What happens when my trial runs out? =
 
@@ -160,6 +160,12 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.3.68 =
+* fix: chat usage now counted from chat_messages table (was incorrectly reading voice_sessions)
+* fix: domain lock in trial-activate — prevents multiple trials per domain with different fingerprints
+* fix: orphan docblock removed from class-smva.php
+* fix: readme updated to reflect explicit trial activation flow (WordPress.org compliance)
 
 = 1.3.67 =
 * fix: remove debug message from voice sessions empty state
