@@ -1147,9 +1147,7 @@ class SMVA_Plugin {
         }
 
         if ( isset( $_POST['smva_extra_langs'] ) ) {
-            // JSON blob — decoded then each element sanitized via array_map( 'sanitize_text_field', ... ) below.
-            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-            $extra = json_decode( wp_unslash( $_POST['smva_extra_langs'] ), true );
+            $extra = json_decode( sanitize_text_field( wp_unslash( $_POST['smva_extra_langs'] ) ), true );
             if ( is_array( $extra ) ) {
                 update_option( 'smva_extra_langs', wp_json_encode( array_values( array_map( 'sanitize_text_field', $extra ) ) ) );
             }
@@ -1222,17 +1220,14 @@ class SMVA_Plugin {
         // Only send agent_tools if explicitly provided (Automation tab only)
         // Extra languages
         if ( isset( $_POST['extra_langs'] ) ) {
-            // JSON blob — decoded then each element sanitized via array_map below.
-            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-            $el = json_decode( wp_unslash( $_POST['extra_langs'] ), true );
+            $el = json_decode( sanitize_text_field( wp_unslash( $_POST['extra_langs'] ) ), true );
             if ( is_array( $el ) ) {
                 $payload['extra_langs'] = array_values( array_map( 'sanitize_text_field', $el ) );
             }
         }
 
         if ( isset( $_POST['agent_tools'] ) ) {
-            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-            $tools_raw = json_decode( wp_unslash( $_POST['agent_tools'] ), true );
+            $tools_raw = json_decode( sanitize_text_field( wp_unslash( $_POST['agent_tools'] ) ), true );
             if ( is_array( $tools_raw ) ) {
                 $payload['agent_tools'] = array_map( function( $tool ) {
                     if ( ! is_array( $tool ) ) return array();
@@ -1243,9 +1238,7 @@ class SMVA_Plugin {
 
         // Only send suggested_questions if explicitly provided (Agent tab only)
         if ( isset( $_POST['smva_suggested_questions'] ) ) {
-            // Multi-line text input — split by newline, trimmed, and filtered below.
-            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-            $raw = wp_unslash( $_POST['smva_suggested_questions'] );
+            $raw = sanitize_textarea_field( wp_unslash( $_POST['smva_suggested_questions'] ) );
             $payload['suggested_questions'] = array_values( array_filter( array_map( 'sanitize_text_field', explode( "\n", $raw ) ) ) );
         }
 

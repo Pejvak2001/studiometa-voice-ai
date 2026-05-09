@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, voice ai, ai assistant, customer support, gemini
 Requires at least: 6.0
 Tested up to: 6.9
-Stable tag: 1.3.68
+Stable tag: 1.3.69
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -66,7 +66,7 @@ If you want unlimited or higher quotas, visit [studiometa.io/pricing](https://st
 **Data NOT sent:** WordPress user passwords, post content (unless you explicitly import it via "Import KB"), visitor IP addresses, visitor names or accounts.
 
 * Service homepage: [https://studiometa.io](https://studiometa.io)
-* Terms of Service: [https://studiometa.io/privacy-policy/](https://studiometa.io/privacy-policy/)
+* Terms of Service: [https://studiometa.io/terms/](https://studiometa.io/terms/)
 * Privacy Policy: [https://studiometa.io/privacy](https://studiometa.io/privacy)
 
 = 2. StudioMeta Workflow Webhooks (n8n.studiometa.io) =
@@ -81,7 +81,7 @@ If you want unlimited or higher quotas, visit [studiometa.io/pricing](https://st
 **Data sent:** admin email, site URL, business name, current plan, usage percentages.
 
 * Service homepage: [https://studiometa.io](https://studiometa.io)
-* Terms of Service: [https://studiometa.io/privacy-policy/](https://studiometa.io/privacy-policy/)
+* Terms of Service: [https://studiometa.io/terms/](https://studiometa.io/terms/)
 * Privacy Policy: [https://studiometa.io/privacy](https://studiometa.io/privacy)
 
 = 3. Google Gemini Live (indirectly, via api2.studiometa.io) =
@@ -160,6 +160,10 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.3.69 =
+* fix: sanitization hardened for agent_tools, extra_langs, and suggested_questions inputs
+* fix: Terms of Service URL corrected in readme (was pointing to privacy policy)
 
 = 1.3.68 =
 * fix: chat usage now counted from chat_messages table (was incorrectly reading voice_sessions)
