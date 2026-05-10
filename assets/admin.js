@@ -534,6 +534,112 @@ jQuery(function($) {
         .always(function() { hideLoading(); $btn.prop('disabled', false).text('✨ Optimize System Prompt & KB'); setTimeout(function() { $msg.text('').css('color', ''); }, 6000); });
     });
 
+    // ── Auto-train Wizard ──────────────────────────────────────────────
+    var trainResult = {};
+
+    function smvaShowTrainStep(step) {
+        $('#smva-train-step1, #smva-train-step2, #smva-train-step3').hide();
+        $('#smva-train-step' + step).show();
+    }
+
+    $('#smva-auto-train-open').on('click', function() {
+        trainResult = {};
+        smvaShowTrainStep(1);
+        $('#smva-train-modal').css('display', 'flex');
+    });
+
+    $('#smva-train-cancel1, #smva-train-cancel3').on('click', function() {
+        $('#smva-train-modal').hide();
+    });
+
+    $('#smva-train-modal').on('click', function(e) {
+        if ($(e.target).is('#smva-train-modal')) $(this).hide();
+    });
+
+    $('#smva-train-start').on('click', function() {
+        var siteUrl = $('#smva-train-url').val().trim();
+        if (!siteUrl) { alert('Please enter a website URL.'); return; }
+        smvaShowTrainStep(2);
+        $('#smva-train-progress-bar').css('width', '10%');
+        $('#smva-train-progress-text').text('📥 Reading your website...');
+
+        // Animate progress
+        var prog = 10;
+        var progMessages = [
+            [30, '📥 Pages crawled, analyzing content...'],
+            [55, '🧠 Writing system prompt...'],
+            [75, '📚 Building knowledge base...'],
+            [90, '💡 Generating suggested questions...'],
+        ];
+        var progTimer = setInterval(function() {
+            if (prog < 88) {
+                prog += 3;
+                $('#smva-train-progress-bar').css('width', prog + '%');
+                progMessages.forEach(function(m) {
+                    if (prog >= m[0] && prog < m[0] + 4) $('#smva-train-progress-text').text(m[1]);
+                });
+            }
+        }, 1200);
+
+        $.post(window.smvaAdmin.ajaxUrl, {
+            action: 'smva_auto_train',
+            nonce: window.smvaAdmin.nonce,
+            site_url_b64: btoa(unescape(encodeURIComponent(siteUrl)))
+        }).done(function(res) {
+            clearInterval(progTimer);
+            $('#smva-train-progress-bar').css('width', '100%');
+            if (res.success && res.data) {
+                trainResult = res.data;
+                setTimeout(function() {
+                    // Populate step 3
+                    $('#smva-train-result-prompt').val(res.data.system_prompt || '');
+                    $('#smva-train-result-kb').val(res.data.knowledge_base || '');
+                    $('#smva-train-pages-info').text('Read ' + (res.data.pages_crawled || '?') + ' pages from your website.');
+                    // Render suggested questions as checkboxes
+                    var qs = res.data.suggested_questions || [];
+                    var html = '';
+                    qs.forEach(function(q, i) {
+                        html += '<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#374151;cursor:pointer;padding:8px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px">';
+                        html += '<input type="checkbox" checked data-q="' + i + '" style="width:16px;height:16px;cursor:pointer"> ';
+                        html += '<span>' + $('<div>').text(q).html() + '</span></label>';
+                    });
+                    $('#smva-train-result-questions').html(html || '<p style="font-size:13px;color:#9ca3af">No suggestions generated.</p>');
+                    $('#smva-train-error').hide();
+                    smvaShowTrainStep(3);
+                }, 400);
+            } else {
+                smvaShowTrainStep(1);
+                alert('Error: ' + (res.data && res.data.message ? res.data.message : 'Training failed. Please try again.'));
+            }
+        }).fail(function() {
+            clearInterval(progTimer);
+            smvaShowTrainStep(1);
+            alert('Connection error. Please try again.');
+        });
+    });
+
+    $('#smva-train-apply').on('click', function() {
+        var $btn = $(this).prop('disabled', true).text('Saving...');
+        // Apply to form fields
+        var sp = $('#smva-train-result-prompt').val();
+        var kb = $('#smva-train-result-kb').val();
+        $('[name=system_prompt]').val(sp);
+        $('[name=knowledge_base]').val(kb);
+        // Apply selected suggested questions
+        var qs = [];
+        $('#smva-train-result-questions input[type=checkbox]:checked').each(function() {
+            var idx = parseInt($(this).data('q'));
+            if (trainResult.suggested_questions && trainResult.suggested_questions[idx]) {
+                qs.push(trainResult.suggested_questions[idx]);
+            }
+        });
+        if (qs.length) $('[name=smva_suggested_questions]').val(qs.join('\n'));
+        // Auto-save
+        $('#smva-agent-form').trigger('submit');
+        $('#smva-train-modal').hide();
+        $btn.prop('disabled', false).text('✓ Apply & Save');
+    });
+
     // Webhook
     $('#smva-save-webhook-btn').on('click', function() {
         var $btn = $(this).prop('disabled', true).text('Saving...');

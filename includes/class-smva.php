@@ -149,6 +149,7 @@ class SMVA_Plugin {
         add_action( 'wp_ajax_smva_save_agent',         array( $this, 'ajax_save_agent' ) );
         add_action( 'wp_ajax_smva_crawl_site',         array( $this, 'ajax_crawl_site' ) );
         add_action( 'wp_ajax_smva_optimize_agent',     array( $this, 'ajax_optimize_agent' ) );
+        add_action( 'wp_ajax_smva_auto_train',         array( $this, 'ajax_auto_train' ) );
         add_action( 'wp_ajax_smva_refresh_quota',      array( $this, 'ajax_refresh_quota' ) );
         add_action( 'wp_ajax_smva_tts_preview',        array( $this, 'ajax_tts_preview' ) );
         add_action( 'wp_ajax_smva_get_agent_tools',    array( $this, 'ajax_get_agent_tools' ) );
@@ -1363,6 +1364,41 @@ class SMVA_Plugin {
         } else {
             wp_send_json_error( array( 'message' => $data['error'] ?? 'Failed to optimize.' ) );
         }
+    }
+
+    // ── AJAX: Auto-train Agent (crawl + optimize + suggest questions) ──────
+    public function ajax_auto_train() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+        $license_key    = get_option( 'smva_license_key', '' );
+        $internal_token = get_option( 'smva_internal_token', '' );
+        $site_url_raw   = sanitize_text_field( $this->decode_b64_field( 'site_url' ) ?? get_site_url() );
+        if ( ! empty( $site_url_raw ) && ! preg_match( '/^https?:\/\//i', $site_url_raw ) ) {
+            $site_url_raw = 'https://' . $site_url_raw;
+        }
+        $response = wp_remote_post( SMVA_API_URL . '/plugin/license/auto-train', array(
+            'headers' => array( 'Content-Type' => 'application/json' ),
+            'body'    => wp_json_encode( array(
+                'license_key'    => $license_key,
+                'internal_token' => $internal_token,
+                'site_url'       => $site_url_raw,
+            ) ),
+            'timeout' => 90,
+        ) );
+        if ( is_wp_error( $response ) ) {
+            wp_send_json_error( array( 'message' => 'Connection error.' ) );
+        }
+        $data   = json_decode( wp_remote_retrieve_body( $response ), true );
+        $status = wp_remote_retrieve_response_code( $response );
+        if ( $status === 200 && is_array( $data ) ) {
+            wp_send_json_success( array(
+                'system_prompt'        => $data['system_prompt'] ?? '',
+                'knowledge_base'       => $data['knowledge_base'] ?? '',
+                'suggested_questions'  => is_array( $data['suggested_questions'] ?? null ) ? $data['suggested_questions'] : array(),
+                'pages_crawled'        => intval( $data['pages_crawled'] ?? 0 ),
+            ) );
+        }
+        wp_send_json_error( array( 'message' => $data['error'] ?? 'Auto-train failed.' ) );
     }
 
     // ── Dashboard Data ──────────────────────────────────────────────────────

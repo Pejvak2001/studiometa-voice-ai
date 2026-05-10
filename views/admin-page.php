@@ -637,6 +637,91 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             if ( ! is_wp_error($r) ) $agent = json_decode( wp_remote_retrieve_body($r), true ) ?: array();
         }
     ?>
+    <!-- Auto-train wizard trigger -->
+    <div style="margin-bottom:20px;background:linear-gradient(135deg,#eff6ff,#f5f3ff);border:1px solid #c7d2fe;border-radius:12px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <div>
+            <div style="font-size:15px;font-weight:600;color:#1e1b4b;margin-bottom:4px">🚀 Train My Agent automatically</div>
+            <div style="font-size:13px;color:#6b7280">We'll read your website, build a knowledge base, write a system prompt, and suggest questions — all in one click.</div>
+        </div>
+        <button type="button" id="smva-auto-train-open" class="smva-btn smva-btn-primary" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;white-space:nowrap;flex-shrink:0">
+            🚀 Train My Agent
+        </button>
+    </div>
+
+    <!-- Auto-train wizard modal -->
+    <div id="smva-train-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center">
+        <div style="background:#fff;border-radius:16px;padding:32px;width:620px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.2)">
+
+            <!-- Step 1: Setup -->
+            <div id="smva-train-step1">
+                <div style="text-align:center;margin-bottom:24px">
+                    <div style="font-size:40px;margin-bottom:12px">🚀</div>
+                    <h2 style="font-size:20px;font-weight:700;color:#0f172a;margin:0 0 8px">Train My Agent</h2>
+                    <p style="font-size:14px;color:#6b7280;margin:0">We'll automatically read your website and set up your AI assistant in about 30 seconds.</p>
+                </div>
+                <div style="margin-bottom:20px">
+                    <label style="display:block;font-size:13px;font-weight:500;color:#374151;margin-bottom:6px">Website URL to train from:</label>
+                    <input type="text" id="smva-train-url" class="smva-input" value="<?php echo esc_attr( get_site_url() ); ?>" placeholder="https://yoursite.com" style="width:100%">
+                </div>
+                <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin-bottom:24px">
+                    <div style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">What we'll do:</div>
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#374151"><span style="font-size:16px">📥</span> Read up to 10 pages from your website</div>
+                        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#374151"><span style="font-size:16px">🧠</span> Write a system prompt for your agent</div>
+                        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#374151"><span style="font-size:16px">📚</span> Build a clean knowledge base</div>
+                        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#374151"><span style="font-size:16px">💡</span> Suggest questions for your visitors</div>
+                    </div>
+                </div>
+                <div style="display:flex;gap:10px;justify-content:flex-end">
+                    <button type="button" id="smva-train-cancel1" class="smva-btn" style="background:#f3f4f6;color:#374151">Cancel</button>
+                    <button type="button" id="smva-train-start" class="smva-btn smva-btn-primary" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none">🚀 Start Training</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Progress -->
+            <div id="smva-train-step2" style="display:none;text-align:center;padding:16px 0">
+                <div style="font-size:40px;margin-bottom:16px">⚙️</div>
+                <h2 style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 8px">Training in progress...</h2>
+                <p id="smva-train-progress-text" style="font-size:14px;color:#6b7280;margin:0 0 24px">Reading your website...</p>
+                <div style="background:#f1f5f9;border-radius:99px;height:8px;overflow:hidden;margin-bottom:8px">
+                    <div id="smva-train-progress-bar" style="height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:99px;width:10%;transition:width .5s ease"></div>
+                </div>
+                <p style="font-size:12px;color:#94a3b8">This may take 30-60 seconds...</p>
+            </div>
+
+            <!-- Step 3: Review -->
+            <div id="smva-train-step3" style="display:none">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+                    <div style="width:40px;height:40px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">✓</div>
+                    <div>
+                        <h2 style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 2px">Training complete!</h2>
+                        <p id="smva-train-pages-info" style="font-size:13px;color:#6b7280;margin:0"></p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:16px">
+                    <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">🧠 System Prompt</label>
+                    <textarea id="smva-train-result-prompt" class="smva-textarea" rows="5" style="width:100%;font-size:13px"></textarea>
+                </div>
+                <div style="margin-bottom:16px">
+                    <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">📚 Knowledge Base</label>
+                    <textarea id="smva-train-result-kb" class="smva-textarea" rows="6" style="width:100%;font-size:13px"></textarea>
+                </div>
+                <div style="margin-bottom:20px">
+                    <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:8px">💡 Suggested Questions</label>
+                    <div id="smva-train-result-questions" style="display:flex;flex-direction:column;gap:6px"></div>
+                </div>
+
+                <div id="smva-train-error" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px;font-size:13px;color:#dc2626;margin-bottom:16px"></div>
+
+                <div style="display:flex;gap:10px;justify-content:flex-end">
+                    <button type="button" id="smva-train-cancel3" class="smva-btn" style="background:#f3f4f6;color:#374151">Cancel</button>
+                    <button type="button" id="smva-train-apply" class="smva-btn smva-btn-primary" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none">✓ Apply & Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <form id="smva-agent-form">
 
         <div class="smva-card">
