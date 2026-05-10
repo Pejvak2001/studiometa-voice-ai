@@ -575,3 +575,18 @@
 .toplevel_page_smva .smva-admin-wrap {
     margin-top: 0;
 }
+
+#smva-event-logs > div {
+}
+#smva-event-logs > div * {
+}
+
+#smva-event-logs > div {
+    direction: ltr;
+    text-align: left;
+    unicode-bidi: isolate;
+}
+#smva-event-logs > div * {
+    direction: ltr;
+    text-align: left;
+}
