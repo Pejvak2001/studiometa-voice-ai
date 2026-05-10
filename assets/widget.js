@@ -257,7 +257,7 @@
         } else if (theme === 'glass') {
             css = ['#smva-panel{background:rgba(255,255,255,.55)!important;border:1px solid rgba(255,255,255,.8)!important;backdrop-filter:blur(20px) saturate(160%)!important;-webkit-backdrop-filter:blur(20px) saturate(160%)!important;box-shadow:0 8px 32px rgba(0,0,0,.12),inset 0 0.5px 0 rgba(255,255,255,.9)!important;border-radius:20px!important}','.smva-hdr{background:rgba(255,255,255,.35)!important;border-bottom:0.5px solid rgba(255,255,255,.6)!important}','.smva-hn{color:#1e293b!important}','.smva-hs{color:#475569!important}','.smva-hs::before{background:#10b981!important}','.smva-x{background:rgba(0,0,0,.06)!important;color:#374151!important;border:0.5px solid rgba(0,0,0,.1)!important}','.smva-tabs{background:rgba(255,255,255,.25)!important;border-bottom:0.5px solid rgba(0,0,0,.06)!important}','.smva-tab-btn{color:#64748b!important}','.smva-tab-btn.active{color:#1e293b!important;border-bottom-color:#1e293b!important;background:rgba(255,255,255,.4)!important}','.smva-msgs{background:transparent!important}','.smva-msg-bot{background:rgba(255,255,255,.6)!important;color:#1e293b!important;border:0.5px solid rgba(255,255,255,.9)!important;backdrop-filter:blur(8px)!important}','.smva-msg-user{background:rgba(30,41,59,.75)!important;color:#fff!important;backdrop-filter:blur(8px)!important}','.smva-voice-body{background:rgba(255,255,255,.2)!important}','.smva-status-text{color:#64748b!important}','.smva-timer{color:#1e293b!important}','.smva-btn-start{background:rgba(30,41,59,.8)!important;color:#fff!important;border:none!important}','.smva-btn-end{background:rgba(220,38,38,.15)!important;color:#b91c1c!important}','.smva-voice-ft,.smva-chat-ft{background:rgba(255,255,255,.3)!important;border-top:0.5px solid rgba(0,0,0,.06)!important}','.smva-input{background:rgba(255,255,255,.6)!important;border:0.5px solid rgba(0,0,0,.1)!important;color:#1e293b!important}','.smva-input::placeholder{color:#94a3b8!important}','.smva-send{background:rgba(30,41,59,.8)!important;border:none!important}','.smva-suggestions{background:rgba(255,255,255,.2)!important;border-top:0.5px solid rgba(0,0,0,.05)!important}','.smva-chip{background:rgba(255,255,255,.5)!important;border-color:rgba(0,0,0,.1)!important;color:#374151!important}','.smva-chip:hover{background:rgba(30,41,59,.8)!important;color:#fff!important;border-color:transparent!important}','#smva-text-panel{background:rgba(255,255,255,.4)!important;backdrop-filter:blur(8px)!important}'].join('');
         } else if (theme === 'gradient') {
-            css = ['#smva-panel{border-radius:20px!important}','.smva-hdr{background:linear-gradient(135deg,#667eea,#764ba2)!important}','.smva-msg-user{background:linear-gradient(135deg,#667eea,#764ba2)!important}','.smva-send{background:linear-gradient(135deg,#667eea,#764ba2)!important}','.smva-btn-start{background:linear-gradient(135deg,#667eea,#764ba2)!important}','.smva-tab-btn.active{color:#764ba2!important;border-bottom-color:#764ba2!important}','.smva-chip{color:#764ba2!important;border-color:rgba(118,75,162,.3)!important}','.smva-chip:hover{background:#764ba2!important}','#smva-text-send{background:linear-gradient(135deg,#667eea,#764ba2)!important}'].join('');
+            css = ['#smva-panel{border-radius:20px!important}','.smva-hdr{background:linear-gradient(135deg,#667eea,#764ba2)!important}','.smva-msg-user{background:linear-gradient(135deg,#667eea,#764ba2)!important}','.smva-send{background:linear-gradient(135deg,#667eea,#764ba2)!important}','.smva-btn-start{background:linear-gradient(135deg,#667eea,#764ba2)!important}','.smva-tab-btn.active{color:#764ba2!important;border-bottom-color:#764ba2!important}','.smva-chip{color:#764ba2!important;border-color:rgba(118,75,162,.3)!important}','.smva-chip:hover{background:#764ba2!important;color:#fff!important}','#smva-text-send{background:linear-gradient(135deg,#667eea,#764ba2)!important}'].join('');
         }
         if (css) { ts.textContent = css; document.head.appendChild(ts); }
     }
@@ -322,7 +322,7 @@
             '.smva-suggestions{padding:10px 16px 14px;display:flex;flex-wrap:wrap;gap:6px;border-top:0.5px solid #f0f0f0}',
             '.smva-suggestions.hide{display:none}',
             '.smva-chip{background:#fff;border:1.5px solid '+c+'33;color:'+c+';border-radius:20px;padding:6px 14px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}',
-            '.smva-chip:hover{background:'+c+';color:#fff;border-color:'+c+';transform:translateY(-1px)}',
+            '.smva-chip:hover{background:'+c+'!important;color:#fff!important;border-color:'+c+'!important;transform:translateY(-1px)}',
             '.smva-chat-ft{padding:12px 16px;border-top:1px solid #f0f0f0;background:#fafafa}',
             '.smva-input-row{display:flex;gap:8px;align-items:flex-end}',
             '.smva-input{flex:1;border:1.5px solid #e5e7eb;border-radius:12px;padding:10px 14px;font-size:13.5px;resize:none;max-height:100px;direction:'+(isRTL?'rtl':'ltr')+';background:#fff;line-height:1.4;font-family:inherit;transition:border-color .2s}',
@@ -1166,14 +1166,26 @@
         updateChatUI();
     }
 
+    function persianToWestern(str) {
+      var persian = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+      var arabic  = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+      for (var i = 0; i < 10; i++) {
+        str = str.split(persian[i]).join(i);
+        str = str.split(arabic[i]).join(i);
+      }
+      return str;
+    }
     function formatMsg(text) {
+      text = persianToWestern(text);
+      // Wrap phone numbers with LTR marks to prevent RTL reversal
+      text = text.replace(/(\d{3}[-\s]\d{3}[-\s]\d{4})/g, '‎$1‎');
       var escaped = esc(text);
       // Step 1: markdown links [text](url) → <a>
       escaped = escaped.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;word-break:break-all;">$1</a>');
       // Step 2: plain https?:// URLs not already in href
       escaped = escaped.replace(/(?<!href=["'])(https?:\/\/[^\s<>"\)]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;word-break:break-all;">$1</a>');
       // Step 3: bare domains (e.g. aarenocare.ca) not already linked
-      escaped = escaped.replace(/(?<![\/"\'=@])((?:[a-zA-Z0-9-]+\.)+(?:ca|com|net|org|io|co|info|biz)(?:\/[^\s<>"\)]*)?)/g, function(m, p1, offset, str) { var before = str.substring(Math.max(0,offset-10),offset); if (/href=|https?:\/\//.test(before)) return m; return '<a href="https://' + m + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;word-break:break-all;">' + m + '</a>'; });
+      escaped = escaped.replace(/(?<![\/"\'=@])((?:[a-zA-Z0-9-]+\.)+(?:ca|com|net|org|io|co|info|biz)(?:\/[^\s<>"\)]*)?)/g, function(m, p1, offset, str) { var before = str.substring(Math.max(0,offset-20),offset); if (/href=|https?:\/\/|@[a-zA-Z]/.test(before)) return m; return '<a href="https://' + m + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;word-break:break-all;">' + m + '</a>'; });
       // **bold**
       escaped = escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
       // *italic*
