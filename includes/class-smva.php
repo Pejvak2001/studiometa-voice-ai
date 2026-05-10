@@ -311,14 +311,22 @@ class SMVA_Plugin {
         ) );
 
         if ( is_wp_error( $response ) ) {
-            return false;
+            return array(
+                'success' => false,
+                'error'   => 'connection_error',
+                'message' => 'Could not reach the licensing server. Please try again.',
+            );
         }
 
         $code = wp_remote_retrieve_response_code( $response );
         $data = json_decode( wp_remote_retrieve_body( $response ), true );
 
         if ( $code !== 200 || empty( $data['internal_token'] ) ) {
-            return false;
+            return array(
+                'success' => false,
+                'error'   => $data['error'] ?? 'activation_failed',
+                'message' => $data['message'] ?? 'Could not activate trial.',
+            );
         }
 
         update_option( 'smva_license_key',    $data['license_key'] ?? '' );
@@ -523,12 +531,19 @@ class SMVA_Plugin {
             wp_send_json_success( array( 'message' => 'Trial is already active.', 'reload' => true ) );
         }
 
-        $started = $this->auto_trial_activate();
-        if ( $started ) {
+        $result = $this->auto_trial_activate();
+        if ( is_array( $result ) && ! empty( $result['success'] ) ) {
             wp_send_json_success( array( 'message' => '✓ Free trial activated.', 'reload' => true ) );
         }
-
-        wp_send_json_error( array( 'message' => 'Could not reach the licensing server. Please try again or enter a license key.' ) );
+        $error   = is_array( $result ) ? ( $result['error'] ?? '' ) : '';
+        $message = is_array( $result ) ? ( $result['message'] ?? '' ) : '';
+        if ( $error === 'trial_exists' ) {
+            wp_send_json_error( array(
+                'message' => '⚠️ A free trial has already been used for this domain. To continue, please <a href="' . esc_url( SMVA_PRICING_URL ) . '" target="_blank">purchase a plan</a> and enter your license key below.',
+                'code'    => 'trial_exists',
+            ) );
+        }
+        wp_send_json_error( array( 'message' => $message ?: 'Could not reach the licensing server. Please try again or enter a license key.' ) );
     }
 
     // ── Admin Menu ──────────────────────────────────────────────────────────
@@ -803,6 +818,18 @@ class SMVA_Plugin {
             }
         }
 
+        // License deleted or invalid — clear local options so widget hides
+        if ( $code === 401 || $code === 404 ) {
+            $error_code = $data['code'] ?? $data['error'] ?? '';
+            if ( in_array( $error_code, array( 'invalid_token', 'not_found' ), true ) ) {
+                update_option( 'smva_license_key', '' );
+                update_option( 'smva_internal_token', '' );
+                update_option( 'smva_plan', '' );
+                update_option( 'smva_trial_attempted', '0' );
+                $this->invalidate_quota_cache();
+                return array( 'error' => 'license_deleted', 'message' => 'This license has been removed.' );
+            }
+        }
         if ( $code !== 200 || ! is_array( $data ) ) {
             return array( 'error' => $data['error'] ?? 'API error ' . $code );
         }
@@ -1147,7 +1174,9 @@ class SMVA_Plugin {
         }
 
         if ( isset( $_POST['smva_extra_langs'] ) ) {
-            $extra = json_decode( sanitize_text_field( wp_unslash( $_POST['smva_extra_langs'] ) ), true );
+            // JSON blob — decoded then each element sanitized via array_map( 'sanitize_text_field', ... ) below.
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+            $extra = json_decode( wp_unslash( $_POST['smva_extra_langs'] ), true );
             if ( is_array( $extra ) ) {
                 update_option( 'smva_extra_langs', wp_json_encode( array_values( array_map( 'sanitize_text_field', $extra ) ) ) );
             }
@@ -1220,14 +1249,17 @@ class SMVA_Plugin {
         // Only send agent_tools if explicitly provided (Automation tab only)
         // Extra languages
         if ( isset( $_POST['extra_langs'] ) ) {
-            $el = json_decode( sanitize_text_field( wp_unslash( $_POST['extra_langs'] ) ), true );
+            // JSON blob — decoded then each element sanitized via array_map below.
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+            $el = json_decode( wp_unslash( $_POST['extra_langs'] ), true );
             if ( is_array( $el ) ) {
                 $payload['extra_langs'] = array_values( array_map( 'sanitize_text_field', $el ) );
             }
         }
 
         if ( isset( $_POST['agent_tools'] ) ) {
-            $tools_raw = json_decode( sanitize_text_field( wp_unslash( $_POST['agent_tools'] ) ), true );
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+            $tools_raw = json_decode( wp_unslash( $_POST['agent_tools'] ), true );
             if ( is_array( $tools_raw ) ) {
                 $payload['agent_tools'] = array_map( function( $tool ) {
                     if ( ! is_array( $tool ) ) return array();
@@ -1238,7 +1270,9 @@ class SMVA_Plugin {
 
         // Only send suggested_questions if explicitly provided (Agent tab only)
         if ( isset( $_POST['smva_suggested_questions'] ) ) {
-            $raw = sanitize_textarea_field( wp_unslash( $_POST['smva_suggested_questions'] ) );
+            // Multi-line text input — split by newline, trimmed, and filtered below.
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+            $raw = wp_unslash( $_POST['smva_suggested_questions'] );
             $payload['suggested_questions'] = array_values( array_filter( array_map( 'sanitize_text_field', explode( "\n", $raw ) ) ) );
         }
 
