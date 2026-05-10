@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, voice ai, ai assistant, customer support, gemini
 Requires at least: 6.0
 Tested up to: 6.9
-Stable tag: 1.3.70
+Stable tag: 1.3.71
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -160,6 +160,10 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.3.71 =
+* fix: plain domain URLs (e.g. aarenocare.ca) now render as clickable links in chat widget
+* fix: chat responses no longer use markdown formatting
 
 = 1.3.70 =
 * fix: widget now hides automatically when license is deleted or revoked from admin panel

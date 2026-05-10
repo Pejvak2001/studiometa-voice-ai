@@ -1168,8 +1168,9 @@
 
     function formatMsg(text) {
       var escaped = esc(text);
-      // URLs → clickable links (http/https)
+      // URLs → clickable links (http/https and bare domains)
       escaped = escaped.replace(/(https?:\/\/[^\s<>"]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;word-break:break-all;">$1</a>');
+      escaped = escaped.replace(/(?<!["\'=])((?:[a-zA-Z0-9-]+\.)+(?:ca|com|net|org|io|co|info|biz)(?:\/[^\s<>"]*)?)/g, function(m) { return '<a href="https://' + m + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;word-break:break-all;">' + m + '</a>'; });
       // **bold**
       escaped = escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
       // *italic*
