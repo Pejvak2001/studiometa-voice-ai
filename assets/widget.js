@@ -1168,9 +1168,12 @@
 
     function formatMsg(text) {
       var escaped = esc(text);
-      // URLs → clickable links (http/https and bare domains)
-      escaped = escaped.replace(/(https?:\/\/[^\s<>"]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;word-break:break-all;">$1</a>');
-      escaped = escaped.replace(/(?<!["\'=])((?:[a-zA-Z0-9-]+\.)+(?:ca|com|net|org|io|co|info|biz)(?:\/[^\s<>"]*)?)/g, function(m) { return '<a href="https://' + m + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;word-break:break-all;">' + m + '</a>'; });
+      // Step 1: markdown links [text](url) → <a>
+      escaped = escaped.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;word-break:break-all;">$1</a>');
+      // Step 2: plain https?:// URLs not already in href
+      escaped = escaped.replace(/(?<!href=["'])(https?:\/\/[^\s<>"\)]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;word-break:break-all;">$1</a>');
+      // Step 3: bare domains (e.g. aarenocare.ca) not already linked
+      escaped = escaped.replace(/(?<![\/"\'=@])((?:[a-zA-Z0-9-]+\.)+(?:ca|com|net|org|io|co|info|biz)(?:\/[^\s<>"\)]*)?)/g, function(m, p1, offset, str) { var before = str.substring(Math.max(0,offset-10),offset); if (/href=|https?:\/\//.test(before)) return m; return '<a href="https://' + m + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;word-break:break-all;">' + m + '</a>'; });
       // **bold**
       escaped = escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
       // *italic*
