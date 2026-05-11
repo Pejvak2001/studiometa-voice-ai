@@ -1966,7 +1966,8 @@ class SMVA_Plugin {
 
     public function ajax_capture_lead_fragment() {
         check_ajax_referer( 'smva_widget_nonce', 'nonce' );
-        $this->check_public_rate_limit( 'capture_lead_fragment', 2 );
+        $field_rl = sanitize_text_field( wp_unslash( $_POST['field'] ?? 'x' ) );
+        $this->check_public_rate_limit( 'capture_lead_fragment_' . $field_rl, 1 );
 
         $session_id = sanitize_text_field( wp_unslash( $_POST['session_id'] ?? '' ) );
         $field      = sanitize_text_field( wp_unslash( $_POST['field'] ?? '' ) );

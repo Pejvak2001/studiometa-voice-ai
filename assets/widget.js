@@ -1150,6 +1150,7 @@
                 try {
                     const data = JSON.parse(e.data);
                     if (data.type === 'setup_complete' && pendingMessage) { chatWs.send(JSON.stringify({ type: 'chat', text: pendingMessage })); pendingMessage = null; }
+                    if (data.type === 'lead_captured' && data.lead) { var ld = data.lead; if (ld.name) saveLeadFragment('name','Name',ld.name,'Chat lead capture'); if (ld.email) saveLeadFragment('email','Email',ld.email,'Chat lead capture'); if (ld.phone) saveLeadFragment('phone','Phone',ld.phone,'Chat lead capture'); if (ld.notes) saveLeadFragment('notes','Notes',ld.notes,'Chat lead capture'); }
                     if (data.type === 'chat_response') { isTyping = false; addChatMessage('bot', data.text); chatHistory.push({ role: 'bot', content: data.text }); saveChatHistory();
                     } else if (data.type === 'error' && data.code === 'quota_exceeded') { isTyping = false; addChatMessage('bot', '⚠️ ' + t('chat_unavailable')); setTimeout(refreshQuota, 500);
                     } else if (data.type === 'error') { isTyping = false; var msg = data.message || 'Error'; addChatMessage('bot', '⚠️ ' + msg); }
