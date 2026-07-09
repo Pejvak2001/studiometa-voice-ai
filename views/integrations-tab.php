@@ -1,6 +1,6 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <?php
-$hs_connected = get_option( 'smva_hubspot_connected', '0' ) === '1';
+$smva_hs_connected = get_option( 'smva_hubspot_connected', '0' ) === '1';
 ?>
 <div class="smva-tab-content">
     <div class="smva-section">
@@ -17,14 +17,14 @@ $hs_connected = get_option( 'smva_hubspot_connected', '0' ) === '1';
                 <div>
                     <div class="smva-int-name">
                         HubSpot
-                        <?php if ( $hs_connected ) : ?>
+                        <?php if ( $smva_hs_connected ) : ?>
                             <span class="smva-int-badge-connected">&#10003; Connected</span>
                         <?php endif; ?>
                     </div>
                     <div style="font-size:12px;color:#6b7280;margin-top:2px">Sync leads to HubSpot Contacts automatically</div>
                 </div>
             </div>
-            <?php if ( $hs_connected ) : ?>
+            <?php if ( $smva_hs_connected ) : ?>
                 <div class="smva-int-connected-row">
                     <span style="font-size:13px;color:#374151">Leads are syncing to your HubSpot account.</span>
                     <button class="smva-btn smva-btn-ghost smva-btn-sm" id="smva-hubspot-disconnect">Disconnect</button>
