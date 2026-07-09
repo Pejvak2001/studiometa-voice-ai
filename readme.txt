@@ -84,7 +84,22 @@ If you want unlimited or higher quotas, visit [studiometa.io/pricing](https://st
 * Terms of Service: [https://studiometa.io/terms/](https://studiometa.io/terms/)
 * Privacy Policy: [https://studiometa.io/privacy](https://studiometa.io/privacy)
 
-= 3. Google Gemini Live (indirectly, via api2.studiometa.io) =
+= 3. HubSpot (api.hubapi.com) — optional, only if you connect it =
+
+**What it does:** Syncs leads captured by the voice/chat widget (name, email, phone, notes) into your own HubSpot CRM as contacts.
+
+**When it is contacted:** Only if you explicitly connect HubSpot under **Voice AI → Integrations** by entering your own HubSpot Private App Token. If you never connect it, the plugin never contacts HubSpot.
+
+* When you click "Connect": one test request to `api.hubapi.com` to verify your token
+* When the widget captures a lead: the lead's name, email, phone, and notes are sent to `api.hubapi.com` to create/update a contact in **your** HubSpot account
+
+**Data sent:** your HubSpot Private App Token (stored in your WordPress database, sent only to HubSpot), and captured lead fields (name, email, phone, notes).
+
+* Service homepage: [https://www.hubspot.com](https://www.hubspot.com)
+* Terms of Service: [https://legal.hubspot.com/terms-of-service](https://legal.hubspot.com/terms-of-service)
+* Privacy Policy: [https://legal.hubspot.com/privacy-policy](https://legal.hubspot.com/privacy-policy)
+
+= 4. Google Gemini Live (indirectly, via api2.studiometa.io) =
 
 The AI capabilities are powered by Google's Gemini Live API. The plugin does **not** contact Google directly — all requests go through `api2.studiometa.io`, which forwards them to Google. You do not need a Google account or API key.
 
@@ -164,6 +179,9 @@ https://github.com/Pejvak2001/studiometa-voice-ai
 = 1.3.72 =
 * New: Lead capture in chat mode — agent can save visitor name, email, phone, and notes via the save_lead tool
 * Improved: Per-field rate limiting on lead capture (was a single shared limit) to prevent one field's spam from blocking the others
+* fix: Integrations tab styles moved from inline <style> block to the enqueued admin.css (WordPress.org review)
+* fix: Plugin URI updated to https://studiometa.io/ (previous /plugin/ URL returned 404)
+* docs: HubSpot (api.hubapi.com) documented in the External services section of the readme
 
 = 1.3.71 =
 * fix: plain domain URLs (e.g. aarenocare.ca) now render as clickable links in chat widget
