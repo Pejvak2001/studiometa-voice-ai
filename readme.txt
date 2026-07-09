@@ -67,7 +67,7 @@ If you want unlimited or higher quotas, visit [studiometa.io/pricing](https://st
 
 * Service homepage: [https://studiometa.io](https://studiometa.io)
 * Terms of Service: [https://studiometa.io/terms/](https://studiometa.io/terms/)
-* Privacy Policy: [https://studiometa.io/privacy](https://studiometa.io/privacy)
+* Privacy Policy: [https://studiometa.io/privacy-policy-2/](https://studiometa.io/privacy-policy-2/)
 
 = 2. StudioMeta Workflow Webhooks (n8n.studiometa.io) =
 
@@ -82,7 +82,7 @@ If you want unlimited or higher quotas, visit [studiometa.io/pricing](https://st
 
 * Service homepage: [https://studiometa.io](https://studiometa.io)
 * Terms of Service: [https://studiometa.io/terms/](https://studiometa.io/terms/)
-* Privacy Policy: [https://studiometa.io/privacy](https://studiometa.io/privacy)
+* Privacy Policy: [https://studiometa.io/privacy-policy-2/](https://studiometa.io/privacy-policy-2/)
 
 = 3. HubSpot (api.hubapi.com) — optional, only if you connect it =
 
@@ -158,7 +158,7 @@ Yes. When you uninstall, the plugin removes all its options, transients, and lic
 
 = Where can I get support? =
 
-Visit [studiometa.io/support](https://studiometa.io/support) or use the support forum on this plugin's WordPress.org page.
+Visit [studiometa.io/contact-us](https://studiometa.io/contact-us/) or use the support forum on this plugin's WordPress.org page.
 
 == Screenshots ==
 
