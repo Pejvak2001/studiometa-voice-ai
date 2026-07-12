@@ -246,12 +246,62 @@ class SMVA_Plugin {
      * Generate stable site fingerprint. Used so re-installing the plugin
      * on the same site does NOT grant a fresh trial.
      */
+    /**
+     * Recursively sanitize a decoded JSON structure.
+     *
+     * json_decode() does not sanitize. Both the KEYS and the VALUES of the
+     * decoded structure are attacker-controlled, as is its depth, so every
+     * level is walked and cleaned. Non-scalar leaves are dropped, depth is
+     * capped, and integer keys are preserved as integers so list arrays stay
+     * lists.
+     *
+     * @param mixed $data  Decoded JSON data.
+     * @param int   $depth Current recursion depth.
+     * @return mixed Sanitized data.
+     */
+    private function sanitize_json_recursive( $data, $depth = 0 ) {
+        if ( $depth > 10 ) {
+            return '';
+        }
+
+        if ( is_array( $data ) ) {
+            $clean = array();
+            foreach ( $data as $key => $value ) {
+                $clean_key = is_int( $key )
+                    ? $key
+                    : sanitize_key( (string) $key );
+                if ( '' === $clean_key && ! is_int( $clean_key ) ) {
+                    continue;
+                }
+                $clean[ $clean_key ] = $this->sanitize_json_recursive( $value, $depth + 1 );
+            }
+            return $clean;
+        }
+
+        if ( is_bool( $data ) || is_int( $data ) || is_float( $data ) ) {
+            return $data;
+        }
+
+        if ( is_string( $data ) ) {
+            return sanitize_textarea_field( $data );
+        }
+
+        // null, objects, resources, anything unexpected.
+        return '';
+    }
+
+    /**
+     * Stable, non-secret identifier for this site.
+     *
+     * Deliberately derived only from public site data. WordPress authentication
+     * secrets (AUTH_KEY and friends) must never leave the site, so they are not
+     * used here. This value is an identifier only - it carries no authority and
+     * must not be treated as a shared secret by any consumer.
+     */
     private function site_fingerprint() {
         $site_url    = get_site_url();
         $admin_email = get_option( 'admin_email', '' );
-        // Use AUTH_KEY if available for entropy; fallback to site_url
-        $secret = defined( 'AUTH_KEY' ) ? AUTH_KEY : $site_url;
-        return hash( 'sha256', $site_url . '|' . $admin_email . '|' . $secret );
+        return hash( 'sha256', $site_url . '|' . $admin_email );
     }
 
     /**
@@ -1175,9 +1225,11 @@ class SMVA_Plugin {
         }
 
         if ( isset( $_POST['smva_extra_langs'] ) ) {
-            // JSON blob — decoded then each element sanitized via array_map( 'sanitize_text_field', ... ) below.
-            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-            $extra = json_decode( wp_unslash( $_POST['smva_extra_langs'] ), true );
+            // JSON blob: decoded, then keys, values and nested structure are all
+            // sanitized by sanitize_json_recursive() before use.
+            $extra = $this->sanitize_json_recursive(
+                json_decode( sanitize_textarea_field( wp_unslash( $_POST['smva_extra_langs'] ) ), true )
+            );
             if ( is_array( $extra ) ) {
                 update_option( 'smva_extra_langs', wp_json_encode( array_values( array_map( 'sanitize_text_field', $extra ) ) ) );
             }
@@ -1250,22 +1302,24 @@ class SMVA_Plugin {
         // Only send agent_tools if explicitly provided (Automation tab only)
         // Extra languages
         if ( isset( $_POST['extra_langs'] ) ) {
-            // JSON blob — decoded then each element sanitized via array_map below.
-            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-            $el = json_decode( wp_unslash( $_POST['extra_langs'] ), true );
+            // JSON blob: decoded, then keys, values and nested structure are all
+            // sanitized by sanitize_json_recursive() before use.
+            $el = $this->sanitize_json_recursive(
+                json_decode( sanitize_textarea_field( wp_unslash( $_POST['extra_langs'] ) ), true )
+            );
             if ( is_array( $el ) ) {
                 $payload['extra_langs'] = array_values( array_map( 'sanitize_text_field', $el ) );
             }
         }
 
         if ( isset( $_POST['agent_tools'] ) ) {
-            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-            $tools_raw = json_decode( wp_unslash( $_POST['agent_tools'] ), true );
+            // JSON blob: decoded, then keys, values and nested structure are all
+            // sanitized by sanitize_json_recursive() before being forwarded.
+            $tools_raw = $this->sanitize_json_recursive(
+                json_decode( sanitize_textarea_field( wp_unslash( $_POST['agent_tools'] ) ), true )
+            );
             if ( is_array( $tools_raw ) ) {
-                $payload['agent_tools'] = array_map( function( $tool ) {
-                    if ( ! is_array( $tool ) ) return array();
-                    return array_map( 'sanitize_text_field', array_filter( $tool, 'is_string' ) );
-                }, $tools_raw );
+                $payload['agent_tools'] = array_values( array_filter( $tools_raw, 'is_array' ) );
             }
         }
 
@@ -1880,7 +1934,6 @@ class SMVA_Plugin {
         $internal_token = get_option( 'smva_internal_token', '' );
         $session_id     = sanitize_text_field( wp_unslash( $_GET['session_id'] ?? '' ) );
         $track          = sanitize_text_field( wp_unslash( $_GET['track'] ?? 'main' ) );
-        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- esc_url_raw sanitizes the value
         $source_url     = esc_url_raw( rawurldecode( wp_unslash( $_GET['source_url'] ?? '' ) ) );
 

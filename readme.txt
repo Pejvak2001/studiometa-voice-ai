@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, voice ai, ai assistant, customer support, gemini
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.3.72
+Stable tag: 1.3.73
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -175,6 +175,10 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.3.73 =
+* Security: site fingerprint is no longer derived from AUTH_KEY. It is now built only from public site data, so no WordPress authentication secret ever leaves the site (WordPress.org review)
+* Security: decoded JSON input is now sanitized recursively — keys, values and nested structure at every level — for agent tools and extra languages (WordPress.org review)
 
 = 1.3.72 =
 * New: Lead capture in chat mode — agent can save visitor name, email, phone, and notes via the save_lead tool
