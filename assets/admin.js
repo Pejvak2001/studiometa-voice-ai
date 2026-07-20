@@ -1627,6 +1627,7 @@ jQuery(function($){
 
   // ── Leads tab ───────────────────────────────────────────────────────────────
   (function(){
+      if(!document.getElementById('smva-leads-tbody'))return; // not on the Leads tab
       var page=1,total=0,limit=20,allLeads=[];
       var smvaLeadsAjaxUrl = smvaAdmin.ajaxUrl;
       var smvaLeadsNonce   = smvaAdmin.nonce;
@@ -1679,7 +1680,8 @@ jQuery(function($){
           el.innerHTML=h;
       }
       window.smvaLP=function(p){load(p);};
-      document.getElementById('smva-leads-export-btn').addEventListener('click',function(){
+      var exportBtn=document.getElementById('smva-leads-export-btn');
+      if(exportBtn)exportBtn.addEventListener('click',function(){
           if(!allLeads.length){alert('No leads to export');return;}
           var csv=['Date,Name,Email,Phone,Source,Notes'];
           allLeads.forEach(function(l){csv.push(['"'+(l.created_at||'')+'"','"'+(l.name||'')+'"','"'+(l.email||'')+'"','"'+(l.phone||'')+'"','"'+(l.source||'')+'"','"'+(l.notes||'').replace(/"/g,"'")+'"'].join(','));});
@@ -1752,9 +1754,10 @@ jQuery(function($){
     if (yes) yes.addEventListener('click', function(){ send('done'); });
     var done = document.getElementById('smva-review-done');
     if (done) done.addEventListener('click', function(){ send('done'); n.style.display = 'none'; });
-    // The X (is-dismissible) just snoozes for another week.
+    // The X (is-dismissible) just snoozes for another week. Use closest() so a
+    // click on the button's inner <span> still counts as dismissing.
     n.addEventListener('click', function(e){
-      if (!e.target.classList.contains('notice-dismiss')) return;
+      if (!e.target.closest || !e.target.closest('.notice-dismiss')) return;
       send('later');
     });
   })();

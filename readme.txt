@@ -178,6 +178,7 @@ https://github.com/Pejvak2001/studiometa-voice-ai
 
 = 1.3.74 =
 * New: Optional in-dashboard reminder inviting happy users to leave a review (appears only after the plugin has been active for a week; can be dismissed or snoozed)
+* Fix: a JavaScript error on non-Leads admin tabs stopped later admin scripts from running; the Leads code now only runs on its own tab (this also removes an unnecessary background request on every other tab)
 * Housekeeping: refreshed readme tags for discoverability
 
 = 1.3.73 =
