@@ -1,7 +1,7 @@
 === StudioMeta Voice AI ===
 Contributors: studiometa, stdmeta
 Donate link: https://studiometa.io/
-Tags: chatbot, voice ai, ai assistant, customer support, gemini
+Tags: chatbot, live chat, voice assistant, ai chatbot, customer support, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
 Stable tag: 1.3.73
