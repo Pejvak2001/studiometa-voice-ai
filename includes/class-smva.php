@@ -138,6 +138,7 @@ class SMVA_Plugin {
         add_action( 'wp_footer',             array( $this, 'inject_widget' ) );
         add_shortcode( 'smva_widget',        array( $this, 'render_widget_shortcode' ) );
         add_action( 'admin_notices',         array( $this, 'maybe_trial_notice' ) );
+        add_action( 'admin_notices',         array( $this, 'maybe_review_notice' ) );
 
         // Existing-license maintenance hook: refreshes quota/settings without starting a trial automatically.
         add_action( 'admin_init',            array( $this, 'maybe_retry_trial_activation' ) );
@@ -159,6 +160,7 @@ class SMVA_Plugin {
         add_action( 'wp_ajax_smva_poll_new_license',   array( $this, 'ajax_poll_new_license' ) );
         add_action( 'wp_ajax_smva_manage_subscription', array( $this, 'ajax_manage_subscription' ) );
         add_action( 'wp_ajax_smva_dismiss_trial_notice', array( $this, 'ajax_dismiss_trial_notice' ) );
+        add_action( 'wp_ajax_smva_dismiss_review_notice', array( $this, 'ajax_dismiss_review_notice' ) );
         add_action( 'wp_ajax_smva_start_trial', array( $this, 'ajax_start_trial' ) );
         add_action( 'wp_ajax_smva_get_leads',   array( $this, 'ajax_get_leads' ) );
         add_action( 'wp_ajax_smva_delete_lead', array( $this, 'ajax_delete_lead' ) );
@@ -222,6 +224,11 @@ class SMVA_Plugin {
         add_option( 'smva_trial_attempted', '0' );
         add_option( 'smva_trial_last_attempt', 0 );
         add_option( 'smva_trial_notice_dismissed', '0' );
+
+        // Review-request notice state (shown once the install has been active a while)
+        add_option( 'smva_review_notice_dismissed', '0' );
+        add_option( 'smva_review_first_seen', 0 );
+        add_option( 'smva_review_notice_next', 0 );
 
         // Site-replaced state (set when this site is auto-deactivated by another)
         add_option( 'smva_site_replaced_notice', '0' );
@@ -571,6 +578,64 @@ class SMVA_Plugin {
         check_ajax_referer( 'smva_nonce', 'nonce' );
         $this->require_admin_capability();
         update_option( 'smva_trial_notice_dismissed', '1' );
+        wp_send_json_success();
+    }
+
+    /**
+     * Gentle, one-time "leave a review" nudge in the admin.
+     *
+     * Only shown to admins of an active install, and only after the install
+     * has been active for a while (so we never ask someone who just installed
+     * the plugin). It never stacks on the site-replaced error, and it can be
+     * snoozed (remind later) or dismissed for good.
+     */
+    public function maybe_review_notice() {
+        if ( ! current_user_can( 'manage_options' ) ) return;
+
+        // Only ask active installs, and never on top of the site-replaced error.
+        if ( empty( get_option( 'smva_internal_token', '' ) ) ) return;
+        if ( get_option( 'smva_site_replaced_notice', '0' ) === '1' ) return;
+        if ( get_option( 'smva_review_notice_dismissed', '0' ) === '1' ) return;
+
+        // Anchor the countdown the first time we see this install active
+        // (also covers installs that predate this feature).
+        $first_seen = (int) get_option( 'smva_review_first_seen', 0 );
+        if ( $first_seen <= 0 ) {
+            $first_seen = time();
+            update_option( 'smva_review_first_seen', $first_seen, false );
+        }
+
+        $snooze_until = (int) get_option( 'smva_review_notice_next', 0 );
+        $due          = $snooze_until > 0 ? $snooze_until : ( $first_seen + ( 7 * DAY_IN_SECONDS ) );
+        if ( time() < $due ) return;
+
+        $review_url = 'https://wordpress.org/support/plugin/studiometa-voice-ai/reviews/#new-post';
+        ?>
+        <div class="notice notice-info is-dismissible" id="smva-review-notice" style="border-left-color:#f59e0b">
+            <p>
+                <strong>⭐ Enjoying StudioMeta Voice AI?</strong>
+                If the widget is helping your visitors, a quick five-star review would mean a lot — and it helps other site owners discover it.
+            </p>
+            <p>
+                <a href="<?php echo esc_url( $review_url ); ?>" target="_blank" rel="noopener" class="button button-primary" id="smva-review-yes">★ Leave a 5-star review</a>
+                <button type="button" class="button" id="smva-review-done">I already did</button>
+                <span style="margin-left:6px;color:#6b7280;font-style:italic">or dismiss to be reminded later</span>
+            </p>
+        </div>
+        <?php
+    }
+
+    public function ajax_dismiss_review_notice() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+        $mode = isset( $_POST['mode'] ) ? sanitize_key( wp_unslash( $_POST['mode'] ) ) : 'later';
+        if ( 'done' === $mode ) {
+            // Clicked the review button or "I already did" — never ask again.
+            update_option( 'smva_review_notice_dismissed', '1' );
+        } else {
+            // Plain dismiss (X) — remind again in a week.
+            update_option( 'smva_review_notice_next', time() + ( 7 * DAY_IN_SECONDS ), false );
+        }
         wp_send_json_success();
     }
 

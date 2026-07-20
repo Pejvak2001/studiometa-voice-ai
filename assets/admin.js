@@ -1737,4 +1737,26 @@ jQuery(function($){
     });
   })();
 
+  // ── Review request notice ────────────────────────────────────────────────
+  (function(){
+    var n = document.getElementById('smva-review-notice');
+    if (!n) return;
+    function send(mode){
+      jQuery.post(smvaAdmin.ajaxUrl, {
+        action: 'smva_dismiss_review_notice',
+        nonce: smvaAdmin.nonce,
+        mode: mode
+      });
+    }
+    var yes = document.getElementById('smva-review-yes');
+    if (yes) yes.addEventListener('click', function(){ send('done'); });
+    var done = document.getElementById('smva-review-done');
+    if (done) done.addEventListener('click', function(){ send('done'); n.style.display = 'none'; });
+    // The X (is-dismissible) just snoozes for another week.
+    n.addEventListener('click', function(e){
+      if (!e.target.classList.contains('notice-dismiss')) return;
+      send('later');
+    });
+  })();
+
 }(jQuery));

@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, customer support, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.3.73
+Stable tag: 1.3.74
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -175,6 +175,10 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.3.74 =
+* New: Optional in-dashboard reminder inviting happy users to leave a review (appears only after the plugin has been active for a week; can be dismissed or snoozed)
+* Housekeeping: refreshed readme tags for discoverability
 
 = 1.3.73 =
 * Security: site fingerprint is no longer derived from AUTH_KEY. It is now built only from public site data, so no WordPress authentication secret ever leaves the site (WordPress.org review)
