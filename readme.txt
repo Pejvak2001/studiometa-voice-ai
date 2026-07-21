@@ -202,6 +202,7 @@ https://github.com/Pejvak2001/studiometa-voice-ai
 = 1.3.78 =
 * Fix: training the agent on your website read only your home page on many sites. Sitemaps produced by All in One SEO could not be read at all, and sites whose sitemap is split into several files (common once you have more than a thousand posts) were not followed through to the actual pages. Training now reads up to 30 pages and favours the ones that describe your business — services, pricing, contact, booking — over the newest blog posts
 * Fix: training stopped early on sites that limit how quickly pages can be requested, silently missing most of the site. It now slows down and retries instead of giving up
+* Fix: only the top of each page was read, so anything further down — service areas, opening hours, the address and phone number in your footer — never reached the agent. Whole pages are now read, and text repeated on every page is stored once instead of once per page, which makes the knowledge base smaller and more accurate at the same time
 * Fix: pages listed in a sitemap but since deleted were stored as if they were real content, putting "page not found" text into the agent's knowledge base
 * Fix: sites behind a security firewall that blocks automated visitors returned no content at all; these are now read through a fallback reader
 * Improved: allowed more time for training to finish, so larger sites are no longer cut short
