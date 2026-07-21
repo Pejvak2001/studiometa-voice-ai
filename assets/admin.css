@@ -209,7 +209,7 @@
 
 /* ── Table ───────────────────────────────────────────────────────────────── */
 .smva-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.smva-table th { text-align: left; padding: 9px 14px; background: var(--smva-bg); color: var(--smva-text-3); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--smva-border); }
+.smva-table th { text-align: start; padding: 9px 14px; background: var(--smva-bg); color: var(--smva-text-3); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--smva-border); }
 .smva-table td { padding: 11px 14px; border-bottom: 1px solid var(--smva-border); color: var(--smva-text); font-size: 13px; }
 .smva-table tr:last-child td { border-bottom: none; }
 .smva-table tr:hover td { background: var(--smva-bg); }

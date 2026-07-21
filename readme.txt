@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.3.75
+Stable tag: 1.3.76
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -175,6 +175,9 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.3.76 =
+* Fix: in right-to-left languages (Arabic, Persian, Hebrew), the Recent Sessions table on the Dashboard showed its column headers on the opposite side from the data beneath them; headers now align with their column like everywhere else in the admin panel
 
 = 1.3.75 =
 * Fix: starting the free trial appeared to fail — the trial was activated correctly, but the admin screen reported "Could not reach the licensing server" and did not refresh, so you had to open the Dashboard tab to discover it had worked
