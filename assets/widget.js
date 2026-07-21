@@ -181,6 +181,13 @@
     let currentPlaybackSource = null;
     let nextPlaybackTime = 0;
     let playbackGeneration = 0;
+    // Playback starts only once a small cushion of audio has arrived, and the
+    // cushion grows if the stream underruns. See primePlayback()/playNextAudio().
+    let playbackPrimed = false;
+    let playbackPrimeStartedAt = 0;
+    let playbackPrimeTimer = null;
+    let playbackStartBuffer = 0.24;
+    let playbackReplyUnderran = false;
     let suggestionsShown = true;
     let agentEndedCall = false;
     const widgetSessionId = 'smva_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
@@ -926,14 +933,73 @@
         audioCaptureNode._smvaSilentGain = silentGain;
     }
 
+    // Duration of everything queued, estimated from the base64 length so the
+    // pre-roll check doesn't have to decode audio it may not schedule yet.
+    function estimateQueuedSeconds() {
+        let seconds = 0;
+        for (let i = 0; i < audioQueue.length; i++) {
+            const item = audioQueue[i];
+            const b64 = (item && typeof item === 'object') ? item.audio : item;
+            if (!b64) continue;
+            const mimeType = (item && typeof item === 'object' && item.mimeType) ? item.mimeType : 'audio/pcm;rate=24000';
+            const rateMatch = /rate=(\d+)/i.exec(String(mimeType || ''));
+            const rate = rateMatch ? parseInt(rateMatch[1], 10) : 24000;
+            const bytes = Math.floor(String(b64).length * 3 / 4);
+            seconds += (bytes / 2) / rate;   // PCM16 mono
+        }
+        return seconds;
+    }
+
+    // Arm the pre-roll for the next reply. Only safe once nothing is queued or
+    // still scheduled, otherwise mid-reply chunks would be held back and create
+    // the very gap the pre-roll exists to prevent.
+    function markPlaybackIdle() {
+        isPlayingAudio = false;
+        playbackPrimed = false;
+        playbackPrimeStartedAt = 0;
+        // Everything queued has played, so the next reply starts a fresh
+        // timeline. Leaving a stale time here would look like an underrun.
+        nextPlaybackTime = 0;
+        // Ease the cushion back down after clean replies so one bad moment
+        // doesn't leave every later reply needlessly delayed.
+        if (!playbackReplyUnderran) {
+            playbackStartBuffer = Math.max(0.24, playbackStartBuffer - 0.02);
+        }
+        playbackReplyUnderran = false;
+        if (playbackPrimeTimer) { clearTimeout(playbackPrimeTimer); playbackPrimeTimer = null; }
+    }
+
     async function playNextAudio() {
         if (!audioQueue.length) {
-            if (!playbackSources.length) isPlayingAudio = false;
+            if (!playbackSources.length) markPlaybackIdle();
             return;
         }
 
         isPlayingAudio = true;
         const generationAtStart = playbackGeneration;
+
+        // The first chunk of a reply usually arrives alone, so scheduling it
+        // immediately leaves almost nothing buffered — one late chunk then
+        // underruns and is heard as a break. Wait for a cushion to build first.
+        // This is why the stutter only happened at the start of speech: by
+        // mid-reply enough audio is queued to ride out the same jitter.
+        if (!playbackPrimed) {
+            const PRIME_TARGET_SECONDS = 0.35;
+            const PRIME_MAX_WAIT_MS = 300;
+            if (!playbackPrimeStartedAt) playbackPrimeStartedAt = Date.now();
+            const waited = Date.now() - playbackPrimeStartedAt;
+            if (estimateQueuedSeconds() < PRIME_TARGET_SECONDS && waited < PRIME_MAX_WAIT_MS) {
+                if (playbackPrimeTimer) clearTimeout(playbackPrimeTimer);
+                playbackPrimeTimer = setTimeout(function () {
+                    playbackPrimeTimer = null;
+                    if (generationAtStart === playbackGeneration) playNextAudio();
+                }, 40);
+                return;
+            }
+            playbackPrimed = true;
+            window.SMVAAudioDebug = window.SMVAAudioDebug || {};
+            window.SMVAAudioDebug.playbackPrimeWaitMs = waited;
+        }
 
         if (!playbackAudioContext) {
             // Dedicated playback context for the engine's audio output.
@@ -949,7 +1015,9 @@
         window.SMVAAudioDebug.playbackContextSampleRate = playbackAudioContext.sampleRate;
 
         const OUTPUT_RATE_DEFAULT = 24000;
-        const START_BUFFER_SECONDS = 0.24;      // stable jitter buffer; prevents choppy starts
+        const START_BUFFER_SECONDS = playbackStartBuffer;  // adaptive jitter buffer; grows after an underrun
+        const START_BUFFER_MAX = 0.60;
+        const START_BUFFER_STEP = 0.10;
         const MAX_SCHEDULE_AHEAD_SECONDS = 1.20; // cap latency without cutting every small burst
         const HARD_RESET_DELAY_SECONDS = 2.50;   // only recover from truly bad backlog
         const MAX_COMBINED_MS = 480;             // combine chunks into fewer BufferSource nodes
@@ -976,7 +1044,18 @@
             // If the previous schedule somehow drifted too far into the future, reset timing.
             // Important: do NOT drop audio for normal small jitter; dropping caused the "tr-tr" sound.
             if (!nextPlaybackTime || nextPlaybackTime < now) {
-                nextPlaybackTime = now + START_BUFFER_SECONDS;
+                // A non-zero nextPlaybackTime now in the past means scheduled
+                // audio ran out before more arrived — the gap the listener
+                // hears. (It is zeroed when a reply ends normally, so this
+                // does not fire on the first chunk of each reply.) Widen the
+                // cushion so the next reply absorbs the same jitter silently.
+                if (nextPlaybackTime) {
+                    playbackReplyUnderran = true;
+                    playbackStartBuffer = Math.min(playbackStartBuffer + START_BUFFER_STEP, START_BUFFER_MAX);
+                    window.SMVAAudioDebug.playbackUnderruns = (window.SMVAAudioDebug.playbackUnderruns || 0) + 1;
+                    window.SMVAAudioDebug.playbackStartBufferMs = Math.round(playbackStartBuffer * 1000);
+                }
+                nextPlaybackTime = now + Math.max(START_BUFFER_SECONDS, playbackStartBuffer);
             } else if ((nextPlaybackTime - now) > HARD_RESET_DELAY_SECONDS) {
                 nextPlaybackTime = now + START_BUFFER_SECONDS;
                 window.SMVAAudioDebug.playbackHardResets = (window.SMVAAudioDebug.playbackHardResets || 0) + 1;
@@ -1065,7 +1144,7 @@
                     if (currentPlaybackSource === source) currentPlaybackSource = null;
                     if (generationAtStart !== playbackGeneration) return;
                     if (audioQueue.length) playNextAudio();
-                    else if (!playbackSources.length) isPlayingAudio = false;
+                    else if (!playbackSources.length) markPlaybackIdle();
                 };
 
                 source.start(startAt);
@@ -1078,7 +1157,7 @@
             console.error('[SMVA] Audio playback error:', err);
             window.SMVAAudioDebug.playbackError = err && err.message ? err.message : String(err);
             if (audioQueue.length) setTimeout(function(){ playNextAudio(); }, 80);
-            else if (!playbackSources.length) isPlayingAudio = false;
+            else if (!playbackSources.length) markPlaybackIdle();
         }
     }
 
@@ -1087,6 +1166,13 @@
         audioQueue = [];
         isPlayingAudio = false;
         nextPlaybackTime = 0;
+
+        // Re-prime for the next reply. playbackStartBuffer deliberately keeps
+        // whatever it learned about this connection's jitter.
+        playbackPrimed = false;
+        playbackPrimeStartedAt = 0;
+        playbackReplyUnderran = false;
+        if (playbackPrimeTimer) { clearTimeout(playbackPrimeTimer); playbackPrimeTimer = null; }
 
         playbackSources.forEach(function(source) {
             try { source.onended = null; } catch (e) {}

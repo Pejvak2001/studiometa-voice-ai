@@ -205,6 +205,7 @@ https://github.com/Pejvak2001/studiometa-voice-ai
 * Fix: only the top of each page was read, so anything further down — service areas, opening hours, the address and phone number in your footer — never reached the agent. Whole pages are now read, and text repeated on every page is stored once instead of once per page, which makes the knowledge base smaller and more accurate at the same time
 * Fix: pages listed in a sitemap but since deleted were stored as if they were real content, putting "page not found" text into the agent's knowledge base
 * Fix: sites behind a security firewall that blocks automated visitors returned no content at all; these are now read through a fallback reader
+* Fix: the agent's voice could break up once or twice just as it started speaking, then play normally. Playback began the moment the first fragment of audio arrived, leaving nothing in reserve, so a single late fragment was heard as a gap. The widget now waits for a short cushion of audio before starting, and widens that cushion automatically on connections where it proves too small
 * Improved: allowed more time for training to finish, so larger sites are no longer cut short
 
 = 1.3.77 =
