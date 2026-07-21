@@ -188,6 +188,11 @@
     let playbackPrimeTimer = null;
     let playbackStartBuffer = 0.24;
     let playbackReplyUnderran = false;
+    // Barge-in (user interrupting the agent) detection state. See
+    // handleCapturedAudio() for why a single loud frame must not interrupt.
+    let bargeInFrames = 0;
+    let lastInterruptAt = 0;
+    let playbackStartedAt = 0;
     let suggestionsShown = true;
     let agentEndedCall = false;
     const widgetSessionId = 'smva_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
@@ -788,6 +793,13 @@
         const TARGET_SAMPLE_RATE = 16000;
         const TARGET_CHUNK_SIZE = 320; // 20ms at 16kHz. Keeps WebSocket audio packets stable.
 
+        // Levels are peak amplitude of a frame, PCM16 so full scale is 32768.
+        const VOICE_ACTIVITY_LEVEL = 800;   // ~2.4% — any sound, used only for the UI hint
+        const BARGE_IN_LEVEL       = 2600;  // ~8% — deliberate speech, not room noise or echo residue
+        const BARGE_IN_FRAMES      = 6;     // 120ms of sustained level before believing it
+        const BARGE_IN_GRACE_MS    = 400;   // let a reply get going before it can be cut off
+        const BARGE_IN_COOLDOWN_MS = 1000;  // one interrupt per second at most
+
         audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: TARGET_SAMPLE_RATE });
         if (audioContext.state === 'suspended') { try { await audioContext.resume(); } catch(e) {} }
         audioCaptureSource = audioContext.createMediaStreamSource(mediaStream);
@@ -816,10 +828,37 @@
                 binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
             }
             ws.send(JSON.stringify({ type: 'audio', audio: btoa(binary), sampleRate: TARGET_SAMPLE_RATE }));
-            if (maxVal > 800) {
-                if (isPlayingAudio) { stopPlayback(); try { if (ws) ws.send(JSON.stringify({ type: 'interrupt' })); } catch(e) {} }
+
+            // Any sound at all is enough to retire the "speak now" hint.
+            if (maxVal > VOICE_ACTIVITY_LEVEL) {
                 const hint = h('smva-speak-hint');
                 if (hint && hint.style.display !== 'none') { hint.style.opacity = '0'; setTimeout(function(){ hint.style.display = 'none'; }, 1000); }
+            }
+
+            // Interrupting the agent is destructive: it stops playback here and
+            // makes the backend discard the rest of the generated reply. It must
+            // therefore take real speech, not one loud frame. Each frame is 20ms,
+            // so a single spike — a cough, a keystroke, or the agent's own voice
+            // leaking back through imperfect echo cancellation — used to cut the
+            // reply off. Require sustained level, leave the opening of a reply
+            // alone, and rate-limit so one noisy moment cannot fire repeatedly.
+            if (maxVal > BARGE_IN_LEVEL) { bargeInFrames += 1; } else { bargeInFrames = 0; }
+
+            const nowMs = Date.now();
+            const sustained     = bargeInFrames >= BARGE_IN_FRAMES;
+            const pastGrace     = playbackStartedAt && (nowMs - playbackStartedAt) > BARGE_IN_GRACE_MS;
+            const pastCooldown  = (nowMs - lastInterruptAt) > BARGE_IN_COOLDOWN_MS;
+
+            window.SMVAAudioDebug.bargeInFrames = bargeInFrames;
+            window.SMVAAudioDebug.bargeInLevel = BARGE_IN_LEVEL;
+
+            if (sustained && isPlayingAudio && pastGrace && pastCooldown) {
+                lastInterruptAt = nowMs;
+                bargeInFrames = 0;
+                window.SMVAAudioDebug.interruptsSent = (window.SMVAAudioDebug.interruptsSent || 0) + 1;
+                window.SMVAAudioDebug.lastInterruptMaxVal = maxVal;
+                stopPlayback();
+                try { if (ws) ws.send(JSON.stringify({ type: 'interrupt' })); } catch(e) {}
             }
         };
 
@@ -960,6 +999,7 @@
         // Everything queued has played, so the next reply starts a fresh
         // timeline. Leaving a stale time here would look like an underrun.
         nextPlaybackTime = 0;
+        playbackStartedAt = 0;
         // Ease the cushion back down after clean replies so one bad moment
         // doesn't leave every later reply needlessly delayed.
         if (!playbackReplyUnderran) {
@@ -997,6 +1037,7 @@
                 return;
             }
             playbackPrimed = true;
+            playbackStartedAt = Date.now();
             window.SMVAAudioDebug = window.SMVAAudioDebug || {};
             window.SMVAAudioDebug.playbackPrimeWaitMs = waited;
         }
@@ -1172,6 +1213,8 @@
         playbackPrimed = false;
         playbackPrimeStartedAt = 0;
         playbackReplyUnderran = false;
+        playbackStartedAt = 0;
+        bargeInFrames = 0;
         if (playbackPrimeTimer) { clearTimeout(playbackPrimeTimer); playbackPrimeTimer = null; }
 
         playbackSources.forEach(function(source) {
