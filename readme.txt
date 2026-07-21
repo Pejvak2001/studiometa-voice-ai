@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.3.76
+Stable tag: 1.3.77
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -18,6 +18,13 @@ AI voice & chat widget for your site. Free trial included: 30 voice minutes + 10
 The assistant understands context, answers in multiple languages, and can be customized to match your brand.
 
 **Every install includes a free trial — no signup, no credit card required.** Click "Start Free Trial" in the admin panel to activate 30 voice minutes and 100 chat messages before deciding on a paid plan.
+
+= Why StudioMeta Voice AI? =
+
+* **Real voice, not just text** — most WordPress chatbot plugins only type back; your visitors can actually talk to this one and hear a spoken reply
+* **No API key to manage** — the AI runs on our hosted infrastructure, so there's nothing to sign up for or configure outside this plugin
+* **No coding required** — install, click Start Free Trial, and the widget is live
+* **Try before you buy** — 30 voice minutes and 100 chat messages, no credit card
 
 = Key features =
 
@@ -124,6 +131,22 @@ If you do not want the plugin to contact these services, simply deactivate and u
 
 No. Click **Start Free Trial** in the admin panel after activation. No account or credit card needed.
 
+= Is StudioMeta Voice AI free? =
+
+Every install starts with a free trial (30 voice minutes + 100 chat messages, no credit card). After the trial, you can upgrade for more usage, or keep using whichever quota — voice or chat — hasn't run out yet.
+
+= Do I need coding skills to set this up? =
+
+No. Install the plugin, click Start Free Trial, and the widget appears automatically. Customizing your agent's name, voice, and knowledge base is done through simple admin screens — no code, no API keys.
+
+= Will this slow down my site? =
+
+The widget script loads in the footer after your page content, so it doesn't block your site from rendering.
+
+= Which AI powers the assistant, and do I need my own API key? =
+
+The assistant runs entirely on StudioMeta's hosted AI Engine. You don't need your own API key or a separate AI subscription — everything is included in the plugin.
+
 = What happens when my trial runs out? =
 
 The widget shows an upgrade button linking to our pricing page. If you've used all your voice minutes but still have chat messages, the widget shows only the chat tab (and vice versa).
@@ -175,6 +198,9 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.3.77 =
+* Housekeeping: expanded the plugin description with a "Why StudioMeta Voice AI?" summary and four new FAQ entries (is it free, coding required, page speed impact, which AI powers it) for clarity and discoverability
 
 = 1.3.76 =
 * Fix: in right-to-left languages (Arabic, Persian, Hebrew), the Recent Sessions table on the Dashboard showed its column headers on the opposite side from the data beneath them; headers now align with their column like everywhere else in the admin panel
