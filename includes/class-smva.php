@@ -1456,7 +1456,7 @@ class SMVA_Plugin {
         $response = wp_remote_post( SMVA_API_URL . '/plugin/license/crawl-site', array(
             'headers' => array( 'Content-Type' => 'application/json' ),
             'body'    => wp_json_encode( array( 'license_key' => $license_key, 'internal_token' => $internal_token, 'site_url' => $site_url ) ),
-            'timeout' => 60,
+            'timeout' => 75,
         ) );
 
         if ( is_wp_error( $response ) ) wp_send_json_error( array( 'message' => 'Connection error.' ) );
@@ -1519,7 +1519,7 @@ class SMVA_Plugin {
                 'internal_token' => $internal_token,
                 'site_url'       => $site_url_raw,
             ) ),
-            'timeout' => 90,
+            'timeout' => 120,
         ) );
         if ( is_wp_error( $response ) ) {
             wp_send_json_error( array( 'message' => 'Connection error.' ) );

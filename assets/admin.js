@@ -511,7 +511,7 @@ jQuery(function($) {
         var siteUrl = $('#smva-crawl-url').val().trim() || (window.smvaAdmin && window.smvaAdmin.siteUrl) || window.location.origin;
         if (!confirm('Import KB from:\n' + siteUrl)) return;
         $btn.prop('disabled', true).text('🔄 Crawling...');
-        showLoading('Crawling website pages, this may take up to 30 seconds...');
+        showLoading('Crawling website pages, this may take up to 60 seconds...');
         $.post(window.smvaAdmin.ajaxUrl, {action:'smva_crawl_site', nonce:window.smvaAdmin.nonce, site_url_b64:btoa(unescape(encodeURIComponent(siteUrl)))})
         .done(function(res) {
             if (res.success && res.data.knowledge_base) { $('[name=knowledge_base]').val(res.data.knowledge_base); $msg.text('Imported from ' + (res.data.pages_crawled||'?') + ' pages!').css('color', '#059669'); }

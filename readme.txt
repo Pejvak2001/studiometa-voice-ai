@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.3.77
+Stable tag: 1.3.78
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -198,6 +198,13 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.3.78 =
+* Fix: training the agent on your website read only your home page on many sites. Sitemaps produced by All in One SEO could not be read at all, and sites whose sitemap is split into several files (common once you have more than a thousand posts) were not followed through to the actual pages. Training now reads up to 30 pages and favours the ones that describe your business — services, pricing, contact, booking — over the newest blog posts
+* Fix: training stopped early on sites that limit how quickly pages can be requested, silently missing most of the site. It now slows down and retries instead of giving up
+* Fix: pages listed in a sitemap but since deleted were stored as if they were real content, putting "page not found" text into the agent's knowledge base
+* Fix: sites behind a security firewall that blocks automated visitors returned no content at all; these are now read through a fallback reader
+* Improved: allowed more time for training to finish, so larger sites are no longer cut short
 
 = 1.3.77 =
 * Housekeeping: expanded the plugin description with a "Why StudioMeta Voice AI?" summary and four new FAQ entries (is it free, coding required, page speed impact, which AI powers it) for clarity and discoverability
