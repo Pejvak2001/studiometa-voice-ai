@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.3.74
+Stable tag: 1.3.75
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -175,6 +175,18 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.3.75 =
+* Fix: starting the free trial appeared to fail — the trial was activated correctly, but the admin screen reported "Could not reach the licensing server" and did not refresh, so you had to open the Dashboard tab to discover it had worked
+* Fix: the Refresh button on the Dashboard did not actually update the usage figures
+* Fix: the Dashboard could show "∞ days remaining" directly beside a real expiry date; the remaining days are now worked out from the expiry date itself
+* Fix: when usage details could not be loaded, the Dashboard displayed "0 sessions" as though it were a real figure — even alongside recorded voice minutes and chat messages. Unknown figures now show a dash, and the license status falls back to what this site knows rather than always claiming "Active"
+* Improved: refreshed admin design — the plugin logo replaces the placeholder icon, all menu icons are now crisp line drawings that render identically on every operating system, and usage figures are easier to read at a glance
+* Privacy: the admin panel no longer downloads a font from a third-party server. Opening the plugin's admin pages previously sent a request — including your IP address — to an outside host on every page view. The panel now uses fonts already present on your computer, and no admin page view leaves your site
+* Improved: status and setup messages on the License screen are now clearly visible instead of plain unstyled text
+* Fix: if your agent used a newer voice this version did not recognise, the Settings screen displayed a different voice and saving would silently replace your real one; the configured voice is now always kept and shown
+* Fix: session lists no longer describe a session of unknown type as "Voice" or show an unrecorded duration as "0.0 min", and a lead with no recorded source is no longer labelled "voice"
+* Fix: the License screen no longer reports the plan as "Basic" when the plan is genuinely unknown
 
 = 1.3.74 =
 * New: Optional in-dashboard reminder inviting happy users to leave a review (appears only after the plugin has been active for a week; can be dismissed or snoozed)

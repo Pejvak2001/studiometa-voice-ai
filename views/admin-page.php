@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     <aside class="smva-sidebar">
         <div class="smva-sidebar-brand">
             <div class="smva-sidebar-brand-inner">
-                <div class="smva-sb-logo">🎙️</div>
+                <img class="smva-sb-logo" src="<?php echo esc_url( SMVA_URL . 'assets/logo.png' ); ?>" alt="" width="38" height="38">
                 <div>
                     <div class="smva-sb-name">StudioMeta AI</div>
                     <div class="smva-sb-sub">Voice &amp; Chat</div>
@@ -22,56 +22,56 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             <div class="smva-sidenav-group">
                 <div class="smva-sidenav-label">Account</div>
                 <a href="?page=smva&tab=license" class="<?php echo $active_tab==='license' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">🔑</span>
+                    <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M17 6l2.5 2.5M14.5 8.5 17 11"/></svg></span>
                     <span class="smva-nav-label">License</span>
                 </a>
                 <a href="?page=smva&tab=dashboard" class="<?php echo $active_tab==='dashboard' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">📊</span>
+                    <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>
                     <span class="smva-nav-label">Dashboard</span>
                 </a>
             </div>
             <div class="smva-sidenav-group">
                 <div class="smva-sidenav-label">Configuration</div>
                 <a href="?page=smva&tab=general" class="<?php echo $active_tab==='general' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">⚙️</span>
+                    <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg></span>
                     <span class="smva-nav-label">General</span>
                 </a>
                 <a href="?page=smva&tab=agent" class="<?php echo $active_tab==='agent' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">🤖</span>
+                    <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round"><rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 8V4M9 14h.01M15 14h.01M9.5 17.5h5"/><circle cx="12" cy="3" r="1.4"/></svg></span>
                     <span class="smva-nav-label">My Agent</span>
                 </a>
                 <a href="?page=smva&tab=widget" class="<?php echo $active_tab==='widget' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">🎨</span>
+                    <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 0 18c.9 0 1.6-.7 1.6-1.6 0-.4-.2-.8-.5-1.1-.3-.3-.4-.6-.4-1 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5c0-4-4-7.7-9-7.7Z"/><circle cx="7.5" cy="11" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16.5" cy="11" r="1"/></svg></span>
                     <span class="smva-nav-label">Widget</span>
                 </a>
                 <a href="?page=smva&tab=automation" class="<?php echo $active_tab==='automation' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">⚡</span>
+                    <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg></span>
                     <span class="smva-nav-label">Automation</span>
                 </a>
             </div>
             <div class="smva-sidenav-group">
                 <div class="smva-sidenav-label">History</div>
                 <a href="?page=smva&tab=history" class="<?php echo $active_tab==='history' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">💬</span>
+                    <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round"><path d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3Z"/></svg></span>
                     <span class="smva-nav-label">Chat History</span>
                 </a>
                 <a href="?page=smva&tab=voice_summary" class="<?php echo $active_tab==='voice_summary' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">🎙️</span>
+                    <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span>
                     <span class="smva-nav-label">Voice Summary</span>
                 </a>
                 <a href="?page=smva&tab=leads" class="<?php echo $active_tab==='leads' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">🎯</span>
+                    <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/></svg></span>
                     <span class="smva-nav-label">Leads</span>
                 </a>
             </div>
             <div class="smva-sidenav-group">
                 <div class="smva-sidenav-label">System</div>
                 <a href="?page=smva&tab=health" class="<?php echo $active_tab==='health' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">🩺</span>
+                    <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l2.5-6 4 13L15 12h7"/></svg></span>
                     <span class="smva-nav-label">Health Check</span>
                 </a>
                 <a href="?page=smva&tab=integrations" class="<?php echo $active_tab==='integrations' ? 'active' : ''; ?>">
-                    <span class="smva-nav-icon">&#128279;</span>
+                    <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round"><path d="M10 13a4.5 4.5 0 0 0 6.6.4l2.6-2.6a4.6 4.6 0 0 0-6.5-6.5l-1.5 1.5"/><path d="M14 11a4.5 4.5 0 0 0-6.6-.4l-2.6 2.6a4.6 4.6 0 0 0 6.5 6.5l1.5-1.5"/></svg></span>
                     <span class="smva-nav-label">Integrations</span>
                 </a>
             </div>
@@ -120,10 +120,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         </div>
         <div class="smva-main-actions">
             <span class="smva-status-pill"><span class="smva-status-dot <?php echo $is_active ? '' : 'off'; ?>"></span><?php echo $is_active ? 'License active' : 'License inactive'; ?></span>
-            <span class="smva-status-pill">🎙️ <?php echo $smva_voice_on ? 'Voice on' : 'Voice off'; ?></span>
-            <span class="smva-status-pill">💬 <?php echo $smva_chat_on ? 'Chat on' : 'Chat off'; ?></span>
+            <span class="smva-status-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true" focusable="false" stroke-linecap="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg> <?php echo $smva_voice_on ? 'Voice on' : 'Voice off'; ?></span>
+            <span class="smva-status-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true" focusable="false" stroke-linecap="round"><path d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3Z"/></svg> <?php echo $smva_chat_on ? 'Chat on' : 'Chat off'; ?></span>
         </div>
     </div>
+    <div class="smva-header-rule"></div>
     <div class="smva-tab-content">
 
     <?php // ── LICENSE TAB ─────────────────────────────────────────────── ?>
@@ -140,7 +141,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         </div>
         <p class="smva-desc">Upgrade to a paid plan to unlock full voice &amp; chat. Usage details are in the <a href="?page=smva&tab=dashboard">Dashboard</a>.</p>
         <div class="smva-card-footer">
-            <button id="smva-upgrade-btn" class="smva-btn smva-btn-primary" type="button">💎 Upgrade Plan</button>
+            <button id="smva-upgrade-btn" class="smva-btn smva-btn-primary" type="button">Upgrade Plan</button>
         </div>
     </div>
     <?php endif; ?>
@@ -177,7 +178,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
                 <div style="background:#f8fafc;border-radius:8px;padding:12px 14px">
                     <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Plan</div>
-                    <div style="font-size:14px;font-weight:600;color:#0f172a"><?php echo esc_html( ucwords( str_replace('_',' ', $quota['plan'] ?? get_option('smva_plan','basic') ) ) ); ?></div>
+                    <?php
+                    // Fall back to the locally stored plan, but never invent one —
+                    // telling a trial user they are on "Basic" is worse than "—".
+                    $smva_plan_name = $quota['plan'] ?? get_option( 'smva_plan', '' );
+                    ?>
+                    <div style="font-size:14px;font-weight:600;color:#0f172a"><?php echo $smva_plan_name ? esc_html( ucwords( str_replace( '_', ' ', $smva_plan_name ) ) ) : '—'; ?></div>
                 </div>
                 <div style="background:#f8fafc;border-radius:8px;padding:12px 14px">
                     <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Active Site</div>
@@ -256,21 +262,28 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         $widget_mode   = get_option( 'smva_display_mode', 'sitewide' );
         $agent_voice   = get_option( 'smva_voice_name', get_option( 'smva_voice', 'Aoede' ) );
         ?>
+        <?php
+        // Steps 1-3 are derived from saved settings; step 4 (system test) is never
+        // auto-marked, so the wizard always leaves one explicit action to take.
+        $smva_steps_done = ( $is_active ? 1 : 0 ) + ( $agent_voice ? 1 : 0 ) + ( $widget_mode ? 1 : 0 );
+        $smva_step_words = array( 'No', 'One', 'Two', 'Three', 'Four' );
+        $smva_steps_word = $smva_step_words[ $smva_steps_done ] ?? (string) $smva_steps_done;
+        ?>
         <div class="smva-card" style="margin-bottom:16px">
-            <div class="smva-card-header"><h2 class="smva-card-title">Setup Wizard</h2><span class="smva-hint-inline">recommended launch path</span></div>
+            <div class="smva-card-header"><h2 class="smva-card-title">Finish setting up</h2><span class="smva-hint-inline"><?php echo esc_html( $smva_steps_word ); ?> of four steps done — run a system test to go live with confidence.</span></div>
             <div class="smva-wizard">
-                <a class="smva-wizard-step <?php echo $is_active ? 'is-done' : ''; ?>" href="?page=smva&tab=license"><span class="smva-wizard-num"><?php echo $is_active ? '✓' : '1'; ?></span><span><span class="smva-wizard-title">Activate License</span><span class="smva-wizard-copy">Connect this site to StudioMeta.</span></span></a>
-                <a class="smva-wizard-step <?php echo $agent_voice ? 'is-done' : ''; ?>" href="?page=smva&tab=general"><span class="smva-wizard-num"><?php echo $agent_voice ? '✓' : '2'; ?></span><span><span class="smva-wizard-title">Choose Voice</span><span class="smva-wizard-copy">Pick gender, tone, and greeting.</span></span></a>
-                <a class="smva-wizard-step <?php echo $widget_mode ? 'is-done' : ''; ?>" href="?page=smva&tab=widget"><span class="smva-wizard-num"><?php echo $widget_mode ? '✓' : '3'; ?></span><span><span class="smva-wizard-title">Customize Widget</span><span class="smva-wizard-copy">Set display mode and styling.</span></span></a>
-                <a class="smva-wizard-step" href="?page=smva&tab=health"><span class="smva-wizard-num">4</span><span><span class="smva-wizard-title">Test System</span><span class="smva-wizard-copy">Run health, chat, and voice checks.</span></span></a>
+                <a class="smva-wizard-step <?php echo $is_active ? 'is-done' : ''; ?>" href="?page=smva&tab=license"><span class="smva-wizard-num"><?php echo $is_active ? '✓' : '1'; ?></span><span><span class="smva-wizard-title">Activate license</span><span class="smva-wizard-copy"><?php echo $is_active ? 'Connected to StudioMeta.' : 'Connect this site to StudioMeta.'; ?></span></span></a>
+                <a class="smva-wizard-step <?php echo $agent_voice ? 'is-done' : ''; ?>" href="?page=smva&tab=general"><span class="smva-wizard-num"><?php echo $agent_voice ? '✓' : '2'; ?></span><span><span class="smva-wizard-title">Choose a voice</span><span class="smva-wizard-copy"><?php echo $agent_voice ? esc_html( $agent_voice ) . ', balanced tone.' : 'Pick gender, tone, and greeting.'; ?></span></span></a>
+                <a class="smva-wizard-step <?php echo $widget_mode ? 'is-done' : ''; ?>" href="?page=smva&tab=widget"><span class="smva-wizard-num"><?php echo $widget_mode ? '✓' : '3'; ?></span><span><span class="smva-wizard-title">Customize widget</span><span class="smva-wizard-copy">Set display mode and styling.</span></span></a>
+                <a class="smva-wizard-step" href="?page=smva&tab=health"><span class="smva-wizard-num">4</span><span><span class="smva-wizard-title">Test the system</span><span class="smva-wizard-copy">Check health, chat and voice.</span></span></a>
             </div>
         </div>
 
         <div class="smva-status-grid">
             <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label">License</div><span class="<?php echo $is_active ? 'smva-dot-ok' : 'smva-dot-bad'; ?>"></span></div><div class="smva-status-card-value"><?php echo $is_active ? 'Active' : 'Not activated'; ?></div><div class="smva-status-card-sub"><?php echo $is_active ? 'Ready to serve visitors.' : 'Activate to unlock chat and voice.'; ?></div></div>
-            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label">Voice</div><span class="<?php echo $voice_enabled ? 'smva-dot-ok' : 'smva-dot-warn'; ?>"></span></div><div class="smva-status-card-value"><?php echo $voice_enabled ? 'Enabled' : 'Disabled'; ?></div><div class="smva-status-card-sub"><?php echo esc_html( $agent_voice ?: 'Default voice' ); ?></div></div>
-            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label">Chat</div><span class="<?php echo $chat_enabled ? 'smva-dot-ok' : 'smva-dot-warn'; ?>"></span></div><div class="smva-status-card-value"><?php echo $chat_enabled ? 'Enabled' : 'Disabled'; ?></div><div class="smva-status-card-sub">Text assistant availability.</div></div>
-            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label">Widget</div><span class="<?php echo $widget_mode ? 'smva-dot-ok' : 'smva-dot-warn'; ?>"></span></div><div class="smva-status-card-value"><?php echo esc_html( ucfirst( str_replace( '_', ' ', $widget_mode ?: 'shortcode' ) ) ); ?></div><div class="smva-status-card-sub">Frontend display mode.</div></div>
+            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label">Voice</div><span class="<?php echo $voice_enabled ? 'smva-dot-ok' : 'smva-dot-warn'; ?>"></span></div><div class="smva-status-card-value"><?php echo $voice_enabled ? 'Enabled' : 'Disabled'; ?></div><div class="smva-status-card-sub"><?php echo $agent_voice ? 'Voice profile: ' . esc_html( $agent_voice ) : 'Default voice profile'; ?></div></div>
+            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label">Chat</div><span class="<?php echo $chat_enabled ? 'smva-dot-ok' : 'smva-dot-warn'; ?>"></span></div><div class="smva-status-card-value"><?php echo $chat_enabled ? 'Enabled' : 'Disabled'; ?></div><div class="smva-status-card-sub"><?php echo $chat_enabled ? 'Text assistant available' : 'Text assistant is off'; ?></div></div>
+            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label">Widget</div><span class="<?php echo $widget_mode ? 'smva-dot-ok' : 'smva-dot-warn'; ?>"></span></div><div class="smva-status-card-value"><?php echo esc_html( ucfirst( str_replace( '_', ' ', $widget_mode ?: 'shortcode' ) ) ); ?></div><div class="smva-status-card-sub"><?php echo $widget_mode === 'sitewide' ? 'Shows on every page' : 'Shown via [smva_widget] shortcode'; ?></div></div>
         </div>
 
         <?php
@@ -294,46 +307,58 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 <?php endif; ?>
             </div>
 
-            <div class="smva-stats-grid" style="margin-bottom:16px">
+            <div class="smva-usage-hero">
                 <?php if ( $dv_limit > 0 ) : ?>
-                <div class="smva-stat-card" style="text-align:left">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-                        <div>
-                            <div class="smva-stat-label" style="font-size:12px">🎙️ Voice Minutes</div>
-                            <div class="smva-stat-value" style="font-size:22px"><?php echo number_format($dv_used,1); ?></div>
-                            <div class="smva-stat-sub">of <?php echo (int) $dv_limit; ?> min</div>
-                        </div>
+                <div class="smva-usage-metric">
+                    <div class="smva-usage-top">
+                        <span class="smva-usage-name">Voice minutes</span>
+                        <span class="smva-usage-of" id="smva-voice-limit">of <?php echo (int) $dv_limit; ?></span>
                     </div>
-                    <div class="smva-quota-bar"><div class="smva-quota-fill <?php echo $dv_pct > 90 ? 'danger' : ($dv_pct > 70 ? 'warn' : ''); ?>" style="width:<?php echo esc_attr($dv_pct); ?>%"></div></div>
+                    <div class="smva-usage-figure">
+                        <span class="smva-usage-big" id="smva-voice-num"><?php echo esc_html( number_format( $dv_used, 1 ) ); ?></span>
+                        <span class="smva-usage-of">used</span>
+                    </div>
+                    <div class="smva-usage-track"><div class="smva-usage-fill <?php echo $dv_pct > 90 ? 'danger' : ( $dv_pct > 70 ? 'warn' : '' ); ?>" id="smva-voice-fill" style="width:<?php echo esc_attr( $dv_pct ); ?>%"></div></div>
                 </div>
                 <?php endif; ?>
-                <div class="smva-stat-card" style="text-align:left">
-                    <div style="margin-bottom:8px">
-                        <div class="smva-stat-label" style="font-size:12px">💬 Chat Messages</div>
-                        <div class="smva-stat-value" style="font-size:22px"><?php echo number_format($dc_used); ?></div>
-                        <div class="smva-stat-sub">of <?php echo number_format($dc_limit); ?></div>
+                <div class="smva-usage-metric">
+                    <div class="smva-usage-top">
+                        <span class="smva-usage-name">Chat messages</span>
+                        <span class="smva-usage-of" id="smva-chat-limit">of <?php echo esc_html( number_format( $dc_limit ) ); ?></span>
                     </div>
-                    <div class="smva-quota-bar"><div class="smva-quota-fill <?php echo $dc_pct > 90 ? 'danger' : ($dc_pct > 70 ? 'warn' : ''); ?>" style="width:<?php echo esc_attr($dc_pct); ?>%"></div></div>
+                    <div class="smva-usage-figure">
+                        <span class="smva-usage-big" id="smva-chat-num"><?php echo esc_html( number_format( $dc_used ) ); ?></span>
+                        <span class="smva-usage-of">used</span>
+                    </div>
+                    <div class="smva-usage-track"><div class="smva-usage-fill <?php echo $dc_pct > 90 ? 'danger' : ( $dc_pct > 70 ? 'warn' : '' ); ?>" id="smva-chat-fill" style="width:<?php echo esc_attr( $dc_pct ); ?>%"></div></div>
                 </div>
-                <div class="smva-stat-card">
-                    <div class="smva-stat-icon">🧾</div>
-                    <div class="smva-stat-value"><?php echo number_format($usage['total_sessions'] ?? 0); ?></div>
-                    <div class="smva-stat-label">Sessions</div>
-                    <div class="smva-stat-sub">This month</div>
-                </div>
-                <div class="smva-stat-card">
-                    <div class="smva-stat-icon">📅</div>
-                    <div class="smva-stat-value"><?php echo esc_html( $usage['days_remaining'] ?? '∞' ); ?></div>
-                    <div class="smva-stat-label">Days Remaining</div>
-                    <div class="smva-stat-sub"><?php echo esc_html($license['status'] ?? 'active'); ?></div>
-                </div>
+            </div>
+
+            <?php
+            // Only the backend can report the session count, and there is no local
+            // source to derive it from. When it is missing, show an em dash rather
+            // than 0 — a fabricated 0 reads as real data and can contradict the
+            // usage figures directly above it.
+            $smva_sessions = isset( $usage['total_sessions'] )
+                ? number_format( $usage['total_sessions'] )
+                : '—';
+            // The subscription status likewise comes from the backend; fall back to
+            // what this site knows for certain (whether it holds a valid token).
+            $smva_lic_status = ! empty( $license['status'] )
+                ? ucfirst( $license['status'] )
+                : ( $is_active ? 'Active' : 'Inactive' );
+            ?>
+            <div class="smva-usage-mini-row">
+                <div class="smva-usage-mini"><span class="smva-usage-mini-v"><?php echo esc_html( $smva_sessions ); ?></span><span class="smva-usage-mini-l">sessions</span></div>
+                <div class="smva-usage-mini"><span class="smva-usage-mini-v"><?php echo esc_html( $usage['days_remaining'] ?? '∞' ); ?></span><span class="smva-usage-mini-l">days remaining</span></div>
+                <div class="smva-usage-mini"><span class="smva-usage-mini-v"><?php echo esc_html( $smva_lic_status ); ?></span><span class="smva-usage-mini-l">license status</span></div>
             </div>
 
             <div class="smva-card-footer" style="border-top:1px solid var(--smva-border);padding-top:12px;margin-top:0">
                 <?php if ( $is_trial ) : ?>
-                <button id="smva-upgrade-btn" class="smva-btn smva-btn-primary" type="button">💎 Upgrade Plan</button>
+                <button id="smva-upgrade-btn" class="smva-btn smva-btn-primary" type="button">Upgrade Plan</button>
                 <?php endif; ?>
-                <button id="smva-refresh-quota" class="smva-btn" type="button">⟳ Refresh</button>
+                <button id="smva-refresh-quota" class="smva-btn" type="button">Refresh</button>
                 <span class="smva-hint-inline">Refreshes every 5 min.</span>
             </div>
         </div>
@@ -347,13 +372,17 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 <?php foreach ( array_slice($sessions, 0, 10) as $s ) : ?>
                 <tr>
                     <td><?php echo esc_html( gmdate('M d, H:i', strtotime($s['started_at'])) ); ?></td>
-                    <td><?php echo esc_html( ucfirst($s['session_type'] ?? 'voice') ); ?></td>
-                    <td><?php 
-                        $type = $s['session_type'] ?? 'voice';
+                    <td><?php echo esc_html( isset( $s['session_type'] ) ? ucfirst( $s['session_type'] ) : '—' ); ?></td>
+                    <td><?php
+                        // Never guess the type: assuming "voice" also sends an unknown
+                        // duration down the numeric branch, printing a fabricated 0.0 min.
+                        $type = $s['session_type'] ?? '';
                         if ( $type === 'chat' ) {
-                            echo '—';
+                            echo '—'; // chat sessions have no duration by definition
+                        } elseif ( isset( $s['duration_minutes'] ) ) {
+                            echo esc_html( number_format( $s['duration_minutes'], 1 ) . ' min' );
                         } else {
-                            echo number_format($s['duration_minutes'] ?? 0, 1) . ' min';
+                            echo '—';
                         }
                     ?></td>
                 </tr>
@@ -516,6 +545,16 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                         </button>
                     </div>
                     <select name="voice_id" class="smva-select" id="smva-voice-select">
+                        <?php
+                        // If the configured voice is not in this map (the backend added a
+                        // voice this release does not know), no option would match and the
+                        // browser would silently select the first one — showing the wrong
+                        // voice and overwriting the real one on save. Carry it explicitly.
+                        if ( $current_voice && ! isset( $voices[ $current_voice ] ) ) : ?>
+                        <option value="<?php echo esc_attr( $current_voice ); ?>" data-label="<?php echo esc_attr( $current_voice ); ?>" data-tone="" data-best-for="No description available for this voice yet." data-preview-rate="1" data-preview-pitch="1" data-gender="<?php echo esc_attr( $current_gender ); ?>" selected>
+                            <?php echo esc_html( $current_voice ); ?>
+                        </option>
+                        <?php endif; ?>
                         <?php foreach ( $voices as $val => $meta ) :
                             $g = $voice_gender[$val] ?? 'f';
                         ?>
@@ -535,17 +574,22 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     </select>
                     
                     
-                    <p class="smva-hint">Filter by gender, then pick a voice. Preview uses Gemini TTS — same as the live widget.</p>
+                    <p class="smva-hint">Filter by gender, then pick a voice. Preview uses the StudioMeta AI Engine — same as the live widget.</p>
                     <div class="smva-voice-meta-card" id="smva-voice-meta-card">
                         <div class="smva-voice-meta-top">
                             <div>
-                                <div class="smva-voice-meta-name" id="smva-voice-meta-name"><?php echo esc_html( $voices[ $current_voice ]['label'] ?? 'Aoede' ); ?></div>
-                                <div class="smva-voice-meta-tone" id="smva-voice-meta-tone"><?php echo esc_html( $voices[ $current_voice ]['tone'] ?? 'Breezy' ); ?></div>
+                                <?php
+                                // A voice the backend added but this map does not know yet
+                                // must not borrow Aoede's name and tone — show what is real.
+                                $smva_voice_meta = $voices[ $current_voice ] ?? array();
+                                ?>
+                                <div class="smva-voice-meta-name" id="smva-voice-meta-name"><?php echo esc_html( $smva_voice_meta['label'] ?? $current_voice ); ?></div>
+                                <div class="smva-voice-meta-tone" id="smva-voice-meta-tone"><?php echo esc_html( $smva_voice_meta['tone'] ?? '—' ); ?></div>
                             </div>
                             <span class="smva-voice-meta-badge">Voice profile</span>
                         </div>
-                        <div class="smva-voice-meta-best" id="smva-voice-meta-best"><?php echo esc_html( $voices[ $current_voice ]['best_for'] ?? 'Warm, relaxed greetings' ); ?></div>
-                        <div class="smva-voice-meta-note">Preview uses Gemini TTS with the selected voice — same as the live widget.</div>
+                        <div class="smva-voice-meta-best" id="smva-voice-meta-best"><?php echo esc_html( $smva_voice_meta['best_for'] ?? 'No description available for this voice yet.' ); ?></div>
+                        <div class="smva-voice-meta-note">Preview uses the StudioMeta AI Engine with the selected voice — same as the live widget.</div>
                     </div>
                     <div class="smva-voice-greeting-inline">
                         <label>🎙️ Voice Greeting — <span style="color:#9ca3af;font-weight:400">what the agent says when the voice call starts</span></label>

@@ -144,7 +144,7 @@ jQuery(function($) {
 
     // Refresh quota (Dashboard / License tabs)
     $(document).on('click', '#smva-refresh-quota', function() {
-        var $btn = $(this).prop('disabled', true).text('⟳ Refreshing...');
+        var $btn = $(this).prop('disabled', true).text('Refreshing…');
         $.post(ajaxUrl, { action: 'smva_refresh_quota', nonce: nonce })
             .done(function(res) {
                 if (!res.success || !res.data) { return; }
@@ -156,21 +156,25 @@ jQuery(function($) {
                 var vPct = vLimit > 0 ? Math.min(100, (vUsed / vLimit) * 100) : 0;
                 var cPct = cLimit > 0 ? Math.min(100, (cUsed / cLimit) * 100) : 0;
 
+                // Thresholds must match the server-side render in admin-page.php,
+                // otherwise a refresh recolours a bar the page load drew differently.
                 $('#smva-voice-fill').css('width', vPct + '%')
                     .removeClass('warn danger')
-                    .addClass(vPct >= 100 ? 'danger' : (vPct >= 80 ? 'warn' : ''));
+                    .addClass(vPct > 90 ? 'danger' : (vPct > 70 ? 'warn' : ''));
                 $('#smva-chat-fill').css('width', cPct + '%')
                     .removeClass('warn danger')
-                    .addClass(cPct >= 100 ? 'danger' : (cPct >= 80 ? 'warn' : ''));
-                $('#smva-voice-num').text(vUsed.toFixed(1) + ' / ' + vLimit);
-                $('#smva-chat-num').text(cUsed + ' / ' + cLimit);
+                    .addClass(cPct > 90 ? 'danger' : (cPct > 70 ? 'warn' : ''));
+                $('#smva-voice-num').text(vUsed.toFixed(1));
+                $('#smva-voice-limit').text('of ' + vLimit);
+                $('#smva-chat-num').text(cUsed);
+                $('#smva-chat-limit').text('of ' + cLimit);
 
                 // If plan changed (e.g. trial → paid), reload so UI reflects it
                 if (q.plan && window.smvaPlan && q.plan !== window.smvaPlan) {
                     location.reload();
                 }
             })
-            .always(function() { $btn.prop('disabled', false).text('⟳ Refresh'); });
+            .always(function() { $btn.prop('disabled', false).text('Refresh'); });
     });
 
     // Auto-refresh quota every 30s on Dashboard tab
@@ -186,10 +190,12 @@ jQuery(function($) {
         if (!$voiceNum.length || !$chatNum.length) return;
 
         function looksEmpty() {
-            var v = $voiceNum.text().trim();
-            var c = $chatNum.text().trim();
-            var emptyPatterns = ['0 / 0', '', '0.0 / 0'];
-            return emptyPatterns.indexOf(v) > -1 || emptyPatterns.indexOf(c) > -1;
+            // A zero limit means the quota has not been fetched yet — the used
+            // value alone is ambiguous, since 0 used is legitimate on a fresh plan.
+            var vLimit = $('#smva-voice-limit').text().trim();
+            var cLimit = $('#smva-chat-limit').text().trim();
+            var emptyLimits = ['of 0', ''];
+            return emptyLimits.indexOf(vLimit) > -1 || emptyLimits.indexOf(cLimit) > -1;
         }
 
         // Try 1: after 800ms (backend should be cached by now)
@@ -325,7 +331,7 @@ jQuery(function($) {
         $('#smva-preview-greeting-btn').prop('disabled', true).text('Loading...');
         $('#smva-stop-preview-btn').hide();
 
-        // Use Gemini TTS via backend — supports all languages and all 30 voices
+        // Use the StudioMeta AI Engine TTS via backend — supports all languages and all 30 voices
         $.ajax({
             url: window.smvaAdmin.ajaxUrl,
             method: 'POST',
@@ -1110,12 +1116,26 @@ jQuery(function($) {
         VS.totalPages = pagination.pages || 1;
         if (!sessions.length) { $tbody.html('<tr><td colspan="5" style="text-align:center;padding:20px;">No sessions found for the selected date range.</td></tr>'); vsBuildPagination(pagination); return; }
         var rows = '';
+        // Returns the first value the backend actually sent. Unlike ||, a real 0
+        // is kept, and "nothing was sent" stays distinguishable from "the value is 0".
+        function smvaFirstPresent(values) {
+          for (var i = 0; i < values.length; i++) {
+            if (values[i] !== undefined && values[i] !== null && values[i] !== '') return values[i];
+          }
+          return undefined;
+        }
         sessions.forEach(function (s) {
           var rawDate = s.started_at || s.created_at || s.startedAt || s.createdAt || s.timestamp || s.date || s.created || s.time || '';
           var date = smvaFormatSessionDate(rawDate);
-          var durVal = s.duration_minutes || s.durationMinutes || (s.duration_seconds ? (parseFloat(s.duration_seconds) / 60) : 0) || (s.durationSeconds ? (parseFloat(s.durationSeconds) / 60) : 0);
-          var dur = parseFloat(durVal || 0).toFixed(1) + ' min';
-          var turns = s.turn_count || s.turns || s.message_count || s.messageCount || 0;
+          var durVal = smvaFirstPresent([s.duration_minutes, s.durationMinutes]);
+          if (durVal === undefined) {
+            var durSecs = smvaFirstPresent([s.duration_seconds, s.durationSeconds]);
+            if (durSecs !== undefined) durVal = parseFloat(durSecs) / 60;
+          }
+          // An unknown duration must not be printed as a measured "0.0 min".
+          var dur = (durVal === undefined || isNaN(parseFloat(durVal))) ? '—' : parseFloat(durVal).toFixed(1) + ' min';
+          var turnsVal = smvaFirstPresent([s.turn_count, s.turns, s.message_count, s.messageCount]);
+          var turns = (turnsVal === undefined) ? '—' : escHtml(String(turnsVal));
           var summaryText = s.ai_summary || s.summary || s.aiSummary || '';
           var summBadge = summaryText ? '<span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;">✓ Summary</span>' : '<span style="background:#e9ecef;color:#6c757d;padding:2px 8px;border-radius:10px;font-size:11px;">No summary</span>';
           var btns = '';
@@ -1661,7 +1681,7 @@ jQuery(function($){
               '<td>'+esc(l.name||'—')+'</td>'+ 
               '<td>'+(email?'<a href="mailto:'+esc(email)+'">'+esc(email)+'</a>':'—')+'</td>'+ 
               '<td>'+(phone?'<a href="tel:'+esc(phone)+'">'+esc(phone)+'</a>':'—')+'</td>'+ 
-              '<td><span style="font-size:11px;padding:2px 8px;background:#eff6ff;color:#1d4ed8;border-radius:10px">'+esc(l.source||'voice')+'</span></td>'+ 
+              '<td><span style="font-size:11px;padding:2px 8px;background:#eff6ff;color:#1d4ed8;border-radius:10px">'+esc(l.source||'—')+'</span></td>'+ 
               '<td style="font-size:12px;color:#6b7280;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(l.notes||'—')+'</td>'+ 
               '<td><button class="button button-small smva-lead-del" data-id="'+esc(l.id||'')+'">Delete</button></td></tr>';
           }).join('');

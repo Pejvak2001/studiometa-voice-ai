@@ -648,7 +648,12 @@ class SMVA_Plugin {
         }
 
         $result = $this->auto_trial_activate();
-        if ( is_array( $result ) && ! empty( $result['success'] ) ) {
+
+        // auto_trial_activate() signals success either as boolean true or as an
+        // array with a truthy 'success' key — accept both, otherwise a genuinely
+        // activated trial gets reported to the user as a connection failure.
+        $succeeded = ( true === $result ) || ( is_array( $result ) && ! empty( $result['success'] ) );
+        if ( $succeeded ) {
             wp_send_json_success( array( 'message' => '✓ Free trial activated.', 'reload' => true ) );
         }
         $error   = is_array( $result ) ? ( $result['error'] ?? '' ) : '';
@@ -864,6 +869,18 @@ class SMVA_Plugin {
             }
             if ( empty( $dashboard['license']['expires_at'] ) && ! empty( $quota['expires_at'] ) ) {
                 $dashboard['license']['expires_at'] = $quota['expires_at'];
+            }
+        }
+
+        // The backend normally supplies days_remaining, but it is absent whenever
+        // the dashboard endpoint is unreachable and we fall back to the quota
+        // cache alone. Derive it from the expiry date so the figure can never
+        // contradict the "Expires <date>" line rendered next to it.
+        if ( ! isset( $dashboard['usage']['days_remaining'] ) ) {
+            $expires_at = $dashboard['license']['expires_at'] ?? ( $quota['expires_at'] ?? '' );
+            $expires_ts = $expires_at ? strtotime( $expires_at ) : false;
+            if ( $expires_ts ) {
+                $dashboard['usage']['days_remaining'] = max( 0, (int) ceil( ( $expires_ts - time() ) / DAY_IN_SECONDS ) );
             }
         }
 

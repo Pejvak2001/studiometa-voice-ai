@@ -936,8 +936,8 @@
         const generationAtStart = playbackGeneration;
 
         if (!playbackAudioContext) {
-            // Dedicated playback context for Gemini Live output.
-            // Gemini returns PCM16 output at 24kHz; keep mic capture and playback separate.
+            // Dedicated playback context for the engine's audio output.
+            // Output is PCM16 at 24kHz; keep mic capture and playback separate.
             playbackAudioContext = new (window.AudioContext || window.webkitAudioContext)();
             nextPlaybackTime = 0;
         }
