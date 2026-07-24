@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.3.84
+Stable tag: 1.3.85
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -198,6 +198,9 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.3.85 =
+* Improved: the plugin now reports its own version to the StudioMeta AI Engine on each periodic status check, not only at activation, so the dashboard reflects the version a site is actually running after an automatic update
 
 = 1.3.84 =
 * Fix: the agent's voice could break up during a call, and got steadily worse the longer the call ran. Playback was mistaking the ordinary join between two bursts of audio for a shortage of sound, and inserting a fraction of a second of silence to "recover" from it — then making that silence longer every time it happened again. Replies now play through continuously

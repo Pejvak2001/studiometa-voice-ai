@@ -496,6 +496,7 @@ class SMVA_Plugin {
                     'body'    => wp_json_encode( array(
                         'license_key'    => $license_key,
                         'internal_token' => $existing_token,
+                        'plugin_version' => SMVA_VERSION,
                     ) ),
                     'timeout' => 5,
                 ) );
@@ -1091,6 +1092,7 @@ class SMVA_Plugin {
             'body'    => wp_json_encode( array(
                 'license_key'    => $license_key,
                 'internal_token' => $internal_token,
+                'plugin_version' => SMVA_VERSION,
             ) ),
             'timeout' => 8,
         ) );
@@ -1298,7 +1300,7 @@ class SMVA_Plugin {
         if ( $license_key && $internal_token ) {
             $r = wp_remote_post( SMVA_API_URL . '/plugin/license/quota-status', array(
                 'headers' => array( 'Content-Type' => 'application/json' ),
-                'body'    => wp_json_encode( array( 'license_key' => $license_key, 'internal_token' => $internal_token ) ),
+                'body'    => wp_json_encode( array( 'license_key' => $license_key, 'internal_token' => $internal_token, 'plugin_version' => SMVA_VERSION ) ),
                 'timeout' => 8,
             ) );
             if ( is_wp_error( $r ) ) {
