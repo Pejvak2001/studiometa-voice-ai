@@ -944,6 +944,25 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         </div>
 
         <div class="smva-card" style="margin-top:16px">
+            <div class="smva-card-header">
+                <h2 class="smva-card-title">Lead Notifications</h2>
+                <span class="smva-hint-inline">email me new leads</span>
+            </div>
+            <div class="smva-form-grid">
+                <div class="smva-field">
+                    <label>Email Alerts</label>
+                    <input type="hidden" name="smva_lead_email_notify" value="0"><label class="smva-toggle-label"><input type="checkbox" name="smva_lead_email_notify" value="1" <?php checked( get_option('smva_lead_email_notify','1'), '1' ); ?>> Email me when a new lead comes in</label>
+                    <p class="smva-hint">Sent the moment a visitor shares an email or phone number — no automation setup required.</p>
+                </div>
+                <div class="smva-field">
+                    <label>Send Notifications To</label>
+                    <input type="email" name="smva_lead_email_to" class="smva-input" value="<?php echo esc_attr( get_option('smva_lead_email_to','') ); ?>" placeholder="<?php echo esc_attr( get_option('admin_email','') ); ?>">
+                    <p class="smva-hint">Leave blank to use your WordPress admin email.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="smva-card" style="margin-top:16px">
             <div class="smva-card-header"><h2 class="smva-card-title">Performance &amp; Workflow Buttons</h2></div>
             <div class="smva-form-grid">
                 <div class="smva-field">

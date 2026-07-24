@@ -131,6 +131,165 @@ class SMVA_Plugin {
         return $id;
     }
 
+    /**
+     * Upsert a full lead in one shot (name/email/phone/company/notes together),
+     * keyed by session so it merges with any fragments already stored for the
+     * same conversation. Only non-empty incoming fields overwrite existing ones.
+     *
+     * @return string Local lead id.
+     */
+    private function upsert_local_lead_complete( $session_id, $fields, $source = 'widget' ) {
+        $session_id = sanitize_key( $session_id ? $session_id : 'session_' . wp_generate_uuid4() );
+        $source     = sanitize_text_field( $source );
+        $id         = 'local_' . md5( $session_id );
+
+        $incoming = array();
+        foreach ( array( 'name', 'email', 'phone', 'company', 'notes' ) as $k ) {
+            $incoming[ $k ] = isset( $fields[ $k ] ) ? sanitize_text_field( $fields[ $k ] ) : '';
+        }
+
+        $leads = $this->get_local_leads();
+        $found = false;
+        foreach ( $leads as &$lead ) {
+            if ( isset( $lead['id'] ) && $lead['id'] === $id ) {
+                $found = true;
+                foreach ( $incoming as $k => $v ) {
+                    if ( '' === $v ) { continue; }
+                    if ( 'notes' === $k && ! empty( $lead['notes'] ) && false === strpos( $lead['notes'], $v ) ) {
+                        $lead['notes'] = trim( $lead['notes'] . "\n" . $v );
+                    } else {
+                        $lead[ $k ] = $v;
+                    }
+                }
+                $lead['updated_at'] = current_time( 'mysql' );
+                $lead['source']     = $source ?: ( $lead['source'] ?? 'Widget' );
+                break;
+            }
+        }
+        unset( $lead );
+
+        if ( ! $found ) {
+            $leads[] = array(
+                'id'         => $id,
+                'created_at' => current_time( 'mysql' ),
+                'updated_at' => current_time( 'mysql' ),
+                'name'       => $incoming['name'],
+                'email'      => $incoming['email'],
+                'phone'      => $incoming['phone'],
+                'company'    => $incoming['company'],
+                'notes'      => $incoming['notes'],
+                'source'     => $source ?: 'Widget',
+                'session_id' => $session_id,
+                'local'      => true,
+            );
+        }
+
+        $this->save_local_leads( $leads );
+        return $id;
+    }
+
+    /**
+     * Email the site owner about a newly captured lead. Runs from the deferred
+     * 'smva_lead_notify_event' cron event so the name/phone/email fragment burst
+     * has coalesced into one complete record. Sends at most one email per lead
+     * (tracked via a 'notified_at' marker on the stored lead) and only when the
+     * lead carries a reachable contact channel (email or phone).
+     *
+     * @param string $lead_id Local lead id (e.g. "local_<md5>").
+     */
+    public function maybe_notify_owner_of_lead( $lead_id ) {
+        if ( get_option( 'smva_lead_email_notify', '1' ) !== '1' ) {
+            return;
+        }
+
+        $lead_id = sanitize_text_field( $lead_id );
+        $leads   = $this->get_local_leads();
+
+        $target = null;
+        $index  = null;
+        foreach ( $leads as $i => $lead ) {
+            if ( isset( $lead['id'] ) && $lead['id'] === $lead_id ) {
+                $target = $lead;
+                $index  = $i;
+                break;
+            }
+        }
+
+        if ( null === $target ) {
+            return;
+        }
+        // Already emailed for this lead — never send twice.
+        if ( ! empty( $target['notified_at'] ) ) {
+            return;
+        }
+
+        $email   = isset( $target['email'] ) ? trim( (string) $target['email'] ) : '';
+        $phone   = isset( $target['phone'] ) ? trim( (string) $target['phone'] ) : '';
+        $request = isset( $target['notes'] ) ? trim( (string) $target['notes'] ) : '';
+        // Only notify for a "valuable" lead: one we can reply to (email or phone)
+        // AND that carries an actual request. This prevents a premature email on a
+        // bare greeting/introduction with no stated question — the notification
+        // fires once the visitor has said what they want.
+        if ( '' === $email && '' === $phone ) {
+            return;
+        }
+        if ( '' === $request ) {
+            return;
+        }
+
+        // Hourly ceiling so a scripted flood of sessions cannot mail-bomb the owner.
+        $cap_key = 'smva_lead_notify_count_' . gmdate( 'YmdH' );
+        $sent    = (int) get_transient( $cap_key );
+        if ( $sent >= 50 ) {
+            return;
+        }
+
+        $to = sanitize_email( get_option( 'smva_lead_email_to', '' ) );
+        if ( ! is_email( $to ) ) {
+            $to = get_option( 'admin_email', '' );
+        }
+        if ( ! is_email( $to ) ) {
+            return;
+        }
+
+        $site_name = wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
+        $name      = isset( $target['name'] ) ? trim( (string) $target['name'] ) : '';
+        $company   = isset( $target['company'] ) ? trim( (string) $target['company'] ) : '';
+        $notes     = isset( $target['notes'] ) ? trim( (string) $target['notes'] ) : '';
+        $source    = isset( $target['source'] ) ? trim( (string) $target['source'] ) : '';
+        $when      = isset( $target['created_at'] ) ? (string) $target['created_at'] : current_time( 'mysql' );
+
+        /* translators: %s: website name */
+        $subject = sprintf( __( 'New lead from %s', 'studiometa-voice-ai' ), $site_name );
+
+        $lines = array();
+        $lines[] = __( 'A visitor asked to be contacted through your Voice AI assistant.', 'studiometa-voice-ai' );
+        $lines[] = '';
+        $lines[] = __( 'Their request:', 'studiometa-voice-ai' );
+        $lines[] = $notes;
+        $lines[] = '';
+        $lines[] = __( 'Contact details:', 'studiometa-voice-ai' );
+        if ( '' !== $name )    { $lines[] = __( 'Name:', 'studiometa-voice-ai' ) . '    ' . $name; }
+        if ( '' !== $email )   { $lines[] = __( 'Email:', 'studiometa-voice-ai' ) . '   ' . $email; }
+        if ( '' !== $phone )   { $lines[] = __( 'Phone:', 'studiometa-voice-ai' ) . '   ' . $phone; }
+        if ( '' !== $company ) { $lines[] = __( 'Company:', 'studiometa-voice-ai' ) . ' ' . $company; }
+        $lines[] = '';
+        if ( '' !== $source )  { $lines[] = __( 'Source:', 'studiometa-voice-ai' ) . '  ' . $source; }
+        $lines[] = __( 'Received:', 'studiometa-voice-ai' ) . ' ' . $when;
+        $lines[] = '';
+        $lines[] = __( 'View all leads:', 'studiometa-voice-ai' ) . ' ' . admin_url( 'admin.php?page=smva&tab=leads' );
+
+        $body = implode( "\n", $lines );
+        $sent_ok = wp_mail( $to, $subject, $body );
+
+        if ( $sent_ok ) {
+            set_transient( $cap_key, $sent + 1, HOUR_IN_SECONDS );
+            // Mark the lead so we never email about it again.
+            $leads[ $index ]['notified_at'] = current_time( 'mysql' );
+            $this->save_local_leads( $leads );
+        }
+    }
+
     private function __construct() {
         add_action( 'admin_menu',            array( $this, 'admin_menu' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ) );
@@ -166,6 +325,12 @@ class SMVA_Plugin {
         add_action( 'wp_ajax_smva_delete_lead', array( $this, 'ajax_delete_lead' ) );
         add_action( 'wp_ajax_smva_capture_lead_fragment', array( $this, 'ajax_capture_lead_fragment' ) );
         add_action( 'wp_ajax_nopriv_smva_capture_lead_fragment', array( $this, 'ajax_capture_lead_fragment' ) );
+        add_action( 'wp_ajax_smva_capture_lead', array( $this, 'ajax_capture_lead' ) );
+        add_action( 'wp_ajax_nopriv_smva_capture_lead', array( $this, 'ajax_capture_lead' ) );
+
+        // Back-compat: any lead-notification events still queued on older installs
+        // are handled synchronously here so they don't get lost after the upgrade.
+        add_action( 'smva_lead_notify_event', array( $this, 'maybe_notify_owner_of_lead' ) );
         add_action( 'wp_ajax_smva_reactivate_here',     array( $this, 'ajax_reactivate_here' ) );
         add_action( 'wp_ajax_smva_health_check',       array( $this, 'ajax_health_check' ) );
         add_action( 'wp_ajax_smva_get_event_logs',     array( $this, 'ajax_get_event_logs' ) );
@@ -213,6 +378,10 @@ class SMVA_Plugin {
         add_option( 'smva_display_mode', 'sitewide' );
         add_option( 'smva_lazy_load_widget', '1' );
         add_option( 'smva_debug_events', '1' );
+
+        // Lead notification email (on by default; recipient falls back to admin_email when blank)
+        add_option( 'smva_lead_email_notify', '1' );
+        add_option( 'smva_lead_email_to', '' );
         add_option( 'smva_workflow_buttons', wp_json_encode( array(
             array( 'label' => 'Book Appointment', 'message' => 'I would like to book an appointment.' ),
             array( 'label' => 'Request Callback', 'message' => 'Please help me request a callback.' ),
@@ -766,6 +935,7 @@ class SMVA_Plugin {
         $wb       = json_decode( get_option( 'smva_workflow_buttons', '[]' ), true );
 
         wp_localize_script( 'smva-widget', 'smvaConfig', array(
+            'pluginVersion'     => SMVA_VERSION,
             'internalToken'     => $token,
             'licenseKey'        => get_option( 'smva_license_key', '' ),
             'wsUrl'             => SMVA_WS_URL,
@@ -1287,6 +1457,11 @@ class SMVA_Plugin {
 
         if ( isset( $_POST['smva_voice_enabled'] ) ) update_option( 'smva_voice_enabled', $_POST['smva_voice_enabled'] === '1' ? '1' : '0' );
         if ( isset( $_POST['smva_chat_enabled'] ) )  update_option( 'smva_chat_enabled',  $_POST['smva_chat_enabled']  === '1' ? '1' : '0' );
+        if ( isset( $_POST['smva_lead_email_notify'] ) ) update_option( 'smva_lead_email_notify', $_POST['smva_lead_email_notify'] === '1' ? '1' : '0' );
+        if ( isset( $_POST['smva_lead_email_to'] ) ) {
+            $lead_to = sanitize_email( wp_unslash( $_POST['smva_lead_email_to'] ) );
+            update_option( 'smva_lead_email_to', is_email( $lead_to ) ? $lead_to : '' );
+        }
 
         // Sync language and greeting to backend agent
         $lic_key = get_option( 'smva_license_key', '' );
@@ -2118,6 +2293,9 @@ class SMVA_Plugin {
         if ( ! $lead_id ) {
             wp_send_json_error( array( 'message' => 'Could not store lead fragment' ), 500 );
         }
+        // Note: owner notification is NOT sent from here. Single typed fields arrive
+        // one at a time and would produce partial emails. The complete lead is sent
+        // as one payload to ajax_capture_lead(), which emails the full record.
 
         // Push to HubSpot if connected (non-blocking, best-effort)
         $hs_token = get_option( 'smva_hubspot_token', '' );
@@ -2146,6 +2324,69 @@ class SMVA_Plugin {
                 ) );
             }
         }
+
+        wp_send_json_success( array( 'lead_id' => $lead_id ) );
+    }
+
+    /**
+     * Capture a COMPLETE lead in a single request (name + email + phone + notes
+     * together) and email the site owner immediately. This is the path the widget
+     * uses when the agent finishes collecting a lead, so the notification always
+     * carries the full record and never depends on WP-Cron.
+     */
+    public function ajax_capture_lead() {
+        check_ajax_referer( 'smva_widget_nonce', 'nonce' );
+        $this->check_public_rate_limit( 'capture_lead', 2 );
+
+        $session_id = sanitize_text_field( wp_unslash( $_POST['session_id'] ?? '' ) );
+        $fields = array(
+            'name'    => sanitize_text_field( wp_unslash( $_POST['name'] ?? '' ) ),
+            'email'   => sanitize_email( wp_unslash( $_POST['email'] ?? '' ) ),
+            'phone'   => sanitize_text_field( wp_unslash( $_POST['phone'] ?? '' ) ),
+            'company' => sanitize_text_field( wp_unslash( $_POST['company'] ?? '' ) ),
+            'notes'   => sanitize_textarea_field( wp_unslash( $_POST['notes'] ?? '' ) ),
+        );
+        if ( ! is_email( $fields['email'] ) ) { $fields['email'] = ''; }
+
+        if ( '' === $fields['name'] && '' === $fields['email'] && '' === $fields['phone'] && '' === $fields['notes'] ) {
+            wp_send_json_error( array( 'message' => 'Empty lead' ), 400 );
+        }
+
+        $source  = sanitize_text_field( wp_unslash( $_POST['source'] ?? 'Widget' ) );
+        $lead_id = $this->upsert_local_lead_complete( $session_id, $fields, $source );
+        if ( ! $lead_id ) {
+            wp_send_json_error( array( 'message' => 'Could not store lead' ), 500 );
+        }
+
+        // Push to HubSpot if connected (non-blocking, best-effort).
+        $hs_token = get_option( 'smva_hubspot_token', '' );
+        if ( $hs_token && get_option( 'smva_hubspot_connected', '0' ) === '1'
+             && ( '' !== $fields['email'] || '' !== $fields['phone'] || '' !== $fields['name'] ) ) {
+            $props = array();
+            if ( '' !== $fields['name'] )  { $props['firstname'] = $fields['name']; }
+            if ( '' !== $fields['phone'] ) { $props['phone'] = $fields['phone']; }
+            if ( '' !== $fields['email'] ) {
+                $hs_endpoint = 'https://api.hubapi.com/contacts/v1/contact/createOrUpdate/email/' . rawurlencode( $fields['email'] );
+                $hs_props    = array( array( 'property' => 'email', 'value' => $fields['email'] ) );
+                foreach ( $props as $p => $v ) { $hs_props[] = array( 'property' => $p, 'value' => $v ); }
+                $hs_body = array( 'properties' => $hs_props );
+            } else {
+                $hs_endpoint = 'https://api.hubapi.com/crm/v3/objects/contacts';
+                $hs_body     = array( 'properties' => $props );
+            }
+            wp_remote_post( $hs_endpoint, array(
+                'headers'  => array(
+                    'Content-Type'  => 'application/json',
+                    'Authorization' => 'Bearer ' . $hs_token,
+                ),
+                'body'     => wp_json_encode( $hs_body ),
+                'timeout'  => 5,
+                'blocking' => false,
+            ) );
+        }
+
+        // Email the owner right now with the complete record — no WP-Cron needed.
+        $this->maybe_notify_owner_of_lead( $lead_id );
 
         wp_send_json_success( array( 'lead_id' => $lead_id ) );
     }

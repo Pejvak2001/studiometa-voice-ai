@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.3.79
+Stable tag: 1.3.84
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -198,6 +198,21 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.3.84 =
+* Fix: the agent's voice could break up during a call, and got steadily worse the longer the call ran. Playback was mistaking the ordinary join between two bursts of audio for a shortage of sound, and inserting a fraction of a second of silence to "recover" from it — then making that silence longer every time it happened again. Replies now play through continuously
+* New: voice calls keep a private diagnostic record of how smoothly audio arrived, so a call that breaks up can be examined afterwards instead of guessed at. It stays in your browser, is never sent anywhere, and holds only timings and sizes — no recordings and no conversation text
+
+= 1.3.82 =
+* Improved: the new-lead notification is no longer sent for a bare greeting or when a visitor only shares their contact details with no request. The email now waits until the visitor has actually asked something, and leads with their request so you know why they reached out before you see their name and number
+
+= 1.3.81 =
+* Fix: the new-lead notification email (added in 1.3.80) did not arrive on sites where WordPress scheduled tasks (WP-Cron) do not run reliably — which is common. The email is now sent immediately when the lead is captured, with no reliance on scheduled tasks
+* Improved: a captured lead is now sent to the site in a single complete request (name, email and phone together) instead of one field at a time, so the notification always contains the full record
+
+= 1.3.80 =
+* Fix: during a voice call the agent could go quiet right after asking for your name, phone number, or email and never speak again until you talked a second time. Collecting contact details left the voice detection in a state where it ignored your next words; the agent now stays responsive and can finish the conversation on its own
+* New: get an email the moment a visitor leaves their contact details, sent straight to your WordPress admin address — no external automation to set up. Turn it off, or send the alerts to a different address, under Widget settings. Only leads with a real email or phone number trigger a message, and each lead is emailed once
 
 = 1.3.79 =
 * Fix: the agent's speech was being cut off and interrupted repeatedly during a call, leaving long pauses. The widget treated any brief sound above a very low level as the visitor interrupting — a cough, a keystroke, background noise, or the agent's own voice picked up by the microphone would all stop the reply mid-sentence, sometimes several times in a few seconds. Interrupting now requires sustained speech at a normal talking level, is ignored for a moment at the very start of a reply, and cannot fire repeatedly. Deliberately talking over the agent still works

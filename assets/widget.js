@@ -2,16 +2,19 @@
     'use strict';
 
     window.SMVAAudioDebug = window.SMVAAudioDebug || {};
-    window.SMVAAudioDebug.version = '1.3.59';
     window.SMVAAudioDebug.context = 'frontend-widget';
     window.SMVAAudioDebug.loadedAt = Date.now();
 
     const cfg = window.smvaConfig || {};
+    // Stamped from SMVA_VERSION so a trace always names the code that produced
+    // it. Never hard-code this — a stale version makes every log ambiguous.
+    window.SMVAAudioDebug.version = cfg.pluginVersion || 'unknown';
     window.SMVAAudioDebug.hasConfig = !!window.smvaConfig;
     window.SMVAAudioDebug.hasInternalToken = !!cfg.internalToken;
     if (!cfg.internalToken) { window.SMVAAudioDebug.loadError = 'Missing internalToken'; console.warn('[SMVA] No token'); return; }
 
     const CONFIG = {
+        pluginVersion: cfg.pluginVersion || 'unknown',
         internalToken: cfg.internalToken,
         licenseKey: cfg.licenseKey || '',
         wsUrl: cfg.wsUrl || 'wss://api2.studiometa.io/voice',
@@ -198,6 +201,318 @@
     const widgetSessionId = 'smva_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
     window.SMVAAudioDebug.widgetSessionId = widgetSessionId;
 
+    // ── Call flight recorder ────────────────────────────────────────────────
+    // SMVAAudioDebug holds current state, which cannot explain a dropout that
+    // has already happened. This keeps a bounded ring of timestamped events
+    // plus per-reply delivery statistics, so a call can be reconstructed after
+    // the fact and the cause separated into one of two very different classes:
+    //
+    //   deliveryRatio < 1.0  audio arrived slower than it plays. The stream
+    //                        cannot sustain realtime; no local buffer size can
+    //                        hide it. Cause is upstream (backend or network).
+    //   deliveryRatio ~ 1.0  enough audio arrived, but in bursts. Look at
+    //                        gapP95. A larger start cushion does fix this.
+    //
+    // Timings use performance.now(): monotonic, sub-millisecond, and immune to
+    // system clock adjustments that would corrupt interval maths.
+    //
+    // Only numbers are recorded — message types, byte counts, timings. No
+    // transcript text, no lead fields, no audio is retained.
+    //
+    // Console API: SMVATrace.summary() | SMVATrace.copy() | SMVATrace.dump()
+    const TRACE_MAX_EVENTS    = 4000;
+    const TRACE_TRIM_CHUNK    = 500;
+    const TRACE_STORE_KEY     = 'smva_trace_v1';
+    const TRACE_STORE_CALLS   = 3;
+    const TRACE_STORE_EVENTS  = 1500;   // keep localStorage well under quota
+    const TRACE_MIC_BUCKET_MS = 500;
+    const TRACE_GAP_EVENT_MS  = 250;    // only gaps this large become events
+
+    let traceEvents = [];
+    let traceCall   = null;
+    let traceReply  = null;
+    let traceMic    = null;
+
+    function traceNow() { return Math.round(performance.now() * 10) / 10; }
+    function traceRound(v, dp) { const m = Math.pow(10, dp || 0); return Math.round(v * m) / m; }
+
+    function traceAdd(type, data) {
+        if (traceEvents.length >= TRACE_MAX_EVENTS) traceEvents.splice(0, TRACE_TRIM_CHUNK);
+        const ev = { t: traceNow(), type: type };
+        if (data) { for (const k in data) ev[k] = data[k]; }
+        traceEvents.push(ev);
+        return ev;
+    }
+
+    function tracePct(sorted, p) {
+        if (!sorted.length) return 0;
+        const i = Math.min(sorted.length - 1, Math.max(0, Math.round((p / 100) * (sorted.length - 1))));
+        return traceRound(sorted[i], 1);
+    }
+
+    // navigator.connection is advisory and absent on Safari/Firefox, but where
+    // it exists it distinguishes "the visitor is on a weak link" from "our
+    // backend is slow" — the single most useful piece of context in a report.
+    function traceConnection() {
+        const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (!c) return null;
+        return { effectiveType: c.effectiveType || '', downlinkMbps: c.downlink || 0, rttMs: c.rtt || 0, saveData: !!c.saveData };
+    }
+
+    function traceCallBegin() {
+        traceEvents = [];
+        traceMic    = null;
+        traceReply  = null;
+        traceCall   = {
+            sessionId: widgetSessionId,
+            pluginVersion: CONFIG.pluginVersion,
+            startedAt: new Date().toISOString(),
+            t0: traceNow(),
+            userAgent: navigator.userAgent,
+            lang: CONFIG.lang,
+            wsUrl: CONFIG.wsUrl,
+            connectionStart: traceConnection(),
+            replyCount: 0,
+            replies: [],
+            micChunks: 0,
+            micQuietBuckets: 0,
+            micBuckets: 0,
+            wsCloseCode: null,
+            reason: '',
+        };
+        traceAdd('call_start', { startBufferMs: Math.round(playbackStartBuffer * 1000) });
+    }
+
+    function traceReplyBegin() {
+        if (!traceCall) return;
+        traceReply = {
+            index: traceCall.replyCount + 1,
+            firstChunkT: traceNow(),
+            lastChunkT: traceNow(),
+            chunks: 0, bytes: 0, audioMs: 0,
+            gaps: [], underruns: 0, seams: 0, interrupts: 0,
+            primeWaitMs: null, primeQueuedMs: null,
+            startBufferMs: Math.round(playbackStartBuffer * 1000),
+            schedCount: 0, minLookaheadMs: null,
+        };
+        traceAdd('reply_start', { reply: traceReply.index });
+    }
+
+    function traceAudioIn(bytes, sampleRate) {
+        if (!traceCall) return;
+        if (!traceReply) traceReplyBegin();
+        if (!traceReply) return;
+        const now = traceNow();
+        if (traceReply.chunks) {
+            const gap = now - traceReply.lastChunkT;
+            traceReply.gaps.push(gap);
+            if (gap > TRACE_GAP_EVENT_MS) {
+                traceAdd('rx_gap', { reply: traceReply.index, gapMs: traceRound(gap, 1), chunk: traceReply.chunks + 1 });
+            }
+        }
+        traceReply.chunks  += 1;
+        traceReply.bytes   += bytes;
+        traceReply.audioMs += ((bytes / 2) / (sampleRate || 24000)) * 1000;  // PCM16 mono
+        traceReply.lastChunkT = now;
+    }
+
+    function traceReplyEnd() {
+        if (!traceCall || !traceReply) { traceReply = null; return; }
+        const r = traceReply;
+        traceReply = null;
+        if (!r.chunks) return;
+
+        const wallMs = r.lastChunkT - r.firstChunkT;
+        const sorted = r.gaps.slice().sort(function (a, b) { return a - b; });
+
+        // Percentiles alone hide the shape of the distribution. Seven buckets
+        // cost nothing to store and show at a glance whether delivery was
+        // steady or arrived in clumps.
+        const TRACE_GAP_BUCKETS = [20, 50, 100, 200, 400, 800];
+        const gapHist = [0, 0, 0, 0, 0, 0, 0];
+        for (let gi = 0; gi < r.gaps.length; gi++) {
+            let bi = TRACE_GAP_BUCKETS.length;
+            for (let bj = 0; bj < TRACE_GAP_BUCKETS.length; bj++) {
+                if (r.gaps[gi] < TRACE_GAP_BUCKETS[bj]) { bi = bj; break; }
+            }
+            gapHist[bi] += 1;
+        }
+        const summary = {
+            reply: r.index,
+            chunks: r.chunks,
+            kb: traceRound(r.bytes / 1024, 1),
+            audioMs: Math.round(r.audioMs),
+            wallMs: Math.round(wallMs),
+            // The verdict metric. A single-chunk reply has no interval to
+            // measure, so it reports null rather than a meaningless number.
+            deliveryRatio: (r.chunks > 1 && wallMs > 0) ? traceRound(r.audioMs / wallMs, 2) : null,
+            gapP50: tracePct(sorted, 50),
+            gapP95: tracePct(sorted, 95),
+            gapMax: sorted.length ? traceRound(sorted[sorted.length - 1], 1) : 0,
+            gapHist: gapHist,          // counts for <20, <50, <100, <200, <400, <800, 800+ ms
+            underruns: r.underruns,
+            seams: r.seams || 0,       // harmless timeline joins; should not affect anything
+            interrupts: r.interrupts,
+            primeWaitMs: r.primeWaitMs,
+            primeQueuedMs: r.primeQueuedMs,
+            startBufferMs: r.startBufferMs,
+            minLookaheadMs: r.minLookaheadMs,
+        };
+        traceCall.replyCount += 1;
+        traceCall.replies.push(summary);
+        traceAdd('reply_end', summary);
+    }
+
+    function traceMicChunk(maxVal) {
+        if (!traceCall) return;
+        const now = traceNow();
+        if (!traceMic) traceMic = { start: now, n: 0, peak: 0, voiced: 0 };
+        traceMic.n    += 1;
+        traceMic.peak  = Math.max(traceMic.peak, maxVal || 0);
+        if ((maxVal || 0) > 800) traceMic.voiced += 1;
+        traceCall.micChunks += 1;
+        if ((now - traceMic.start) >= TRACE_MIC_BUCKET_MS) {
+            traceAdd('mic', { n: traceMic.n, peak: traceMic.peak, voicedPct: Math.round((traceMic.voiced / traceMic.n) * 100) });
+            traceCall.micBuckets += 1;
+            if (traceMic.peak < 200) traceCall.micQuietBuckets += 1;
+            traceMic = null;
+        }
+    }
+
+    function traceCallEnd(reason) {
+        if (!traceCall) return;
+        traceReplyEnd();
+        // Guard against a DOM Event arriving here from a listener bound
+        // straight to endCall — it would serialise as noise in the report.
+        traceCall.reason        = (typeof reason === 'string') ? reason : '';
+        traceCall.endedAt       = new Date().toISOString();
+        traceCall.durationMs    = Math.round(traceNow() - traceCall.t0);
+        traceCall.connectionEnd = traceConnection();
+        traceAdd('call_end', { reason: traceCall.reason, durationMs: traceCall.durationMs });
+        traceCall.events = traceEvents.slice(-TRACE_STORE_EVENTS);
+        traceStore(traceCall);
+        traceCall = null;
+    }
+
+    // Persisted so a reflexive tab close after a bad call does not destroy the
+    // only evidence. Capped hard: three calls, trimmed events.
+    function traceStore(call) {
+        try {
+            const raw  = window.localStorage.getItem(TRACE_STORE_KEY);
+            const list = raw ? JSON.parse(raw) : [];
+            list.push(call);
+            while (list.length > TRACE_STORE_CALLS) list.shift();
+            window.localStorage.setItem(TRACE_STORE_KEY, JSON.stringify(list));
+        } catch (e) {
+            // Private mode, disabled storage, or quota. The live object still
+            // works for the current page, so this is not worth surfacing.
+            window.SMVAAudioDebug.traceStoreError = String(e && e.message || e);
+        }
+    }
+
+    function traceVerdict(call) {
+        const out  = [];
+        const reps = call.replies || [];
+
+        if (!reps.length) {
+            out.push('NO AUDIO: the agent never sent any audio in this call.');
+        }
+        const rated = reps.filter(function (r) { return r.deliveryRatio !== null; });
+        const slow  = rated.filter(function (r) { return r.deliveryRatio < 1; });
+        if (slow.length) {
+            const worst = Math.min.apply(null, slow.map(function (r) { return r.deliveryRatio; }));
+            out.push('UPSTREAM: ' + slow.length + '/' + rated.length + ' replies arrived slower than realtime (worst ratio ' + worst + '). No local buffer size can fix this — the backend or the link is the bottleneck.');
+        }
+        const bursty = rated.filter(function (r) { return r.gapP95 > 300; });
+        if (bursty.length) {
+            out.push('JITTER: ' + bursty.length + '/' + rated.length + ' replies had p95 arrival gaps over 300ms. Audio is arriving in bursts — a larger start cushion absorbs this.');
+        }
+        const under = reps.reduce(function (n, r) { return n + r.underruns; }, 0);
+        if (under) out.push('UNDERRUNS: ' + under + ' — playback ran dry and the listener heard a break.');
+
+        const firstUnder = reps.filter(function (r) { return r.reply <= 2 && r.underruns > 0; }).length;
+        if (firstUnder) out.push('EARLY-CALL: the break happened in the first two replies, when the adaptive cushion is still at its floor.');
+
+        if (call.micChunks === 0) {
+            out.push('MIC DEAD: no audio was captured at all. The microphone path failed, not the network.');
+        } else if (call.micBuckets && call.micQuietBuckets / call.micBuckets > 0.9) {
+            out.push('MIC QUIET: ' + call.micQuietBuckets + '/' + call.micBuckets + ' windows were near-silent. Check the input device.');
+        }
+        const ints = reps.reduce(function (n, r) { return n + r.interrupts; }, 0);
+        if (ints > 2) out.push('BARGE-IN: ' + ints + ' interrupts. Room noise or speaker echo may be cutting the agent off.');
+
+        if (call.wsCloseCode && call.wsCloseCode !== 1000 && call.wsCloseCode !== 1005) {
+            out.push('WS CLOSE: code ' + call.wsCloseCode + ' — the connection did not close cleanly.');
+        }
+        if (!out.length) out.push('CLEAN: audio arrived at or above realtime with no underruns.');
+        return out;
+    }
+
+    const SMVATrace = {
+        current: function () { return traceCall; },
+        events:  function () { return traceEvents.slice(); },
+        stored:  function () {
+            try { return JSON.parse(window.localStorage.getItem(TRACE_STORE_KEY) || '[]'); } catch (e) { return []; }
+        },
+        clear: function () {
+            try { window.localStorage.removeItem(TRACE_STORE_KEY); } catch (e) {}
+            traceEvents = [];
+            return 'Trace history cleared.';
+        },
+        dump: function () {
+            const calls = SMVATrace.stored();
+            if (traceCall) {
+                const live = JSON.parse(JSON.stringify(traceCall));
+                live.events = traceEvents.slice(-TRACE_STORE_EVENTS);
+                live.inProgress = true;
+                calls.push(live);
+            }
+            return JSON.stringify({
+                format: 'smva-trace/1',
+                pluginVersion: CONFIG.pluginVersion,
+                generatedAt: new Date().toISOString(),
+                calls: calls,
+            }, null, 2);
+        },
+        // The clipboard API is blocked on plain-http sites, which is exactly
+        // where trouble tends to be reported from. Saving a file always works.
+        download: function () {
+            const blob = new Blob([SMVATrace.dump()], { type: 'application/json' });
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href = url;
+            a.download = 'smva-trace-' + new Date().toISOString().replace(/[:.]/g, '-') + '.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+            return 'Saved to your Downloads folder.';
+        },
+        copy: function () {
+            const text = SMVATrace.dump();
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                return navigator.clipboard.writeText(text)
+                    .then(function () { return 'Trace copied (' + Math.round(text.length / 1024) + ' KB). Paste it into tools/smva-trace-analyzer.html'; })
+                    .catch(function () { console.log(text); return 'Clipboard blocked — the trace was printed above instead.'; });
+            }
+            console.log(text);
+            return 'No clipboard API — the trace was printed above instead.';
+        },
+        summary: function () {
+            const calls = SMVATrace.dump ? JSON.parse(SMVATrace.dump()).calls : [];
+            if (!calls.length) { console.log('[SMVA] No calls recorded yet.'); return; }
+            calls.forEach(function (call, i) {
+                console.group('[SMVA] Call ' + (i + 1) + '/' + calls.length + ' — v' + call.pluginVersion + ' — ' + Math.round((call.durationMs || 0) / 1000) + 's' + (call.inProgress ? ' (in progress)' : ''));
+                if (call.connectionStart) console.log('Link:', call.connectionStart.effectiveType, call.connectionStart.downlinkMbps + ' Mbps', 'rtt ' + call.connectionStart.rttMs + 'ms');
+                if (call.replies && call.replies.length && console.table) console.table(call.replies);
+                traceVerdict(call).forEach(function (line) { console.log('  • ' + line); });
+                console.groupEnd();
+            });
+            return 'Run SMVATrace.copy() to export the full trace.';
+        },
+    };
+    window.SMVATrace = SMVATrace;
+
     const MIC = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
     const CHAT_IC = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
     const AI_IC = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>';
@@ -226,6 +541,34 @@
             })
             .catch(function(err){
                 window.SMVAAudioDebug.lastLeadFragmentError = String(err && err.message || err);
+            });
+    }
+    // Send the WHOLE lead in one request (never split into fragments) so the owner
+    // notification email carries the complete record and fires immediately.
+    function saveLeadComplete(lead, source) {
+        if (!CONFIG.ajaxUrl || !CONFIG.widgetNonce || !lead) return;
+        var name  = lead.name || '';
+        var email = lead.email || '';
+        var phone = lead.phone || '';
+        var notes = lead.notes || lead.message || '';
+        if (!name && !email && !phone && !notes) return;
+        const body = new URLSearchParams();
+        body.append('action', 'smva_capture_lead');
+        body.append('nonce', CONFIG.widgetNonce);
+        body.append('session_id', widgetSessionId);
+        body.append('name', name);
+        body.append('email', email);
+        body.append('phone', phone);
+        body.append('notes', notes);
+        body.append('source', source || 'Voice widget');
+        fetch(CONFIG.ajaxUrl, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString() })
+            .then(function(r){ return r.json().catch(function(){ return null; }); })
+            .then(function(json){
+                window.SMVAAudioDebug.lastLeadSavedAt = Date.now();
+                window.SMVAAudioDebug.lastLeadResponse = json;
+            })
+            .catch(function(err){
+                window.SMVAAudioDebug.lastLeadError = String(err && err.message || err);
             });
     }
     function setSt(txt) { const e = h('smva-status'); if(e) e.textContent = txt; }
@@ -449,7 +792,7 @@
 
         if (caps.voice) {
             h('smva-start').addEventListener('click', startCall);
-            h('smva-end').addEventListener('click', endCall);
+            h('smva-end').addEventListener('click', function () { endCall('user_ended'); });
 
             // Text input panel submit
             const textSendBtn = h('smva-text-send');
@@ -622,10 +965,16 @@
             h('smva-end').classList.remove('hide');
             h('smva-voice-status').textContent = t('connecting');
 
+            traceCallBegin();
+            const micRequestedAt = traceNow();
             mediaStream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, sampleRate: 16000, echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+            traceAdd('mic_ready', { waitMs: Math.round(traceNow() - micRequestedAt) });
+
+            const wsOpenedAt = traceNow();
             ws = new WebSocket(CONFIG.wsUrl + '?token=' + CONFIG.internalToken);
 
             ws.onopen = () => {
+                traceAdd('ws_open', { connectMs: Math.round(traceNow() - wsOpenedAt) });
                 ws.send(JSON.stringify({ type: 'start', licenseKey: CONFIG.internalToken, sessionId: widgetSessionId, sessionType: 'voice', isChatOnly: false, callCooldown: CONFIG.callCooldown || 20, maxCallDuration: CONFIG.maxCallDuration || 10, silenceTimeout: CONFIG.silenceTimeout || 60 }));
                 voiceState = 'active';
                 setSt(t('on_call'));
@@ -646,6 +995,9 @@
                     window.SMVAAudioDebug = window.SMVAAudioDebug || {};
                     window.SMVAAudioDebug.lastWsMessageType = data.type || '';
                     window.SMVAAudioDebug.lastWsMessageAt = Date.now();
+                    // Audio is traced separately below with its byte count; every
+                    // other message is recorded by type only, never by content.
+                    if (data.type !== 'audio') traceAdd('rx', { msg: data.type || '?', code: data.code || undefined });
 
                     if (data.type === 'thinking') {
                         const el = h('smva-voice-status');
@@ -653,7 +1005,10 @@
                     }
 
                     if (data.type === 'audio') {
-                        audioQueue.push({ audio: data.audio, mimeType: data.mimeType || 'audio/pcm;rate=24000' });
+                        const mime = data.mimeType || 'audio/pcm;rate=24000';
+                        const rateM = /rate=(\d+)/i.exec(String(mime));
+                        traceAudioIn(Math.floor(String(data.audio || '').length * 3 / 4), rateM ? parseInt(rateM[1], 10) : 24000);
+                        audioQueue.push({ audio: data.audio, mimeType: mime });
                         if (!isPlayingAudio) playNextAudio();
                     } else if (data.type === 'chat_response') {
                         isTyping = false;
@@ -693,11 +1048,7 @@
                     // ── Feature B: backend confirmed receipt → re-enable input ──
                     } else if (data.type === 'display_text') { renderDisplayText(data); } else if (data.type === 'text_input_received' || data.type === 'text_response_received' || data.type === 'lead_captured') {
                         if (data.type === 'lead_captured' && data.lead) {
-                            const lead = data.lead || {};
-                            if (lead.email) saveLeadFragment('email', 'Email', lead.email, 'Backend lead capture');
-                            if (lead.phone) saveLeadFragment('phone', 'Phone', lead.phone, 'Backend lead capture');
-                            if (lead.name) saveLeadFragment('name', 'Name', lead.name, 'Backend lead capture');
-                            if (lead.notes || lead.message) saveLeadFragment('notes', 'Notes', lead.notes || lead.message, 'Backend lead capture');
+                            saveLeadComplete(data.lead, 'Voice lead capture');
                         }
                         const input   = h('smva-text-input');
                         const sendBtn = h('smva-text-send');
@@ -739,13 +1090,15 @@
                 } catch (err) { console.error('[SMVA] WS error:', err); }
             };
 
-            ws.onerror = () => endCall();
+            ws.onerror = () => { traceAdd('ws_error'); endCall('ws_error'); };
             ws.onclose = (evt) => {
+                traceAdd('ws_close', { code: evt.code, wasClean: !!evt.wasClean });
+                if (traceCall) traceCall.wsCloseCode = evt.code;
                 if (agentEndedCall) { setTimeout(() => { const panel = h('smva-panel'); if (panel) panel.classList.add('hide'); agentEndedCall = false; }, 500); }
-                if (evt.code === 4004) { endCall(); setSt('Your trial has expired. Please upgrade your plan.');
-                } else if (evt.code === 4003) { endCall(); setSt('Monthly usage limit reached. Please upgrade.');
-                } else if (evt.code === 4001 || evt.code === 4002) { endCall(); setSt('License inactive. Please check your plan.');
-                } else if (voiceState !== 'idle') { endCall(); }
+                if (evt.code === 4004) { endCall('trial_expired'); setSt('Your trial has expired. Please upgrade your plan.');
+                } else if (evt.code === 4003) { endCall('quota_exceeded'); setSt('Monthly usage limit reached. Please upgrade.');
+                } else if (evt.code === 4001 || evt.code === 4002) { endCall('license_inactive'); setSt('License inactive. Please check your plan.');
+                } else if (voiceState !== 'idle') { endCall('ws_closed_' + evt.code); }
             };
 
         } catch (error) {
@@ -760,7 +1113,10 @@
         }
     }
 
-    function endCall() {
+    function endCall(reason) {
+        // Close the trace first: it must see the in-flight reply before
+        // stopPlayback() clears the queue. Repeat calls are harmless.
+        traceCallEnd(reason || (agentEndedCall ? 'agent_ended' : 'user_ended'));
         if (agentEndedCall) { const panel = h('smva-panel'); if (panel) panel.classList.add('hide'); agentEndedCall = false; }
         voiceState = 'idle';
         lastCallEnd = Date.now();
@@ -820,6 +1176,9 @@
             window.SMVAAudioDebug.lastChunkLength = samplesLength || (pcmBuffer.byteLength / 2);
             window.SMVAAudioDebug.lastMaxVal = maxVal || 0;
             window.SMVAAudioDebug.lastSentAt = Date.now();
+            // Bucketed to 500ms: at 50 frames/sec, one event per frame would
+            // fill the ring in a minute and drown out everything else.
+            traceMicChunk(maxVal);
 
             const bytes = new Uint8Array(pcmBuffer);
             let binary = '';
@@ -857,6 +1216,8 @@
                 bargeInFrames = 0;
                 window.SMVAAudioDebug.interruptsSent = (window.SMVAAudioDebug.interruptsSent || 0) + 1;
                 window.SMVAAudioDebug.lastInterruptMaxVal = maxVal;
+                if (traceReply) traceReply.interrupts += 1;
+                traceAdd('interrupt', { maxVal: maxVal, sincePlaybackMs: Math.round(nowMs - playbackStartedAt) });
                 stopPlayback();
                 try { if (ws) ws.send(JSON.stringify({ type: 'interrupt' })); } catch(e) {}
             }
@@ -993,6 +1354,9 @@
     // still scheduled, otherwise mid-reply chunks would be held back and create
     // the very gap the pre-roll exists to prevent.
     function markPlaybackIdle() {
+        // The reply is fully played out — close its statistics here, where the
+        // arrival window is genuinely over.
+        traceReplyEnd();
         isPlayingAudio = false;
         playbackPrimed = false;
         playbackPrimeStartedAt = 0;
@@ -1040,6 +1404,12 @@
             playbackStartedAt = Date.now();
             window.SMVAAudioDebug = window.SMVAAudioDebug || {};
             window.SMVAAudioDebug.playbackPrimeWaitMs = waited;
+            // Whether the pre-roll reached its target or timed out is the
+            // difference between a cushion that works and one that only looks
+            // like it does. queuedMs well under the target means it gave up.
+            const primeQueuedMs = Math.round(estimateQueuedSeconds() * 1000);
+            if (traceReply) { traceReply.primeWaitMs = waited; traceReply.primeQueuedMs = primeQueuedMs; }
+            traceAdd('prime', { waitMs: waited, queuedMs: primeQueuedMs, targetMs: Math.round(PRIME_TARGET_SECONDS * 1000), timedOut: waited >= PRIME_MAX_WAIT_MS });
         }
 
         if (!playbackAudioContext) {
@@ -1063,6 +1433,8 @@
         const HARD_RESET_DELAY_SECONDS = 2.50;   // only recover from truly bad backlog
         const MAX_COMBINED_MS = 480;             // combine chunks into fewer BufferSource nodes
         const MIN_FADE_SECONDS = 0.006;          // tiny fade to prevent clicks between chunks
+        const UNDERRUN_MIN_SECONDS = 0.05;       // below this the timeline seam is inaudible
+        const RESUME_OFFSET_SECONDS = 0.06;      // lead time when picking a seam back up
 
         const decodeItem = (item) => {
             const base64Audio = (item && typeof item === 'object') ? item.audio : item;
@@ -1085,18 +1457,51 @@
             // If the previous schedule somehow drifted too far into the future, reset timing.
             // Important: do NOT drop audio for normal small jitter; dropping caused the "tr-tr" sound.
             if (!nextPlaybackTime || nextPlaybackTime < now) {
-                // A non-zero nextPlaybackTime now in the past means scheduled
-                // audio ran out before more arrived — the gap the listener
-                // hears. (It is zeroed when a reply ends normally, so this
-                // does not fire on the first chunk of each reply.) Widen the
-                // cushion so the next reply absorbs the same jitter silently.
-                if (nextPlaybackTime) {
+                // A non-zero nextPlaybackTime now in the past means the
+                // scheduled timeline has been passed. That is only a real
+                // underrun if it fell meaningfully behind. Audio arrives in
+                // bursts well ahead of realtime, so the ordinary case is a
+                // seam: the previous burst finished playing microseconds
+                // before the next was scheduled, with plenty still queued.
+                //
+                // Treating that seam as starvation was the stutter. It re-armed
+                // the full start cushion mid-sentence — inserting 240ms or more
+                // of silence to "recover" from being 1ms late — and ratcheted
+                // the cushion up each time, so every later seam inserted more
+                // silence than the last. Traces showed six such events in one
+                // call, every one with 10+ chunks still waiting in the queue.
+                const shortfall = nextPlaybackTime ? (now - nextPlaybackTime) : 0;
+                const starved   = shortfall > UNDERRUN_MIN_SECONDS;
+
+                if (starved) {
                     playbackReplyUnderran = true;
                     playbackStartBuffer = Math.min(playbackStartBuffer + START_BUFFER_STEP, START_BUFFER_MAX);
                     window.SMVAAudioDebug.playbackUnderruns = (window.SMVAAudioDebug.playbackUnderruns || 0) + 1;
                     window.SMVAAudioDebug.playbackStartBufferMs = Math.round(playbackStartBuffer * 1000);
+                    if (traceReply) traceReply.underruns += 1;
+                    traceAdd('underrun', {
+                        reply: traceReply ? traceReply.index : null,
+                        shortfallMs: Math.round(shortfall * 1000),
+                        queueDepth: audioQueue.length,
+                        newBufferMs: Math.round(playbackStartBuffer * 1000),
+                    });
+                } else if (nextPlaybackTime) {
+                    // Recorded so a trace still shows these happening, but
+                    // nothing is adjusted — there is nothing wrong.
+                    if (traceReply) traceReply.seams = (traceReply.seams || 0) + 1;
+                    traceAdd('seam', {
+                        reply: traceReply ? traceReply.index : null,
+                        shortfallMs: Math.round(shortfall * 1000),
+                        queueDepth: audioQueue.length,
+                    });
                 }
-                nextPlaybackTime = now + Math.max(START_BUFFER_SECONDS, playbackStartBuffer);
+
+                // Resuming mid-reply needs only enough lead time to schedule
+                // safely. The full cushion belongs at the start of a reply,
+                // where nextPlaybackTime is zero.
+                nextPlaybackTime = now + ((nextPlaybackTime && !starved)
+                    ? RESUME_OFFSET_SECONDS
+                    : Math.max(START_BUFFER_SECONDS, playbackStartBuffer));
             } else if ((nextPlaybackTime - now) > HARD_RESET_DELAY_SECONDS) {
                 nextPlaybackTime = now + START_BUFFER_SECONDS;
                 window.SMVAAudioDebug.playbackHardResets = (window.SMVAAudioDebug.playbackHardResets || 0) + 1;
@@ -1178,6 +1583,17 @@
                 window.SMVAAudioDebug.playbackCombinedChunks = parts.length;
                 window.SMVAAudioDebug.playbackDroppedChunks = window.SMVAAudioDebug.playbackDroppedChunks || 0;
 
+                // Lookahead is how much scheduled audio is still ahead of the
+                // playhead. Its low-water mark over a reply says how close that
+                // reply came to running dry, including the times it did not.
+                if (traceReply) {
+                    const lookaheadMs = Math.round(Math.max(0, nextPlaybackTime - playbackAudioContext.currentTime) * 1000);
+                    traceReply.schedCount += 1;
+                    if (traceReply.minLookaheadMs === null || lookaheadMs < traceReply.minLookaheadMs) {
+                        traceReply.minLookaheadMs = lookaheadMs;
+                    }
+                }
+
                 source.onended = () => {
                     playbackSources = playbackSources.filter(s => s !== source);
                     try { source.disconnect(); } catch (e) {}
@@ -1203,6 +1619,10 @@
     }
 
     function stopPlayback() {
+        // An interrupted reply still has statistics worth keeping — close it
+        // here so its numbers are not merged into the next one. No-op once the
+        // call itself has already ended.
+        traceReplyEnd();
         playbackGeneration++;
         audioQueue = [];
         isPlayingAudio = false;
@@ -1240,7 +1660,7 @@
     function updateTimer() {
         callSeconds++;
         const maxSecs = CONFIG.maxCallDuration ? parseInt(CONFIG.maxCallDuration,10) * 60 : 0;
-        if (maxSecs > 0 && callSeconds >= maxSecs) { endCall(); return; }
+        if (maxSecs > 0 && callSeconds >= maxSecs) { endCall('max_duration'); return; }
         const mins = Math.floor(callSeconds / 60);
         const secs = callSeconds % 60;
         const el = h('smva-timer');
@@ -1279,7 +1699,7 @@
                 try {
                     const data = JSON.parse(e.data);
                     if (data.type === 'setup_complete' && pendingMessage) { chatWs.send(JSON.stringify({ type: 'chat', text: pendingMessage })); pendingMessage = null; }
-                    if (data.type === 'lead_captured' && data.lead) { var ld = data.lead; if (ld.name) saveLeadFragment('name','Name',ld.name,'Chat lead capture'); if (ld.email) saveLeadFragment('email','Email',ld.email,'Chat lead capture'); if (ld.phone) saveLeadFragment('phone','Phone',ld.phone,'Chat lead capture'); if (ld.notes) saveLeadFragment('notes','Notes',ld.notes,'Chat lead capture'); }
+                    if (data.type === 'lead_captured' && data.lead) { saveLeadComplete(data.lead, 'Chat lead capture'); }
                     if (data.type === 'chat_response') { isTyping = false; addChatMessage('bot', data.text); chatHistory.push({ role: 'bot', content: data.text }); saveChatHistory();
                     } else if (data.type === 'error' && data.code === 'quota_exceeded') { isTyping = false; addChatMessage('bot', '⚠️ ' + t('chat_unavailable')); setTimeout(refreshQuota, 500);
                     } else if (data.type === 'error') { isTyping = false; var msg = data.message || 'Error'; addChatMessage('bot', '⚠️ ' + msg); }

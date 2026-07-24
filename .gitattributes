@@ -2,3 +2,5 @@
 /.gitattributes export-ignore
 /.git*          export-ignore
 /.wp-env*.json  export-ignore
+/tools          export-ignore
+/tools/**       export-ignore

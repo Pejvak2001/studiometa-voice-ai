@@ -493,6 +493,8 @@ jQuery(function($) {
             smva_default_tab: $('[name=smva_default_tab]').val(),
             smva_voice_enabled: $('[name=smva_voice_enabled]').is(':checked') ? '1' : '0',
             smva_chat_enabled: $('[name=smva_chat_enabled]').is(':checked') ? '1' : '0',
+            smva_lead_email_notify: $('[name=smva_lead_email_notify]').is(':checked') ? '1' : '0',
+            smva_lead_email_to: $('[name=smva_lead_email_to]').val(),
             smva_max_call_duration: $('[name=smva_max_call_duration]').val(),
             smva_silence_timeout: $('[name=smva_silence_timeout]').val(),
             smva_call_cooldown: $('[name=smva_call_cooldown]').val(),
