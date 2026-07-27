@@ -169,8 +169,12 @@ jQuery(function($) {
                 $('#smva-chat-num').text(cUsed);
                 $('#smva-chat-limit').text('of ' + cLimit);
 
-                // If plan changed (e.g. trial → paid), reload so UI reflects it
-                if (q.plan && window.smvaPlan && q.plan !== window.smvaPlan) {
+                // If the plan or engine changed (e.g. trial → paid), reload so the
+                // badge and the voice list reflect it immediately rather than
+                // staying stale until someone refreshes by hand.
+                var known = window.smvaAdmin || {};
+                if ((q.plan && known.plan && q.plan !== known.plan) ||
+                    (q.engine && known.engine && q.engine !== known.engine)) {
                     location.reload();
                 }
             })
@@ -803,6 +807,8 @@ jQuery(function($) {
             chat_pro:       { icon: '💬', color: '#047857', bg: '#d1fae5' },
             bundle_starter: { icon: '⚡', color: '#7c3aed', bg: '#f5f3ff' },
             bundle_pro:     { icon: '⚡', color: '#6d28d9', bg: '#ede9fe', popular: true },
+            voice_premium:    { icon: '💎', color: '#0e7490', bg: '#ecfeff' },
+            voice_enterprise: { icon: '👑', color: '#b45309', bg: '#fffbeb' },
         };
 
         var html = '';
@@ -822,6 +828,11 @@ jQuery(function($) {
             html += '<div style="font-size:22px;font-weight:800;color:' + d.color + ';margin:6px 0">$' + (plan.price_usd || plan.price_cad) + '<span style="font-size:12px;font-weight:500;color:#94a3b8"> USD/mo</span></div>';
             html += minutesRow;
             html += '<div style="font-size:12px;color:#475569;margin-bottom:8px">💬 ' + plan.chat.toLocaleString() + ' chat messages/mo</div>';
+            // Without this the higher tiers just look more expensive for the
+            // same allowance — the engine is the whole reason for the price.
+            if (plan.engine_badge && plan.engine_badge !== 'Standard') {
+                html += '<div style="font-size:12px;font-weight:600;color:' + d.color + ';margin-bottom:8px">✨ ' + plan.engine_badge + ' AI Engine</div>';
+            }
             html += '<button class="smva-btn smva-btn-primary smva-plan-select-btn" data-plan="' + plan.id + '" style="width:100%;justify-content:center;margin-top:auto">Select →</button>';
             html += '</div>';
         });

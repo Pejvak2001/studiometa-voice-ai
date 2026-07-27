@@ -1098,6 +1098,7 @@
                 if (evt.code === 4004) { endCall('trial_expired'); setSt('Your trial has expired. Please upgrade your plan.');
                 } else if (evt.code === 4003) { endCall('quota_exceeded'); setSt('Monthly usage limit reached. Please upgrade.');
                 } else if (evt.code === 4001 || evt.code === 4002) { endCall('license_inactive'); setSt('License inactive. Please check your plan.');
+                } else if (evt.code === 4005) { endCall('upstream_unavailable'); setSt('Voice service is temporarily unavailable. Please try again in a moment.');
                 } else if (voiceState !== 'idle') { endCall('ws_closed_' + evt.code); }
             };
 

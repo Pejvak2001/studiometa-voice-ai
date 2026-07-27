@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.3.85
+Stable tag: 1.4.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -113,6 +113,15 @@ The AI capabilities are powered by Google's Gemini Live API. The plugin does **n
 * Google Gemini Terms: [https://ai.google.dev/terms](https://ai.google.dev/terms)
 * Google Privacy Policy: [https://policies.google.com/privacy](https://policies.google.com/privacy)
 
+= 5. OpenAI Realtime (indirectly, via api2.studiometa.io) =
+
+On the Premium and Enterprise plans, voice conversations are powered by OpenAI's Realtime API instead. The plugin does **not** contact OpenAI directly — all requests go through `api2.studiometa.io`, which forwards them to OpenAI. You do not need an OpenAI account or API key. Plans other than Premium and Enterprise do not use this service.
+
+**Data sent:** the visitor's microphone audio and typed messages during a voice conversation, plus your configured agent name, greeting, system prompt and knowledge base.
+
+* OpenAI Terms of Use: [https://openai.com/policies/terms-of-use](https://openai.com/policies/terms-of-use)
+* OpenAI Privacy Policy: [https://openai.com/policies/privacy-policy](https://openai.com/policies/privacy-policy)
+
 = How to opt out =
 
 If you do not want the plugin to contact these services, simply deactivate and uninstall the plugin. The plugin cannot function without the hosted services because the AI assistant runs on our infrastructure (similar to how an Akismet plugin needs the Akismet service, or a Mailchimp plugin needs Mailchimp).
@@ -198,6 +207,19 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.4.0 =
+* New: **Premium and Enterprise plans**, which run voice conversations on a higher-quality AI engine. It holds up noticeably better in noisy rooms and sounds more natural in tone and pacing. Your plan decides which engine you get — there is nothing to configure
+* New: the voice list now comes from the StudioMeta AI Engine rather than being fixed in the plugin, so new voices appear without waiting for a plugin update. If the service cannot be reached, the built-in list is used instead
+* New: if your plan changes to an engine that does not offer your current voice, the closest match is chosen for you — same gender, nearest tone — and the General tab tells you it happened
+* New: your plan's AI engine is shown on the License tab
+* Fix: agent settings saved on a newly purchased licence were ignored during voice calls. The agent answered with the default name and voice no matter what had been configured, until the settings were saved a second time
+* Fix: when the voice service could not be reached, the widget showed a call in progress and then sat in silence. It now says so and ends the call
+* Fix: the sidebar showed "Trial Plan" for every site, including paid ones
+* Fix: cancelling one subscription could deactivate other licences registered to the same email address
+* Fix: changing plan through the billing portal had no effect on the site's quota
+* Improved: voice calls now have a maximum length, so a call left open in a background tab cannot quietly consume your monthly minutes
+* Improved: saving an unavailable voice, language or response style is now rejected with an explanation instead of failing later during a call
 
 = 1.3.85 =
 * Improved: the plugin now reports its own version to the StudioMeta AI Engine on each periodic status check, not only at activation, so the dashboard reflects the version a site is actually running after an automatic update

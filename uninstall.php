@@ -40,6 +40,8 @@ $options = array(
     // License / trial state — NOTE: smva_license_key and smva_internal_token
     // are intentionally kept so reinstalling restores the existing license.
     'smva_plan',
+    'smva_engine',
+    'smva_engine_label',
     'smva_trial_attempted',
     'smva_trial_last_attempt',
     'smva_trial_notice_dismissed',
@@ -78,6 +80,13 @@ foreach ( $options as $option ) {
 // ── Delete transients ──────────────────────────────────────────────────────
 delete_transient( 'smva_quota_cache' );
 delete_site_transient( 'smva_quota_cache' );
+
+// The per-license caches are keyed by a hash of the credentials, which are
+// deliberately retained above so a reinstall keeps working — so the key can
+// still be recomputed here rather than left behind.
+$smva_cache_hash = md5( get_option( 'smva_license_key', '' ) . '|' . get_option( 'smva_internal_token', '' ) );
+delete_transient( 'smva_quota_cache_v2_' . $smva_cache_hash );
+delete_transient( 'smva_voices_cache_' . $smva_cache_hash );
 
 // ── Multisite: clean up across all sites ───────────────────────────────────
 if ( is_multisite() ) {

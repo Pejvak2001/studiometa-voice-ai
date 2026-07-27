@@ -6,6 +6,8 @@ class SMVA_Plugin {
     const QUOTA_CACHE_KEY = 'smva_quota_cache';
     const QUOTA_CACHE_KEY_PREFIX = 'smva_quota_cache_v2_';
     const QUOTA_CACHE_TTL = 300; // 5 minutes
+    const VOICE_CACHE_KEY_PREFIX = 'smva_voices_cache_';
+    const VOICE_CACHE_TTL = 21600; // 6 hours — the catalog changes rarely
 
     private static $instance = null;
 
@@ -312,6 +314,7 @@ class SMVA_Plugin {
         add_action( 'wp_ajax_smva_auto_train',         array( $this, 'ajax_auto_train' ) );
         add_action( 'wp_ajax_smva_refresh_quota',      array( $this, 'ajax_refresh_quota' ) );
         add_action( 'wp_ajax_smva_tts_preview',        array( $this, 'ajax_tts_preview' ) );
+        add_action( 'wp_ajax_smva_get_voices',         array( $this, 'ajax_get_voices' ) );
         add_action( 'wp_ajax_smva_get_agent_tools',    array( $this, 'ajax_get_agent_tools' ) );
         add_action( 'wp_ajax_smva_get_plans',          array( $this, 'ajax_get_plans' ) );
         add_action( 'wp_ajax_smva_chat_history',       array( $this, 'ajax_chat_history' ) );
@@ -873,6 +876,11 @@ class SMVA_Plugin {
             'siteUrl'       => get_site_url(),
             'timezone'      => $smva_admin_timezone ?: 'UTC',
             'dateRangeDays' => 30,
+            // The quota poller compares these to decide whether an upgrade has
+            // landed and the page needs reloading. It guarded on window.smvaPlan
+            // before, which was never assigned, so the check never fired.
+            'plan'          => get_option( 'smva_plan', '' ),
+            'engine'        => get_option( 'smva_engine', '' ),
         ) );
     }
 
@@ -989,6 +997,96 @@ class SMVA_Plugin {
         return self::QUOTA_CACHE_KEY_PREFIX . md5( $license_key . '|' . $internal_token );
     }
 
+    /** Keyed like the quota cache, so activating a different licence busts it. */
+    private function voice_cache_key() {
+        $license_key    = get_option( 'smva_license_key', '' );
+        $internal_token = get_option( 'smva_internal_token', '' );
+        return self::VOICE_CACHE_KEY_PREFIX . md5( $license_key . '|' . $internal_token );
+    }
+
+    /**
+     * Voice catalog for this licence's engine, fetched from the backend.
+     *
+     * Returns an empty array on any failure; callers fall back to the built-in
+     * list. Fetching rather than hardcoding means adding a voice no longer
+     * requires a plugin release and a WordPress.org review.
+     */
+    public function get_voice_catalog( $force_refresh = false ) {
+        $creds = $this->get_api_credentials();
+        if ( empty( $creds['license_key'] ) || empty( $creds['internal_token'] ) ) {
+            return array();
+        }
+
+        $cache_key = $this->voice_cache_key();
+        if ( ! $force_refresh ) {
+            $cached = get_transient( $cache_key );
+            if ( is_array( $cached ) ) {
+                return $cached;
+            }
+        }
+
+        $response = wp_remote_post( SMVA_API_URL . '/plugin/voices', array(
+            'headers' => array( 'Content-Type' => 'application/json' ),
+            'body'    => wp_json_encode( array(
+                'license_key'    => $creds['license_key'],
+                'internal_token' => $creds['internal_token'],
+            ) ),
+            'timeout' => 8,
+        ) );
+
+        if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+            return array();
+        }
+
+        $data = json_decode( wp_remote_retrieve_body( $response ), true );
+        if ( ! is_array( $data ) || empty( $data['voices'] ) || ! is_array( $data['voices'] ) ) {
+            return array();
+        }
+
+        $voices = array();
+        foreach ( $data['voices'] as $voice ) {
+            if ( empty( $voice['id'] ) ) {
+                continue;
+            }
+            $voices[] = array(
+                'id'            => sanitize_text_field( $voice['id'] ),
+                'label'         => sanitize_text_field( $voice['label'] ?? $voice['id'] ),
+                'gender'        => ( isset( $voice['gender'] ) && 'm' === $voice['gender'] ) ? 'm' : 'f',
+                'tone'          => sanitize_text_field( $voice['tone'] ?? '' ),
+                'best_for'      => sanitize_text_field( $voice['best_for'] ?? '' ),
+                'preview_rate'  => sanitize_text_field( $voice['preview_rate'] ?? '1.00' ),
+                'preview_pitch' => sanitize_text_field( $voice['preview_pitch'] ?? '1.00' ),
+            );
+        }
+        if ( empty( $voices ) ) {
+            return array();
+        }
+
+        $catalog = array(
+            'voices'        => $voices,
+            'engine_label'  => sanitize_text_field( $data['engine']['display_name'] ?? '' ),
+            'engine_badge'  => sanitize_text_field( $data['engine']['badge'] ?? '' ),
+            'default_voice' => sanitize_text_field( $data['default_voice'] ?? '' ),
+            'current_voice' => sanitize_text_field( $data['current_voice'] ?? '' ),
+            'remapped_from' => sanitize_text_field( $data['remapped_from'] ?? '' ),
+        );
+
+        set_transient( $cache_key, $catalog, self::VOICE_CACHE_TTL );
+        return $catalog;
+    }
+
+    public function ajax_get_voices() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => 'Unauthorized' ), 403 );
+        }
+        $catalog = $this->get_voice_catalog( true );
+        if ( empty( $catalog['voices'] ) ) {
+            wp_send_json_error( array( 'message' => 'Could not load the voice list. Showing the built-in list instead.' ) );
+        }
+        wp_send_json_success( $catalog );
+    }
+
     private function get_api_credentials() {
         return array(
             'license_key'    => get_option( 'smva_license_key', '' ),
@@ -1018,6 +1116,10 @@ class SMVA_Plugin {
             'chat_messages_limit' => intval( $chat_limit ),
             'chat_available'      => array_key_exists( 'chat_available', $data ) ? ! empty( $data['chat_available'] ) : ( intval( $chat_limit ) > 0 ? intval( $chat_used ) < intval( $chat_limit ) : false ),
             'plan'                => sanitize_text_field( $data['plan'] ?? $data['license']['plan'] ?? get_option( 'smva_plan', '' ) ),
+            // This array is the only gate through which backend fields reach the
+            // plugin — anything not listed here is silently dropped.
+            'engine'              => sanitize_text_field( $data['engine']['badge'] ?? get_option( 'smva_engine', '' ) ),
+            'engine_label'        => sanitize_text_field( $data['engine']['display_name'] ?? get_option( 'smva_engine_label', '' ) ),
             'expires_at'          => $data['expires_at'] ?? $data['license']['expires_at'] ?? null,
         );
     }
@@ -1149,6 +1251,15 @@ class SMVA_Plugin {
             if ( $normalized['plan'] !== 'trial' ) {
                 update_option( 'smva_trial_notice_dismissed', '0' );
             }
+        }
+
+        // Persist the engine so the badge still renders when the API is
+        // unreachable, and drop the cached voice catalog when the tier changes —
+        // the two engines share no voice names.
+        if ( $normalized['engine'] && $normalized['engine'] !== get_option( 'smva_engine', '' ) ) {
+            update_option( 'smva_engine', $normalized['engine'] );
+            update_option( 'smva_engine_label', $normalized['engine_label'] );
+            delete_transient( $this->voice_cache_key() );
         }
 
         $this->set_quota_cache( $normalized );

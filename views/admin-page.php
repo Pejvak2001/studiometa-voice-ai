@@ -79,13 +79,19 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
         <div class="smva-sb-footer">
             <?php
-            $sb_plan = get_option('smva_plan_type', get_option('smva_license_plan','trial'));
-            $sb_key  = get_option('smva_license_key','');
+            // This read used to be get_option('smva_plan_type', get_option('smva_license_plan','trial')),
+            // and neither of those options is ever written — only smva_plan is.
+            // So the sidebar said "Trial Plan" for every customer, paid or not.
+            $sb_plan  = get_option( 'smva_plan', '' );
+            $sb_label = $sb_plan
+                ? ucwords( str_replace( '_', ' ', $sb_plan ) ) . ' Plan'
+                : 'Not activated';
+            $sb_key   = get_option('smva_license_key','');
             ?>
             <div class="smva-sb-plan">
                 <span class="smva-sb-plan-dot"></span>
                 <div class="smva-sb-plan-info">
-                    <div class="smva-sb-plan-name"><?php echo esc_html( ucfirst($sb_plan) ); ?> Plan</div>
+                    <div class="smva-sb-plan-name"><?php echo esc_html( $sb_label ); ?></div>
                     <div class="smva-sb-plan-sub"><?php echo $sb_key ? esc_html( substr($sb_key,0,16) ).'…' : 'Not activated'; ?></div>
                 </div>
             </div>
@@ -175,7 +181,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     </div>
                 <?php endif; ?>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px">
                 <div style="background:#f8fafc;border-radius:8px;padding:12px 14px">
                     <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Plan</div>
                     <?php
@@ -184,6 +190,13 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     $smva_plan_name = $quota['plan'] ?? get_option( 'smva_plan', '' );
                     ?>
                     <div style="font-size:14px;font-weight:600;color:#0f172a"><?php echo $smva_plan_name ? esc_html( ucwords( str_replace( '_', ' ', $smva_plan_name ) ) ) : '—'; ?></div>
+                </div>
+                <div style="background:#f8fafc;border-radius:8px;padding:12px 14px">
+                    <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">AI Engine</div>
+                    <?php
+                    $smva_engine_name = $quota['engine_label'] ?? get_option( 'smva_engine_label', '' );
+                    ?>
+                    <div style="font-size:13px;font-weight:600;color:#0f172a"><?php echo $smva_engine_name ? esc_html( $smva_engine_name ) : 'StudioMeta AI Engine'; ?></div>
                 </div>
                 <div style="background:#f8fafc;border-radius:8px;padding:12px 14px">
                     <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Active Site</div>
@@ -522,9 +535,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                         'Sadaltager'    => array( 'label' => 'Sadaltager',    'tone' => 'Knowledgeable', 'best_for' => 'Expert explainers and consultative flows',   'preview_rate' => '0.97', 'preview_pitch' => '0.96' ),
                         'Sulafat'       => array( 'label' => 'Sulafat',       'tone' => 'Warm',          'best_for' => 'Welcoming, human-sounding introductions',    'preview_rate' => '0.98', 'preview_pitch' => '1.01' ),
                     );
-                    $current_voice = $agent['voice_id'] ?? 'Aoede';
-                    ?>
-                    <?php
                     $voice_gender = array(
                         'Zephyr'=>'f','Kore'=>'f','Leda'=>'f','Aoede'=>'f','Callirrhoe'=>'f',
                         'Autonoe'=>'f','Despina'=>'f','Erinome'=>'f','Laomedeia'=>'f','Achernar'=>'f',
@@ -534,8 +544,51 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                         'Alnilam'=>'m','Schedar'=>'m','Gacrux'=>'m','Achird'=>'m',
                         'Zubenelgenubi'=>'m','Sadaltager'=>'m',
                     );
+
+                    // The list above is now only the offline fallback. Which
+                    // voices are valid depends on the plan's engine, so the
+                    // backend is authoritative and a new voice no longer needs a
+                    // plugin release.
+                    $smva_catalog = $this->get_voice_catalog();
+                    if ( ! empty( $smva_catalog['voices'] ) ) {
+                        $voices       = array();
+                        $voice_gender = array();
+                        foreach ( $smva_catalog['voices'] as $smva_v ) {
+                            $voices[ $smva_v['id'] ] = array(
+                                'label'         => $smva_v['label'],
+                                'tone'          => $smva_v['tone'],
+                                'best_for'      => $smva_v['best_for'],
+                                'preview_rate'  => $smva_v['preview_rate'],
+                                'preview_pitch' => $smva_v['preview_pitch'],
+                            );
+                            $voice_gender[ $smva_v['id'] ] = $smva_v['gender'];
+                        }
+                    }
+
+                    // Prefer the backend's view of the current voice: on a tier
+                    // change it has already been remapped there, and the stored
+                    // value would name a voice this engine cannot speak.
+                    // ?: not ?? — the catalog returns '' rather than null for an
+                    // unset voice, which ?? would happily accept as the answer.
+                    $current_voice = ( $smva_catalog['current_voice'] ?? '' )
+                        ?: ( $agent['voice_id'] ?? '' )
+                        ?: ( $smva_catalog['default_voice'] ?? '' )
+                        ?: 'Aoede';
                     $current_gender = $voice_gender[ $current_voice ] ?? 'f';
                     ?>
+                    <?php if ( ! empty( $smva_catalog['remapped_from'] ) ) : ?>
+                    <p class="smva-hint">
+                        <strong>Your plan changed.</strong>
+                        <?php
+                        printf(
+                            /* translators: 1: previous voice name, 2: new voice name */
+                            esc_html__( 'The %1$s voice is not available on your current engine, so the closest match (%2$s) was selected. Pick a different one below at any time.', 'studiometa-voice-ai' ),
+                            esc_html( $smva_catalog['remapped_from'] ),
+                            esc_html( $voices[ $current_voice ]['label'] ?? $current_voice )
+                        );
+                        ?>
+                    </p>
+                    <?php endif; ?>
                     <div class="smva-gender-tabs" id="smva-gender-tabs">
                         <button type="button" class="smva-gender-btn <?php echo $current_gender==='f'?'active':''; ?>" data-gender="f">
                             <span>♀</span> Female
@@ -574,7 +627,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     </select>
                     
                     
-                    <p class="smva-hint">Filter by gender, then pick a voice. Preview uses the StudioMeta AI Engine — same as the live widget.</p>
+                    <?php
+                    // Never name the underlying vendor here — this string comes
+                    // from the backend's engine registry, which is the only
+                    // place tier names exist.
+                    $smva_engine_label = ( $smva_catalog['engine_label'] ?? '' )
+                        ?: ( get_option( 'smva_engine_label', '' ) ?: 'StudioMeta AI Engine' );
+                    ?>
+                    <p class="smva-hint">Filter by gender, then pick a voice. Preview uses the <?php echo esc_html( $smva_engine_label ); ?> — same as the live widget.</p>
                     <div class="smva-voice-meta-card" id="smva-voice-meta-card">
                         <div class="smva-voice-meta-top">
                             <div>
@@ -589,7 +649,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                             <span class="smva-voice-meta-badge">Voice profile</span>
                         </div>
                         <div class="smva-voice-meta-best" id="smva-voice-meta-best"><?php echo esc_html( $smva_voice_meta['best_for'] ?? 'No description available for this voice yet.' ); ?></div>
-                        <div class="smva-voice-meta-note">Preview uses the StudioMeta AI Engine with the selected voice — same as the live widget.</div>
+                        <div class="smva-voice-meta-note">Preview uses the <?php echo esc_html( $smva_engine_label ); ?> with the selected voice — same as the live widget.</div>
                     </div>
                     <div class="smva-voice-greeting-inline">
                         <label>🎙️ Voice Greeting — <span style="color:#9ca3af;font-weight:400">what the agent says when the voice call starts</span></label>
@@ -1257,7 +1317,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 <button id="smva-upgrade-modal-close" style="background:none;border:none;cursor:pointer;font-size:20px;color:#94a3b8;padding:4px">✕</button>
             </div>
 
-            <div id="smva-plans-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+            <div id="smva-plans-grid" class="smva-plans-grid">
                 <!-- Plans loaded via JS -->
                 <div style="grid-column:1/-1;text-align:center;padding:20px;color:#94a3b8;font-size:13px">Loading plans...</div>
             </div>
