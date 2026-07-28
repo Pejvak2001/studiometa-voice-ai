@@ -719,8 +719,20 @@
         if (!caps.voice && !caps.chat) { buildCTA(); return; }
 
         const questions = Array.isArray(CONFIG.suggestedQuestions) ? CONFIG.suggestedQuestions : [];
-        const chipsHtml = questions.length > 0
-            ? '<div class="smva-suggestions" id="smva-suggestions">' + questions.map(q => '<button class="smva-chip" data-q="' + esc(q) + '">' + esc(q) + '</button>').join('') + '</div>'
+        // Workflow buttons (Voice AI → Automation) were seeded on activation —
+        // "Book Appointment" among them — but nothing ever rendered them; this
+        // is the only discoverable way a visitor starts a booking conversation
+        // rather than having to think to ask for one. Same chip, same click
+        // handler as a suggested question: data-q carries the message to send,
+        // the button's own label is only ever the caption shown.
+        const workflowButtons = Array.isArray(CONFIG.workflowButtons) ? CONFIG.workflowButtons : [];
+        const workflowChips = workflowButtons
+            .filter(b => b && b.label && b.message)
+            .map(b => '<button class="smva-chip smva-wf-chip" data-q="' + esc(b.message) + '">' + esc(b.label) + '</button>')
+            .join('');
+        const chipsHtml = (questions.length > 0 || workflowChips)
+            ? '<div class="smva-suggestions" id="smva-suggestions">' + workflowChips
+                + questions.map(q => '<button class="smva-chip" data-q="' + esc(q) + '">' + esc(q) + '</button>').join('') + '</div>'
             : '';
 
         const tabsBar = (caps.voice && caps.chat)
@@ -1046,7 +1058,9 @@
                         }
 
                     // ── Feature B: backend confirmed receipt → re-enable input ──
-                    } else if (data.type === 'display_text') { renderDisplayText(data); } else if (data.type === 'text_input_received' || data.type === 'text_response_received' || data.type === 'lead_captured') {
+                    } else if (data.type === 'display_text') { renderDisplayText(data);
+                    } else if (data.type === 'options') { renderOptions(data);
+                    } else if (data.type === 'text_input_received' || data.type === 'text_response_received' || data.type === 'lead_captured') {
                         if (data.type === 'lead_captured' && data.lead) {
                             saveLeadComplete(data.lead, 'Voice lead capture');
                         }
@@ -1675,6 +1689,33 @@
         }
     }
 
+    /**
+     * Tap routing for a check_availability chip. renderOptions() is a global
+     * function (declared outside this closure, alongside renderDisplayText) so
+     * it has no access to ws/chatWs/chatHistory — it calls this bridge instead.
+     *
+     * Deliberately NOT sendChatMessage(): that function sends {type:'chat'} on
+     * `ws` whenever a voice call is live (line below), which the backend's
+     * router treats as a brand-new REST conversation on the SAME socket,
+     * completely disconnected from the live realtime turn the visitor is
+     * actually having. A tap during a voice call must instead become
+     * `text_input`, injected into that same live turn via session.provider.sendText().
+     * Only when there is no live call is it safe to fall through to the
+     * ordinary chat path.
+     */
+    window.__smvaOptionTap = function (label) {
+        addChatMessage('user', label);
+        chatHistory.push({ role: 'user', content: label });
+        isTyping = true;
+        updateChatUI();
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'text_input', text: label }));
+            return;
+        }
+        if (!chatWs || chatWs.readyState !== WebSocket.OPEN) { connectChatSession(label); }
+        else { chatWs.send(JSON.stringify({ type: 'chat', text: label })); }
+    };
+
     function sendChatMessage() {
         if (!caps.chat) return;
         const input = h('smva-input');
@@ -1702,6 +1743,11 @@
                     if (data.type === 'setup_complete' && pendingMessage) { chatWs.send(JSON.stringify({ type: 'chat', text: pendingMessage })); pendingMessage = null; }
                     if (data.type === 'lead_captured' && data.lead) { saveLeadComplete(data.lead, 'Chat lead capture'); }
                     if (data.type === 'chat_response') { isTyping = false; addChatMessage('bot', data.text); chatHistory.push({ role: 'bot', content: data.text }); saveChatHistory();
+                    // Chat-only mode never wired display_text or options — a tool
+                    // that renders either (booking's slot picker, or any site tool
+                    // using display_text) showed nothing at all in chat-only mode.
+                    } else if (data.type === 'display_text') { renderDisplayText(data);
+                    } else if (data.type === 'options') { renderOptions(data);
                     } else if (data.type === 'error' && data.code === 'quota_exceeded') { isTyping = false; addChatMessage('bot', '⚠️ ' + t('chat_unavailable')); setTimeout(refreshQuota, 500);
                     } else if (data.type === 'error') { isTyping = false; var msg = data.message || 'Error'; addChatMessage('bot', '⚠️ ' + msg); }
                 } catch (err) { console.error('[SMVA] Chat parse error:', err); }
@@ -1826,6 +1872,54 @@ function renderDisplayText(p){
   });
 }
 function smvaDtFallbackCopy(t,done){try{var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);done();}catch(e){}}
+
+/* === Feature D: options (tappable slot picker) ===
+ * Modelled on renderDisplayText above: same panel lookup, same tab switch,
+ * same dedupe-by-signature guard. Declared outside the main closure the same
+ * way, so tapping a chip goes through window.__smvaOptionTap — the bridge the
+ * main closure defines next to sendChatMessage(), since only that closure can
+ * see ws/chatWs and route the tap onto the correct connection. */
+function renderOptions(p){
+  if(!p||!Array.isArray(p.options)||!p.options.length)return;
+  var panel=document.querySelector('.smva-msgs')||document.querySelector('.smva-chat-messages')||document.querySelector('.smva-messages');
+  if(!panel)return;
+  var esc=function(x){return String(x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
+  var sig=(p.title||'')+'|'+p.options.map(function(o){return o.label;}).join('|');
+  if(panel.querySelector('[data-smva-opts="'+sig.replace(/"/g,'&quot;')+'"]'))return;
+  var tabs=document.querySelectorAll('.smva-tab-btn');
+  var contents=document.querySelectorAll('.smva-tab-content');
+  var chatTabIdx=-1;
+  contents.forEach(function(c,i){if(c.contains(panel)||c.querySelector('.smva-msgs'))chatTabIdx=i;});
+  var smvaPanel=document.getElementById('smva-panel');
+  if(smvaPanel&&smvaPanel.classList.contains('hide')){smvaPanel.classList.remove('hide');}
+  if(chatTabIdx>=0){
+    tabs.forEach(function(t){t.classList.remove('active');});
+    contents.forEach(function(c){c.classList.remove('active');});
+    if(tabs[chatTabIdx])tabs[chatTabIdx].classList.add('active');
+    contents[chatTabIdx].classList.add('active');
+  }
+  var card=document.createElement('div');
+  card.className='smva-opts';
+  card.setAttribute('data-smva-opts', sig);
+  var title=p.title?('<div class="smva-opts-title">'+esc(p.title)+'</div>'):'';
+  card.innerHTML=title+'<div class="smva-opts-row">'+p.options.map(function(o,i){
+    return '<button type="button" class="smva-chip smva-opt-chip" data-idx="'+i+'">'+esc(o.label)+'</button>';
+  }).join('')+'</div>';
+  panel.appendChild(card);
+  panel.scrollTop=panel.scrollHeight;
+  var buttons=card.querySelectorAll('.smva-opt-chip');
+  buttons.forEach(function(btn,i){
+    btn.addEventListener('click',function(){
+      if(btn.disabled)return;
+      buttons.forEach(function(b){b.disabled=true;});
+      btn.classList.add('smva-opt-picked');
+      if(typeof window.__smvaOptionTap==='function')window.__smvaOptionTap(p.options[i].label);
+    });
+  });
+}
+(function(){if(document.getElementById('smva-opts-css'))return;var s=document.createElement('style');s.id='smva-opts-css';
+s.textContent='.smva-opts{margin:8px 0}.smva-opts-title{font-size:12px;opacity:.7;margin-bottom:6px}.smva-opts-row{display:flex;flex-wrap:wrap;gap:6px}.smva-opt-chip:disabled{opacity:.5;cursor:default}.smva-opt-picked{background:var(--smva-accent,#2563eb)!important;color:#fff!important;border-color:transparent!important}';
+(document.head||document.documentElement).appendChild(s);})();
 (function(){if(document.getElementById('smva-dt-css'))return;var s=document.createElement('style');s.id='smva-dt-css';
 s.textContent='.smva-dt{display:flex;gap:10px;align-items:center;padding:10px 12px;margin:8px 0;border-radius:12px;background:var(--smva-card-bg,rgba(0,0,0,0.05));border:1px solid var(--smva-border,rgba(0,0,0,0.08))}.smva-dt-icon{font-size:20px;line-height:1}.smva-dt-body{flex:1;min-width:0}.smva-dt-label{font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}.smva-dt-value{font-size:14px;font-weight:600;word-break:break-all;line-height:1.3}.smva-dt-actions{display:flex;gap:6px;flex-shrink:0}.smva-dt-btn{padding:6px 10px;font-size:12px;border-radius:8px;cursor:pointer;border:1px solid var(--smva-border,rgba(0,0,0,.15));background:#fff;color:#111;text-decoration:none;font-family:inherit}.smva-dt-primary{background:var(--smva-accent,#2563eb);color:#fff;border-color:transparent}.smva-dt-btn:hover{opacity:.9}[dir="rtl"] .smva-dt-label{letter-spacing:0}';
 (document.head||document.documentElement).appendChild(s);})();
