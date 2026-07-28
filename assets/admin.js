@@ -1447,6 +1447,312 @@ jQuery(function($) {
   })();
 
 
+  // ── Appointments ──────────────────────────────────────────────────────────
+  // Working hours are validated and stored on the backend — the availability
+  // engine and the agent both read from there mid-call. What is built here is
+  // only ever a proposal sent to /plugin/booking/config/save; the grid re-syncs
+  // to whatever the backend actually accepted, so the two cannot drift apart.
+  (function () {
+    var root = document.getElementById('smva-appt-hours');
+    if (!root) return; // Not on the Appointments tab.
+
+    var DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+    function post(action, data) {
+      return fetch(smvaAdmin.ajaxUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(Object.assign({ action: action, nonce: smvaAdmin.nonce }, data || {})),
+      }).then(function (r) { return r.json(); });
+    }
+
+    function dayRow(day) {
+      return root.querySelector('.smva-appt-day[data-day="' + day + '"]');
+    }
+
+    function setDayOpen(day, open, start, end) {
+      var row = dayRow(day);
+      if (!row) return;
+      row.classList.toggle('is-open', !!open);
+      row.querySelector('.smva-appt-day-open').checked = !!open;
+      var startEl = row.querySelector('.smva-appt-start');
+      var endEl   = row.querySelector('.smva-appt-end');
+      startEl.disabled = endEl.disabled = !open;
+      if (start) startEl.value = start;
+      if (end) endEl.value = end;
+    }
+
+    // Every open day becomes exactly one window. The plugin UI keeps to one
+    // window per day on purpose — split days (e.g. a lunch break) are a config
+    // the backend already supports, but adding a second row per day here is a
+    // v2, not part of this stage.
+    function readConfigFromUI() {
+      var hours = {};
+      DAY_KEYS.forEach(function (day) {
+        var row = dayRow(day);
+        if (!row || !row.classList.contains('is-open')) return;
+        var start = row.querySelector('.smva-appt-start').value || '09:00';
+        var end   = row.querySelector('.smva-appt-end').value || '17:00';
+        hours[day] = [{ start: start, end: end }];
+      });
+      return {
+        slot_minutes: parseInt(document.getElementById('smva-appt-slot').value, 10) || 30,
+        buffer_minutes: parseInt(document.getElementById('smva-appt-buffer').value, 10) || 0,
+        min_notice_minutes: parseInt(document.getElementById('smva-appt-notice').value, 10) || 0,
+        horizon_days: parseInt(document.getElementById('smva-appt-horizon').value, 10) || 30,
+        meeting_type: document.getElementById('smva-appt-meeting-type').value || 'phone',
+        location: document.getElementById('smva-appt-location').value || '',
+        hours: hours,
+      };
+    }
+
+    function applyConfigToUI(config) {
+      config = config || {};
+      var hours = config.hours || {};
+      DAY_KEYS.forEach(function (day) {
+        var windows = hours[day];
+        if (windows && windows.length) {
+          setDayOpen(day, true, windows[0].start, windows[0].end);
+        } else {
+          setDayOpen(day, false);
+        }
+      });
+      if (config.slot_minutes) document.getElementById('smva-appt-slot').value = String(config.slot_minutes);
+      document.getElementById('smva-appt-buffer').value = String(config.buffer_minutes || 0);
+      if (config.min_notice_minutes !== undefined) document.getElementById('smva-appt-notice').value = String(config.min_notice_minutes);
+      if (config.horizon_days) document.getElementById('smva-appt-horizon').value = String(config.horizon_days);
+      if (config.meeting_type) document.getElementById('smva-appt-meeting-type').value = config.meeting_type;
+      document.getElementById('smva-appt-location').value = config.location || '';
+    }
+
+    // Day-row open/closed toggle.
+    root.addEventListener('change', function (e) {
+      if (!e.target.classList.contains('smva-appt-day-open')) return;
+      var row = e.target.closest('.smva-appt-day');
+      setDayOpen(row.getAttribute('data-day'), e.target.checked);
+    });
+
+    var copyBtn = document.getElementById('smva-appt-copy-mon');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        var mon = dayRow('mon');
+        var start = mon.querySelector('.smva-appt-start').value;
+        var end   = mon.querySelector('.smva-appt-end').value;
+        var open  = mon.classList.contains('is-open');
+        DAY_KEYS.forEach(function (day) {
+          if (day === 'mon') return;
+          setDayOpen(day, open, start, end);
+        });
+      });
+    }
+
+    function setMsg(el, ok, text) {
+      el.className = 'smva-int-msg' + (text ? (ok ? ' ok' : ' err') : '');
+      el.textContent = text || '';
+    }
+
+    function loadConfig() {
+      post('smva_booking_get_config').then(function (res) {
+        if (!res.success) return; // No license yet — leave the resting defaults.
+        var enabled = document.getElementById('smva-booking-enabled');
+        enabled.checked = !!res.data.booking_enabled;
+        if (res.data.booking_config && Object.keys(res.data.booking_config).length) {
+          applyConfigToUI(res.data.booking_config);
+        }
+        // The page rendered from the local mirror, which can lag the backend.
+        // Correct it, so the owner is never told their hours are in a zone the
+        // agent isn't actually using.
+        var tzEl = document.getElementById('smva-appt-tz');
+        if (tzEl && res.data.timezone) tzEl.textContent = res.data.timezone;
+        refreshPreview();
+      });
+    }
+
+    var saveBtn = document.getElementById('smva-appt-save');
+    if (saveBtn) {
+      var saveLabel = saveBtn.querySelector('.smva-appt-save-label');
+      var saveSpin  = saveBtn.querySelector('.smva-appt-save-spinner');
+      var msg       = document.getElementById('smva-appt-msg');
+
+      saveBtn.addEventListener('click', function () {
+        saveBtn.disabled = true;
+        saveLabel.classList.add('smva-hidden');
+        saveSpin.classList.remove('smva-hidden');
+        setMsg(msg, true, '');
+
+        post('smva_booking_save_config', {
+          booking_enabled: document.getElementById('smva-booking-enabled').checked ? '1' : '0',
+          booking_config: JSON.stringify(readConfigFromUI()),
+        }).then(function (res) {
+          saveBtn.disabled = false;
+          saveLabel.classList.remove('smva-hidden');
+          saveSpin.classList.add('smva-hidden');
+          if (res.success) {
+            setMsg(msg, true, 'Saved.');
+            refreshPreview();
+          } else {
+            var detail = res.data && res.data.details ? ' (' + res.data.details + ')' : '';
+            setMsg(msg, false, ((res.data && res.data.message) || 'Could not save.') + detail);
+          }
+        }).catch(function () {
+          saveBtn.disabled = false;
+          saveLabel.classList.remove('smva-hidden');
+          saveSpin.classList.add('smva-hidden');
+          setMsg(msg, false, 'Network error. Please try again.');
+        });
+      });
+    }
+
+    function formatSlotTime(iso) {
+      try {
+        return new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+      } catch (e) { return iso; }
+    }
+
+    function formatSlotDate(dateStr) {
+      try {
+        // Noon avoids any local-midnight rounding in the browser's own zone.
+        return new Date(dateStr + 'T12:00:00Z').toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+      } catch (e) { return dateStr; }
+    }
+
+    function renderPreview(data) {
+      var el = document.getElementById('smva-appt-preview');
+      var summary = document.getElementById('smva-appt-preview-summary');
+      if (!el) return;
+
+      if (!data || !data.days || !data.days.length) {
+        el.innerHTML = '<div class="smva-appt-preview-empty">No availability in the next 7 days with your current hours.</div>';
+        if (summary) summary.textContent = '';
+        return;
+      }
+
+      if (summary) summary.textContent = data.total + ' open slot' + (data.total === 1 ? '' : 's') + ' · ' + data.timezone;
+
+      el.innerHTML = data.days.map(function (day) {
+        var chips = day.slots.map(function (s) {
+          return '<span class="smva-appt-slot-chip">' + formatSlotTime(s.startUtc) + '</span>';
+        }).join('');
+        return '<div class="smva-appt-preview-day">'
+          + '<div class="smva-appt-preview-date">' + formatSlotDate(day.date) + '</div>'
+          + '<div class="smva-appt-preview-slots">' + chips + '</div>'
+          + '</div>';
+      }).join('');
+    }
+
+    function refreshPreview() {
+      var el = document.getElementById('smva-appt-preview');
+      if (el) el.innerHTML = '<div class="smva-appt-preview-empty">Loading...</div>';
+      post('smva_booking_slots', { booking_config: JSON.stringify(readConfigFromUI()) }).then(function (res) {
+        if (res.success) renderPreview(res.data);
+        else if (el) el.innerHTML = '<div class="smva-appt-preview-empty">Could not load availability.</div>';
+      });
+    }
+
+    var refreshBtn = document.getElementById('smva-appt-refresh');
+    if (refreshBtn) refreshBtn.addEventListener('click', refreshPreview);
+
+    // ── Google Calendar connection ──────────────────────────────────────────
+    var gcalSub    = document.getElementById('smva-gcal-sub');
+    var gcalBadge  = document.getElementById('smva-gcal-badge');
+    var gcalHint   = document.getElementById('smva-gcal-hint');
+    var gcalMsg    = document.getElementById('smva-gcal-msg');
+    var gcalConn   = document.getElementById('smva-gcal-connect');
+    var gcalDisc   = document.getElementById('smva-gcal-disconnect');
+
+    function renderCalendarStatus(res) {
+      if (!res.success) {
+        gcalSub.textContent = 'Could not check calendar status.';
+        return;
+      }
+      var d = res.data;
+      gcalConn.classList.toggle('smva-hidden', !!d.connected);
+      gcalDisc.classList.toggle('smva-hidden', !d.connected);
+
+      if (d.connected && d.needs_reauth) {
+        gcalBadge.className   = 'smva-int-badge-warn';
+        gcalBadge.textContent = 'Reconnect needed';
+        gcalBadge.classList.remove('smva-hidden');
+        gcalSub.textContent = d.account_email ? d.account_email : 'Connection needs to be renewed.';
+        gcalHint.textContent = 'Google access expired or was revoked. Booking still works off your working hours; reconnect to resume calendar sync.';
+        gcalConn.classList.remove('smva-hidden'); // Reconnect uses the same button.
+        gcalConn.textContent = 'Reconnect Google Calendar';
+      } else if (d.connected) {
+        gcalBadge.className   = 'smva-int-badge-connected';
+        gcalBadge.textContent = '✓ Connected';
+        gcalBadge.classList.remove('smva-hidden');
+        gcalSub.textContent = d.account_email || 'Connected';
+        gcalHint.textContent = 'New appointments are added to this calendar, and busy times are kept off the availability shown to visitors.';
+      } else {
+        gcalBadge.classList.add('smva-hidden');
+        gcalSub.textContent = d.available === false ? 'Not available yet' : 'Not connected';
+        gcalHint.textContent = 'Booking works from your working hours alone until you connect a calendar.';
+        gcalConn.textContent = 'Connect Google Calendar';
+      }
+    }
+
+    function loadCalendarStatus() {
+      post('smva_calendar_status').then(renderCalendarStatus);
+    }
+
+    if (gcalConn) {
+      gcalConn.addEventListener('click', function () {
+        gcalConn.disabled = true;
+        setMsg(gcalMsg, true, '');
+        post('smva_calendar_connect_url').then(function (res) {
+          if (res.success && res.data.url) {
+            // Full navigation, not a popup: the consent screen needs the whole
+            // tab, and the callback lands back on this same wp-admin page.
+            window.location.href = res.data.url;
+          } else {
+            gcalConn.disabled = false;
+            setMsg(gcalMsg, false, (res.data && res.data.message) || 'Could not start the connection.');
+          }
+        }).catch(function () {
+          gcalConn.disabled = false;
+          setMsg(gcalMsg, false, 'Network error. Please try again.');
+        });
+      });
+    }
+
+    if (gcalDisc) {
+      gcalDisc.addEventListener('click', function () {
+        if (!confirm('Disconnect Google Calendar? Booking will keep working from your working hours alone.')) return;
+        gcalDisc.disabled = true;
+        gcalDisc.textContent = 'Disconnecting...';
+        post('smva_calendar_disconnect').then(function (res) {
+          gcalDisc.disabled = false;
+          gcalDisc.textContent = 'Disconnect';
+          if (res.success) { loadCalendarStatus(); refreshPreview(); }
+          else setMsg(gcalMsg, false, (res.data && res.data.message) || 'Could not disconnect.');
+        });
+      });
+    }
+
+    // The OAuth callback 302-redirects here with ?calendar=connected|denied|...
+    // rather than rendering its own page (see routes/oauth/google.ts) — this is
+    // where that outcome actually gets shown to the owner.
+    var calParam = new URLSearchParams(window.location.search).get('calendar');
+    if (calParam) {
+      var messages = {
+        connected: ['ok', 'Google Calendar connected.'],
+        denied: ['err', 'Calendar connection was cancelled.'],
+        expired: ['err', 'That connection link expired. Please try again.'],
+        invalid_state: ['err', 'Could not verify that request. Please try again.'],
+        exchange_failed: ['err', 'Google did not confirm the connection. Please try again.'],
+      };
+      var m = messages[calParam] || ['err', 'Calendar connection could not be completed.'];
+      setMsg(gcalMsg, m[0] === 'ok', m[1]);
+      var url = new URL(window.location.href);
+      url.searchParams.delete('calendar');
+      window.history.replaceState({}, '', url.toString());
+    }
+
+    loadConfig();
+    loadCalendarStatus();
+  })();
+
+
   // ── Knowledge Base File Upload ───────────────────────────────────────────
   (function () {
     var uploadBtn = document.getElementById('smva-kb-upload-btn');

@@ -355,6 +355,14 @@ class SMVA_Plugin {
         add_action( 'wp_ajax_smva_hubspot_save_token', array( $this, 'ajax_hubspot_save_token' ) );
         add_action( 'wp_ajax_smva_hubspot_disconnect', array( $this, 'ajax_hubspot_disconnect' ) );
         add_action( 'wp_ajax_smva_hubspot_status',     array( $this, 'ajax_hubspot_status' ) );
+
+        // Appointments
+        add_action( 'wp_ajax_smva_booking_get_config',      array( $this, 'ajax_booking_get_config' ) );
+        add_action( 'wp_ajax_smva_booking_save_config',     array( $this, 'ajax_booking_save_config' ) );
+        add_action( 'wp_ajax_smva_booking_slots',           array( $this, 'ajax_booking_slots' ) );
+        add_action( 'wp_ajax_smva_calendar_status',         array( $this, 'ajax_calendar_status' ) );
+        add_action( 'wp_ajax_smva_calendar_connect_url',    array( $this, 'ajax_calendar_connect_url' ) );
+        add_action( 'wp_ajax_smva_calendar_disconnect',     array( $this, 'ajax_calendar_disconnect' ) );
     }
 
     // ── Activation / Auto-Trial ─────────────────────────────────────────────
@@ -391,6 +399,12 @@ class SMVA_Plugin {
             array( 'label' => 'Ask About Services', 'message' => 'Can you tell me about your services?' ),
         ) ) );
         add_option( 'smva_event_logs', array() );
+
+        // Appointments. Off by default: a site that has not set its hours must
+        // not have an agent offering 9-5 on its behalf. Both are local mirrors
+        // of the backend, which owns the real working hours.
+        add_option( 'smva_booking_enabled', '0' );
+        add_option( 'smva_booking_config', '' );
 
         // Trial state
         add_option( 'smva_trial_attempted', '0' );
@@ -1950,6 +1964,216 @@ class SMVA_Plugin {
         if ( ! is_array( $tools ) ) $tools = array();
 
         wp_send_json_success( array( 'agent_tools' => $tools ) );
+    }
+
+
+    // ── AJAX: Appointments ───────────────────────────────────────────────
+    //
+    // The backend holds the working hours — the availability engine reads them
+    // there, and the agent answers from them mid-call. The options written here
+    // are a mirror of the last successful save, so the tab renders instantly and
+    // survives a backend blip; they are never the source of truth, and the
+    // backend value always wins on load.
+
+    public function ajax_booking_get_config() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+
+        $creds = $this->get_api_credentials();
+        if ( empty( $creds['license_key'] ) || empty( $creds['internal_token'] ) ) {
+            wp_send_json_error( array( 'message' => __( 'Activate your license first.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $response = $this->api_post_json( '/plugin/booking/config', $creds, 10 );
+        if ( is_wp_error( $response ) ) {
+            wp_send_json_error( array( 'message' => __( 'Connection error.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $data = json_decode( wp_remote_retrieve_body( $response ), true );
+        if ( wp_remote_retrieve_response_code( $response ) !== 200 || ! is_array( $data ) ) {
+            wp_send_json_error( array( 'message' => $data['error'] ?? __( 'Could not load your working hours.', 'studiometa-voice-ai' ) ) );
+        }
+
+        // Keep the local mirror in step with whatever the backend just told us.
+        update_option( 'smva_booking_enabled', ! empty( $data['booking_enabled'] ) ? '1' : '0' );
+        if ( isset( $data['booking_config'] ) && is_array( $data['booking_config'] ) ) {
+            update_option( 'smva_booking_config', wp_json_encode( $data['booking_config'] ) );
+        }
+
+        wp_send_json_success( array(
+            'booking_enabled' => ! empty( $data['booking_enabled'] ),
+            'booking_config'  => is_array( $data['booking_config'] ?? null ) ? $data['booking_config'] : array(),
+            'timezone'        => sanitize_text_field( $data['timezone'] ?? 'UTC' ),
+        ) );
+    }
+
+    public function ajax_booking_save_config() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+
+        $creds = $this->get_api_credentials();
+        if ( empty( $creds['license_key'] ) || empty( $creds['internal_token'] ) ) {
+            wp_send_json_error( array( 'message' => __( 'Activate your license first.', 'studiometa-voice-ai' ) ) );
+        }
+
+        // Hard rule: every json_decode of POST data goes through
+        // sanitize_json_recursive(). It also lowercases every key via
+        // sanitize_key(), which is exactly why the backend schema is snake_case.
+        $raw    = isset( $_POST['booking_config'] ) ? sanitize_textarea_field( wp_unslash( $_POST['booking_config'] ) ) : '';
+        $config = $this->sanitize_json_recursive( json_decode( $raw, true ) );
+        if ( ! is_array( $config ) ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid working hours.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $enabled = isset( $_POST['booking_enabled'] ) && '1' === sanitize_text_field( wp_unslash( $_POST['booking_enabled'] ) );
+
+        $response = $this->api_post_json( '/plugin/booking/config/save', array_merge( $creds, array(
+            'booking_enabled' => $enabled,
+            'booking_config'  => $config,
+        ) ), 12 );
+
+        if ( is_wp_error( $response ) ) {
+            wp_send_json_error( array( 'message' => __( 'Connection error.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $data = json_decode( wp_remote_retrieve_body( $response ), true );
+        if ( wp_remote_retrieve_response_code( $response ) !== 200 || empty( $data['success'] ) ) {
+            // The backend validates these hours because they decide what the
+            // agent says out loud; surface its reason rather than a generic one.
+            $detail = is_array( $data['details'] ?? null ) ? implode( '; ', array_map( 'sanitize_text_field', $data['details'] ) ) : '';
+            wp_send_json_error( array(
+                'message' => $data['error'] ?? __( 'Could not save your working hours.', 'studiometa-voice-ai' ),
+                'details' => $detail,
+            ) );
+        }
+
+        // Mirror only after the backend accepted, so the two cannot diverge.
+        update_option( 'smva_booking_enabled', $enabled ? '1' : '0' );
+        update_option( 'smva_booking_config', wp_json_encode( $data['booking_config'] ?? $config ) );
+
+        wp_send_json_success( array(
+            'booking_enabled' => $enabled,
+            'booking_config'  => $data['booking_config'] ?? $config,
+        ) );
+    }
+
+    public function ajax_booking_slots() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+
+        $creds = $this->get_api_credentials();
+        if ( empty( $creds['license_key'] ) || empty( $creds['internal_token'] ) ) {
+            wp_send_json_error( array( 'message' => __( 'Activate your license first.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $payload = array_merge( $creds, array( 'days' => 7 ) );
+
+        // An unsaved config previews the effect of an edit before committing it.
+        if ( ! empty( $_POST['booking_config'] ) ) {
+            $raw     = sanitize_textarea_field( wp_unslash( $_POST['booking_config'] ) );
+            $preview = $this->sanitize_json_recursive( json_decode( $raw, true ) );
+            if ( is_array( $preview ) ) {
+                $payload['booking_config'] = $preview;
+            }
+        }
+
+        $response = $this->api_post_json( '/plugin/booking/slots', $payload, 15 );
+        if ( is_wp_error( $response ) ) {
+            wp_send_json_error( array( 'message' => __( 'Connection error.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $data = json_decode( wp_remote_retrieve_body( $response ), true );
+        if ( wp_remote_retrieve_response_code( $response ) !== 200 || ! is_array( $data ) ) {
+            wp_send_json_error( array( 'message' => $data['error'] ?? __( 'Could not calculate availability.', 'studiometa-voice-ai' ) ) );
+        }
+
+        wp_send_json_success( array(
+            'timezone' => sanitize_text_field( $data['timezone'] ?? 'UTC' ),
+            'total'    => intval( $data['total'] ?? 0 ),
+            'days'     => is_array( $data['days'] ?? null ) ? $data['days'] : array(),
+        ) );
+    }
+
+    public function ajax_calendar_status() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+
+        $creds = $this->get_api_credentials();
+        if ( empty( $creds['license_key'] ) || empty( $creds['internal_token'] ) ) {
+            wp_send_json_error( array( 'message' => __( 'Activate your license first.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $response = $this->api_post_json( '/plugin/booking/calendar/status', $creds, 10 );
+        if ( is_wp_error( $response ) ) {
+            wp_send_json_error( array( 'message' => __( 'Connection error.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $data = json_decode( wp_remote_retrieve_body( $response ), true );
+        if ( ! is_array( $data ) ) {
+            wp_send_json_error( array( 'message' => __( 'Could not read the calendar status.', 'studiometa-voice-ai' ) ) );
+        }
+
+        wp_send_json_success( array(
+            'connected'     => ! empty( $data['connected'] ),
+            'available'     => ! empty( $data['available'] ),
+            'needs_reauth'  => ! empty( $data['needs_reauth'] ),
+            'account_email' => sanitize_text_field( $data['account_email'] ?? '' ),
+        ) );
+    }
+
+    /**
+     * Mint the Google consent URL.
+     *
+     * The plugin never sees a client id or a secret — StudioMeta owns the OAuth
+     * app, the backend signs a short-lived state, and this handler only relays
+     * the URL for the browser to follow.
+     */
+    public function ajax_calendar_connect_url() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+
+        $creds = $this->get_api_credentials();
+        if ( empty( $creds['license_key'] ) || empty( $creds['internal_token'] ) ) {
+            wp_send_json_error( array( 'message' => __( 'Activate your license first.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $response = $this->api_post_json( '/plugin/booking/calendar/connect-url', $creds, 10 );
+        if ( is_wp_error( $response ) ) {
+            wp_send_json_error( array( 'message' => __( 'Connection error.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $data = json_decode( wp_remote_retrieve_body( $response ), true );
+        $url  = isset( $data['url'] ) ? esc_url_raw( $data['url'] ) : '';
+
+        // Only ever send the browser to Google. A URL from anywhere else means
+        // the response was not what we think it was.
+        if ( ! $url || 0 !== strpos( $url, 'https://accounts.google.com/' ) ) {
+            wp_send_json_error( array( 'message' => $data['error'] ?? __( 'Calendar connection is not available yet.', 'studiometa-voice-ai' ) ) );
+        }
+
+        wp_send_json_success( array( 'url' => $url ) );
+    }
+
+    public function ajax_calendar_disconnect() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+
+        $creds = $this->get_api_credentials();
+        if ( empty( $creds['license_key'] ) || empty( $creds['internal_token'] ) ) {
+            wp_send_json_error( array( 'message' => __( 'Activate your license first.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $response = $this->api_post_json( '/plugin/booking/calendar/disconnect', $creds, 12 );
+        if ( is_wp_error( $response ) ) {
+            wp_send_json_error( array( 'message' => __( 'Connection error.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $data = json_decode( wp_remote_retrieve_body( $response ), true );
+        if ( empty( $data['success'] ) ) {
+            wp_send_json_error( array( 'message' => $data['error'] ?? __( 'Could not disconnect the calendar.', 'studiometa-voice-ai' ) ) );
+        }
+
+        wp_send_json_success( array( 'disconnected' => ! empty( $data['disconnected'] ) ) );
     }
 
 

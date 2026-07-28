@@ -673,3 +673,63 @@
 /* Upgrade modal plan grid. Was an inline repeat(3,1fr), which overflowed once
    the catalog grew past six plans; auto-fit reflows instead of squeezing. */
 .smva-plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:20px}
+
+/* ── Appointments tab ─────────────────────────────────────────────────────
+   The tab renders before admin.js has heard back from the backend, so the
+   day rows need a resting state that reads as "closed" rather than as
+   "loading" — an empty row that later fills in looks like a bug. */
+.smva-hidden{display:none!important}
+
+.smva-appt-toggle-row{display:flex;align-items:center;gap:14px}
+.smva-appt-toggle-label{font-size:14px;font-weight:600;color:var(--smva-text)}
+.smva-appt-toggle-hint{font-size:12px;color:var(--smva-text-3);margin-top:2px}
+
+/* A checkbox styled as a switch. Kept as a real checkbox so it stays
+   keyboard-reachable and announces its state to a screen reader. */
+.smva-switch{position:relative;display:inline-block;width:42px;height:24px;flex-shrink:0}
+.smva-switch input{opacity:0;width:0;height:0}
+.smva-switch-slider{position:absolute;inset:0;cursor:pointer;background:var(--smva-border-lg);border-radius:24px;transition:background .18s}
+.smva-switch-slider::before{content:"";position:absolute;height:18px;width:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .18s}
+.smva-switch input:checked + .smva-switch-slider{background:var(--smva-primary)}
+.smva-switch input:checked + .smva-switch-slider::before{transform:translateX(18px)}
+.smva-switch input:focus-visible + .smva-switch-slider{box-shadow:0 0 0 3px var(--smva-primary-m)}
+
+.smva-appt-hours{display:flex;flex-direction:column;gap:2px}
+.smva-appt-day{display:flex;align-items:center;gap:14px;padding:10px 12px;border-radius:var(--smva-radius);transition:background .12s}
+.smva-appt-day:hover{background:var(--smva-bg)}
+.smva-appt-day-toggle{display:flex;align-items:center;gap:9px;cursor:pointer;min-width:150px}
+.smva-appt-day-name{font-size:13px;font-weight:600;color:var(--smva-text)}
+.smva-appt-day-times{display:flex;align-items:center;gap:8px}
+.smva-appt-time{border:1.5px solid var(--smva-border-lg);border-radius:8px;padding:6px 10px;font-size:13px;color:var(--smva-text);background:var(--smva-surface);font-family:var(--font)}
+.smva-appt-time:disabled{opacity:.4;cursor:not-allowed}
+.smva-appt-time:focus{outline:none;border-color:var(--smva-primary);box-shadow:0 0 0 3px var(--smva-primary-m)}
+.smva-appt-dash{color:var(--smva-text-3);font-size:13px}
+.smva-appt-day-closed{font-size:12px;color:var(--smva-text-3)}
+/* Exactly one of the two is shown, so a closed day never renders empty. */
+.smva-appt-day.is-open .smva-appt-day-closed{display:none}
+.smva-appt-day:not(.is-open) .smva-appt-day-times{display:none}
+.smva-appt-hours-actions{margin-top:14px;padding-top:14px;border-top:1px solid var(--smva-border)}
+
+.smva-appt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px}
+.smva-appt-grid select,.smva-appt-grid input[type=text]{border:1.5px solid var(--smva-border-lg);border-radius:var(--smva-radius);padding:9px 12px;font-size:13px;color:var(--smva-text);width:100%;box-sizing:border-box;background:var(--smva-surface);font-family:var(--font)}
+.smva-appt-grid select:focus,.smva-appt-grid input[type=text]:focus{outline:none;border-color:var(--smva-primary);box-shadow:0 0 0 3px var(--smva-primary-m)}
+.smva-field-hint{font-size:11px;color:var(--smva-text-3)}
+.smva-appt-save-row{display:flex;align-items:center;gap:12px;margin-top:20px;padding-top:18px;border-top:1px solid var(--smva-border);flex-wrap:wrap}
+.smva-appt-save-row .smva-int-msg{margin-top:0}
+
+.smva-int-grow{flex:1}
+.smva-int-sub{font-size:12px;color:var(--smva-text-3);margin-top:2px}
+.smva-int-name-muted{opacity:.5}
+.smva-int-header-flush{margin-bottom:0}
+.smva-int-logo-gcal{background:#eef4fe;border-color:#cfe0fb}
+.smva-int-logo-ms{background:#f6f7f9;border-color:#e3e6ea}
+.smva-int-badge-warn{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:#b45309;background:#fef3c7;padding:3px 10px;border-radius:20px;margin-left:8px}
+
+.smva-appt-preview-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.smva-appt-preview{display:flex;flex-direction:column;gap:14px}
+.smva-appt-preview-empty{font-size:13px;color:var(--smva-text-3);text-align:center;padding:24px}
+.smva-appt-preview-day{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.smva-appt-preview-date{font-size:12px;font-weight:700;color:var(--smva-text-2);min-width:130px;padding-top:4px}
+.smva-appt-preview-slots{display:flex;flex-wrap:wrap;gap:6px;flex:1}
+.smva-appt-slot-chip{font-size:12px;font-weight:600;color:var(--smva-primary);background:var(--smva-primary-l);border:1px solid var(--smva-primary-m);border-radius:20px;padding:4px 11px}
+.smva-appt-preview-none{font-size:12px;color:var(--smva-text-3);font-style:italic;padding-top:4px}

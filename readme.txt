@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.4.0
+Stable tag: 1.5.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -122,6 +122,25 @@ On the Premium and Enterprise plans, voice conversations are powered by OpenAI's
 * OpenAI Terms of Use: [https://openai.com/policies/terms-of-use](https://openai.com/policies/terms-of-use)
 * OpenAI Privacy Policy: [https://openai.com/policies/privacy-policy](https://openai.com/policies/privacy-policy)
 
+= 6. Google Calendar (calendar.googleapis.com) — optional, only if you connect it =
+
+**What it does:** Lets the AI agent book real appointments during a conversation. Reads busy times from your connected Google Calendar so the agent never offers a slot you're already booked, and creates a calendar event when a visitor books.
+
+**When it is contacted:** Only if you explicitly connect Google Calendar under **Voice AI → Appointments** by clicking "Connect Google Calendar" and signing in through Google's own consent screen. If you never connect it, the plugin never contacts Google Calendar, and appointment booking still works from the working hours you set — it simply won't check your calendar for conflicts.
+
+* When you connect: a one-time OAuth sign-in with Google, requesting only free/busy visibility and the ability to create/edit events it creates — never your full calendar or any other Google data
+* When a visitor asks about availability: your calendar's busy times are checked (cached briefly) to avoid offering a taken slot
+* When a visitor books: an event is created on your calendar with the appointment details
+
+**Data sent:** an encrypted access credential (stored on StudioMeta's servers, never in your WordPress database), and appointment details (visitor name, email, and time) when creating a calendar event.
+
+**Data NOT sent:** the content of your other calendar events, contacts, or any other Google account data.
+
+You can disconnect at any time from **Voice AI → Appointments**, or by revoking access directly from your Google Account permissions page.
+
+* Google Calendar Terms: [https://developers.google.com/terms](https://developers.google.com/terms)
+* Google Privacy Policy: [https://policies.google.com/privacy](https://policies.google.com/privacy)
+
 = How to opt out =
 
 If you do not want the plugin to contact these services, simply deactivate and uninstall the plugin. The plugin cannot function without the hosted services because the AI assistant runs on our infrastructure (similar to how an Akismet plugin needs the Akismet service, or a Mailchimp plugin needs Mailchimp).
@@ -207,6 +226,12 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.5.0 =
+* New: **Appointments tab.** Set the hours you are open, how long an appointment lasts, how much notice you need, and how far ahead visitors may book. A preview shows exactly what the agent will offer over the next 7 days, so you can check it before a visitor ever hears it
+* New: **Google Calendar sync (optional).** Connect your calendar with one click — there is no API key, no developer console, and nothing to paste. Busy times are kept off the availability shown to visitors, and booked appointments appear on your calendar automatically. Disconnect at any time
+* New: appointment booking works with no calendar connected at all. Your working hours alone are enough, and a calendar outage can never stop a visitor booking
+* Improved: working hours are stored against your licence, so they survive upgrading from a trial to a paid plan
 
 = 1.4.0 =
 * New: **Premium and Enterprise plans**, which run voice conversations on a higher-quality AI engine. It holds up noticeably better in noisy rooms and sounds more natural in tone and pacing. Your plan decides which engine you get — there is nothing to configure

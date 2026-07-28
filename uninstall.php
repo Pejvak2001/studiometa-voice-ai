@@ -63,6 +63,12 @@ $options = array(
     'smva_silence_timeout',
     'smva_call_cooldown',
 
+    // Appointments — local mirrors only. The real working hours live on the
+    // backend against the license, so deleting these loses nothing: they are
+    // refetched when the license is re-activated.
+    'smva_booking_enabled',
+    'smva_booking_config',
+
     // Content settings — intentionally kept because they're synced from backend
     // and will be restored when the license is re-activated.
     // 'smva_lang',

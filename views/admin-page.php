@@ -48,6 +48,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg></span>
                     <span class="smva-nav-label">Automation</span>
                 </a>
+                <a href="?page=smva&tab=appointments" class="<?php echo $active_tab==='appointments' ? 'active' : ''; ?>">
+                    <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9.5 15.5 1.8 1.8 3.4-3.6"/></svg></span>
+                    <span class="smva-nav-label">Appointments</span>
+                </a>
             </div>
             <div class="smva-sidenav-group">
                 <div class="smva-sidenav-label">History</div>
@@ -108,6 +112,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             'agent'         => array( 'Agent Personality', 'Tune how your AI agent responds and represents your business.' ),
             'widget'        => array( 'Widget Experience', 'Customize the floating widget, display behavior, and performance options.' ),
             'automation'    => array( 'Workflow Buttons', 'Create quick actions that help visitors trigger useful workflows.' ),
+            'appointments'  => array( 'Appointments', 'Set your working hours and let the agent book visitors in.' ),
             'history'       => array( 'Chat History', 'Review recent conversations and visitor interactions.' ),
             'voice_summary' => array( 'Voice Summary', 'Review voice sessions and usage details.' ),
             'leads'         => array( 'Leads', 'See captured visitor leads and contact requests.' ),
@@ -1302,6 +1307,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     <div id="smva-leads-pagination" style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end"></div>
 </div>
 
+<?php elseif ( $active_tab === 'appointments' ) : include __DIR__ . '/appointments-tab.php'; ?>
 <?php elseif ( $active_tab === 'integrations' ) : include __DIR__ . '/integrations-tab.php'; ?>
     <?php endif; ?>
     </div><!-- .smva-tab-content -->
