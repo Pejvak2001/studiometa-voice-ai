@@ -1603,16 +1603,28 @@ jQuery(function($) {
       });
     }
 
-    function formatSlotTime(iso) {
-      try {
-        return new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-      } catch (e) { return iso; }
+    // Renders the slot's own localTime (a plain "HH:MM" the backend already
+    // computed in the site's agent_timezone) rather than reformatting
+    // s.startUtc through the browser's Intl — which renders in whatever
+    // timezone the admin's own browser happens to be in. An owner in Tehran
+    // previewing a Paris business's hours must see Paris time, not Tehran time.
+    function formatSlotTime(hhmm) {
+      var m = /^(\d{2}):(\d{2})$/.exec(hhmm || '');
+      if (!m) return hhmm;
+      var h = parseInt(m[1], 10);
+      var period = h >= 12 ? 'PM' : 'AM';
+      var h12 = h % 12 || 12;
+      return h12 + ':' + m[2] + ' ' + period;
     }
 
+    // day.date is already the site's local calendar date. Formatting it in UTC
+    // keeps it that date: passing it through the browser's zone can shift it a
+    // day for any admin west of UTC.
     function formatSlotDate(dateStr) {
       try {
-        // Noon avoids any local-midnight rounding in the browser's own zone.
-        return new Date(dateStr + 'T12:00:00Z').toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+        return new Date(dateStr + 'T12:00:00Z').toLocaleDateString([], {
+          weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC',
+        });
       } catch (e) { return dateStr; }
     }
 
@@ -1631,7 +1643,7 @@ jQuery(function($) {
 
       el.innerHTML = data.days.map(function (day) {
         var chips = day.slots.map(function (s) {
-          return '<span class="smva-appt-slot-chip">' + formatSlotTime(s.startUtc) + '</span>';
+          return '<span class="smva-appt-slot-chip">' + formatSlotTime(s.localTime) + '</span>';
         }).join('');
         return '<div class="smva-appt-preview-day">'
           + '<div class="smva-appt-preview-date">' + formatSlotDate(day.date) + '</div>'
