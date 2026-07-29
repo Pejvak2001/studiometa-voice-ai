@@ -37,7 +37,10 @@
         defaultTab: cfg.defaultTab || 'voice',
         suggestedQuestions: cfg.suggestedQuestions || [],
         callCooldown: parseInt(cfg.callCooldown) || 20,
-        maxCallDuration: parseInt(cfg.maxCallDuration) || 600,
+        // Minutes, and 0 legitimately means "no site limit" — the admin field
+        // allows it. A `|| 600` fallback here read as 600 *minutes* further
+        // down, so choosing unlimited silently bought a ten-hour ceiling.
+        maxCallDuration: (function (v) { var n = parseInt(v, 10); return isNaN(n) || n < 0 ? 0 : n; })(cfg.maxCallDuration),
         silenceTimeout: parseInt(cfg.silenceTimeout) || 60,
         widgetTheme: cfg.widgetTheme || 'classic',
         agentLogo: cfg.agentLogo || '',
@@ -69,6 +72,7 @@
             type_response: 'Type your response',
             send: 'Send',
             call_ended_by_agent: 'Call ended by assistant',
+            call_time_up: 'Call time limit reached',
         },
         fa: {
             online: 'آنلاین', ready: 'آماده', on_call: 'در حال مکالمه',
@@ -88,6 +92,7 @@
             type_response: 'پاسخ خود را تایپ کنید',
             send: 'ارسال',
             call_ended_by_agent: 'مکالمه توسط دستیار پایان یافت',
+            call_time_up: 'محدودیت زمان تماس به پایان رسید',
         },
         ar: {
             online: 'متصل', ready: 'جاهز', on_call: 'في مكالمة',
@@ -107,6 +112,7 @@
             type_response: 'اكتب ردك',
             send: 'إرسال',
             call_ended_by_agent: 'انتهت المكالمة من قبل المساعد',
+            call_time_up: 'تم بلوغ الحد الزمني للمكالمة',
         },
         fr: {
             online: 'En ligne', ready: 'Prêt', on_call: 'En appel',
@@ -126,6 +132,7 @@
             type_response: 'Tapez votre réponse',
             send: 'Envoyer',
             call_ended_by_agent: 'Appel terminé par l\'assistant',
+            call_time_up: 'Durée maximale de l\'appel atteinte',
         },
         es: {
             online: 'En línea', ready: 'Listo', on_call: 'En llamada',
@@ -145,6 +152,7 @@
             type_response: 'Escribe tu respuesta',
             send: 'Enviar',
             call_ended_by_agent: 'Llamada finalizada por el asistente',
+            call_time_up: 'Se alcanzó el límite de tiempo de la llamada',
         },
     };
 
@@ -173,6 +181,10 @@
     let isTyping = false;
     let callSeconds = 0;
     let callTimer = null;
+    // Seconds the backend will actually allow, learned from setup_complete.
+    // Falls back to the local setting so the countdown still works against a
+    // backend that predates limitMs. 0 = unlimited, bar hidden.
+    let callLimitSecs = 0;
     let lastCallEnd = 0;
     let chatSessionId = null;
     let chatHistory = [];
@@ -648,6 +660,11 @@
             '.smva-viz.active .smva-bar{animation:smvabar2 .55s ease-in-out infinite;opacity:1}',
             '.smva-timer{font-size:15px;font-weight:700;color:#374151;display:none;letter-spacing:.03em}',
             '.smva-timer.show{display:block}',
+            // Drains right-to-left under the timer. Width is the only animated
+            // property so this stays off the main thread on low-end phones.
+            '.smva-progress{width:70%;max-width:200px;height:4px;border-radius:3px;background:#e5e7eb;overflow:hidden;display:none}',
+            '.smva-progress.show{display:block}',
+            '.smva-progress-fill{height:100%;width:100%;border-radius:3px;background:#22c55e;transition:width 1s linear,background-color 1s linear}',
             '.smva-status-text{font-size:12px;color:#9ca3af;text-align:center;font-weight:500}',
             '.smva-voice-ft{padding:12px 16px;border-top:1px solid #f0f0f0;display:flex;gap:8px;background:#fff}',
             '.smva-btn{flex:1;padding:11px;border-radius:10px;border:none;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .15s;letter-spacing:-.01em}',
@@ -744,6 +761,7 @@
                 + '<div class="smva-voice-body">'
                     + '<div class="smva-viz" id="smva-viz"><span class="smva-bar"></span><span class="smva-bar" style="animation-delay:.1s"></span><span class="smva-bar" style="animation-delay:.2s"></span><span class="smva-bar" style="animation-delay:.3s"></span><span class="smva-bar" style="animation-delay:.4s"></span></div>'
                     + '<div class="smva-timer" id="smva-timer">00:00</div>'
+                    + '<div class="smva-progress" id="smva-progress"><div class="smva-progress-fill" id="smva-progress-fill"></div></div>'
                     + '<div class="smva-status-text" id="smva-voice-status">' + t('ready') + '</div>'
                     + '<div class="smva-speak-hint" id="smva-speak-hint" style="display:none;font-size:11px;color:' + c + ';background:' + c + '11;border:1px solid ' + c + '33;border-radius:20px;padding:5px 14px;margin-top:4px;text-align:center;opacity:0;transition:opacity 1s ease">' + t('speak_hint') + '</div>'
                 + '</div>'
@@ -996,6 +1014,11 @@
                 const hintEl = h('smva-speak-hint');
                 if (hintEl) { hintEl.style.opacity = '0'; hintEl.style.display = 'block'; setTimeout(function(){ hintEl.style.opacity = '1'; }, 50); }
                 callSeconds = 0;
+                // Provisional until setup_complete lands, so the bar is drawn
+                // from the first tick instead of appearing a second late.
+                callLimitSecs = CONFIG.maxCallDuration > 0 ? CONFIG.maxCallDuration * 60 : 0;
+                var pf0 = h('smva-progress-fill');
+                if (pf0) { pf0.style.width = '100%'; pf0.style.backgroundColor = progressColor(1); }
                 updateTimer();
                 callTimer = setInterval(updateTimer, 1000);
                 startAudioCapture();
@@ -1010,6 +1033,13 @@
                     // Audio is traced separately below with its byte count; every
                     // other message is recorded by type only, never by content.
                     if (data.type !== 'audio') traceAdd('rx', { msg: data.type || '?', code: data.code || undefined });
+
+                    // The backend clamps the site's setting against its own
+                    // ceiling, so its number — not ours — is the one the
+                    // countdown must be drawn against.
+                    if (data.type === 'setup_complete' && typeof data.limitMs === 'number' && data.limitMs > 0) {
+                        callLimitSecs = Math.round(data.limitMs / 1000);
+                    }
 
                     if (data.type === 'thinking') {
                         const el = h('smva-voice-status');
@@ -1031,13 +1061,23 @@
                     // ── Feature A: agent said goodbye → close call + widget ──
                     } else if (data.type === 'end_call') {
                         const delay = typeof data.delay === 'number' ? data.delay : 2000;
+                        // Running out of time is not the same as the assistant
+                        // deciding it is done: the visitor did not ask to
+                        // leave, so the widget stays open and simply returns to
+                        // idle, ready for another call once the cooldown ends.
+                        const timeUp = data.reason === 'max_duration';
                         const vs = h('smva-voice-status');
-                        if (vs) vs.textContent = data.message || t('call_ended_by_agent');
-                        agentEndedCall = true;
+                        if (vs) vs.textContent = data.message || t(timeUp ? 'call_time_up' : 'call_ended_by_agent');
+                        agentEndedCall = !timeUp;
                         setTimeout(() => {
-                            endCall();
-                            const panel = h('smva-panel');
-                            if (panel) panel.classList.add('hide');
+                            endCall(timeUp ? 'max_duration' : undefined);
+                            if (!timeUp) {
+                                const panel = h('smva-panel');
+                                if (panel) panel.classList.add('hide');
+                            } else {
+                                const vs2 = h('smva-voice-status');
+                                if (vs2) vs2.textContent = t('call_time_up');
+                            }
                         }, delay);
 
                     // ── Feature B: agent requests typed input → open text panel ──
@@ -1141,6 +1181,7 @@
         const en = h('smva-end'); if (en) en.classList.add('hide');
         const vz = h('smva-viz'); if (vz) vz.classList.remove('show', 'active');
         const tm = h('smva-timer'); if (tm) tm.classList.remove('show');
+        const pw = h('smva-progress'); if (pw) pw.classList.remove('show');
         const hint = h('smva-speak-hint'); if (hint) { hint.style.opacity = '0'; hint.style.display = 'none'; }
         // NEW: hide text input panel
         const textPanel = h('smva-text-panel'); if (textPanel) textPanel.classList.remove('show');
@@ -1672,9 +1713,31 @@
         }
     }
 
+    /**
+     * Green through amber to red across the life of the call.
+     *
+     * `ratio` is the share of the call still remaining, so it runs 1 → 0. Two
+     * linear segments meeting at amber rather than one green→red ramp, which
+     * would spend the middle of every call an alarming muddy brown.
+     */
+    function progressColor(ratio) {
+        var GREEN = [34, 197, 94], AMBER = [245, 158, 11], RED = [239, 68, 68];
+        var from, to, t;
+        if (ratio > 0.4) { from = GREEN; to = AMBER; t = (1 - ratio) / 0.6; }
+        else             { from = AMBER; to = RED;   t = (0.4 - ratio) / 0.4; }
+        t = Math.max(0, Math.min(1, t));
+        return 'rgb(' + Math.round(from[0] + (to[0] - from[0]) * t) + ','
+                      + Math.round(from[1] + (to[1] - from[1]) * t) + ','
+                      + Math.round(from[2] + (to[2] - from[2]) * t) + ')';
+    }
+
     function updateTimer() {
         callSeconds++;
-        const maxSecs = CONFIG.maxCallDuration ? parseInt(CONFIG.maxCallDuration,10) * 60 : 0;
+        // Backend-supplied where available. Its own timer fires marginally
+        // earlier (it starts at session setup, this starts at socket open), so
+        // in practice the backend ends the call and this is the fallback for
+        // when that message never arrives.
+        const maxSecs = callLimitSecs;
         if (maxSecs > 0 && callSeconds >= maxSecs) { endCall('max_duration'); return; }
         const mins = Math.floor(callSeconds / 60);
         const secs = callSeconds % 60;
@@ -1686,6 +1749,18 @@
                 if (remaining <= 60) { el.style.color = '#ef4444'; timeStr = '⚠ ' + timeStr; } else { el.style.color = ''; }
             }
             el.textContent = timeStr;
+        }
+        const wrap = h('smva-progress'), fill = h('smva-progress-fill');
+        if (maxSecs > 0) {
+            var ratio = Math.max(0, 1 - callSeconds / maxSecs);
+            if (wrap) wrap.classList.add('show');
+            if (fill) {
+                fill.style.width = (ratio * 100).toFixed(2) + '%';
+                fill.style.backgroundColor = progressColor(ratio);
+            }
+        } else if (wrap) {
+            // No limit configured — an empty track would imply one.
+            wrap.classList.remove('show');
         }
     }
 
@@ -1945,6 +2020,7 @@ s.textContent='.smva-dt{display:flex;gap:10px;align-items:center;padding:10px 12
       '<span class="smva-cb-dot"></span>' +
       '<span class="smva-cb-lbl" id="smva-cb-lbl">' + _cbI18n.on_call + '</span>' +
       '<span class="smva-cb-timer" id="smva-cb-timer"></span>' +
+      '<span class="smva-cb-progress" id="smva-cb-progress"><span class="smva-cb-progress-fill" id="smva-cb-progress-fill"></span></span>' +
       '<button class="smva-cb-end" id="smva-cb-end" type="button">' + _cbI18n.end_call + '</button>';
     var msgs = chatContent.querySelector('.smva-msgs');
     chatContent.appendChild(bar);
@@ -1962,7 +2038,11 @@ s.textContent='.smva-dt{display:flex;gap:10px;align-items:center;padding:10px 12
         'animation:smva-cb-pulse 1.2s ease-in-out infinite;flex-shrink:0;}' +
         '@keyframes smva-cb-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}' +
         '.smva-cb-lbl{color:#b91c1c;font-weight:600;}' +
-        '.smva-cb-timer{color:#b91c1c;opacity:.8;font-variant-numeric:tabular-nums;margin-right:auto;}' +
+        '.smva-cb-timer{color:#b91c1c;opacity:.8;font-variant-numeric:tabular-nums;}' +
+        '.smva-cb-progress{display:none;flex:1;height:4px;border-radius:3px;background:rgba(0,0,0,.1);overflow:hidden;margin:0 4px;}' +
+        '.smva-cb-progress.show{display:block;}' +
+        '.smva-cb-progress-fill{display:block;height:100%;width:100%;border-radius:3px;background:#22c55e;' +
+        'transition:width 1s linear,background-color 1s linear;}' +
         '.smva-cb-end{margin-left:auto;padding:5px 12px;border-radius:8px;border:none;cursor:pointer;' +
         'background:#ef4444;color:#fff;font-size:12px;font-weight:600;font-family:inherit;}' +
         '.smva-cb-end:hover{background:#dc2626;}';
@@ -1974,6 +2054,22 @@ s.textContent='.smva-dt{display:flex;gap:10px;align-items:center;padding:10px 12
       var voiceTimer = document.getElementById('smva-timer');
       var cbTimer = document.getElementById('smva-cb-timer');
       if(voiceTimer && cbTimer) cbTimer.textContent = voiceTimer.textContent;
+      // Mirrored from the voice tab's bar rather than recomputed: this runs in
+      // its own closure with no access to the call clock, and one source for
+      // the countdown means the two bars cannot drift apart.
+      var srcWrap = document.getElementById('smva-progress');
+      var srcFill = document.getElementById('smva-progress-fill');
+      var cbWrap  = document.getElementById('smva-cb-progress');
+      var cbFill  = document.getElementById('smva-cb-progress-fill');
+      if(srcWrap && srcFill && cbWrap && cbFill){
+        if(srcWrap.classList.contains('show')){
+          cbWrap.classList.add('show');
+          cbFill.style.width = srcFill.style.width;
+          cbFill.style.backgroundColor = srcFill.style.backgroundColor;
+        } else {
+          cbWrap.classList.remove('show');
+        }
+      }
     }
     setInterval(syncTimer, 500);
 

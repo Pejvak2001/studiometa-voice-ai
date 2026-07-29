@@ -232,6 +232,10 @@ https://github.com/Pejvak2001/studiometa-voice-ai
 * New: **Google Calendar sync (optional).** Connect your calendar with one click — there is no API key, no developer console, and nothing to paste. Busy times are kept off the availability shown to visitors, and booked appointments appear on your calendar automatically. Disconnect at any time
 * New: appointment booking works with no calendar connected at all. Your working hours alone are enough, and a calendar outage can never stop a visitor booking
 * Improved: working hours are stored against your licence, so they survive upgrading from a trial to a paid plan
+* New: **a countdown bar during voice calls.** A slim bar under the timer drains from green through amber to red as the call approaches its time limit, so visitors are never surprised by it. Visible whether the widget is open or minimised
+* New: **the assistant now says goodbye before a call times out.** Shortly before the limit it tells the caller the call is ending, in whichever language they have been speaking, instead of the line simply going dead
+* Fixed: the call time limit set in Settings is now enforced exactly. Shorter limits were previously allowed to overrun
+* Fixed: setting the call time limit to 0 now means "no limit of your own" as intended, rather than being treated as a very large number
 
 = 1.4.0 =
 * New: **Premium and Enterprise plans**, which run voice conversations on a higher-quality AI engine. It holds up noticeably better in noisy rooms and sounds more natural in tone and pacing. Your plan decides which engine you get — there is nothing to configure
