@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -226,6 +226,10 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.5.1 =
+* Fixed: during a voice call, the box for typing your email vanished the moment the assistant showed the address back to you to confirm it. Anything typed afterwards went into the ordinary chat instead, which knows nothing about the call in progress, so the assistant answered as though a new conversation had started. The typing box now stays put whatever else appears on screen
+* Fixed: contact details the assistant put on screen during a call — an email address, phone number or link — could be unreadable, because the card took its text colour from the surrounding page and could end up the same shade as its own background
 
 = 1.5.0 =
 * New: **Appointments tab.** Set the hours you are open, how long an appointment lasts, how much notice you need, and how far ahead visitors may book. A preview shows exactly what the agent will offer over the next 7 days, so you can check it before a visitor ever hears it
