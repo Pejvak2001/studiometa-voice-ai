@@ -497,13 +497,14 @@ jQuery(function($) {
             smva_default_tab: $('[name=smva_default_tab]').val(),
             smva_voice_enabled: $('[name=smva_voice_enabled]').is(':checked') ? '1' : '0',
             smva_chat_enabled: $('[name=smva_chat_enabled]').is(':checked') ? '1' : '0',
-            smva_lead_email_notify: $('[name=smva_lead_email_notify]').is(':checked') ? '1' : '0',
-            smva_lead_email_to: $('[name=smva_lead_email_to]').val(),
             smva_max_call_duration: $('[name=smva_max_call_duration]').val(),
             smva_silence_timeout: $('[name=smva_silence_timeout]').val(),
             smva_call_cooldown: $('[name=smva_call_cooldown]').val(),
             smva_widget_theme: $('#smva_widget_theme').val(),
-            smva_agent_logo: $('[name=smva_agent_logo]').val()
+            smva_agent_logo: $('[name=smva_agent_logo]').val(),
+            smva_lazy_load_widget: $('[name=smva_lazy_load_widget]').is(':checked') ? '1' : '0',
+            smva_debug_events: $('[name=smva_debug_events]').is(':checked') ? '1' : '0',
+            smva_workflow_buttons: $('[name=smva_workflow_buttons]').val()
         }).done(function(res) {
             $msg.text(res.success ? 'Saved!' : 'Error').css('color', res.success ? '#059669' : '#dc2626');
         }).fail(function() { $msg.text('Connection error.').css('color', '#dc2626'); })
@@ -524,6 +525,119 @@ jQuery(function($) {
             else $msg.text('Error: ' + (res.data && res.data.message ? res.data.message : 'Failed')).css('color', '#dc2626');
         }).fail(function() { hideLoading(); $msg.text('Connection error.').css('color', '#dc2626'); })
         .always(function() { hideLoading(); $btn.prop('disabled', false).text('🌐 Import KB from Website'); setTimeout(function() { $msg.text('').css('color', ''); }, 6000); });
+    });
+
+    // Save Lead Notification Settings (Leads tab)
+    $('#smva-leads-settings-form').on('submit', function(e) {
+        e.preventDefault();
+        var $btn = $(this).find('button[type=submit]').prop('disabled', true).text('Saving...');
+        var $msg = $('#smva-leads-settings-msg').text('').css('color', '');
+        $.post(ajaxUrl, {
+            action: 'smva_save_settings',
+            nonce: nonce,
+            smva_lead_email_notify: $('[name=smva_lead_email_notify]').is(':checked') ? '1' : '0',
+            smva_lead_email_to: $('[name=smva_lead_email_to]').val()
+        }).done(function(res) {
+            $msg.text(res.success ? 'Saved!' : 'Error').css('color', res.success ? '#059669' : '#dc2626');
+        }).fail(function() { $msg.text('Connection error.').css('color', '#dc2626'); })
+        .always(function() { $btn.prop('disabled', false).text('Save Notification Settings'); setTimeout(function() { $msg.text(''); }, 3000); });
+    });
+
+    // ── KB page picker ─────────────────────────────────────────────────────
+    // Builds the knowledge base from content read straight out of WordPress,
+    // so the admin can exclude things like news posts that the crawler would
+    // otherwise sweep up.
+
+    function smvaUpdatePagesCount() {
+        var n = $('#smva-pages-list input[type=checkbox]:checked').length;
+        $('#smva-pages-count').text(n + ' selected');
+        $('#smva-pages-apply').prop('disabled', n === 0)
+            .text(n ? 'Build Knowledge Base (' + n + ')' : 'Build Knowledge Base');
+    }
+
+    function smvaRenderPagesList(groups) {
+        var html = '';
+        (groups || []).forEach(function(group) {
+            // Pages are evergreen business content, so default them on. Posts
+            // and custom types stay off until the admin opts in.
+            var onByDefault = group.type === 'page';
+            html += '<div style="margin-bottom:14px">';
+            html += '<label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#0f172a;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;cursor:pointer">';
+            html += '<input type="checkbox" class="smva-pages-group" data-group="' + group.type + '"' + (onByDefault ? ' checked' : '') + ' style="width:15px;height:15px;cursor:pointer"> ';
+            html += '<span>' + $('<div>').text(group.label).html() + ' (' + group.items.length + ')</span></label>';
+            html += '<div style="display:flex;flex-direction:column;gap:5px;padding-left:8px">';
+            group.items.forEach(function(item) {
+                html += '<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#374151;cursor:pointer;padding:6px 9px;background:#fff;border:1px solid #e2e8f0;border-radius:7px">';
+                html += '<input type="checkbox" class="smva-page-item" data-group="' + group.type + '" value="' + parseInt(item.id, 10) + '"' + (onByDefault ? ' checked' : '') + ' style="width:15px;height:15px;cursor:pointer;flex:none"> ';
+                html += '<span style="flex:1">' + $('<div>').text(item.title).html() + '</span>';
+                html += '<span style="font-size:11px;color:#9ca3af;flex:none">' + $('<div>').text(item.date || '').html() + '</span></label>';
+            });
+            html += '</div></div>';
+        });
+        $('#smva-pages-list').html(html || '<p style="font-size:13px;color:#9ca3af;margin:0">No published content found.</p>');
+        smvaUpdatePagesCount();
+    }
+
+    $('#smva-select-pages-btn').on('click', function() {
+        $('#smva-pages-error').hide();
+        $('#smva-pages-list').empty();
+        $('#smva-pages-loading').show();
+        $('#smva-pages-count').text('');
+        $('#smva-pages-modal').css('display', 'flex');
+
+        $.post(ajaxUrl, {action: 'smva_list_content', nonce: nonce})
+        .done(function(res) {
+            if (res.success && res.data) smvaRenderPagesList(res.data.groups);
+            else $('#smva-pages-error').text(res.data && res.data.message ? res.data.message : 'Could not load your content.').show();
+        })
+        .fail(function() { $('#smva-pages-error').text('Connection error.').show(); })
+        .always(function() { $('#smva-pages-loading').hide(); });
+    });
+
+    // Group checkbox toggles every item beneath it.
+    $(document).on('change', '.smva-pages-group', function() {
+        var g = $(this).data('group');
+        $('#smva-pages-list .smva-page-item[data-group="' + g + '"]').prop('checked', $(this).prop('checked'));
+        smvaUpdatePagesCount();
+    });
+
+    // Keep each group checkbox in sync when items are toggled individually.
+    $(document).on('change', '.smva-page-item', function() {
+        var g = $(this).data('group');
+        var $items = $('#smva-pages-list .smva-page-item[data-group="' + g + '"]');
+        $('#smva-pages-list .smva-pages-group[data-group="' + g + '"]')
+            .prop('checked', $items.length === $items.filter(':checked').length);
+        smvaUpdatePagesCount();
+    });
+
+    $('#smva-pages-cancel').on('click', function() { $('#smva-pages-modal').hide(); });
+    $('#smva-pages-modal').on('click', function(e) {
+        if ($(e.target).is('#smva-pages-modal')) $(this).hide();
+    });
+
+    $('#smva-pages-apply').on('click', function() {
+        var ids = $('#smva-pages-list input.smva-page-item:checked').map(function() {
+            return parseInt($(this).val(), 10);
+        }).get();
+        if (!ids.length) return;
+
+        var $btn = $(this).prop('disabled', true).text('Building...');
+        var $msg = $('#smva-agent-msg');
+        showLoading('Reading selected pages and building the knowledge base...');
+
+        $.post(ajaxUrl, {action: 'smva_build_kb_from_pages', nonce: nonce, post_ids: JSON.stringify(ids)})
+        .done(function(res) {
+            if (res.success && res.data.knowledge_base) {
+                $('[name=knowledge_base]').val(res.data.knowledge_base);
+                $('#smva-pages-modal').hide();
+                $msg.text('Built from ' + (res.data.pages_used || ids.length) + ' pages!').css('color', '#059669');
+                setTimeout(function() { $msg.text('').css('color', ''); }, 6000);
+            } else {
+                $('#smva-pages-error').text(res.data && res.data.message ? res.data.message : 'Failed to build knowledge base.').show();
+            }
+        })
+        .fail(function() { $('#smva-pages-error').text('Connection error.').show(); })
+        .always(function() { hideLoading(); $btn.prop('disabled', false); smvaUpdatePagesCount(); });
     });
 
     // Optimize
@@ -659,7 +773,17 @@ jQuery(function($) {
         $.post(window.smvaAdmin.ajaxUrl, {action:'smva_save_agent', nonce:window.smvaAdmin.nonce, webhook_url:$('#smva-webhook-url').val()})
         .done(function(res) { $msg.text(res.success ? 'Saved!' : 'Error').css('color', res.success ? '#059669' : '#dc2626'); })
         .fail(function() { $msg.text('Connection error.').css('color', '#dc2626'); })
-        .always(function() { $btn.prop('disabled', false).text('Save Webhook'); setTimeout(function() { $msg.text(''); }, 3000); });
+        .always(function() { $btn.prop('disabled', false).text('Save Webhook URL'); setTimeout(function() { $msg.text(''); }, 3000); });
+    });
+
+    // Workflow Trigger Buttons
+    $('#smva-save-workflow-buttons-btn').on('click', function() {
+        var $btn = $(this).prop('disabled', true).text('Saving...');
+        var $msg = $('#smva-workflow-buttons-msg').text('').css('color', '');
+        $.post(window.smvaAdmin.ajaxUrl, {action:'smva_save_settings', nonce:window.smvaAdmin.nonce, smva_workflow_buttons:$('#smva-workflow-buttons').val()})
+        .done(function(res) { $msg.text(res.success ? 'Saved!' : 'Error').css('color', res.success ? '#059669' : '#dc2626'); })
+        .fail(function() { $msg.text('Connection error.').css('color', '#dc2626'); })
+        .always(function() { $btn.prop('disabled', false).text('Save Workflow Buttons'); setTimeout(function() { $msg.text(''); }, 3000); });
     });
 
     // Tools
@@ -1086,7 +1210,8 @@ jQuery(function($) {
 
   function vsInit() {
     $('#smva-vs-search-btn').on('click', function () { VS.currentPage = 1; vsLoadSessions(); });
-    $(document).on('click', '#smva-vs-modal-close, #smva-vs-overlay', vsCloseModal);
+    $(document).on('click', '#smva-vs-modal-close', vsCloseModal);
+    $('#smva-vs-modal').on('click', function (e) { if ($(e.target).is('#smva-vs-modal')) vsCloseModal(); });
     $(document).on('click', '#smva-vs-summarize-btn', vsGenerateSummary);
     var today = new Date();
     var from = new Date(today.getTime() - (smvaVoiceSummaryRangeDays * 24 * 60 * 60 * 1000));
@@ -1158,9 +1283,9 @@ jQuery(function($) {
             return v === true || v === 1 || v === '1' || String(v).toLowerCase() === 'true' || String(v).toLowerCase() === 'yes';
           }
           var hasRecording = !!recordingUrl || smvaTruthyFlag(s.has_recording) || smvaTruthyFlag(s.hasRecording) || smvaTruthyFlag(s.recording_available) || smvaTruthyFlag(s.recordingAvailable);
-          if (sid) { btns += '<button class="button smva-vs-view-btn" data-session="' + escAttr(sid) + '" data-summary="' + escAttr(summaryText) + '">View</button> '; }
+          if (sid) { btns += '<button class="smva-btn smva-btn-sm smva-vs-view-btn" data-session="' + escAttr(sid) + '" data-summary="' + escAttr(summaryText) + '">View</button> '; }
           if (sid && hasRecording) {
-            btns += '<button class="button smva-vs-play-btn" data-session="' + escAttr(sid) + '" data-recording-url="' + escAttr(recordingUrl) + '">&#9654; Play</button>';
+            btns += '<button class="smva-btn smva-btn-sm smva-vs-play-btn" data-session="' + escAttr(sid) + '" data-recording-url="' + escAttr(recordingUrl) + '">&#9654; Play</button>';
           } else if (sid) {
             btns += '<span style="color:#8c8f94;font-size:12px;">No recording</span>';
           }
@@ -1199,7 +1324,6 @@ jQuery(function($) {
     $('#smva-vs-summarize-btn').prop('disabled', false).text(existingSummary ? 'Regenerate Summary' : 'Generate Summary');
     $('#smva-vs-summary-text').html(existingSummary ? '<p>' + escHtml(existingSummary) + '</p>' : '<em>No summary yet.</em>');
     $('#smva-vs-modal').css('display', 'flex');
-    $('#smva-vs-overlay').show();
     $.ajax({
       url: smvaAdmin.ajaxUrl,
       data: { action: 'smva_voice_transcript', nonce: smvaAdmin.nonce, session_id: sessionId },
@@ -1335,7 +1459,6 @@ jQuery(function($) {
 
   function vsCloseModal() {
     $('#smva-vs-modal').hide();
-    $('#smva-vs-overlay').hide();
     VS.activeSession = null;
   }
 
@@ -1444,6 +1567,138 @@ jQuery(function($) {
       });
     }
 
+  })();
+
+
+  // ── Phone (Twilio) Integration ───────────────────────────────────────────
+  // The auth token is posted once and never round-tripped back: the backend
+  // stores it encrypted and only ever returns a masked SID, so there is no
+  // path by which the secret reaches this page again.
+  (function () {
+    var saveBtn = document.getElementById('smva-phone-save');
+    var msg     = document.getElementById('smva-phone-msg');
+
+    function setMsg(kind, text) {
+      if (!msg) return;
+      msg.className   = kind ? 'smva-int-msg ' + kind : 'smva-int-msg';
+      msg.textContent = text || '';
+    }
+
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function () {
+        var sid    = (document.getElementById('smva-phone-sid')    || {}).value || '';
+        var token  = (document.getElementById('smva-phone-token')  || {}).value || '';
+        var number = (document.getElementById('smva-phone-number') || {}).value || '';
+        var label  = saveBtn.querySelector('.smva-phone-label-text');
+        var spin   = saveBtn.querySelector('.smva-phone-spinner');
+
+        sid = sid.trim(); token = token.trim(); number = number.trim();
+
+        if (!sid || !token || !number) {
+          setMsg('err', 'Account SID, Auth Token, and phone number are all required.');
+          return;
+        }
+        // Mirrors the backend's E.164 check so an obvious typo is caught
+        // before it costs a round trip to Twilio.
+        if (!/^\+[1-9]\d{6,14}$/.test(number)) {
+          setMsg('err', 'Phone number must be in E.164 format, e.g. +15551234567.');
+          return;
+        }
+
+        label.classList.add('smva-hidden');
+        spin.classList.remove('smva-hidden');
+        saveBtn.disabled = true;
+        setMsg('', '');
+
+        fetch(smvaAdmin.ajaxUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            action: 'smva_phone_connect',
+            nonce: smvaAdmin.nonce,
+            account_sid: sid,
+            auth_token: token,
+            phone_number: number,
+          }),
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (data.success) {
+            setMsg('ok', 'Connected. Reloading...');
+            setTimeout(function () { window.location.reload(); }, 1200);
+          } else {
+            setMsg('err', (data.data && data.data.message) || 'Connection failed. Check your Twilio credentials.');
+            label.classList.remove('smva-hidden');
+            spin.classList.add('smva-hidden');
+            saveBtn.disabled = false;
+          }
+        })
+        .catch(function () {
+          setMsg('err', 'Network error. Please try again.');
+          label.classList.remove('smva-hidden');
+          spin.classList.add('smva-hidden');
+          saveBtn.disabled = false;
+        });
+      });
+    }
+
+    var disconnectBtn = document.getElementById('smva-phone-disconnect');
+    if (disconnectBtn) {
+      disconnectBtn.addEventListener('click', function () {
+        if (!confirm('Disconnect this number? Calls to it will no longer be answered by your agent.')) return;
+        disconnectBtn.textContent = 'Disconnecting...';
+        disconnectBtn.disabled    = true;
+        fetch(smvaAdmin.ajaxUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ action: 'smva_phone_disconnect', nonce: smvaAdmin.nonce }),
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (data.success) { window.location.reload(); }
+          else {
+            setMsg('err', (data.data && data.data.message) || 'Error disconnecting. Please try again.');
+            disconnectBtn.textContent = 'Disconnect';
+            disconnectBtn.disabled    = false;
+          }
+        })
+        .catch(function () {
+          setMsg('err', 'Network error. Please try again.');
+          disconnectBtn.textContent = 'Disconnect';
+          disconnectBtn.disabled    = false;
+        });
+      });
+    }
+
+    var copyBtn = document.getElementById('smva-phone-copy-webhook');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        var input = document.getElementById('smva-phone-webhook-url');
+        if (!input) return;
+        // Left selected on every path, so Ctrl+C still works when the
+        // clipboard API is unavailable or refuses (it rejects with
+        // NotAllowedError whenever the document is not focused).
+        input.select();
+        input.setSelectionRange(0, 99999);
+
+        var flash = function (label) {
+          copyBtn.textContent = label;
+          setTimeout(function () { copyBtn.textContent = 'Copy'; }, 1500);
+        };
+        var fallback = function () {
+          var copied = false;
+          try { copied = document.execCommand('copy'); } catch (_) {}
+          // Don't claim success we didn't get — point at the selection instead.
+          flash(copied ? 'Copied' : 'Press Ctrl+C');
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(input.value).then(function () { flash('Copied'); }, fallback);
+        } else {
+          fallback();
+        }
+      });
+    }
   })();
 
 

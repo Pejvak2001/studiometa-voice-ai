@@ -111,7 +111,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             'general'       => array( 'General Settings', 'Choose the agent language, voice profile, timezone, and greeting.' ),
             'agent'         => array( 'Agent Personality', 'Tune how your AI agent responds and represents your business.' ),
             'widget'        => array( 'Widget Experience', 'Customize the floating widget, display behavior, and performance options.' ),
-            'automation'    => array( 'Workflow Buttons', 'Create quick actions that help visitors trigger useful workflows.' ),
+            'automation'    => array( 'Automation', 'Connect your agent to external tools, define what it can do, and add quick-action buttons to the widget.' ),
             'appointments'  => array( 'Appointments', 'Set your working hours and let the agent book visitors in.' ),
             'history'       => array( 'Chat History', 'Review recent conversations and visitor interactions.' ),
             'voice_summary' => array( 'Voice Summary', 'Review voice sessions and usage details.' ),
@@ -311,14 +311,16 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         $dc_limit = intval(   $usage['chat_messages_limit'] ?? 0 );
         $dv_pct = ( $dv_limit > 0 ) ? min( 100, ( $dv_used / $dv_limit ) * 100 ) : 0;
         $dc_pct = ( $dc_limit > 0 ) ? min( 100, ( $dc_used / $dc_limit ) * 100 ) : 0;
-        $plan_label = esc_html( $quota['plan'] ?? $license['plan_type'] ?? 'basic' );
+        // Never invent a plan name — showing "Basic" to a user on an unknown
+        // plan is worse than showing nothing (see the same rule on the License tab).
+        $plan_label = $quota['plan'] ?? $license['plan_type'] ?? get_option( 'smva_plan', '' );
         $expires_at = ! empty( $quota['expires_at'] ) ? gmdate('M j, Y', strtotime($quota['expires_at'])) : null;
         ?>
         <div class="smva-card" style="margin-bottom:16px">
             <div class="smva-card-header">
                 <h2 class="smva-card-title">Usage This Month</h2>
                 <span class="smva-badge <?php echo $is_trial ? 'smva-badge-trial' : 'smva-badge-success'; ?>">
-                    <?php echo $is_trial ? 'TRIAL' : esc_html( ucfirst(str_replace('_',' ',$plan_label)) ); ?>
+                    <?php echo $is_trial ? 'TRIAL' : esc_html( $plan_label ? ucfirst(str_replace('_',' ',$plan_label)) : '—' ); ?>
                 </span>
                 <?php if ( $expires_at ) : ?>
                 <span class="smva-hint-inline"><?php echo $is_trial ? 'Expires' : 'Renews'; ?> <?php echo esc_html( $expires_at ); ?></span>
@@ -831,6 +833,28 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         </div>
     </div>
 
+    <!-- Page picker: build the knowledge base from selected WordPress content -->
+    <div id="smva-pages-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center">
+        <div style="background:#fff;border-radius:16px;padding:32px;width:620px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.2)">
+            <div style="margin-bottom:16px">
+                <h2 style="font-size:20px;font-weight:700;color:#0f172a;margin:0 0 8px">Select Pages to Train From</h2>
+                <p style="font-size:13px;color:#6b7280;margin:0">Only the content you tick is read into the knowledge base. Pages are selected by default; posts are not, so news and blog archives stay out unless you add them.</p>
+            </div>
+
+            <div id="smva-pages-loading" style="padding:32px 0;text-align:center;font-size:13px;color:#6b7280">Loading your content&hellip;</div>
+            <div id="smva-pages-error" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px;font-size:13px;color:#dc2626;margin-bottom:12px"></div>
+            <div id="smva-pages-list" style="flex:1;overflow-y:auto;min-height:120px;max-height:46vh;border:1px solid #e2e8f0;border-radius:8px;padding:12px;background:#f8fafc"></div>
+
+            <div style="display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:16px">
+                <span id="smva-pages-count" style="font-size:12px;color:#6b7280"></span>
+                <div style="display:flex;gap:10px">
+                    <button type="button" id="smva-pages-cancel" class="smva-btn" style="background:#f3f4f6;color:#374151">Cancel</button>
+                    <button type="button" id="smva-pages-apply" class="smva-btn smva-btn-primary" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none">Build Knowledge Base</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <form id="smva-agent-form">
 
         <div class="smva-card">
@@ -847,6 +871,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     <button type="button" id="smva-crawl-btn" class="smva-btn smva-btn-green" style="flex:none" title="Crawl your website and build knowledge base automatically">
                         &#127760; Import from Website
                     </button>
+                </div>
+                <div style="margin-top:8px">
+                    <button type="button" id="smva-select-pages-btn" class="smva-btn" style="background:#f3f4f6;color:#374151" title="Pick exactly which pages and posts feed the knowledge base">
+                        &#128196; Select Pages to Train From
+                    </button>
+                    <span style="font-size:11px;color:#9ca3af;margin-left:8px">Choose specific content instead of crawling the whole site &mdash; useful if you publish news or blog posts the agent shouldn't quote.</span>
                 </div>
             </div>
             <div class="smva-field smva-field-full" style="margin-bottom:12px">
@@ -1009,26 +1039,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         </div>
 
         <div class="smva-card" style="margin-top:16px">
-            <div class="smva-card-header">
-                <h2 class="smva-card-title">Lead Notifications</h2>
-                <span class="smva-hint-inline">email me new leads</span>
-            </div>
-            <div class="smva-form-grid">
-                <div class="smva-field">
-                    <label>Email Alerts</label>
-                    <input type="hidden" name="smva_lead_email_notify" value="0"><label class="smva-toggle-label"><input type="checkbox" name="smva_lead_email_notify" value="1" <?php checked( get_option('smva_lead_email_notify','1'), '1' ); ?>> Email me when a new lead comes in</label>
-                    <p class="smva-hint">Sent the moment a visitor shares an email or phone number — no automation setup required.</p>
-                </div>
-                <div class="smva-field">
-                    <label>Send Notifications To</label>
-                    <input type="email" name="smva_lead_email_to" class="smva-input" value="<?php echo esc_attr( get_option('smva_lead_email_to','') ); ?>" placeholder="<?php echo esc_attr( get_option('admin_email','') ); ?>">
-                    <p class="smva-hint">Leave blank to use your WordPress admin email.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="smva-card" style="margin-top:16px">
-            <div class="smva-card-header"><h2 class="smva-card-title">Performance &amp; Workflow Buttons</h2></div>
+            <div class="smva-card-header"><h2 class="smva-card-title">Performance</h2></div>
             <div class="smva-form-grid">
                 <div class="smva-field">
                     <label>Frontend Loading</label>
@@ -1039,16 +1050,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     <label>Event Debug Log</label>
                     <input type="hidden" name="smva_debug_events" value="0"><label class="smva-toggle-label"><input type="checkbox" name="smva_debug_events" value="1" <?php checked( get_option('smva_debug_events','1'), '1' ); ?>> Keep recent plugin events</label>
                     <p class="smva-hint">Stores last 50 non-sensitive plugin events for troubleshooting.</p>
-                </div>
-                <div class="smva-field smva-field-full">
-                    <label>Workflow Trigger Buttons <span>— one per line: Label | message sent to agent</span></label>
-                    <textarea name="smva_workflow_buttons" class="smva-textarea" rows="4" placeholder="Book Appointment | I would like to book an appointment.&#10;Request Callback | Please help me request a callback."><?php
-                        $wb = json_decode( get_option('smva_workflow_buttons','[]'), true );
-                        if ( is_array( $wb ) ) {
-                            echo esc_textarea( implode( "
-", array_map( function( $b ) { return ( $b['label'] ?? '' ) . ' | ' . ( $b['message'] ?? $b['label'] ?? '' ); }, $wb ) ) );
-                        }
-                    ?></textarea>
                 </div>
             </div>
         </div>
@@ -1133,6 +1134,24 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         $tools_arr = json_decode( $tools, true ) ?: array();
         $webhook   = $adata['webhook_url'] ?? '';
     ?>
+
+    <div class="smva-card" style="margin-bottom:16px">
+        <div class="smva-card-header"><h2 class="smva-card-title">Workflow Trigger Buttons</h2></div>
+        <p class="smva-desc">Quick-action buttons shown in the widget that send a preset message to the agent — e.g. a visible &ldquo;Book Appointment&rdquo; shortcut.</p>
+        <div class="smva-field smva-field-full">
+            <label>Buttons <span>— one per line: Label | message sent to agent</span></label>
+            <textarea name="smva_workflow_buttons" id="smva-workflow-buttons" class="smva-textarea" rows="4" placeholder="Book Appointment | I would like to book an appointment.&#10;Request Callback | Please help me request a callback."><?php
+                $wb = json_decode( get_option('smva_workflow_buttons','[]'), true );
+                if ( is_array( $wb ) ) {
+                    echo esc_textarea( implode( "\n", array_map( function( $b ) { return ( $b['label'] ?? '' ) . ' | ' . ( $b['message'] ?? $b['label'] ?? '' ); }, $wb ) ) );
+                }
+            ?></textarea>
+        </div>
+        <div class="smva-card-footer">
+            <button type="button" id="smva-save-workflow-buttons-btn" class="smva-btn smva-btn-primary">Save Workflow Buttons</button>
+            <span id="smva-workflow-buttons-msg" class="smva-save-msg"></span>
+        </div>
+    </div>
 
     <div class="smva-card">
         <div class="smva-card-header">
@@ -1258,40 +1277,68 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 
 <?php elseif ( $active_tab === 'voice_summary' ) : ?>
-<div class="smva-vs-wrap">
-  <h2>Voice Summary</h2>
-  <div class="smva-vs-filter-row">
-    <label>From <input type="date" id="smva-vs-date-from" /></label>
-    <label>To <input type="date" id="smva-vs-date-to" /></label>
-    <button class="button button-primary" id="smva-vs-search-btn">Search</button>
-    <span id="smva-vs-timezone-label" style="font-size:12px;color:#64748b;margin-left:8px;"></span>
-    <span id="smva-vs-range-label" style="font-size:12px;color:#64748b;margin-left:8px;"></span>
-  </div>
-  <table class="widefat smva-vs-table">
-    <thead><tr><th>Date</th><th>Duration</th><th>Turns</th><th>Summary</th><th>Actions</th></tr></thead>
-    <tbody id="smva-vs-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;">Click Search to load sessions.</td></tr></tbody>
-  </table>
-  <div id="smva-vs-pagination"></div>
-  <div id="smva-vs-modal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:6px;box-shadow:0 8px 32px rgba(0,0,0,.25);z-index:99999;width:min(90vw,720px);max-height:85vh;flex-direction:column;overflow:hidden;">
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #ddd;">
-      <h3 id="smva-vs-modal-title" style="margin:0;">Session Transcript</h3>
-      <button id="smva-vs-modal-close" style="background:none;border:none;font-size:22px;cursor:pointer;color:#666;">&times;</button>
+<div class="smva-card">
+    <div class="smva-card-header"><h2 class="smva-card-title">Voice Summary</h2></div>
+    <p class="smva-desc">Review voice sessions, play recordings, and generate AI summaries of what was discussed.</p>
+    <div class="smva-vs-filter-row">
+        <label>From <input type="date" id="smva-vs-date-from" class="smva-input" /></label>
+        <label>To <input type="date" id="smva-vs-date-to" class="smva-input" /></label>
+        <button type="button" class="smva-btn smva-btn-primary" id="smva-vs-search-btn">Search</button>
+        <span id="smva-vs-timezone-label" class="smva-hint-inline"></span>
+        <span id="smva-vs-range-label" class="smva-hint-inline"></span>
     </div>
-    <div style="padding:20px;overflow-y:auto;flex:1;">
-      <div style="margin-bottom:16px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <strong>AI Summary</strong>
-          <button class="button" id="smva-vs-summarize-btn">Generate Summary</button>
+    <table class="smva-table smva-vs-table">
+        <thead><tr><th>Date</th><th>Duration</th><th>Turns</th><th>Summary</th><th>Actions</th></tr></thead>
+        <tbody id="smva-vs-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;">Click Search to load sessions.</td></tr></tbody>
+    </table>
+    <div id="smva-vs-pagination"></div>
+</div>
+
+<div id="smva-vs-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center">
+    <div style="background:#fff;border-radius:16px;width:min(90vw,720px);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.2)">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--smva-border)">
+            <h2 id="smva-vs-modal-title" style="margin:0;font-size:16px;font-weight:700;color:var(--smva-text)">Session Transcript</h2>
+            <button type="button" id="smva-vs-modal-close" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--smva-text-3);line-height:1">&times;</button>
         </div>
-        <div id="smva-vs-summary-text" style="background:#f6f7f7;border-left:4px solid #2271b1;padding:10px 14px;border-radius:0 4px 4px 0;font-size:13px;line-height:1.6;min-height:40px;"><em>No summary yet.</em></div>
-      </div>
-      <hr />
-      <div id="smva-vs-transcript-body"><p>Loading...</p></div>
+        <div style="padding:24px;overflow-y:auto;flex:1">
+            <div style="margin-bottom:16px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                    <strong style="font-size:13px;color:var(--smva-text)">AI Summary</strong>
+                    <button type="button" class="smva-btn smva-btn-sm" id="smva-vs-summarize-btn">Generate Summary</button>
+                </div>
+                <div id="smva-vs-summary-text" style="background:var(--smva-bg);border-left:4px solid var(--smva-primary);padding:10px 14px;border-radius:0 8px 8px 0;font-size:13px;line-height:1.6;min-height:40px;color:var(--smva-text-2)"><em>No summary yet.</em></div>
+            </div>
+            <hr style="border:none;border-top:1px solid var(--smva-border);margin:16px 0" />
+            <div id="smva-vs-transcript-body"><p>Loading...</p></div>
+        </div>
     </div>
-  </div>
-  <div id="smva-vs-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99998;"></div>
 </div>
 <?php elseif ( $active_tab === 'leads' ) : ?>
+<form id="smva-leads-settings-form">
+    <div class="smva-card" style="margin-bottom:16px">
+        <div class="smva-card-header">
+            <h2 class="smva-card-title">Lead Notifications</h2>
+            <span class="smva-hint-inline">email me new leads</span>
+        </div>
+        <div class="smva-form-grid">
+            <div class="smva-field">
+                <label>Email Alerts</label>
+                <input type="hidden" name="smva_lead_email_notify" value="0"><label class="smva-toggle-label"><input type="checkbox" name="smva_lead_email_notify" value="1" <?php checked( get_option('smva_lead_email_notify','1'), '1' ); ?>> Email me when a new lead comes in</label>
+                <p class="smva-hint">Sent the moment a visitor shares an email or phone number — no automation setup required.</p>
+            </div>
+            <div class="smva-field">
+                <label>Send Notifications To</label>
+                <input type="email" name="smva_lead_email_to" class="smva-input" value="<?php echo esc_attr( get_option('smva_lead_email_to','') ); ?>" placeholder="<?php echo esc_attr( get_option('admin_email','') ); ?>">
+                <p class="smva-hint">Leave blank to use your WordPress admin email.</p>
+            </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:12px">
+            <button type="submit" class="smva-btn smva-btn-primary">Save Notification Settings</button>
+            <span id="smva-leads-settings-msg" style="font-size:13px"></span>
+        </div>
+    </div>
+</form>
+
 <div class="smva-card">
     <div class="smva-card-header">
         <h2 class="smva-card-title">🎯 Leads</h2>

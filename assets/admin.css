@@ -441,15 +441,11 @@
 .smva-site-current { background: var(--smva-primary-l); color: var(--smva-primary); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
 
 /* ── Voice Summary Tab ───────────────────────────────────────────────────── */
-.smva-vs-wrap { padding: 10px 0; }
 .smva-vs-filter-row { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; margin-bottom:16px; }
-.smva-vs-filter-row label { display:flex; flex-direction:column; font-size:13px; gap:4px; }
-.smva-vs-filter-row input[type="date"] { padding:4px 8px; border:1px solid #ddd; border-radius:4px; }
+.smva-vs-filter-row label { display:flex; flex-direction:column; font-size:13px; gap:4px; color: var(--smva-text-2); }
+.smva-vs-filter-row .smva-input { width:auto; }
 .smva-vs-table { margin-top:0; }
-.smva-vs-table th { background:#f0f0f1; }
 #smva-vs-pagination { margin-top:8px; }
-#smva-vs-modal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#fff; border-radius:6px; box-shadow:0 8px 32px rgba(0,0,0,.25); z-index:99999; width:min(90vw,720px); max-height:85vh; flex-direction:column; overflow:hidden; }
-#smva-vs-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:99998; }
 
 
 /* ── Migrated from admin-page.php ── */
@@ -724,6 +720,19 @@
 .smva-int-logo-gcal{background:#eef4fe;border-color:#cfe0fb}
 .smva-int-logo-ms{background:#f6f7f9;border-color:#e3e6ea}
 .smva-int-badge-warn{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:#b45309;background:#fef3c7;padding:3px 10px;border-radius:20px;margin-left:8px}
+
+/* Phone (Twilio) integration card */
+.smva-int-logo-twilio{background:#fff1f2;border-color:#fecdd3}
+.smva-phone-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.smva-phone-field{display:flex;flex-direction:column;gap:5px}
+.smva-phone-label{font-size:13px;font-weight:600;color:#374151}
+.smva-phone-actions{margin-top:12px}
+.smva-phone-status-text{font-size:13px;color:#374151;flex:1}
+.smva-phone-sid{font-family:monospace;font-size:12px;color:var(--smva-text-3)}
+.smva-phone-webhook{margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb}
+/* The plan gate is rendered server-side, so it must not depend on the JS that
+   toggles .smva-int-msg for transient save feedback. */
+.smva-int-msg-static{display:block}
 
 .smva-appt-preview-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
 .smva-appt-preview{display:flex;flex-direction:column;gap:14px}

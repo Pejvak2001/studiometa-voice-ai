@@ -9,6 +9,11 @@ class SMVA_Plugin {
     const VOICE_CACHE_KEY_PREFIX = 'smva_voices_cache_';
     const VOICE_CACHE_TTL = 21600; // 6 hours — the catalog changes rarely
 
+    // Knowledge base page picker limits.
+    const KB_PICKER_MAX_LISTED = 300;          // per post type, keeps the picker payload sane
+    const KB_PICKER_MAX_SELECTED = 60;         // pages that can feed one knowledge base
+    const KB_PICKER_MAX_CHARS_PER_PAGE = 4000; // per-page truncation
+
     private static $instance = null;
 
     public static function get_instance() {
@@ -310,6 +315,8 @@ class SMVA_Plugin {
         add_action( 'wp_ajax_smva_save_settings',      array( $this, 'ajax_save_settings' ) );
         add_action( 'wp_ajax_smva_save_agent',         array( $this, 'ajax_save_agent' ) );
         add_action( 'wp_ajax_smva_crawl_site',         array( $this, 'ajax_crawl_site' ) );
+        add_action( 'wp_ajax_smva_list_content',       array( $this, 'ajax_list_content' ) );
+        add_action( 'wp_ajax_smva_build_kb_from_pages', array( $this, 'ajax_build_kb_from_pages' ) );
         add_action( 'wp_ajax_smva_optimize_agent',     array( $this, 'ajax_optimize_agent' ) );
         add_action( 'wp_ajax_smva_auto_train',         array( $this, 'ajax_auto_train' ) );
         add_action( 'wp_ajax_smva_refresh_quota',      array( $this, 'ajax_refresh_quota' ) );
@@ -354,6 +361,8 @@ class SMVA_Plugin {
         // ── HubSpot Integration ──────────────────────────────────────────────
         add_action( 'wp_ajax_smva_hubspot_save_token', array( $this, 'ajax_hubspot_save_token' ) );
         add_action( 'wp_ajax_smva_hubspot_disconnect', array( $this, 'ajax_hubspot_disconnect' ) );
+        add_action( 'wp_ajax_smva_phone_connect',      array( $this, 'ajax_phone_connect' ) );
+        add_action( 'wp_ajax_smva_phone_disconnect',   array( $this, 'ajax_phone_disconnect' ) );
         add_action( 'wp_ajax_smva_hubspot_status',     array( $this, 'ajax_hubspot_status' ) );
 
         // Appointments
@@ -1773,6 +1782,125 @@ class SMVA_Plugin {
         }
     }
 
+    // ── AJAX: List site content for the KB page picker ──────────────────────
+
+    /**
+     * Return published content grouped by post type, for the "Select Pages"
+     * picker. Titles and IDs only — bodies are fetched later, and only for the
+     * pages the admin actually selects.
+     */
+    public function ajax_list_content() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+
+        $groups = array();
+        $types  = get_post_types( array( 'public' => true ), 'objects' );
+
+        foreach ( $types as $type ) {
+            if ( 'attachment' === $type->name ) {
+                continue;
+            }
+
+            $posts = get_posts( array(
+                'post_type'        => $type->name,
+                'post_status'      => 'publish',
+                'numberposts'      => self::KB_PICKER_MAX_LISTED,
+                'orderby'          => 'title',
+                'order'            => 'ASC',
+                'suppress_filters' => false,
+            ) );
+
+            if ( empty( $posts ) ) {
+                continue;
+            }
+
+            $items = array();
+            foreach ( $posts as $post ) {
+                $items[] = array(
+                    'id'    => absint( $post->ID ),
+                    'title' => sanitize_text_field( $post->post_title ) ?: '(no title)',
+                    'date'  => mysql2date( 'Y-m-d', $post->post_date ),
+                );
+            }
+
+            $groups[] = array(
+                'type'  => sanitize_key( $type->name ),
+                'label' => sanitize_text_field( $type->labels->name ?? $type->name ),
+                'items' => $items,
+            );
+        }
+
+        wp_send_json_success( array( 'groups' => $groups ) );
+    }
+
+    // ── AJAX: Build knowledge base from selected pages ──────────────────────
+
+    /**
+     * Assemble a knowledge base blob from the specific posts/pages the admin
+     * picked, read straight out of WordPress rather than crawled over HTTP.
+     */
+    public function ajax_build_kb_from_pages() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+
+        $ids = array();
+        if ( isset( $_POST['post_ids'] ) ) {
+            // JSON blob: decoded, then keys, values and nested structure are all
+            // sanitized by sanitize_json_recursive() before use.
+            $decoded = $this->sanitize_json_recursive(
+                json_decode( sanitize_textarea_field( wp_unslash( $_POST['post_ids'] ) ), true )
+            );
+            if ( is_array( $decoded ) ) {
+                $ids = array_values( array_filter( array_map( 'absint', $decoded ) ) );
+            }
+        }
+
+        $ids = array_slice( array_unique( $ids ), 0, self::KB_PICKER_MAX_SELECTED );
+
+        if ( empty( $ids ) ) {
+            wp_send_json_error( array( 'message' => 'No pages selected.' ) );
+        }
+
+        $blocks = array();
+        foreach ( $ids as $id ) {
+            // Never let unpublished content reach a visitor-facing agent, even
+            // though only administrators can reach this handler.
+            if ( 'publish' !== get_post_status( $id ) ) {
+                continue;
+            }
+
+            $raw = get_post_field( 'post_content', $id );
+            // Running core's own `the_content` filter (not declaring a new hook —
+            // the sniff misreads it) so shortcodes and page-builder output resolve
+            // to the text a visitor would actually read. Page builders such as
+            // Elementor render entirely through this filter, and their pages would
+            // otherwise come back empty.
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+            $text = wp_strip_all_tags( apply_filters( 'the_content', $raw ) );
+            $text = trim( preg_replace( '/\n{3,}/', "\n\n", $text ) );
+
+            if ( '' === $text ) {
+                continue;
+            }
+
+            if ( strlen( $text ) > self::KB_PICKER_MAX_CHARS_PER_PAGE ) {
+                $text = substr( $text, 0, self::KB_PICKER_MAX_CHARS_PER_PAGE ) . '…';
+            }
+
+            $title    = get_the_title( $id ) ?: '(no title)';
+            $blocks[] = '## ' . sanitize_text_field( $title ) . "\n\n" . $text;
+        }
+
+        if ( empty( $blocks ) ) {
+            wp_send_json_error( array( 'message' => 'Selected pages have no readable content.' ) );
+        }
+
+        wp_send_json_success( array(
+            'knowledge_base' => implode( "\n\n", $blocks ),
+            'pages_used'     => count( $blocks ),
+        ) );
+    }
+
     // ── AJAX: Optimize Agent ────────────────────────────────────────────────
 
     public function ajax_optimize_agent() {
@@ -2580,15 +2708,19 @@ class SMVA_Plugin {
     public function ajax_get_leads() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
         if ( ! current_user_can( 'manage_options' ) ) { wp_send_json_error( 'Unauthorized' ); return; }
-        $license_key = get_option( 'smva_license_key', '' );
         $page  = max( 1, intval( isset( $_POST['page'] )  ? $_POST['page']  : 1 ) );
         $limit = min( 100, intval( isset( $_POST['limit'] ) ? $_POST['limit'] : 20 ) );
-        $url = SMVA_API_URL . '/plugin/leads?license_key=' . urlencode( $license_key ) . '&page=' . $page . '&limit=' . $limit;
 
         $remote_leads = array();
         $remote_total = 0;
         $remote_error = '';
-        $response = wp_remote_get( $url, array( 'timeout' => 15 ) );
+        // POST, not GET with a query string: leads are PII, and the credentials
+        // that fetch them must not end up in the backend's access logs.
+        $response = $this->api_post_json(
+            '/plugin/leads/list',
+            array_merge( $this->get_api_credentials(), array( 'page' => $page, 'limit' => $limit ) ),
+            15
+        );
         if ( is_wp_error( $response ) ) {
             $remote_error = $response->get_error_message();
         } else {
@@ -2731,7 +2863,6 @@ class SMVA_Plugin {
     public function ajax_delete_lead() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
         if ( ! current_user_can( 'manage_options' ) ) { wp_send_json_error( 'Unauthorized' ); return; }
-        $license_key = get_option( 'smva_license_key', '' );
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $lead_id = sanitize_text_field( wp_unslash( isset( $_POST['lead_id'] ) ? $_POST['lead_id'] : '' ) );
         if ( ! $lead_id ) { wp_send_json_error( 'Missing lead_id' ); return; }
@@ -2744,9 +2875,10 @@ class SMVA_Plugin {
             wp_send_json_success();
         }
 
-        $response = wp_remote_request(
-            SMVA_API_URL . '/plugin/leads/' . urlencode( $lead_id ) . '?license_key=' . urlencode( $license_key ),
-            array( 'method' => 'DELETE', 'timeout' => 15 )
+        $response = $this->api_post_json(
+            '/plugin/leads/delete',
+            array_merge( $this->get_api_credentials(), array( 'lead_id' => $lead_id ) ),
+            15
         );
         if ( is_wp_error( $response ) ) { wp_send_json_error( 'Failed to delete lead' ); return; }
         wp_send_json_success();
@@ -2878,6 +3010,93 @@ class SMVA_Plugin {
         update_option( 'smva_hubspot_connected', '0' );
         delete_option( 'smva_hubspot_token' );
         wp_send_json_success( array( 'message' => 'HubSpot disconnected.' ) );
+    }
+
+    /**
+     * Connect the site owner's own Twilio account so their number reaches the agent.
+     *
+     * The auth token is deliberately NOT stored in WordPress: it is forwarded
+     * once to the backend, which validates it against Twilio and keeps it
+     * encrypted. Only non-secret display values are kept locally, so a database
+     * dump of this site never yields a working Twilio credential.
+     */
+    public function ajax_phone_connect() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+
+        $license_key    = get_option( 'smva_license_key', '' );
+        $internal_token = get_option( 'smva_internal_token', '' );
+        if ( empty( $license_key ) || empty( $internal_token ) ) {
+            wp_send_json_error( array( 'message' => 'License not active.' ) );
+        }
+
+        $account_sid  = sanitize_text_field( wp_unslash( $_POST['account_sid'] ?? '' ) );
+        $auth_token   = sanitize_text_field( wp_unslash( $_POST['auth_token'] ?? '' ) );
+        $phone_number = sanitize_text_field( wp_unslash( $_POST['phone_number'] ?? '' ) );
+
+        if ( empty( $account_sid ) || empty( $auth_token ) || empty( $phone_number ) ) {
+            wp_send_json_error( array( 'message' => 'Account SID, Auth Token, and phone number are all required.' ) );
+        }
+        if ( ! preg_match( '/^\+[1-9]\d{6,14}$/', $phone_number ) ) {
+            wp_send_json_error( array( 'message' => 'Phone number must be in E.164 format, e.g. +15551234567.' ) );
+        }
+
+        $response = $this->api_post_json( '/plugin/phone/connect', array(
+            'license_key'    => $license_key,
+            'internal_token' => $internal_token,
+            'account_sid'    => $account_sid,
+            'auth_token'     => $auth_token,
+            'phone_number'   => $phone_number,
+        ), 20 );
+
+        if ( is_wp_error( $response ) ) {
+            wp_send_json_error( array( 'message' => 'Could not reach StudioMeta. Check your connection and try again.' ) );
+        }
+
+        $code = wp_remote_retrieve_response_code( $response );
+        $data = json_decode( wp_remote_retrieve_body( $response ), true );
+
+        if ( $code !== 200 ) {
+            wp_send_json_error( array(
+                'message' => $data['message'] ?? 'Could not connect that Twilio account.',
+            ) );
+        }
+
+        update_option( 'smva_phone_connected',  '1' );
+        update_option( 'smva_phone_number',     $data['phone_number'] ?? $phone_number );
+        // Masked here rather than trusting the backend to send it back, so the
+        // displayed value cannot silently become the full SID.
+        update_option( 'smva_phone_sid_masked', substr( $account_sid, 0, 2 ) . '••••' . substr( $account_sid, -4 ) );
+
+        wp_send_json_success( array( 'message' => 'Phone number connected.' ) );
+    }
+
+    public function ajax_phone_disconnect() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+
+        $license_key    = get_option( 'smva_license_key', '' );
+        $internal_token = get_option( 'smva_internal_token', '' );
+        if ( empty( $license_key ) || empty( $internal_token ) ) {
+            wp_send_json_error( array( 'message' => 'License not active.' ) );
+        }
+
+        $response = $this->api_post_json( '/plugin/phone/disconnect', array(
+            'license_key'    => $license_key,
+            'internal_token' => $internal_token,
+        ) );
+
+        if ( is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) !== 200 ) {
+            // Leaving the local flags set keeps this page honest about the fact
+            // that the number is still live on the backend.
+            wp_send_json_error( array( 'message' => 'Could not disconnect. Please try again.' ) );
+        }
+
+        update_option( 'smva_phone_connected', '0' );
+        delete_option( 'smva_phone_number' );
+        delete_option( 'smva_phone_sid_masked' );
+
+        wp_send_json_success( array( 'message' => 'Phone number disconnected.' ) );
     }
 
     public function ajax_hubspot_status() {

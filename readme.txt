@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.5.1
+Stable tag: 1.6.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -141,6 +141,24 @@ You can disconnect at any time from **Voice AI → Appointments**, or by revokin
 * Google Calendar Terms: [https://developers.google.com/terms](https://developers.google.com/terms)
 * Google Privacy Policy: [https://policies.google.com/privacy](https://policies.google.com/privacy)
 
+= 7. Twilio (api.twilio.com) — optional, only if you connect it =
+
+**What it does:** Lets real phone calls to a phone number you own be answered by your AI agent, using **your own Twilio account**. You keep your own Twilio account, buy your own number, and pay Twilio directly for call minutes and number rental — StudioMeta does not resell or bill you for Twilio usage. Talk time on answered calls counts against the same monthly voice minutes as the website widget.
+
+**When it is contacted:** Only if you explicitly connect a Twilio account under **Voice AI → Integrations** by entering your Twilio Account SID, Auth Token, and phone number. If you never connect it, the plugin never contacts Twilio.
+
+* When you connect: your Account SID and Auth Token are verified once against Twilio to confirm they are valid before being saved
+* When someone calls your connected number: Twilio sends the call to StudioMeta's servers, and the caller's audio and the agent's replies are streamed for the duration of the call
+
+**Data sent:** your Twilio Account SID and Auth Token (stored encrypted on StudioMeta's servers, never in your WordPress database), the phone number you connected, and during calls: the caller's audio (processed only for the duration of the conversation).
+
+**Data NOT sent:** your Twilio billing details, SMS messages, call recordings held in your Twilio account, or any other data from your Twilio account.
+
+You can disconnect at any time from **Voice AI → Integrations**, or by removing the webhook from your number in the Twilio Console.
+
+* Twilio Terms of Service: [https://www.twilio.com/legal/tos](https://www.twilio.com/legal/tos)
+* Twilio Privacy Policy: [https://www.twilio.com/legal/privacy](https://www.twilio.com/legal/privacy)
+
 = How to opt out =
 
 If you do not want the plugin to contact these services, simply deactivate and uninstall the plugin. The plugin cannot function without the hosted services because the AI assistant runs on our infrastructure (similar to how an Akismet plugin needs the Akismet service, or a Mailchimp plugin needs Mailchimp).
@@ -226,6 +244,10 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.6.0 =
+* New: **Phone (Twilio), on paid plans.** Answer real calls to a phone number you own. Connect your own Twilio account under Voice AI → Integrations — you keep paying Twilio directly for call minutes and number rental, StudioMeta never bills for it — and talk time counts against the same monthly voice minutes as the website widget
+* New: External services disclosure for the Twilio integration (readme.txt)
 
 = 1.5.1 =
 * Fixed: during a voice call, the box for typing your email vanished the moment the assistant showed the address back to you to confirm it. Anything typed afterwards went into the ordinary chat instead, which knows nothing about the call in progress, so the assistant answered as though a new conversation had started. The typing box now stays put whatever else appears on screen
