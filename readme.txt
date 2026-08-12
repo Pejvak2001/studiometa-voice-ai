@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.6.0
+Stable tag: 1.6.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -244,6 +244,14 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.6.1 =
+* New: on plans with both voice and chat, the call and chat buttons now ring/nudge in turn to invite a visitor to talk or type, instead of a single generic pulse
+* Fixed: on those same plans, the widget showed two ways to switch between voice and chat at once — separate call/chat buttons plus a duplicate switcher inside the panel. The panel switcher is gone; the two outside buttons are the only picker now
+* Improved: tapping the call button starts the call immediately, instead of opening a panel with its own separate "start call" button
+* Fixed: the call/chat buttons could sit too close to, or overlap, the panel above them on some screens
+* Fixed: on narrow phone screens, the chat/voice panel could be clipped at the edge of the screen
+* Fixed: during a voice call, typing an answer into the on-screen box (e.g. your name) could fail to reach the assistant, because the microphone kept listening while you typed. The microphone now pauses while that box is open
 
 = 1.6.0 =
 * New: **Phone (Twilio), on paid plans.** Answer real calls to a phone number you own. Connect your own Twilio account under Voice AI → Integrations — you keep paying Twilio directly for call minutes and number rental, StudioMeta never bills for it — and talk time counts against the same monthly voice minutes as the website widget
