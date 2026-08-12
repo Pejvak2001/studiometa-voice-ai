@@ -227,7 +227,7 @@ Yes. When you uninstall, the plugin removes all its options, transients, and lic
 
 = Where can I get support? =
 
-Visit [studiometa.io/contact-us](https://studiometa.io/contact-us/) or use the support forum on this plugin's WordPress.org page.
+Visit [studiometa.io/contact](https://studiometa.io/contact/) or use the support forum on this plugin's WordPress.org page.
 
 == Screenshots ==
 
