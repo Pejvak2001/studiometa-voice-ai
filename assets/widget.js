@@ -44,6 +44,9 @@
         silenceTimeout: parseInt(cfg.silenceTimeout) || 60,
         widgetTheme: cfg.widgetTheme || 'classic',
         agentLogo: cfg.agentLogo || '',
+        // On unless a site opts out. Browsers still block audio before a real
+        // gesture, so a visitor who has not touched the page hears nothing.
+        teaseSound: cfg.teaseSound !== false,
     };
 
     const isRTL = CONFIG.lang === 'fa' || CONFIG.lang === 'ar';
@@ -59,6 +62,7 @@
             connecting: 'Connecting...', typing: 'Typing...',
             voice: 'Voice', chat: 'Chat',
             start_call: 'Start Call', end_call: 'End Call',
+            voice_assistant: 'Voice assistant', not_now: 'Not now', start_chat: 'Start chat',
             placeholder: 'Type a message...',
             speak_hint: '🎙️ Say something to start...',
             upgrade_title: 'Upgrade to continue',
@@ -79,6 +83,7 @@
             connecting: 'در حال اتصال...', typing: 'در حال تایپ...',
             voice: 'صوتی', chat: 'چت',
             start_call: 'شروع تماس', end_call: 'پایان تماس',
+            voice_assistant: 'دستیار صوتی', not_now: 'الان نه', start_chat: 'شروع گفتگو',
             placeholder: 'پیام خود را بنویسید...',
             speak_hint: '🎙️ چیزی بگویید تا شروع شود...',
             upgrade_title: 'برای ادامه ارتقا دهید',
@@ -99,6 +104,7 @@
             connecting: 'جار الاتصال...', typing: 'يكتب...',
             voice: 'صوت', chat: 'دردشة',
             start_call: 'بدء المكالمة', end_call: 'إنهاء المكالمة',
+            voice_assistant: 'المساعد الصوتي', not_now: 'ليس الآن', start_chat: 'بدء الدردشة',
             placeholder: 'اكتب رسالة...',
             speak_hint: '🎙️ قل شيئاً للبدء...',
             upgrade_title: 'قم بالترقية للمتابعة',
@@ -119,6 +125,7 @@
             connecting: 'Connexion...', typing: 'En train d\'écrire...',
             voice: 'Voix', chat: 'Chat',
             start_call: 'Démarrer', end_call: 'Terminer',
+            voice_assistant: 'Assistant vocal', not_now: 'Plus tard', start_chat: 'Démarrer le chat',
             placeholder: 'Tapez un message...',
             speak_hint: '🎙️ Dites quelque chose pour commencer...',
             upgrade_title: 'Passez à la version supérieure',
@@ -139,6 +146,7 @@
             connecting: 'Conectando...', typing: 'Escribiendo...',
             voice: 'Voz', chat: 'Chat',
             start_call: 'Iniciar llamada', end_call: 'Terminar',
+            voice_assistant: 'Asistente de voz', not_now: 'Ahora no', start_chat: 'Iniciar chat',
             placeholder: 'Escribe un mensaje...',
             speak_hint: '🎙️ Di algo para empezar...',
             upgrade_title: 'Actualiza para continuar',
@@ -172,6 +180,14 @@
     let audioCaptureSource = null;
     let audioCaptureNode = null;
     let mediaStream = null;
+    // While the visitor is answering a request_text_input prompt, the mic
+    // keeps streaming underneath the panel — nothing before this silenced it.
+    // Typed and spoken input landing in the same turn is exactly the kind of
+    // thing that leaves a realtime model unsure which one to trust, and it's
+    // the one difference between this path and every other text message sent
+    // during a call (display_text, lead_captured, etc. don't compete with a
+    // live turn the way an open text prompt does).
+    let micMuted = false;
     let activeTab = CONFIG.defaultTab;
     if (activeTab === 'voice' && !caps.voice) activeTab = 'chat';
     if (activeTab === 'chat' && !caps.chat)   activeTab = 'voice';
@@ -528,6 +544,12 @@
     const MIC = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
     const CHAT_IC = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
     const AI_IC = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>';
+    // A handset, not a speech bubble: on a voice-capable site the launcher should
+    // say "you can talk to this", which is the one thing a chat widget can't do.
+    const PHONE_IC = '<svg class="smva-hs-ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+    // Sound leaving the handset. Arcs rather than the expanding box-shadow ring
+    // every other chat widget uses — and it echoes the signal marks on a phone.
+    const WAVES_SVG = '<svg id="smva-waves" viewBox="0 0 100 100" aria-hidden="true"><path d="M62 30a28 28 0 0 1 0 40"/><path d="M70 22a40 40 0 0 1 0 56"/></svg>';
     const END_IC = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
     const SEND_IC = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
     const CLOSE_IC = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
@@ -635,11 +657,97 @@
             '#smva{position:fixed!important;bottom:22px!important;'+side+':22px!important;z-index:999999!important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}',
             (CONFIG.widgetStyle==="pill" ? '#smva-fab{border:none;cursor:pointer;transition:all .2s;padding:0}' : '#smva-fab{width:54px;height:54px;border-radius:50%;background:'+c+';border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 16px '+c+'66;transition:all .2s;position:relative}'),
             '#smva-fab:hover{transform:scale(1.08);box-shadow:0 6px 20px '+c+'88}#smva-fab:active{transform:scale(.94)}',
+
+            /* ── Two launchers ────────────────────────────────────────────
+               On a bundle plan the two ways in are separate buttons rather
+               than tabs behind one, because a tab nobody opens is a feature
+               nobody knows about. They are deliberately not equals: talking is
+               what this product does that a chat box cannot, so voice is the
+               filled primary and chat is the quiet alternative above it. */
+            '#smva-dock{display:flex;flex-direction:column;align-items:'+(R?'flex-end':'flex-start')+';gap:10px}',
+            // Same size as the primary; the difference in weight comes from
+            // fill against outline, not from scale.
+            '#smva-fab-2{width:54px;height:54px;border-radius:50%;background:#fff;border:1px solid rgba(15,23,42,.10);cursor:pointer;display:flex;align-items:center;justify-content:center;color:'+c+';box-shadow:0 1px 2px rgba(15,23,42,.05),0 8px 20px -6px rgba(15,23,42,.22);transition:transform .2s ease,box-shadow .2s ease;position:relative;padding:0}',
+            '#smva-fab-2:hover{transform:scale(1.09);box-shadow:0 2px 4px rgba(15,23,42,.06),0 12px 24px -6px rgba(15,23,42,.28)}',
+            '#smva-fab-2:active{transform:scale(.94)}',
+            '#smva-fab-2:focus-visible{outline:2px solid '+c+';outline-offset:2px}',
+            // Chat does not ring — it arrives, the way a message does.
+            '#smva-fab-2.smva-nudge{animation:smva-nudge 1.5s cubic-bezier(.22,1,.36,1) 2}',
+            '@keyframes smva-nudge{0%,55%,100%{transform:translateY(0)}18%{transform:translateY(-7px)}34%{transform:translateY(-2px)}}',
+            '#smva-fab-2 .smva-dot{position:absolute;top:2px;'+(R?'right':'left')+':2px;width:9px;height:9px;border-radius:50%;background:'+c+';border:2px solid #fff;opacity:0;transform:scale(.4);transition:opacity .25s ease,transform .35s cubic-bezier(.16,1,.3,1)}',
+            '#smva-fab-2.smva-nudge .smva-dot,#smva-fab-2.smva-waiting .smva-dot{opacity:1;transform:scale(1)}',
+            // The panel and the card both have to clear whichever dock is
+            // under them. The offset is measured from the real dock at build
+            // time (see buildWidget) rather than a fixed number here — a
+            // hardcoded px value went stale the moment the two buttons
+            // changed size and started overlapping the panel by 2px.
+            '#smva.smva-two #smva-panel{bottom:calc(var(--smva-dock-h, 118px) + 12px)}',
+            '#smva.smva-two #smva-call{bottom:calc(var(--smva-dock-h, 118px) + 14px)}',
+            '@media (prefers-reduced-motion:reduce){#smva-fab-2.smva-nudge{animation:none}}',
             '@keyframes smva-pulse{0%,100%{box-shadow:0 4px 16px '+c+'66,0 0 0 0 '+c+'44}70%{box-shadow:0 4px 16px '+c+'66,0 0 0 12px rgba(0,0,0,0)}}',
             '#smva-fab.smva-pulse{animation:smva-pulse 1.8s ease-in-out 3}',
             '#smva-bubble{position:absolute;bottom:64px;right:0;background:#fff;border-radius:12px 12px 0 12px;padding:10px 14px;font-size:13px;color:#111827;box-shadow:0 4px 16px rgba(0,0,0,.12);white-space:normal;max-width:200px;width:max-content;line-height:1.4;opacity:0;transform:translateY(6px);transition:opacity .3s,transform .3s;pointer-events:none}',
             '#smva-bubble.show{opacity:1;transform:translateY(0);pointer-events:auto}',
             '#smva-bubble::after{content:"";position:absolute;bottom:-6px;right:14px;width:12px;height:12px;background:#fff;clip-path:polygon(0 0,100% 0,100% 100%)}',
+
+            /* ── Ringing launcher ─────────────────────────────────────────
+               A real phone rocks on its axis; it does not jitter sideways.
+               Rotation with a decaying amplitude reads as "ringing", and the
+               two-ring-then-rest cadence is the one a phone actually uses. */
+            '#smva-fab .smva-hs-ic{transform-origin:50% 62%}',
+            '#smva-fab.smva-ring .smva-hs-ic{animation:smva-tilt 1.2s cubic-bezier(.36,.07,.19,.97) 2}',
+            '@keyframes smva-tilt{0%,42%,100%{transform:rotate(0)}5%{transform:rotate(-14deg)}11%{transform:rotate(12deg)}17%{transform:rotate(-9deg)}23%{transform:rotate(6deg)}29%{transform:rotate(-3deg)}35%{transform:rotate(1deg)}}',
+            '#smva-waves{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;color:'+c+';opacity:0}',
+            '#smva-waves path{fill:none;stroke:currentColor;stroke-width:5;stroke-linecap:round;opacity:0;transform-origin:50% 50%}',
+            '#smva-fab.smva-ring #smva-waves{opacity:1}',
+            '#smva-fab.smva-ring #smva-waves path{animation:smva-wave 1.2s ease-out 2}',
+            '#smva-fab.smva-ring #smva-waves path:nth-child(2){animation-delay:.14s}',
+            '@keyframes smva-wave{0%{opacity:0;transform:scale(.6)}20%{opacity:.45}100%{opacity:0;transform:scale(1.5)}}',
+
+            /* ── Call card ──────────────────────────────────────────────── */
+            '#smva-call{position:absolute;bottom:72px;'+side+':0;width:274px;max-width:calc(100vw - 44px);background:#fff;border:1px solid rgba(15,23,42,.07);border-radius:18px;padding:14px;text-align:'+(isRTL?'right':'left')+';box-shadow:0 1px 2px rgba(15,23,42,.04),0 16px 36px -12px rgba(15,23,42,.28);opacity:0;transform:translateY(12px) scale(.94);transform-origin:'+(R?'calc(100% - 27px)':'27px')+' 100%;transition:opacity .24s ease,transform .5s cubic-bezier(.16,1,.3,1);pointer-events:none;direction:'+(isRTL?'rtl':'ltr')+'}',
+            '#smva-call.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}',
+            '#smva-call-top{display:flex;align-items:center;gap:11px}',
+            '#smva-call-av{width:40px;height:40px;border-radius:50%;background:'+c+';color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}',
+            '#smva-call-tx{flex:1;min-width:0}',
+            // The eyebrow names what this is. It must never imply someone is
+            // actually calling the visitor — the card is an offer, not a ring.
+            '#smva-call-eyebrow{font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:'+c+';display:block;margin-bottom:2px}',
+            '#smva-call-name{font-size:14px;font-weight:600;color:#0f172a;letter-spacing:-.012em;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+            '#smva-call-sub{font-size:12px;line-height:1.45;color:#64748b;margin:9px 0 12px;display:block}',
+            '#smva-call-acts{display:flex;align-items:center;gap:8px}',
+            '#smva-call-go{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;background:'+c+';color:#fff;border:none;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:filter .18s ease,transform .18s ease}',
+            '#smva-call-go:hover{filter:brightness(1.08);transform:translateY(-1px)}',
+            '#smva-call-go:active{transform:translateY(0)}',
+            '#smva-call-no{background:none;border:none;color:#94a3b8;font-size:12.5px;font-family:inherit;cursor:pointer;padding:9px 4px;border-radius:8px;transition:color .18s ease}',
+            '#smva-call-no:hover{color:#475569}',
+            '#smva-call :focus-visible,#smva-fab:focus-visible{outline:2px solid '+c+';outline-offset:2px}',
+            // 36px is a comfortable mouse target and a poor thumb one; on a
+            // phone both controls grow to the 44px minimum.
+            '@media (max-width:480px){#smva-call-go,#smva-call-no{padding-top:13px;padding-bottom:13px}#smva-call-no{padding-left:10px;padding-right:10px}}',
+
+            /* ── Phones ───────────────────────────────────────────────────
+               The panel was a fixed 360px pinned 22px from one edge, so on a
+               375px screen its far edge sat 7px off-screen and the first
+               character of every line was clipped. Let the whole widget span
+               the viewport instead and size the panel to what is actually
+               there. The dock also turns horizontal: two stacked buttons cost
+               118px of a phone's vertical space, and vertical is the scarce
+               axis in a thumb's reach. */
+            '@media (max-width:480px){',
+            '  #smva{left:12px!important;right:12px!important;bottom:16px!important}',
+            '  #smva-panel{width:auto!important;left:0;right:0;max-height:calc(100vh - 130px)}',
+            '  #smva-dock{flex-direction:row;justify-content:'+(R?'flex-end':'flex-start')+';gap:12px}',
+            '  #smva-call{width:auto!important;max-width:none;left:0;right:0}',
+            // No mobile-specific override needed here: --smva-dock-h is read
+            // from the dock's real rendered height, which is already the
+            // short one-row figure on this breakpoint (the dock itself goes
+            // row instead of column above), so the base .smva-two rules
+            // already come out right.
+            '}',
+            // Motion is the whole point here, so when it is unwelcome the card
+            // still has to work: it simply appears, and nothing moves.
+            '@media (prefers-reduced-motion:reduce){#smva-fab.smva-ring .smva-hs-ic,#smva-fab.smva-ring #smva-waves path{animation:none}#smva-fab.smva-ring #smva-waves{opacity:0}#smva-call{transition:opacity .2s ease}#smva-call,#smva-call.show{transform:none}}',
             '#smva-panel{position:absolute;bottom:66px;'+side+':0;width:360px;background:#fff;border-radius:18px;box-shadow:0 8px 40px rgba(0,0,0,.15);overflow:hidden;display:flex;flex-direction:column;transition:height .3s cubic-bezier(.4,0,.2,1),opacity .2s ease;opacity:1}',
             '#smva-panel.hide{display:none}',
             '.smva-hdr{display:flex;align-items:center;gap:10px;padding:13px 16px;background:'+c+';color:#fff}',
@@ -752,7 +860,11 @@
                 + questions.map(q => '<button class="smva-chip" data-q="' + esc(q) + '">' + esc(q) + '</button>').join('') + '</div>'
             : '';
 
-        const tabsBar = (caps.voice && caps.chat)
+        // The dock now IS the voice/chat picker (separate phone and chat
+        // buttons). A second picker inside the panel would just repeat that
+        // choice, so it only remains for 'pill' — the one style with a single
+        // external launcher and therefore no other way to switch.
+        const tabsBar = (caps.voice && caps.chat && CONFIG.widgetStyle === 'pill')
             ? '<div class="smva-tabs"><button class="smva-tab-btn ' + (activeTab==='voice'?'active':'') + '" id="smva-tab-voice">' + MIC.replace('18','14') + ' ' + t('voice') + '</button><button class="smva-tab-btn ' + (activeTab==='chat'?'active':'') + '" id="smva-tab-chat">' + CHAT_IC.replace('18','14') + ' ' + t('chat') + '</button></div>'
             : '';
 
@@ -805,29 +917,91 @@
             + '</div>'
             + (CONFIG.widgetStyle === 'pill'
                 ? '<button id="smva-fab" style="display:flex!important;align-items:center;gap:10px;background:#fff!important;border-radius:50px;padding:8px 14px 8px 8px;box-shadow:0 2px 16px rgba(0,0,0,0.12);cursor:pointer;min-width:200px;position:fixed!important;bottom:22px!important;'+side+':22px!important;z-index:999999!important"><div style="width:36px;height:36px;border-radius:50%;background:'+c+';display:flex;align-items:center;justify-content:center">' + AI_IC + '</div><span style="flex:1;font-size:13px;font-weight:500;color:#374151">' + esc(CONFIG.pillText) + '</span><div style="width:32px;height:32px;border-radius:50%;background:'+c+';display:flex;align-items:center;justify-content:center">' + CHAT_IC.replace('18','15') + '</div></button>'
-                : '<button id="smva-fab">' + AI_IC + '</button>');
+                // The dock carries one button per capability: a voice-only plan
+                // gets a handset, a chat-only plan a bubble, a bundle both.
+                : '<div id="smva-dock">'
+                    + (caps.voice && caps.chat
+                        ? '<button id="smva-fab-2" type="button" aria-label="' + esc(t('start_chat')) + '">' + CHAT_IC.replace('width="18" height="18"', 'width="21" height="21"') + '<span class="smva-dot"></span></button>'
+                        : '')
+                    + '<button id="smva-fab" type="button" aria-label="' + esc(caps.voice ? t('start_call') : t('start_chat')) + '">'
+                        // A chat-only plan gets the same bubble the secondary
+                        // button uses, so the mark for "chat" is one thing
+                        // everywhere rather than two.
+                        + (caps.voice ? PHONE_IC + WAVES_SVG : CHAT_IC.replace('width="18" height="18"', 'width="22" height="22"'))
+                    + '</button>'
+                  + '</div>');
 
         document.body.appendChild(w);
+        if (CONFIG.widgetStyle !== 'pill' && caps.voice && caps.chat) {
+            w.classList.add('smva-two');
+            // Measured, not guessed: border widths, box-sizing and the
+            // desktop-stacked vs. mobile-side-by-side dock are all real by
+            // this point (the dock is already in the DOM), so this always
+            // matches whatever actually rendered instead of drifting out of
+            // sync the next time a button's size changes.
+            var dockEl = h('smva-dock');
+            if (dockEl) w.style.setProperty('--smva-dock-h', dockEl.offsetHeight + 'px');
+        }
 
-        h('smva-fab').addEventListener('click', function() {
+        /** Both launchers open the same panel; they differ only in which side
+         *  of it the visitor lands on. */
+        function openPanel(tab) {
             var panel = h('smva-panel');
-            panel.classList.toggle('hide');
-            if (!panel.classList.contains('hide') && activeTab === 'chat') {
+            if (!panel) return;
+            var hidden    = panel.classList.contains('hide');
+            var switching = !!tab && caps.voice && caps.chat && activeTab !== tab;
+
+            // Pressing the launcher you are already on closes the panel.
+            // Pressing the other one moves you there rather than closing it.
+            if (!hidden && !switching) {
+                panel.classList.add('hide');
+                panel.style.height = '';
+                return;
+            }
+            if (switching) switchTab(tab);
+            panel.classList.remove('hide');
+            if (activeTab === 'chat') {
                 panel.style.height = '520px';
                 var msgs = h('smva-msgs');
                 if (msgs) setTimeout(function(){ msgs.scrollTop = msgs.scrollHeight; }, 50);
             }
+        }
+
+        h('smva-fab').addEventListener('click', function() {
+            if (!caps.voice) { openPanel('chat'); return; }
+            var panel = h('smva-panel');
+            // "Already looking at the live voice tab" is the one case this
+            // click means close (handled inside openPanel) rather than dial —
+            // covers both a fresh open and switching over from chat.
+            var closing = panel && !panel.classList.contains('hide') && activeTab === 'voice';
+            openPanel('voice');
+            // The handset dials on the spot. Landing on a screen whose only
+            // content is another "start call" button makes the visitor ask
+            // twice for the one thing they already asked for. This is a real
+            // click, so the mic prompt is allowed to fire from here. Guarded
+            // both ways: a call already running must not be restarted (the ✕
+            // hides the panel without hanging up, so voiceState can still be
+            // 'active' behind a closed panel), and the close gesture above
+            // must never dial.
+            if (!closing && voiceState === 'idle') startCall();
         });
+        if (h('smva-fab-2')) {
+            h('smva-fab-2').addEventListener('click', function() {
+                h('smva-fab-2').classList.remove('smva-waiting');
+                openPanel('chat');
+            });
+        }
         h('smva-x').addEventListener('click', function() {
             var panel = h('smva-panel');
             panel.classList.add('hide');
             panel.style.height = '';
         });
 
-        if (caps.voice && caps.chat) {
-            h('smva-tab-voice').addEventListener('click', () => switchTab('voice'));
-            h('smva-tab-chat').addEventListener('click',  () => switchTab('chat'));
-        }
+        // Only present for 'pill' now (see tabsBar above) — guarded rather
+        // than gated on widgetStyle again, so this stays correct if that
+        // condition ever changes on just one side.
+        if (h('smva-tab-voice')) h('smva-tab-voice').addEventListener('click', () => switchTab('voice'));
+        if (h('smva-tab-chat'))  h('smva-tab-chat').addEventListener('click',  () => switchTab('chat'));
 
         if (caps.voice) {
             h('smva-start').addEventListener('click', startCall);
@@ -932,8 +1106,10 @@
     function switchTab(tab) {
         if (!caps.voice || !caps.chat) return;
         activeTab = tab;
-        h('smva-tab-voice').classList.toggle('active', tab === 'voice');
-        h('smva-tab-chat').classList.toggle('active', tab === 'chat');
+        // Not present outside 'pill' (see tabsBar) — the panel's own content
+        // (voice orb vs. chat thread) already makes the mode unambiguous.
+        if (h('smva-tab-voice')) h('smva-tab-voice').classList.toggle('active', tab === 'voice');
+        if (h('smva-tab-chat'))  h('smva-tab-chat').classList.toggle('active', tab === 'chat');
         h('smva-voice-tab').classList.toggle('active', tab === 'voice');
         h('smva-chat-tab').classList.toggle('active', tab === 'chat');
         var panel = h('smva-panel');
@@ -1104,6 +1280,10 @@
                             if (sendBtn) sendBtn.disabled = false;
                             panel.classList.add('show');
                             setTimeout(() => input.focus(), 100);
+                            // Silence the mic for as long as the prompt is open. Left
+                            // live, ambient sound while the visitor types becomes a
+                            // second, competing account of the same turn.
+                            micMuted = true;
                         }
 
                     // ── Feature B: backend confirmed receipt → re-enable input ──
@@ -1123,6 +1303,9 @@
                         if (vs && voiceState === 'active') vs.textContent = data.message || t('on_call');
                         window.SMVAAudioDebug.lastTextInputAckAt = Date.now();
                         window.SMVAAudioDebug.lastTextInputAckType = data.type;
+                        // Submitted (or the backend moved on without one) — the mic
+                        // was only ever muted for the duration of this prompt.
+                        micMuted = false;
 
                     } else if (data.type === 'error' && data.code === 'quota_exceeded') {
                         endCall();
@@ -1183,6 +1366,7 @@
         traceCallEnd(reason || (agentEndedCall ? 'agent_ended' : 'user_ended'));
         if (agentEndedCall) { const panel = h('smva-panel'); if (panel) panel.classList.add('hide'); agentEndedCall = false; }
         voiceState = 'idle';
+        micMuted = false;
         lastCallEnd = Date.now();
         setSt(t('ready'));
         const vs = h('smva-voice-status'); if (vs) vs.textContent = t('ready');
@@ -1237,6 +1421,7 @@
 
         const handleCapturedAudio = (pcmBuffer, maxVal, samplesLength) => {
             if (!ws || ws.readyState !== WebSocket.OPEN || !pcmBuffer) return;
+            if (micMuted) return;
             window.SMVAAudioDebug.chunksSent += 1;
             window.SMVAAudioDebug.lastChunkLength = samplesLength || (pcmBuffer.byteLength / 2);
             window.SMVAAudioDebug.lastMaxVal = maxVal || 0;
@@ -1891,19 +2076,152 @@
     buildWidget();
     injectThemeStyles(CONFIG.widgetTheme, CONFIG.primaryColor);
 
-    setTimeout(function() {
+    /* ── Attention: the launcher rings ────────────────────────────────────
+       A chat widget that pulses is wallpaper by now. This one is a phone and
+       the visitor can genuinely talk to it, so it rings like a phone and
+       offers a card. Everything below exists to keep that from becoming
+       obnoxious: it rings twice at most, forgets nothing the visitor tells it,
+       and a dismissal ends it for the whole session. */
+    var TEASE_KEY = 'smva_teased';
+    var teaseTimer = null;
+
+    /** Two soft notes, synthesised so no audio file ships with the plugin.
+     *  Opt-in and default off: a business site that makes noise unprompted
+     *  reads as cheap, and most visitors have not asked for it. Browsers also
+     *  refuse to play anything before a real gesture, so this stays silent on
+     *  a page nobody has touched — by design, not by accident. */
+    function chime() {
+        if (!CONFIG.teaseSound) return;
+        try {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return;
+            var ac = new AC();
+            if (ac.state === 'suspended') { ac.close(); return; }
+            [[880, 0], [1174.66, 0.14]].forEach(function (n) {
+                var o = ac.createOscillator(), g = ac.createGain(), at = ac.currentTime + n[1];
+                o.type = 'sine'; o.frequency.value = n[0];
+                g.gain.setValueAtTime(0, at);
+                g.gain.linearRampToValueAtTime(0.05, at + 0.02);
+                g.gain.exponentialRampToValueAtTime(0.0001, at + 0.5);
+                o.connect(g); g.connect(ac.destination); o.start(at); o.stop(at + 0.55);
+            });
+            setTimeout(function () { try { ac.close(); } catch (e) {} }, 1200);
+        } catch (e) {}
+    }
+
+    function endTease(permanent) {
+        var fab = h('smva-fab'), fab2 = h('smva-fab-2'), card = h('smva-call');
+        if (fab)  fab.classList.remove('smva-ring');
+        if (fab2) fab2.classList.remove('smva-nudge', 'smva-waiting');
+        if (card) card.classList.remove('show');
+        if (teaseTimer) { clearTimeout(teaseTimer); teaseTimer = null; }
+        if (permanent) { teaseStep = 99; try { sessionStorage.setItem(TEASE_KEY, '1'); } catch (e) {} }
+    }
+
+    /* The order is the argument: offer the call first, because talking is the
+       thing worth discovering, and only then offer typing as the easier way
+       out. Two moments total — after that the dock stays quiet for good. */
+    var teaseStep = 0;
+    var teaseQueue = [];
+    if (caps.voice) teaseQueue.push('voice');
+    if (caps.chat)  teaseQueue.push('chat');
+
+    function tease() {
+        var panel = h('smva-panel'), card = h('smva-call');
+        var mode  = teaseQueue[teaseStep];
+        if (!card || !mode) return;
+        // Never talk over something the visitor is already doing.
+        if (panel && !panel.classList.contains('hide')) return;
+        if (voiceState && voiceState !== 'idle') return;
+
+        var isVoice = mode === 'voice';
+        var fab = isVoice ? h('smva-fab') : (h('smva-fab-2') || h('smva-fab'));
+        if (!fab) return;
+        teaseStep += 1;
+        setCardMode(mode);
+
+        if (isVoice) {
+            fab.classList.add('smva-ring');
+            chime();
+            setTimeout(function () { fab.classList.remove('smva-ring'); }, 2600);
+        } else {
+            fab.classList.add('smva-nudge');
+            setTimeout(function () {
+                fab.classList.remove('smva-nudge');
+                // The dot stays behind as a quiet marker once the card is gone.
+                fab.classList.add('smva-waiting');
+            }, 3100);
+        }
+        setTimeout(function () { card.classList.add('show'); }, 420);
+
+        // Ignored is not refused: retract, wait, then make the other offer.
+        teaseTimer = setTimeout(function () {
+            card.classList.remove('show');
+            if (teaseQueue[teaseStep]) teaseTimer = setTimeout(tease, 22000);
+        }, 13000);
+    }
+
+    /** One card, re-dressed for whichever offer is being made. Rebuilding it
+     *  per turn would restart the entrance animation mid-flight. */
+    var cardMode = 'voice';
+    function setCardMode(mode) {
+        var card = h('smva-call');
+        if (!card) return;
+        cardMode = mode;
+        var isVoice = mode === 'voice';
+        var mark    = isVoice ? PHONE_IC : CHAT_IC;
+        var small   = mark.replace(/width="2[02]" height="2[02]"/, 'width="15" height="15"')
+                          .replace(/width="18" height="18"/, 'width="15" height="15"');
+        h('smva-call-av').innerHTML      = mark;
+        h('smva-call-eyebrow').textContent = isVoice ? t('voice_assistant') : t('chat');
+        h('smva-call-go').innerHTML      = small + '<span>' + esc(isVoice ? t('start_call') : t('start_chat')) + '</span>';
+        card.setAttribute('aria-label', isVoice ? t('voice_assistant') : t('chat'));
+    }
+
+    (function buildCallCard() {
         var fab = h('smva-fab');
-        var panel = h('smva-panel');
-        if (!fab || (panel && !panel.classList.contains('hide'))) return;
-        var bubble = document.createElement('div');
-        bubble.id = 'smva-bubble';
-        bubble.textContent = CONFIG.greeting || 'Hi! Need help?';
-        fab.parentElement.appendChild(bubble);
-        fab.classList.add('smva-pulse');
-        setTimeout(function() { bubble.classList.add('show'); }, 300);
-        setTimeout(function() { bubble.classList.remove('show'); fab.classList.remove('smva-pulse'); }, 6000);
-        fab.addEventListener('click', function() { bubble.classList.remove('show'); }, { once: true });
-    }, 3000);
+        if (!fab || !teaseQueue.length) return;
+        try { if (sessionStorage.getItem(TEASE_KEY)) return; } catch (e) {}
+
+        var card = document.createElement('div');
+        card.id = 'smva-call';
+        card.setAttribute('role', 'dialog');
+        card.innerHTML = ''
+            + '<div id="smva-call-top">'
+                + '<div id="smva-call-av"></div>'
+                + '<div id="smva-call-tx">'
+                    + '<span id="smva-call-eyebrow"></span>'
+                    + '<span id="smva-call-name">' + esc(CONFIG.businessName) + '</span>'
+                + '</div>'
+            + '</div>'
+            + '<span id="smva-call-sub">' + esc(CONFIG.greeting || '') + '</span>'
+            + '<div id="smva-call-acts">'
+                + '<button id="smva-call-go" type="button"></button>'
+                + '<button id="smva-call-no" type="button">' + esc(t('not_now')) + '</button>'
+            + '</div>';
+        // Must land in #smva (the positioned ancestor the card is offset
+        // against), and beside the dock rather than inside it — the dock is a
+        // column and would lay the card out as a third button. The pill style
+        // has no dock, so the fab's own parent is already #smva.
+        (h('smva-dock') || fab).parentElement.appendChild(card);
+        setCardMode(teaseQueue[0]);
+
+        h('smva-call-go').addEventListener('click', function () {
+            var wantVoice = cardMode === 'voice';
+            endTease(true);
+            var panel = h('smva-panel');
+            if (!panel) return;
+            if (caps.voice && caps.chat) switchTab(wantVoice ? 'voice' : 'chat');
+            panel.classList.remove('hide');
+            if (wantVoice) { startCall(); }
+            else { panel.style.height = '520px'; }
+        });
+        h('smva-call-no').addEventListener('click', function () { endTease(true); });
+        fab.addEventListener('click', function () { endTease(true); });
+        if (h('smva-fab-2')) h('smva-fab-2').addEventListener('click', function () { endTease(true); });
+
+        teaseTimer = setTimeout(tease, 4000);
+    })();
 
     if (CONFIG.greeting && caps.chat) { addChatMessage('bot', CONFIG.greeting); }
 

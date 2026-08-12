@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SMVA launcher preview</title>
+<style>
+  :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+         color:var(--ink); background:#f8fafc; }
+  .wrap { max-width:720px; margin:0 auto; padding:56px 24px 220px; }
+  h1 { font-size:26px; letter-spacing:-.02em; margin:0 0 6px; }
+  p.lede { color:var(--muted); margin:0 0 28px; }
+  .panel { background:#fff; border:1px solid var(--line); border-radius:14px; padding:18px 20px; margin-bottom:14px; }
+  .panel h2 { font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:0 0 12px; }
+  button { font:inherit; font-size:13px; padding:8px 13px; border-radius:9px; border:1px solid var(--line);
+           background:#fff; cursor:pointer; margin:0 6px 6px 0; }
+  button:hover { border-color:#94a3b8; }
+  button.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  code { background:#f1f5f9; padding:1px 5px; border-radius:4px; font-size:13px; }
+  .note { font-size:13px; color:var(--muted); margin-top:10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Launcher preview</h1>
+  <p class="lede">Front-end only. No licence, no backend — the ring, the card and the motion are all
+  client-side, so this shows exactly what a visitor sees. Pressing <em>Start Call</em> will fail to
+  connect, which is expected here.</p>
+
+  <div class="panel">
+    <h2>Replay</h2>
+    <button onclick="reset()">Ring again</button>
+    <button onclick="document.getElementById('smva-fab').click()">Open panel</button>
+    <div class="note">The real widget rings once at 4s, retracts at 17s, tries once more at ~62s,
+    then stays quiet. A dismissal silences it for the whole session.</div>
+  </div>
+
+  <div class="panel">
+    <h2>Sound</h2>
+    <button id="sndBtn" class="on" onclick="toggleSound()">Sound: on</button>
+    <div class="note">On by default now. Browsers block audio until you have clicked somewhere on the
+    page, so click anywhere first, then <em>Ring again</em>, and you will hear the two-note chime.
+    A site can still switch it off with <code>teaseSound: false</code>.</div>
+  </div>
+
+  <div class="panel">
+    <h2>Position &amp; language</h2>
+    <button onclick="boot({position:'bottom-right'})">Right</button>
+    <button onclick="boot({position:'bottom-left'})">Left</button>
+    <button onclick="boot({lang:'en'})">English</button>
+    <button onclick="boot({lang:'fa'})">فارسی</button>
+  </div>
+
+  <div class="panel">
+    <h2>Brand colour</h2>
+    <button onclick="boot({primaryColor:'#2563eb'})">Blue</button>
+    <button onclick="boot({primaryColor:'#0f766e'})">Teal</button>
+    <button onclick="boot({primaryColor:'#b91c1c'})">Red</button>
+    <button onclick="boot({primaryColor:'#7c3aed'})">Violet</button>
+    <div class="note">Every accent in the card derives from this one value, because a plugin cannot
+    assume anything about the host site's palette.</div>
+  </div>
+
+  <div class="panel">
+    <h2>Reduced motion</h2>
+    <div class="note">Set your OS to “reduce motion” and reload: the tilt and waves stop, and the
+    card simply fades in.</div>
+  </div>
+</div>
+
+<script>
+var soundOn = true;   // matches the shipped default
+var opts = {};
+
+function baseConfig() {
+  return {
+    apiUrl:'https://example.invalid', wsUrl:'wss://example.invalid',
+    internalToken:'preview-token', licenseKey:'preview',
+    position:'bottom-right', primaryColor:'#2563eb', lang:'en',
+    businessName:'ProWise HVAC', greeting:'Ask about pricing or book a free visit.',
+    widgetStyle:'fab', widgetMode:'full', widgetTheme:'classic',
+    voiceEnabled:true, chatEnabled:true, defaultTab:'voice',
+    suggestedQuestions:[], pluginVersion:'preview',
+    teaseSound: soundOn
+  };
+}
+
+function boot(over) {
+  Object.assign(opts, over || {});
+  document.querySelectorAll('#smva, #smva-fab').forEach(function(n){ n.remove(); });
+  document.querySelectorAll('style').forEach(function(s){
+    if (s.textContent.indexOf('#smva-fab') > -1 || s.textContent.indexOf('#smva-call') > -1) s.remove();
+  });
+  try { sessionStorage.removeItem('smva_teased'); } catch(e) {}
+  window.smvaConfig = Object.assign(baseConfig(), opts);
+  var s = document.createElement('script');
+  s.src = '/wp-content/plugins/studiometa-voice-ai/assets/widget.js?t=' + Date.now();
+  document.body.appendChild(s);
+}
+
+function reset() { boot({}); }
+
+function toggleSound() {
+  soundOn = !soundOn;
+  var b = document.getElementById('sndBtn');
+  b.textContent = 'Sound: ' + (soundOn ? 'on' : 'off');
+  b.className = soundOn ? 'on' : '';
+  boot({});
+}
+
+boot({});
+</script>
+</body>
+</html>
