@@ -1236,6 +1236,67 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         </div>
     </div>
 
+    <?php
+    // Email &amp; Recall. Both controls save together through one endpoint, which
+    // is why they share a card rather than sitting on separate tabs — a save
+    // from one would clear the other.
+    $smva_info_docs_json = get_option( 'smva_info_documents', '[]' );
+    $smva_caller_memory  = get_option( 'smva_caller_memory_enabled', '0' ) === '1';
+    $smva_info_docs_arr  = json_decode( $smva_info_docs_json, true );
+    if ( ! is_array( $smva_info_docs_arr ) ) {
+        $smva_info_docs_arr = array();
+    }
+    ?>
+    <div class="smva-card" style="margin-top:16px">
+        <div class="smva-card-header"><h2 class="smva-card-title">Email a Caller</h2></div>
+        <p class="smva-desc">Write the things your agent is allowed to email someone who asks for them on a call &mdash; a price list, a brochure, your opening hours. The agent will only ever offer what you list here, and it will never claim it sent something unless it actually went out.</p>
+
+        <div id="smva-infodoc-list"></div>
+
+        <div style="margin-top:12px;text-align:center">
+            <button type="button" id="smva-infodoc-add" class="smva-btn smva-btn-primary" style="flex:none">Add Document +</button>
+        </div>
+
+        <!-- Add / Edit Document Modal -->
+        <div id="smva-infodoc-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:999999;align-items:center;justify-content:center">
+            <div style="background:#fff;border-radius:14px;padding:28px;width:600px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)">
+                <h2 style="font-size:18px;font-weight:700;margin:0 0 20px;text-align:center" id="smva-infodoc-modal-title">Add Document</h2>
+                <div class="smva-field smva-field-full" style="margin-bottom:14px">
+                    <label style="text-align:right;display:block">Title <span style="color:#9ca3af;font-weight:400">(the agent says this out loud)</span></label>
+                    <input type="text" id="smva-infodoc-title" class="smva-input" placeholder="e.g. Price list">
+                </div>
+                <div class="smva-field smva-field-full" style="margin-bottom:14px">
+                    <label style="text-align:right;display:block">Also matches <span style="color:#9ca3af;font-weight:400">(comma separated &mdash; other ways callers ask for this)</span></label>
+                    <input type="text" id="smva-infodoc-keywords" class="smva-input" placeholder="pricing, cost, how much, rates">
+                </div>
+                <div class="smva-field smva-field-full" style="margin-bottom:6px">
+                    <label style="text-align:right;display:block">What to send <span style="color:#9ca3af;font-weight:400">(plain text &mdash; line breaks are kept)</span></label>
+                    <textarea id="smva-infodoc-body" class="smva-textarea" rows="10" placeholder="Starter &mdash; $39/month&#10;100 minutes included&#10;&#10;Pro &mdash; $79/month&#10;300 minutes included"></textarea>
+                </div>
+                <div style="display:flex;gap:10px;margin-top:20px">
+                    <button type="button" id="smva-infodoc-modal-save" class="smva-btn smva-btn-primary">Save Document</button>
+                    <button type="button" id="smva-infodoc-modal-cancel" class="smva-btn" style="background:#f3f4f6;color:#374151">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid #e5e7eb">
+            <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;margin:0">
+                <input type="checkbox" id="smva-caller-memory" style="margin-top:3px" <?php checked( $smva_caller_memory ); ?>>
+                <span>
+                    <span style="font-weight:600;display:block">Recognise returning callers <span style="color:#9ca3af;font-weight:400">(phone calls only)</span></span>
+                    <span style="font-size:12px;color:#6b7280">Matches the number they are calling from against past enquiries, so the agent has context. It will never greet someone by name before they say who they are &mdash; the person holding a phone today may not be who called last time. Leave this off if your callers share a line.</span>
+                </span>
+            </label>
+        </div>
+
+        <input type="hidden" id="smva-infodoc-json" value="<?php echo esc_attr( wp_json_encode( $smva_info_docs_arr ) ); ?>">
+        <div class="smva-card-footer" style="margin-top:12px">
+            <button type="button" id="smva-infodoc-save" class="smva-btn smva-btn-primary">Save</button>
+            <span id="smva-infodoc-msg" class="smva-save-msg"></span>
+        </div>
+    </div>
+
     <?php elseif ( $active_tab === 'history' ) : ?>
 
     <div class="smva-card">

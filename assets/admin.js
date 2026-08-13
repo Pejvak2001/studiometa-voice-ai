@@ -1702,6 +1702,370 @@ jQuery(function($) {
   })();
 
 
+  // ── Transfer to a human ───────────────────────────────────────────────────
+  // Departments live on the backend beside the rest of the agent config, so
+  // this only ever sends a proposal: whatever the backend accepts after its own
+  // E.164 validation is what the agent will actually dial.
+  (function () {
+    var card = document.getElementById('smva-transfer-card');
+    if (!card) return; // Not on the Integrations tab, or no number connected.
+
+    var listEl    = document.getElementById('smva-transfer-list');
+    var bodyEl    = document.getElementById('smva-transfer-body');
+    var enabledEl = document.getElementById('smva-transfer-enabled');
+    var timeoutEl = document.getElementById('smva-transfer-timeout');
+    var saveBtn   = document.getElementById('smva-transfer-save');
+    var msg       = document.getElementById('smva-transfer-msg');
+
+    var E164 = /^\+[1-9]\d{6,14}$/;
+
+    var departments = [];
+    try {
+      var seed = JSON.parse(document.getElementById('smva-transfer-json').value || '{}');
+      if (seed && Array.isArray(seed.departments)) departments = seed.departments;
+    } catch (_) { departments = []; }
+
+    function setMsg(kind, text) {
+      if (!msg) return;
+      msg.className   = kind ? 'smva-int-msg ' + kind : 'smva-int-msg';
+      msg.textContent = text || '';
+    }
+
+    // textContent, never innerHTML — these strings came back from the backend
+    // and end up next to a phone number the operator is about to trust.
+    function field(row, cls, label, placeholder, value) {
+      var wrap = document.createElement('label');
+      wrap.className = 'smva-transfer-field';
+      var span = document.createElement('span');
+      span.className = 'smva-phone-label';
+      span.textContent = label;
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'smva-int-token-input ' + cls;
+      input.placeholder = placeholder;
+      input.value = value || '';
+      wrap.appendChild(span);
+      wrap.appendChild(input);
+      row.appendChild(wrap);
+      return input;
+    }
+
+    function render() {
+      listEl.textContent = '';
+
+      if (!departments.length) {
+        var empty = document.createElement('p');
+        empty.className = 'smva-transfer-empty';
+        empty.textContent = 'No departments yet. Add one to let the agent transfer callers.';
+        listEl.appendChild(empty);
+        return;
+      }
+
+      departments.forEach(function (dept, i) {
+        var row = document.createElement('div');
+        row.className = 'smva-transfer-row';
+
+        var head = document.createElement('div');
+        head.className = 'smva-transfer-row-head';
+        var title = document.createElement('strong');
+        title.textContent = dept.name || 'New department';
+        var remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'smva-btn smva-btn-ghost smva-btn-sm';
+        remove.textContent = 'Remove';
+        remove.addEventListener('click', function () { departments.splice(i, 1); render(); });
+        head.appendChild(title);
+        head.appendChild(remove);
+        row.appendChild(head);
+
+        var grid = document.createElement('div');
+        grid.className = 'smva-transfer-grid';
+        var nameIn = field(grid, 'smva-transfer-name', 'Department', 'Sales', dept.name);
+        var numIn  = field(grid, 'smva-transfer-number', 'Phone number', '+15551234567', dept.number);
+        row.appendChild(grid);
+
+        var descIn = field(row, 'smva-transfer-desc', 'When to transfer here',
+          'pricing, quotes, new orders', dept.description);
+        var hoursIn = field(row, 'smva-transfer-hours', 'Hours (optional)',
+          'Mon-Fri 9-5', dept.hours);
+
+        nameIn.addEventListener('input',  function () { dept.name = this.value; title.textContent = this.value || 'New department'; });
+        numIn.addEventListener('input',   function () { dept.number = this.value; });
+        descIn.addEventListener('input',  function () { dept.description = this.value; });
+        hoursIn.addEventListener('input', function () { dept.hours = this.value; });
+
+        listEl.appendChild(row);
+      });
+    }
+
+    enabledEl.addEventListener('change', function () {
+      bodyEl.classList.toggle('smva-hidden', !this.checked);
+    });
+
+    document.getElementById('smva-transfer-add').addEventListener('click', function () {
+      // The backend caps this at 8; stopping here keeps the message specific
+      // instead of silently dropping the ninth on save.
+      if (departments.length >= 8) {
+        setMsg('err', 'You can configure up to 8 departments.');
+        return;
+      }
+      setMsg('', '');
+      departments.push({ name: '', number: '', description: '', hours: '' });
+      render();
+    });
+
+    saveBtn.addEventListener('click', function () {
+      var label = saveBtn.querySelector('.smva-transfer-label-text');
+      var spin  = saveBtn.querySelector('.smva-transfer-spinner');
+      var wantEnabled = enabledEl.checked;
+
+      var clean = [];
+      for (var i = 0; i < departments.length; i++) {
+        var d = departments[i];
+        var name   = (d.name || '').trim();
+        var number = (d.number || '').replace(/[\s()\-.]/g, '');
+        if (!name && !number) continue; // an untouched blank row is not an error
+        if (!name) { setMsg('err', 'Every department needs a name.'); return; }
+        // Mirrors the backend check so a typo is caught here rather than
+        // silently vanishing from the saved list.
+        if (!E164.test(number)) {
+          setMsg('err', '"' + name + '" needs a phone number in E.164 format, e.g. +15551234567.');
+          return;
+        }
+        clean.push({
+          name: name,
+          number: number,
+          description: (d.description || '').trim(),
+          hours: (d.hours || '').trim(),
+        });
+      }
+
+      if (wantEnabled && !clean.length) {
+        setMsg('err', 'Add at least one department, or turn transfers off.');
+        return;
+      }
+
+      var timeout = parseInt(timeoutEl.value, 10);
+      if (!isFinite(timeout)) timeout = 25;
+      timeout = Math.min(60, Math.max(10, timeout));
+      timeoutEl.value = timeout;
+
+      label.classList.add('smva-hidden');
+      spin.classList.remove('smva-hidden');
+      saveBtn.disabled = true;
+      setMsg('', '');
+
+      fetch(smvaAdmin.ajaxUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          action: 'smva_save_transfer',
+          nonce: smvaAdmin.nonce,
+          transfer_config: JSON.stringify({
+            enabled: wantEnabled,
+            ring_timeout: timeout,
+            departments: clean,
+          }),
+        }),
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.success) {
+          // Re-seed from what the backend actually stored, so a department it
+          // rejected does not keep showing here as if it were live.
+          if (data.data && Array.isArray(data.data.departments)) {
+            departments = data.data.departments;
+            render();
+          }
+          setMsg('ok', 'Transfer settings saved.');
+        } else {
+          setMsg('err', (data.data && data.data.message) || 'Could not save. Please try again.');
+        }
+      })
+      .catch(function () { setMsg('err', 'Network error. Please try again.'); })
+      .finally(function () {
+        label.classList.remove('smva-hidden');
+        spin.classList.add('smva-hidden');
+        saveBtn.disabled = false;
+      });
+    });
+
+    render();
+  })();
+
+
+  // ── Email a caller, and returning-caller recall ────────────────────────────
+  // The documents live on the backend: it composes the email mid-call and its
+  // answer is what decides whether the agent may tell the caller anything was
+  // sent. What is edited here is only ever a proposal.
+  (function () {
+    var listEl = document.getElementById('smva-infodoc-list');
+    if (!listEl) return; // Not on the Automation tab.
+
+    var jsonEl   = document.getElementById('smva-infodoc-json');
+    var modal    = document.getElementById('smva-infodoc-modal');
+    var titleEl  = document.getElementById('smva-infodoc-title');
+    var kwEl     = document.getElementById('smva-infodoc-keywords');
+    var bodyEl   = document.getElementById('smva-infodoc-body');
+    var msgEl    = document.getElementById('smva-infodoc-msg');
+    var saveBtn  = document.getElementById('smva-infodoc-save');
+    var memoryEl = document.getElementById('smva-caller-memory');
+
+    var docs = [];
+    var editing = -1; // -1 means "adding", otherwise the index being edited.
+
+    try { docs = JSON.parse(jsonEl.value) || []; } catch (e) { docs = []; }
+    if (!Array.isArray(docs)) docs = [];
+
+    function post(action, data) {
+      return fetch(smvaAdmin.ajaxUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(Object.assign({ action: action, nonce: smvaAdmin.nonce }, data || {})),
+      }).then(function (r) { return r.json(); });
+    }
+
+    function setMsg(ok, text) {
+      msgEl.textContent = text || '';
+      msgEl.style.color = text ? (ok ? '#059669' : '#dc2626') : '';
+    }
+
+    function render() {
+      if (!docs.length) {
+        listEl.innerHTML = '<p style="color:#9ca3af;font-size:13px;text-align:center;padding:16px 0">' +
+          'Nothing yet. Until you add something, the agent will not offer to email anyone.</p>';
+        return;
+      }
+      listEl.innerHTML = '';
+      docs.forEach(function (doc, i) {
+        var item = document.createElement('div');
+        item.className = 'smva-tool-item';
+        item.style.cssText = 'background:#f9fafb;border-radius:8px;padding:12px;margin-bottom:8px';
+
+        var head = document.createElement('div');
+        head.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:4px';
+
+        var name = document.createElement('code');
+        name.style.cssText = 'font-size:13px;font-weight:600';
+        name.textContent = doc.title || '';
+
+        var actions = document.createElement('div');
+        actions.style.cssText = 'display:flex;gap:6px';
+
+        var edit = document.createElement('button');
+        edit.type = 'button';
+        edit.className = 'smva-btn';
+        edit.style.cssText = 'padding:4px 10px;font-size:12px;flex:none;background:#e0f2fe;color:#0369a1';
+        edit.textContent = 'Edit';
+        edit.addEventListener('click', function () { openModal(i); });
+
+        var del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'smva-btn smva-btn-danger';
+        del.style.cssText = 'padding:4px 10px;font-size:12px;flex:none';
+        del.textContent = 'Remove';
+        del.addEventListener('click', function () {
+          docs.splice(i, 1);
+          render();
+          setMsg(true, 'Removed — press Save to apply.');
+        });
+
+        actions.appendChild(edit);
+        actions.appendChild(del);
+        head.appendChild(name);
+        head.appendChild(actions);
+
+        var preview = document.createElement('div');
+        preview.style.cssText = 'font-size:12px;color:#6b7280;white-space:pre-wrap';
+        var body = String(doc.body || '');
+        preview.textContent = body.length > 140 ? body.slice(0, 140) + '…' : body;
+
+        item.appendChild(head);
+        item.appendChild(preview);
+
+        if (doc.keywords && doc.keywords.length) {
+          var kw = document.createElement('div');
+          kw.style.cssText = 'font-size:11px;color:#9ca3af;margin-top:6px';
+          kw.textContent = 'also matches: ' + doc.keywords.join(', ');
+          item.appendChild(kw);
+        }
+        listEl.appendChild(item);
+      });
+    }
+
+    function openModal(index) {
+      editing = typeof index === 'number' ? index : -1;
+      var doc = editing >= 0 ? docs[editing] : { title: '', keywords: [], body: '' };
+      document.getElementById('smva-infodoc-modal-title').textContent =
+        editing >= 0 ? 'Edit Document' : 'Add Document';
+      titleEl.value = doc.title || '';
+      kwEl.value = (doc.keywords || []).join(', ');
+      bodyEl.value = doc.body || '';
+      modal.style.display = 'flex';
+      titleEl.focus();
+    }
+
+    function closeModal() { modal.style.display = 'none'; editing = -1; }
+
+    document.getElementById('smva-infodoc-add').addEventListener('click', function () { openModal(); });
+    document.getElementById('smva-infodoc-modal-cancel').addEventListener('click', closeModal);
+
+    document.getElementById('smva-infodoc-modal-save').addEventListener('click', function () {
+      var title = titleEl.value.trim();
+      var body  = bodyEl.value.trim();
+      // The backend drops a document missing either, which would look like the
+      // save silently ignoring it. Say so here instead.
+      if (!title || !body) {
+        window.alert('A document needs both a title and something to send.');
+        return;
+      }
+      var doc = {
+        title: title,
+        keywords: kwEl.value.split(',').map(function (s) { return s.trim().toLowerCase(); }).filter(Boolean),
+        body: body,
+      };
+      if (editing >= 0) docs[editing] = doc; else docs.push(doc);
+      closeModal();
+      render();
+      setMsg(true, 'Press Save to apply.');
+    });
+
+    saveBtn.addEventListener('click', function () {
+      saveBtn.disabled = true;
+      setMsg(true, 'Saving…');
+      post('smva_info_docs_save', {
+        info_documents: JSON.stringify(docs),
+        caller_memory_enabled: memoryEl.checked ? '1' : '0',
+      }).then(function (res) {
+        saveBtn.disabled = false;
+        if (res.success) {
+          // Re-sync to what the backend actually kept, so the list can never
+          // show a document the agent does not have.
+          if (Array.isArray(res.data.info_documents)) { docs = res.data.info_documents; render(); }
+          setMsg(true, 'Saved.');
+        } else {
+          setMsg(false, (res.data && res.data.message) || 'Could not save.');
+        }
+      }).catch(function () {
+        saveBtn.disabled = false;
+        setMsg(false, 'Network error. Please try again.');
+      });
+    });
+
+    // Backend is the source of truth; the markup rendered from the local mirror.
+    post('smva_info_docs_get').then(function (res) {
+      if (!res.success) return; // No license yet — leave what the mirror gave us.
+      if (Array.isArray(res.data.info_documents)) { docs = res.data.info_documents; render(); }
+      memoryEl.checked = !!res.data.caller_memory_enabled;
+      if (!res.data.email_delivery_available) {
+        setMsg(false, 'Email delivery is not configured for this account yet — contact support.');
+      }
+    });
+
+    render();
+  })();
+
+
   // ── Appointments ──────────────────────────────────────────────────────────
   // Working hours are validated and stored on the backend — the availability
   // engine and the agent both read from there mid-call. What is built here is

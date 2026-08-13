@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.6.1
+Stable tag: 1.7.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -244,6 +244,15 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.7.0 =
+* New: **Transfer a call to a human.** On a phone call, the assistant can hand the caller to a real person — set up your departments (Sales, Support, ...) with a phone number and a note on when to use each, under Voice AI → Integrations → Transfer to a human
+* New: if nobody answers within the ring time you choose, the caller comes back to the assistant, which apologises and offers to take a message instead of dropping the call
+* Note: transfers are dialled out on your own Twilio account and billed by Twilio, like the rest of your call minutes. The person picking up sees your Twilio number, so the assistant is instructed to capture the caller's details before transferring
+* New: **Email a caller what they asked for.** Write your price list, brochure or opening hours under Voice AI → Automation → Email a Caller, and the assistant can send it during a call. It only ever offers what you have written, and it will not tell anyone something was sent unless it actually went out
+* New: optionally recognise returning callers by the number they are calling from, so the assistant has context from their past enquiries. Off by default, and it never greets someone by name before they say who they are — the person holding a phone today may not be who called last time
+* Fixed: on phone calls the assistant asked for email addresses through the on-screen typing box, which does not exist on a call — it waited for typing that could never arrive. It now takes the address by ear and reads it back to confirm
+* Fixed: the caller's phone number was not saved with leads captured on a phone call, so there was often no way to call them back
 
 = 1.6.1 =
 * New: on plans with both voice and chat, the call and chat buttons now ring/nudge in turn to invite a visitor to talk or type, instead of a single generic pulse

@@ -9,6 +9,45 @@ $smva_phone_number    = get_option( 'smva_phone_number', '' );
 $smva_phone_sid_mask  = get_option( 'smva_phone_sid_masked', '' );
 $smva_phone_webhook   = SMVA_API_URL . '/twilio/voice';
 $smva_is_trial        = get_option( 'smva_plan', '' ) === 'trial';
+
+// Transfer-to-human departments. Held on the backend next to the rest of the
+// agent config rather than in wp_options, so the agent and this screen can
+// never disagree about which numbers are live. Only fetched when a number is
+// actually connected — there is nothing to transfer otherwise.
+$smva_transfer = array(
+	'enabled'      => false,
+	'ring_timeout' => 25,
+	'departments'  => array(),
+);
+if ( $smva_phone_connected ) {
+	$smva_lk = get_option( 'smva_license_key', '' );
+	$smva_it = get_option( 'smva_internal_token', '' );
+	if ( $smva_lk && $smva_it ) {
+		$smva_r = wp_remote_post(
+			SMVA_API_URL . '/plugin/license/agent/get',
+			array(
+				'headers' => array( 'Content-Type' => 'application/json' ),
+				'body'    => wp_json_encode( array( 'license_key' => $smva_lk, 'internal_token' => $smva_it ) ),
+				'timeout' => 10,
+			)
+		);
+		if ( ! is_wp_error( $smva_r ) ) {
+			$smva_agent = json_decode( wp_remote_retrieve_body( $smva_r ), true );
+			$smva_tc    = $smva_agent['transfer_config'] ?? array();
+			if ( is_string( $smva_tc ) ) {
+				$smva_tc = json_decode( $smva_tc, true );
+			}
+			if ( is_array( $smva_tc ) ) {
+				$smva_transfer['enabled']      = ! empty( $smva_tc['enabled'] );
+				$smva_transfer['ring_timeout'] = (int) ( $smva_tc['ring_timeout'] ?? 25 );
+				$smva_transfer['departments']  = isset( $smva_tc['departments'] ) && is_array( $smva_tc['departments'] )
+					? $smva_tc['departments']
+					: array();
+			}
+		}
+	}
+}
+$smva_transfer_json = wp_json_encode( $smva_transfer );
 ?>
 <div class="smva-tab-content">
     <div class="smva-section">
@@ -155,6 +194,51 @@ $smva_is_trial        = get_option( 'smva_plan', '' ) === 'trial';
                     In the Twilio Console open your number, and under <em>Voice &rarr; A call comes in</em> choose <strong>Webhook</strong>, paste this URL, and set the method to <strong>HTTP POST</strong>.
                 </div>
             </div>
+        </div>
+
+        <?php // Transfer to a human. Only meaningful once a number is answering. ?>
+        <div class="smva-integration-card <?php echo $smva_phone_connected ? '' : 'smva-hidden'; ?>" id="smva-transfer-card">
+            <div class="smva-int-header">
+                <div class="smva-int-grow">
+                    <div class="smva-int-name">Transfer to a human</div>
+                    <div class="smva-int-sub">Let the agent hand a call to a person when the caller asks for one</div>
+                </div>
+            </div>
+
+            <label class="smva-transfer-toggle">
+                <input type="checkbox" id="smva-transfer-enabled" <?php checked( $smva_transfer['enabled'] ); ?>>
+                <span>Allow the agent to transfer calls</span>
+            </label>
+
+            <div id="smva-transfer-body" class="<?php echo $smva_transfer['enabled'] ? '' : 'smva-hidden'; ?>">
+                <div id="smva-transfer-list" class="smva-transfer-list"></div>
+
+                <div class="smva-transfer-actions">
+                    <button type="button" class="smva-btn smva-btn-ghost smva-btn-sm" id="smva-transfer-add">Add department +</button>
+                </div>
+
+                <div class="smva-transfer-field">
+                    <label class="smva-phone-label" for="smva-transfer-timeout">Ring for</label>
+                    <div class="smva-transfer-timeout-row">
+                        <input type="number" id="smva-transfer-timeout" class="smva-int-token-input smva-transfer-timeout" min="10" max="60" step="1" value="<?php echo esc_attr( $smva_transfer['ring_timeout'] ); ?>">
+                        <span class="smva-int-sub">seconds before giving up and returning the caller to the agent</span>
+                    </div>
+                </div>
+
+                <div class="smva-int-hint">
+                    Calls are dialled out on your own Twilio account and billed by Twilio. The person picking up sees your Twilio number, not the caller&rsquo;s &mdash; the agent is told to capture the caller&rsquo;s details first. Enter every number in E.164 format, e.g. <code>+15551234567</code>.
+                </div>
+            </div>
+
+            <div class="smva-transfer-footer">
+                <button type="button" class="smva-btn smva-btn-primary smva-btn-sm" id="smva-transfer-save">
+                    <span class="smva-transfer-label-text">Save transfer settings</span>
+                    <span class="smva-transfer-spinner smva-hidden">Saving&hellip;</span>
+                </button>
+                <span id="smva-transfer-msg" class="smva-int-msg"></span>
+            </div>
+
+            <input type="hidden" id="smva-transfer-json" value="<?php echo esc_attr( $smva_transfer_json ); ?>">
         </div>
     </div>
 </div><!-- .smva-tab-content -->

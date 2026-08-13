@@ -68,6 +68,8 @@ $options = array(
     // refetched when the license is re-activated.
     'smva_booking_enabled',
     'smva_booking_config',
+    'smva_info_documents',
+    'smva_caller_memory_enabled',
 
     // Phone (Twilio) — display mirrors only, no secret among them: the auth
     // token lives encrypted on the backend and was never stored here.

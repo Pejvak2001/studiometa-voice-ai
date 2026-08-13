@@ -363,11 +363,14 @@ class SMVA_Plugin {
         add_action( 'wp_ajax_smva_hubspot_disconnect', array( $this, 'ajax_hubspot_disconnect' ) );
         add_action( 'wp_ajax_smva_phone_connect',      array( $this, 'ajax_phone_connect' ) );
         add_action( 'wp_ajax_smva_phone_disconnect',   array( $this, 'ajax_phone_disconnect' ) );
+        add_action( 'wp_ajax_smva_save_transfer',      array( $this, 'ajax_save_transfer' ) );
         add_action( 'wp_ajax_smva_hubspot_status',     array( $this, 'ajax_hubspot_status' ) );
 
         // Appointments
         add_action( 'wp_ajax_smva_booking_get_config',      array( $this, 'ajax_booking_get_config' ) );
         add_action( 'wp_ajax_smva_booking_save_config',     array( $this, 'ajax_booking_save_config' ) );
+        add_action( 'wp_ajax_smva_info_docs_get',           array( $this, 'ajax_info_docs_get' ) );
+        add_action( 'wp_ajax_smva_info_docs_save',          array( $this, 'ajax_info_docs_save' ) );
         add_action( 'wp_ajax_smva_booking_slots',           array( $this, 'ajax_booking_slots' ) );
         add_action( 'wp_ajax_smva_calendar_status',         array( $this, 'ajax_calendar_status' ) );
         add_action( 'wp_ajax_smva_calendar_connect_url',    array( $this, 'ajax_calendar_connect_url' ) );
@@ -414,6 +417,8 @@ class SMVA_Plugin {
         // of the backend, which owns the real working hours.
         add_option( 'smva_booking_enabled', '0' );
         add_option( 'smva_booking_config', '' );
+        add_option( 'smva_info_documents', '[]' );
+        add_option( 'smva_caller_memory_enabled', '0' );
 
         // Trial state
         add_option( 'smva_trial_attempted', '0' );
@@ -2185,6 +2190,107 @@ class SMVA_Plugin {
         ) );
     }
 
+    // ── Email a caller, and returning-caller recall ──────────────────────────
+    //
+    // The backend holds the documents because it is what composes the email
+    // mid-call and what decides whether the agent may say it sent anything.
+    // The options written here mirror the last successful save so the tab
+    // renders instantly; the backend value always wins on load.
+    //
+    // Both settings save in one call. The backend endpoint writes both columns
+    // every time, so sending one without the other would silently clear it.
+
+    public function ajax_info_docs_get() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+
+        $creds = $this->get_api_credentials();
+        if ( empty( $creds['license_key'] ) || empty( $creds['internal_token'] ) ) {
+            wp_send_json_error( array( 'message' => __( 'Activate your license first.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $response = $this->api_post_json( '/plugin/info-documents', $creds, 10 );
+        if ( is_wp_error( $response ) ) {
+            wp_send_json_error( array( 'message' => __( 'Connection error.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $data = json_decode( wp_remote_retrieve_body( $response ), true );
+        if ( wp_remote_retrieve_response_code( $response ) !== 200 || ! is_array( $data ) ) {
+            wp_send_json_error( array( 'message' => $data['error'] ?? __( 'Could not load your email settings.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $docs = is_array( $data['info_documents'] ?? null ) ? $data['info_documents'] : array();
+        update_option( 'smva_info_documents', wp_json_encode( $docs ) );
+        update_option( 'smva_caller_memory_enabled', ! empty( $data['caller_memory_enabled'] ) ? '1' : '0' );
+
+        wp_send_json_success( array(
+            'info_documents'        => $docs,
+            'caller_memory_enabled' => ! empty( $data['caller_memory_enabled'] ),
+            // False means no delivery workflow is wired on the backend, which
+            // the owner cannot fix from here — the tab says so rather than
+            // letting them write documents that will never be sent.
+            'email_delivery_available' => ! empty( $data['email_delivery_available'] ),
+        ) );
+    }
+
+    public function ajax_info_docs_save() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+
+        $creds = $this->get_api_credentials();
+        if ( empty( $creds['license_key'] ) || empty( $creds['internal_token'] ) ) {
+            wp_send_json_error( array( 'message' => __( 'Activate your license first.', 'studiometa-voice-ai' ) ) );
+        }
+
+        // Hard rule: every json_decode of POST data goes through
+        // sanitize_json_recursive(). It sanitizes every leaf with
+        // sanitize_textarea_field(), which keeps the line breaks a price list
+        // depends on and strips markup — the workflow escapes it again on the
+        // way into the email.
+        //
+        // Deliberately NOT sanitized before decoding, unlike the booking
+        // handler. Verified against this WordPress build: running
+        // sanitize_textarea_field() over the raw JSON turns "<" into "&lt;",
+        // strips anything tag-shaped, and mangles the surrounding quotes badly
+        // enough that json_decode() fails outright with a control-character
+        // error. Harmless for a config of times and numbers; fatal for a
+        // document body, which legitimately contains "<" ("groups <10 people")
+        // and would take the whole save down with it.
+        //
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Decoded below and every leaf sanitized by sanitize_json_recursive(); sanitizing the raw JSON first corrupts it (see above).
+        $raw  = isset( $_POST['info_documents'] ) ? wp_unslash( $_POST['info_documents'] ) : '';
+        $docs = $this->sanitize_json_recursive( json_decode( $raw, true ) );
+        if ( ! is_array( $docs ) ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid documents.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $memory = isset( $_POST['caller_memory_enabled'] ) && '1' === sanitize_text_field( wp_unslash( $_POST['caller_memory_enabled'] ) );
+
+        $response = $this->api_post_json( '/plugin/info-documents/save', array_merge( $creds, array(
+            'info_documents'        => $docs,
+            'caller_memory_enabled' => $memory,
+        ) ), 12 );
+
+        if ( is_wp_error( $response ) ) {
+            wp_send_json_error( array( 'message' => __( 'Connection error.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $data = json_decode( wp_remote_retrieve_body( $response ), true );
+        if ( wp_remote_retrieve_response_code( $response ) !== 200 || empty( $data['success'] ) ) {
+            wp_send_json_error( array( 'message' => $data['error'] ?? __( 'Could not save your email settings.', 'studiometa-voice-ai' ) ) );
+        }
+
+        // Mirror only after the backend accepted, so the two cannot diverge.
+        $saved = is_array( $data['info_documents'] ?? null ) ? $data['info_documents'] : $docs;
+        update_option( 'smva_info_documents', wp_json_encode( $saved ) );
+        update_option( 'smva_caller_memory_enabled', $memory ? '1' : '0' );
+
+        wp_send_json_success( array(
+            'info_documents'        => $saved,
+            'caller_memory_enabled' => $memory,
+        ) );
+    }
+
     public function ajax_booking_slots() {
         check_ajax_referer( 'smva_nonce', 'nonce' );
         $this->require_admin_capability();
@@ -3097,6 +3203,84 @@ class SMVA_Plugin {
         delete_option( 'smva_phone_sid_masked' );
 
         wp_send_json_success( array( 'message' => 'Phone number disconnected.' ) );
+    }
+
+    /**
+     * Save the departments a live phone call may be transferred to.
+     *
+     * Nothing is stored in WordPress: the list goes to the backend with the rest
+     * of the agent config, because the agent reads it mid-call and a local copy
+     * could only ever drift out of date. The backend re-validates every number
+     * as E.164 before storing it, and what it returns is what is echoed back to
+     * the screen — a number it rejected must not keep looking configured here.
+     */
+    public function ajax_save_transfer() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+
+        $license_key    = get_option( 'smva_license_key', '' );
+        $internal_token = get_option( 'smva_internal_token', '' );
+        if ( empty( $license_key ) || empty( $internal_token ) ) {
+            wp_send_json_error( array( 'message' => 'License not active.' ) );
+        }
+
+        // JSON blob: decoded, then keys, values and nested structure are all
+        // sanitized by sanitize_json_recursive() before being forwarded.
+        $config = $this->sanitize_json_recursive(
+            json_decode( sanitize_textarea_field( wp_unslash( $_POST['transfer_config'] ?? '' ) ), true )
+        );
+        if ( ! is_array( $config ) ) {
+            wp_send_json_error( array( 'message' => 'Could not read those transfer settings.' ) );
+        }
+
+        $departments = array();
+        $raw_depts   = isset( $config['departments'] ) && is_array( $config['departments'] ) ? $config['departments'] : array();
+        foreach ( $raw_depts as $dept ) {
+            if ( ! is_array( $dept ) ) {
+                continue;
+            }
+            $name   = sanitize_text_field( $dept['name'] ?? '' );
+            $number = preg_replace( '/[\s()\-.]/', '', (string) ( $dept['number'] ?? '' ) );
+            if ( '' === $name || ! preg_match( '/^\+[1-9]\d{6,14}$/', $number ) ) {
+                // Dropped rather than repaired: a half-valid department is a
+                // call routed to a number nobody meant to publish.
+                continue;
+            }
+            $departments[] = array(
+                'name'        => $name,
+                'number'      => $number,
+                'description' => sanitize_text_field( $dept['description'] ?? '' ),
+                'hours'       => sanitize_text_field( $dept['hours'] ?? '' ),
+            );
+            if ( count( $departments ) >= 8 ) {
+                break;
+            }
+        }
+
+        $ring_timeout = (int) ( $config['ring_timeout'] ?? 25 );
+        $ring_timeout = max( 10, min( 60, $ring_timeout ) );
+
+        $response = $this->api_post_json( '/plugin/license/agent/settings', array(
+            'license_key'     => $license_key,
+            'internal_token'  => $internal_token,
+            'transfer_config' => array(
+                // Enabled with nothing to dial is the same as disabled; the
+                // backend collapses this too, but saying so here keeps the
+                // response the screen re-seeds from honest.
+                'enabled'      => ! empty( $config['enabled'] ) && ! empty( $departments ),
+                'ring_timeout' => $ring_timeout,
+                'departments'  => $departments,
+            ),
+        ), 15 );
+
+        if ( is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) !== 200 ) {
+            wp_send_json_error( array( 'message' => 'Could not save transfer settings. Please try again.' ) );
+        }
+
+        wp_send_json_success( array(
+            'message'     => 'Transfer settings saved.',
+            'departments' => $departments,
+        ) );
     }
 
     public function ajax_hubspot_status() {
