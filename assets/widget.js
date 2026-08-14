@@ -2032,6 +2032,26 @@
         updateChatUI();
     }
 
+    // Char codes rather than a \uXXXX regex literal: several editors/tools in
+    // this pipeline re-render \u escapes for RTL code points as the literal
+    // characters themselves, which then corrupts the source file with raw
+    // bidi text sitting inside a regex -- exactly what happened building this
+    // function the first time. RegExp() from codes sidesteps that entirely.
+    var RTL_RANGES = [[0x0591,0x07FF],[0x200F,0x200F],[0xFB1D,0xFDFF],[0xFE70,0xFEFF]];
+    var RTL_RE = new RegExp('[' + RTL_RANGES.map(function(r){
+      return String.fromCharCode(r[0]) + '-' + String.fromCharCode(r[1]);
+    }).join('') + ']');
+    function isRTLText(str) {
+      // Arabic-script ranges (covers Persian and Arabic -- the two languages
+      // isRTL, above, already recognizes) plus Hebrew, Syriac, and Thaana.
+      // Deliberately per-string rather than reusing the module-level isRTL:
+      // that constant is fixed at widget load from the site's CONFIGURED
+      // language, but the agent detects and replies in whatever language the
+      // VISITOR actually used, per message -- a site configured for English
+      // still needs a Persian reply rendered right-to-left, and a single
+      // conversation can legitimately switch scripts turn to turn.
+      return RTL_RE.test(str || '');
+    }
     function persianToWestern(str) {
       var persian = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
       var arabic  = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
@@ -2064,7 +2084,18 @@
         const container = h('smva-msgs');
         if (!container) return;
         let html = '';
-        chatMessages.forEach(msg => { const cls = msg.role === 'user' ? 'smva-msg-user' : 'smva-msg-bot'; html += '<div class="smva-msg ' + cls + '">' + formatMsg(msg.text) + '</div>'; });
+        chatMessages.forEach(msg => {
+            const cls = msg.role === 'user' ? 'smva-msg-user' : 'smva-msg-bot';
+            // Per-message, not the widget-wide isRTL: the agent replies in
+            // whatever language the visitor used, per turn, so a Persian
+            // reply needs its own text right-aligned even on a site
+            // configured lang="en", and a conversation can switch scripts
+            // turn to turn. The bubble stays on its usual side (bot left,
+            // user right) -- only the text inside follows its own script,
+            // same as ChatGPT/Claude's own web UI handles RTL replies.
+            const dirAttr = isRTLText(msg.text) ? ' dir="rtl" style="text-align:right"' : '';
+            html += '<div class="smva-msg ' + cls + '"' + dirAttr + '>' + formatMsg(msg.text) + '</div>';
+        });
         if (isTyping) html += '<div class="smva-typing"><span></span><span></span><span></span></div>';
         container.innerHTML = html;
         container.scrollTop = container.scrollHeight;

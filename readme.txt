@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.7.0
+Stable tag: 1.7.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -244,6 +244,9 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.7.1 =
+* Fixed: a reply in Persian (or Arabic/Hebrew) in the chat widget rendered left-to-left, with the text stuck against the left edge of its bubble — the widget only checked the site's own configured language, not the language the assistant actually replied in, which is detected per message and can differ from the site's default
 
 = 1.7.0 =
 * New: **Transfer a call to a human.** On a phone call, the assistant can hand the caller to a real person — set up your departments (Sales, Support, ...) with a phone number and a note on when to use each, under Voice AI → Integrations → Transfer to a human
