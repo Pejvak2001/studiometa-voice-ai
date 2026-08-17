@@ -246,7 +246,7 @@ https://github.com/Pejvak2001/studiometa-voice-ai
 == Changelog ==
 
 = 1.7.4 =
-* New: **The admin panel is now translatable.** Text Domain + textdomain loading added, and the settings screens (Dashboard, License, General, Automation, Widget, Agent, History, Health, Voice Summary, Leads) are wrapped for translation — the widget shown to visitors was already localizable, this covers the screens you configure it from. Ship a `languages/studiometa-voice-ai-{locale}.mo` to translate; `.pot` template included.
+* New: **The admin panel is now translatable, and ships in Persian.** Text Domain + textdomain loading added, and the settings screens (Dashboard, License, General, Automation, Widget, Agent, History, Health, Voice Summary, Leads) are wrapped for translation — the widget shown to visitors was already localizable, this covers the screens you configure it from. Set your WordPress site language to فارسی and the panel follows. `.pot` template included for other locales.
 
 = 1.7.3 =
 * Changed: "Workflow Trigger Buttons" (Voice AI → Automation) renamed to "Quick Action Buttons" for clarity — no functional change, same setting

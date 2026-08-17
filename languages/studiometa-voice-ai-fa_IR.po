@@ -1,12 +1,15 @@
+# Persian translation of StudioMeta Voice AI.
 # Copyright (C) 2026 StudioMeta
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: StudioMeta Voice AI 1.7.3\n"
+"Project-Id-Version: StudioMeta Voice AI 1.7.4\n"
 "Report-Msgid-Bugs-To: https://studiometa.io/\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: fa_IR\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Domain: studiometa-voice-ai\n"
 
 #: includes/class-smva.php:2145
@@ -18,93 +21,93 @@ msgstr ""
 #: includes/class-smva.php:2399
 #: includes/class-smva.php:2425
 msgid "Activate your license first."
-msgstr ""
+msgstr "ابتدا لایسنس خود را فعال کنید."
 
 #: includes/class-smva.php:2155
 msgid "Could not load your working hours."
-msgstr ""
+msgstr "ساعات کاری شما بارگذاری نشد."
 
 #: includes/class-smva.php:2186
 msgid "Invalid working hours."
-msgstr ""
+msgstr "ساعات کاری نامعتبر است."
 
 #: includes/class-smva.php:2206
 msgid "Could not save your working hours."
-msgstr ""
+msgstr "ساعات کاری شما ذخیره نشد."
 
 #: includes/class-smva.php:2247
 msgid "Could not load your email settings."
-msgstr ""
+msgstr "تنظیمات ایمیل شما بارگذاری نشد."
 
 #: includes/class-smva.php:2292
 msgid "Invalid documents."
-msgstr ""
+msgstr "اسناد نامعتبر است."
 
 #: includes/class-smva.php:2308
 msgid "Could not save your email settings."
-msgstr ""
+msgstr "تنظیمات ایمیل شما ذخیره نشد."
 
 #: includes/class-smva.php:2349
 msgid "Could not calculate availability."
-msgstr ""
+msgstr "زمان‌های خالی محاسبه نشد."
 
 #: includes/class-smva.php:2375
 msgid "Could not read the calendar status."
-msgstr ""
+msgstr "وضعیت تقویم خوانده نشد."
 
 #: includes/class-smva.php:2413
 msgid "Calendar connection is not available yet."
-msgstr ""
+msgstr "اتصال تقویم هنوز در دسترس نیست."
 
 #: includes/class-smva.php:2435
 msgid "Could not disconnect the calendar."
-msgstr ""
+msgstr "قطع اتصال تقویم انجام نشد."
 
 #: includes/class-smva.php:270
 #. translators: %s: website name
 msgid "New lead from %s"
-msgstr ""
+msgstr "سرنخ جدید از %s"
 
 #: includes/class-smva.php:273
 #. translators: %s: website name
 msgid "A visitor asked to be contacted through your Voice AI assistant."
-msgstr ""
+msgstr "یکی از بازدیدکنندگان از طریق دستیار صوتی هوش مصنوعی شما درخواست تماس کرده است."
 
 #: includes/class-smva.php:275
 msgid "Their request:"
-msgstr ""
+msgstr "درخواست ایشان:"
 
 #: includes/class-smva.php:278
 msgid "Contact details:"
-msgstr ""
+msgstr "اطلاعات تماس:"
 
 #: includes/class-smva.php:279
 msgid "Name:"
-msgstr ""
+msgstr "نام:"
 
 #: includes/class-smva.php:280
 msgid "Email:"
-msgstr ""
+msgstr "ایمیل:"
 
 #: includes/class-smva.php:281
 msgid "Phone:"
-msgstr ""
+msgstr "تلفن:"
 
 #: includes/class-smva.php:282
 msgid "Company:"
-msgstr ""
+msgstr "شرکت:"
 
 #: includes/class-smva.php:284
 msgid "Source:"
-msgstr ""
+msgstr "منبع:"
 
 #: includes/class-smva.php:285
 msgid "Received:"
-msgstr ""
+msgstr "دریافت‌شده:"
 
 #: includes/class-smva.php:287
 msgid "View all leads:"
-msgstr ""
+msgstr "مشاهده همه سرنخ‌ها:"
 
 #: includes/class-smva.php:926
 #: includes/class-smva.php:2150
@@ -116,22 +119,22 @@ msgstr ""
 #: includes/class-smva.php:2404
 #: includes/class-smva.php:2430
 msgid "Connection error."
-msgstr ""
+msgstr "خطای اتصال."
 
 #: includes/class-smva.php:927
 #: views/appointments-tab.php:159
 msgid "Saving..."
-msgstr ""
+msgstr "در حال ذخیره..."
 
 #: includes/class-smva.php:928
 #: views/admin-page.php:256
 msgid "Activate"
-msgstr ""
+msgstr "فعال‌سازی"
 
 #: includes/class-smva.php:929
 #: views/admin-page.php:250
 msgid "Start Free Trial"
-msgstr ""
+msgstr "شروع دوره آزمایشی رایگان"
 
 #: includes/class-smva.php:930
 #: views/admin-page.php:432
@@ -139,1323 +142,1323 @@ msgstr ""
 #: views/admin-page.php:1396
 #: views/appointments-tab.php:232
 msgid "Refresh"
-msgstr ""
+msgstr "بازخوانی"
 
 #: includes/class-smva.php:931
 #: views/admin-page.php:786
 msgid "Save General Settings"
-msgstr ""
+msgstr "ذخیره تنظیمات عمومی"
 
 #: includes/class-smva.php:932
 #: views/admin-page.php:1165
 msgid "Save Widget Settings"
-msgstr ""
+msgstr "ذخیره تنظیمات ویجت"
 
 #: includes/class-smva.php:933
 #: views/admin-page.php:1459
 msgid "Save Notification Settings"
-msgstr ""
+msgstr "ذخیره تنظیمات اعلان‌ها"
 
 #: includes/class-smva.php:934
 #: views/admin-page.php:1232
 msgid "Save Webhook URL"
-msgstr ""
+msgstr "ذخیره آدرس وب‌هوک"
 
 #: includes/class-smva.php:935
 #: views/admin-page.php:1213
 msgid "Save Quick Action Buttons"
-msgstr ""
+msgstr "ذخیره دکمه‌های دسترسی سریع"
 
 #: includes/class-smva.php:936
 #: views/admin-page.php:1288
 msgid "Save Tool"
-msgstr ""
+msgstr "ذخیره ابزار"
 
 #: includes/class-smva.php:937
 #: views/admin-page.php:1296
 msgid "Save & Sync Tools"
-msgstr ""
+msgstr "ذخیره و همگام‌سازی ابزارها"
 
 #: includes/class-smva.php:938
 #: views/admin-page.php:1386
 msgid "Run Check"
-msgstr ""
+msgstr "اجرای بررسی"
 
 #: views/admin-page.php:1008
 #: views/admin-page.php:1011
 msgid "Agent Logo"
-msgstr ""
+msgstr "لوگوی دستیار"
 
 #: views/admin-page.php:1023
 msgid "Choose from Media"
-msgstr ""
+msgstr "انتخاب از رسانه"
 
 #: views/admin-page.php:1025
 #: views/admin-page.php:1251
 msgid "Remove"
-msgstr ""
+msgstr "حذف"
 
 #: views/admin-page.php:1027
 msgid "Square image recommended. Leave empty to use default icon."
-msgstr ""
+msgstr "تصویر مربعی توصیه می‌شود. برای استفاده از آیکون پیش‌فرض خالی بگذارید."
 
 #: views/admin-page.php:1034
 msgid "Widget Theme"
-msgstr ""
+msgstr "پوسته ویجت"
 
 #: views/admin-page.php:1035
 msgid "Choose the visual style of your AI widget."
-msgstr ""
+msgstr "سبک ظاهری ویجت هوش مصنوعی خود را انتخاب کنید."
 
 #: views/admin-page.php:1040
 msgid "Classic"
-msgstr ""
+msgstr "کلاسیک"
 
 #: views/admin-page.php:1041
 msgid "Floating"
-msgstr ""
+msgstr "شناور"
 
 #: views/admin-page.php:1042
 msgid "Soft Round"
-msgstr ""
+msgstr "گرد ملایم"
 
 #: views/admin-page.php:1043
 msgid "Dark Modern"
-msgstr ""
+msgstr "تیره مدرن"
 
 #: views/admin-page.php:1044
 msgid "Glass"
-msgstr ""
+msgstr "شیشه‌ای"
 
 #: views/admin-page.php:1045
 msgid "Gradient"
-msgstr ""
+msgstr "گرادیانی"
 
 #: views/admin-page.php:1064
 msgid "Hello!"
-msgstr ""
+msgstr "سلام!"
 
 #: views/admin-page.php:1065
 msgid "Hi there"
-msgstr ""
+msgstr "سلام"
 
 #: views/admin-page.php:1073
 msgid "Selected"
-msgstr ""
+msgstr "انتخاب‌شده"
 
 #: views/admin-page.php:1085
 msgid "Default Tab"
-msgstr ""
+msgstr "تب پیش‌فرض"
 
 #: views/admin-page.php:1093
 msgid "Enabled Modes"
-msgstr ""
+msgstr "حالت‌های فعال"
 
 #: views/admin-page.php:110
 msgid "License Setup"
-msgstr ""
+msgstr "راه‌اندازی لایسنس"
 
 #: views/admin-page.php:110
 msgid "Activate or manage your StudioMeta subscription."
-msgstr ""
+msgstr "اشتراک StudioMeta خود را فعال یا مدیریت کنید."
 
 #: views/admin-page.php:1104
 msgid "Performance"
-msgstr ""
+msgstr "کارایی"
 
 #: views/admin-page.php:1107
 msgid "Frontend Loading"
-msgstr ""
+msgstr "بارگذاری در سمت کاربر"
 
 #: views/admin-page.php:1108
 msgid "Lazy-load interaction-heavy logic"
-msgstr ""
+msgstr "بارگذاری تنبل بخش‌های تعاملی سنگین"
 
 #: views/admin-page.php:1109
 msgid "Keeps the widget shell light. Voice/audio still starts only after the visitor clicks voice."
-msgstr ""
+msgstr "پوسته ویجت را سبک نگه می‌دارد. صدا همچنان فقط پس از کلیک بازدیدکننده روی گزینه صوتی آغاز می‌شود."
 
 #: views/admin-page.php:111
 msgid "Command Center"
-msgstr ""
+msgstr "مرکز فرماندهی"
 
 #: views/admin-page.php:111
 msgid "Monitor usage, setup progress, system status, and recent activity."
-msgstr ""
+msgstr "مصرف، پیشرفت راه‌اندازی، وضعیت سیستم و فعالیت‌های اخیر را رصد کنید."
 
 #: views/admin-page.php:1112
 msgid "Event Debug Log"
-msgstr ""
+msgstr "گزارش رویدادهای اشکال‌زدایی"
 
 #: views/admin-page.php:1113
 msgid "Keep recent plugin events"
-msgstr ""
+msgstr "نگهداری رویدادهای اخیر افزونه"
 
 #: views/admin-page.php:1114
 msgid "Stores last 50 non-sensitive plugin events for troubleshooting."
-msgstr ""
+msgstr "۵۰ رویداد اخیر و غیرحساس افزونه را برای عیب‌یابی ذخیره می‌کند."
 
 #: views/admin-page.php:112
 #: views/admin-page.php:498
 msgid "General Settings"
-msgstr ""
+msgstr "تنظیمات عمومی"
 
 #: views/admin-page.php:112
 msgid "Choose the agent language, voice profile, timezone, and greeting."
-msgstr ""
+msgstr "زبان دستیار، پروفایل صدا، منطقه زمانی و پیام خوش‌آمد را انتخاب کنید."
 
 #: views/admin-page.php:1121
 msgid "Call Limits"
-msgstr ""
+msgstr "محدودیت‌های تماس"
 
 #: views/admin-page.php:1122
 msgid "prevent abuse"
-msgstr ""
+msgstr "جلوگیری از سوءاستفاده"
 
 #: views/admin-page.php:1127
 msgid "Max Call Duration"
-msgstr ""
+msgstr "حداکثر مدت تماس"
 
 #: views/admin-page.php:1128
 msgid "minutes · 0 = off"
-msgstr ""
+msgstr "دقیقه · ۰ = غیرفعال"
 
 #: views/admin-page.php:113
 msgid "Agent Personality"
-msgstr ""
+msgstr "شخصیت دستیار"
 
 #: views/admin-page.php:113
 msgid "Tune how your AI agent responds and represents your business."
-msgstr ""
+msgstr "نحوه پاسخ‌دهی دستیار هوش مصنوعی و معرفی کسب‌وکارتان را تنظیم کنید."
 
 #: views/admin-page.php:1135
 msgid "Auto-disconnect after this many minutes."
-msgstr ""
+msgstr "قطع خودکار پس از این تعداد دقیقه."
 
 #: views/admin-page.php:1139
 msgid "Silence Timeout"
-msgstr ""
+msgstr "مهلت سکوت"
 
 #: views/admin-page.php:114
 msgid "Widget Experience"
-msgstr ""
+msgstr "تجربه ویجت"
 
 #: views/admin-page.php:114
 msgid "Customize the floating widget, display behavior, and performance options."
-msgstr ""
+msgstr "ویجت شناور، رفتار نمایش و گزینه‌های کارایی را سفارشی کنید."
 
 #: views/admin-page.php:1140
 #: views/admin-page.php:1152
 msgid "seconds · 0 = off"
-msgstr ""
+msgstr "ثانیه · ۰ = غیرفعال"
 
 #: views/admin-page.php:1147
 msgid "Auto-disconnect after this many seconds of silence."
-msgstr ""
+msgstr "قطع خودکار پس از این تعداد ثانیه سکوت."
 
 #: views/admin-page.php:115
 msgid "Connect your agent to external tools, define what it can do, and add quick-action buttons to the widget."
-msgstr ""
+msgstr "دستیار خود را به ابزارهای بیرونی وصل کنید، کارهایی که می‌تواند انجام دهد را تعریف کنید و دکمه‌های دسترسی سریع به ویجت اضافه کنید."
 
 #: views/admin-page.php:1151
 msgid "Call Cooldown"
-msgstr ""
+msgstr "فاصله بین تماس‌ها"
 
 #: views/admin-page.php:1159
 msgid "Minimum wait between calls to prevent abuse."
-msgstr ""
+msgstr "حداقل زمان انتظار بین تماس‌ها برای جلوگیری از سوءاستفاده."
 
 #: views/admin-page.php:116
 msgid "Set your working hours and let the agent book visitors in."
-msgstr ""
+msgstr "ساعات کاری خود را تعیین کنید تا دستیار برای بازدیدکنندگان نوبت رزرو کند."
 
 #: views/admin-page.php:117
 msgid "Review recent conversations and visitor interactions."
-msgstr ""
+msgstr "گفتگوهای اخیر و تعاملات بازدیدکنندگان را مرور کنید."
 
 #: views/admin-page.php:1173
 msgid "Embed"
-msgstr ""
+msgstr "جاسازی"
 
 #: views/admin-page.php:1174
 msgid "Add the widget to any page using the shortcode, or it loads automatically on all pages when the plugin is active."
-msgstr ""
+msgstr "ویجت را با کد کوتاه به هر صفحه‌ای اضافه کنید، یا وقتی افزونه فعال است به‌صورت خودکار در همه صفحات بارگذاری می‌شود."
 
 #: views/admin-page.php:1177
 msgid "Click to copy"
-msgstr ""
+msgstr "برای کپی کلیک کنید"
 
 #: views/admin-page.php:118
 msgid "Review voice sessions and usage details."
-msgstr ""
+msgstr "جلسات صوتی و جزئیات مصرف را مرور کنید."
 
 #: views/admin-page.php:119
 msgid "See captured visitor leads and contact requests."
-msgstr ""
+msgstr "سرنخ‌های ثبت‌شده بازدیدکنندگان و درخواست‌های تماس را ببینید."
 
 #: views/admin-page.php:120
 msgid "System Health"
-msgstr ""
+msgstr "سلامت سیستم"
 
 #: views/admin-page.php:120
 msgid "Check license, quota API, WebSocket configuration, and plugin logs."
-msgstr ""
+msgstr "لایسنس، API سهمیه، پیکربندی WebSocket و گزارش‌های افزونه را بررسی کنید."
 
 #: views/admin-page.php:1201
 msgid "Quick Action Buttons"
-msgstr ""
+msgstr "دکمه‌های دسترسی سریع"
 
 #: views/admin-page.php:1202
 msgid "Quick-action buttons shown in the widget that send a preset message to the agent — e.g. a visible \"Book Appointment\" shortcut."
-msgstr ""
+msgstr "دکمه‌های دسترسی سریع که در ویجت نمایش داده می‌شوند و پیامی از پیش تعیین‌شده به دستیار می‌فرستند — مثلاً میان‌بُری با عنوان «رزرو نوبت»."
 
 #: views/admin-page.php:1204
 msgid "Buttons"
-msgstr ""
+msgstr "دکمه‌ها"
 
 #: views/admin-page.php:1204
 msgid "one per line: Label | message sent to agent"
-msgstr ""
+msgstr "هر خط یک مورد: برچسب | پیامی که به دستیار ارسال می‌شود"
 
 #: views/admin-page.php:1205
 msgid "Book Appointment | I would like to book an appointment."
-msgstr ""
+msgstr "رزرو نوبت | می‌خواهم یک نوبت رزرو کنم."
 
 #: views/admin-page.php:1205
 msgid "Request Callback | Please help me request a callback."
-msgstr ""
+msgstr "درخواست تماس | لطفاً برای درخواست تماس کمکم کنید."
 
 #: views/admin-page.php:121
 msgid "Connect your CRM and external tools."
-msgstr ""
+msgstr "CRM و ابزارهای بیرونی خود را متصل کنید."
 
 #: views/admin-page.php:1220
 msgid "Automation Webhook"
-msgstr ""
+msgstr "وب‌هوک اتوماسیون"
 
 #: views/admin-page.php:1221
 msgid "Agentic"
-msgstr ""
+msgstr "عامل‌محور"
 
 #: views/admin-page.php:1223
 msgid "Connect your AI agent to any automation platform (n8n, Make, Zapier). When the agent needs to take an action, it will call your webhook URL and wait for a result."
-msgstr ""
+msgstr "دستیار هوش مصنوعی خود را به هر پلتفرم اتوماسیونی (n8n، Make، Zapier) وصل کنید. هر وقت دستیار بخواهد کاری انجام دهد، آدرس وب‌هوک شما را فراخوانی کرده و منتظر نتیجه می‌ماند."
 
 #: views/admin-page.php:1225
 msgid "Webhook URL"
-msgstr ""
+msgstr "آدرس وب‌هوک"
 
 #: views/admin-page.php:1225
 msgid "your n8n / Make / Zapier webhook"
-msgstr ""
+msgstr "وب‌هوک n8n / Make / Zapier شما"
 
 #: views/admin-page.php:1229
 msgid "Your webhook receives:"
-msgstr ""
+msgstr "وب‌هوک شما این‌ها را دریافت می‌کند:"
 
 #: views/admin-page.php:1229
 msgid "Return:"
-msgstr ""
+msgstr "بازگردانید:"
 
 #: views/admin-page.php:123
 msgid "StudioMeta Voice AI"
-msgstr ""
+msgstr "StudioMeta Voice AI"
 
 #: views/admin-page.php:123
 msgid "Manage your voice and chat AI widget."
-msgstr ""
+msgstr "ویجت صوتی و چت هوش مصنوعی خود را مدیریت کنید."
 
 #: views/admin-page.php:1238
 msgid "Agent Tools"
-msgstr ""
+msgstr "ابزارهای دستیار"
 
 #: views/admin-page.php:1239
 msgid "Define what actions your agent can perform. Each tool triggers your webhook with the tool name and collected parameters."
-msgstr ""
+msgstr "تعیین کنید دستیار شما چه کارهایی می‌تواند انجام دهد. هر ابزار، وب‌هوک شما را با نام ابزار و پارامترهای جمع‌آوری‌شده فراخوانی می‌کند."
 
 #: views/admin-page.php:1243
 msgid "No tools defined yet. Add a tool below."
-msgstr ""
+msgstr "هنوز ابزاری تعریف نشده است. از پایین یک ابزار اضافه کنید."
 
 #: views/admin-page.php:1250
 msgid "Edit"
-msgstr ""
+msgstr "ویرایش"
 
 #: views/admin-page.php:1261
 msgid "Add Tool +"
-msgstr ""
+msgstr "افزودن ابزار +"
 
 #: views/admin-page.php:1267
 msgid "Add Tool"
-msgstr ""
+msgstr "افزودن ابزار"
 
 #: views/admin-page.php:1269
 msgid "Tool Name"
-msgstr ""
+msgstr "نام ابزار"
 
 #: views/admin-page.php:1269
 msgid "lowercase, no spaces"
-msgstr ""
+msgstr "با حروف کوچک، بدون فاصله"
 
 #: views/admin-page.php:1270
 msgid "e.g. book_appointment"
-msgstr ""
+msgstr "مثلاً book_appointment"
 
 #: views/admin-page.php:1273
 msgid "Description"
-msgstr ""
+msgstr "توضیحات"
 
 #: views/admin-page.php:1273
 msgid "tell the agent when to use this tool"
-msgstr ""
+msgstr "به دستیار بگویید چه زمانی از این ابزار استفاده کند"
 
 #: views/admin-page.php:1274
 msgid "Use this tool to book, update, or cancel an appointment..."
-msgstr ""
+msgstr "از این ابزار برای رزرو، به‌روزرسانی یا لغو نوبت استفاده کن..."
 
 #: views/admin-page.php:1277
 msgid "Thinking Message"
-msgstr ""
+msgstr "پیام حین پردازش"
 
 #: views/admin-page.php:1277
 msgid "shown while processing"
-msgstr ""
+msgstr "هنگام پردازش نمایش داده می‌شود"
 
 #: views/admin-page.php:1278
 msgid "Let me check availability..."
-msgstr ""
+msgstr "اجازه دهید زمان‌های خالی را بررسی کنم..."
 
 #: views/admin-page.php:1282
 msgid "Parameters"
-msgstr ""
+msgstr "پارامترها"
 
 #: views/admin-page.php:1283
 msgid "Add Parameter +"
-msgstr ""
+msgstr "افزودن پارامتر +"
 
 #: views/admin-page.php:1313
 msgid "Email a Caller"
-msgstr ""
+msgstr "ارسال ایمیل به تماس‌گیرنده"
 
 #: views/admin-page.php:1314
 msgid "Write the things your agent is allowed to email someone who asks for them on a call — a price list, a brochure, your opening hours. The agent will only ever offer what you list here, and it will never claim it sent something unless it actually went out."
-msgstr ""
+msgstr "مواردی را بنویسید که دستیار مجاز است در تماس، برای درخواست‌کننده ایمیل کند — لیست قیمت، بروشور، ساعات کاری. دستیار فقط همین موارد را پیشنهاد می‌دهد و هرگز ادعا نمی‌کند چیزی ارسال شده مگر آنکه واقعاً ارسال شده باشد."
 
 #: views/admin-page.php:1319
 msgid "Add Document +"
-msgstr ""
+msgstr "افزودن سند +"
 
 #: views/admin-page.php:1325
 msgid "Add Document"
-msgstr ""
+msgstr "افزودن سند"
 
 #: views/admin-page.php:1327
 msgid "Title"
-msgstr ""
+msgstr "عنوان"
 
 #: views/admin-page.php:1327
 msgid "the agent says this out loud"
-msgstr ""
+msgstr "دستیار این را با صدای بلند می‌گوید"
 
 #: views/admin-page.php:1328
 msgid "e.g. Price list"
-msgstr ""
+msgstr "مثلاً لیست قیمت"
 
 #: views/admin-page.php:1331
 msgid "Also matches"
-msgstr ""
+msgstr "همچنین منطبق است با"
 
 #: views/admin-page.php:1331
 msgid "comma separated — other ways callers ask for this"
-msgstr ""
+msgstr "جداشده با ویرگول — عبارت‌های دیگری که تماس‌گیرندگان برای این مورد به کار می‌برند"
 
 #: views/admin-page.php:1332
 msgid "pricing, cost, how much, rates"
-msgstr ""
+msgstr "قیمت، هزینه، چقدر می‌شود، نرخ"
 
 #: views/admin-page.php:1335
 msgid "What to send"
-msgstr ""
+msgstr "چه چیزی ارسال شود"
 
 #: views/admin-page.php:1335
 msgid "plain text — line breaks are kept"
-msgstr ""
+msgstr "متن ساده — شکست خطوط حفظ می‌شود"
 
 #: views/admin-page.php:1336
 msgid "Starter — $39/month"
-msgstr ""
+msgstr "پایه — ۳۹ دلار در ماه"
 
 #: views/admin-page.php:1336
 msgid "100 minutes included"
-msgstr ""
+msgstr "۱۰۰ دقیقه شامل می‌شود"
 
 #: views/admin-page.php:1336
 msgid "Pro — $79/month"
-msgstr ""
+msgstr "حرفه‌ای — ۷۹ دلار در ماه"
 
 #: views/admin-page.php:1336
 msgid "300 minutes included"
-msgstr ""
+msgstr "۳۰۰ دقیقه شامل می‌شود"
 
 #: views/admin-page.php:1339
 msgid "Save Document"
-msgstr ""
+msgstr "ذخیره سند"
 
 #: views/admin-page.php:134
 msgid "License active"
-msgstr ""
+msgstr "لایسنس فعال"
 
 #: views/admin-page.php:134
 msgid "License inactive"
-msgstr ""
+msgstr "لایسنس غیرفعال"
 
 #: views/admin-page.php:1349
 msgid "Recognise returning callers"
-msgstr ""
+msgstr "شناسایی تماس‌گیرندگان بازگشتی"
 
 #: views/admin-page.php:1349
 msgid "phone calls only"
-msgstr ""
+msgstr "فقط تماس‌های تلفنی"
 
 #: views/admin-page.php:135
 msgid "Voice on"
-msgstr ""
+msgstr "صدا روشن"
 
 #: views/admin-page.php:135
 msgid "Voice off"
-msgstr ""
+msgstr "صدا خاموش"
 
 #: views/admin-page.php:1350
 msgid "Matches the number they are calling from against past enquiries, so the agent has context. It will never greet someone by name before they say who they are — the person holding a phone today may not be who called last time. Leave this off if your callers share a line."
-msgstr ""
+msgstr "شماره‌ای که با آن تماس گرفته‌اند را با درخواست‌های قبلی مطابقت می‌دهد تا دستیار زمینه گفتگو را بداند. هرگز پیش از آنکه فرد خودش را معرفی کند او را با نام خطاب نمی‌کند — ممکن است امروز شخص دیگری پشت آن تلفن باشد. اگر تماس‌گیرندگان شما از یک خط مشترک استفاده می‌کنند، این گزینه را خاموش بگذارید."
 
 #: views/admin-page.php:1357
 msgid "Save"
-msgstr ""
+msgstr "ذخیره"
 
 #: views/admin-page.php:136
 msgid "Chat on"
-msgstr ""
+msgstr "چت روشن"
 
 #: views/admin-page.php:136
 msgid "Chat off"
-msgstr ""
+msgstr "چت خاموش"
 
 #: views/admin-page.php:1368
 msgid "Search..."
-msgstr ""
+msgstr "جستجو..."
 
 #: views/admin-page.php:1372
 msgid "All chat conversations from your AI widget."
-msgstr ""
+msgstr "همه گفتگوهای چت از ویجت هوش مصنوعی شما."
 
 #: views/admin-page.php:1373
 #: views/admin-page.php:1435
 #: views/admin-page.php:1475
 #: views/appointments-tab.php:236
 msgid "Loading..."
-msgstr ""
+msgstr "در حال بارگذاری..."
 
 #: views/admin-page.php:1374
 msgid "No chat history yet."
-msgstr ""
+msgstr "هنوز تاریخچه چتی وجود ندارد."
 
 #: views/admin-page.php:1388
 msgid "Checks plugin configuration, license/quota API connectivity, and WebSocket configuration. Browser microphone playback still needs a frontend test."
-msgstr ""
+msgstr "پیکربندی افزونه، اتصال به API لایسنس/سهمیه و پیکربندی WebSocket را بررسی می‌کند. پخش میکروفون مرورگر همچنان نیازمند آزمون در سمت کاربر است."
 
 #: views/admin-page.php:1390
 msgid "Click Run Check to start."
-msgstr ""
+msgstr "برای شروع، روی «اجرای بررسی» کلیک کنید."
 
 #: views/admin-page.php:1395
 msgid "Recent Plugin Events"
-msgstr ""
+msgstr "رویدادهای اخیر افزونه"
 
 #: views/admin-page.php:1396
 msgid "Clear"
-msgstr ""
+msgstr "پاک کردن"
 
 #: views/admin-page.php:1405
 msgid "Review voice sessions, play recordings, and generate AI summaries of what was discussed."
-msgstr ""
+msgstr "جلسات صوتی را مرور کنید، ضبط‌ها را پخش کنید و خلاصه‌ای هوشمند از آنچه گفته شده تولید کنید."
 
 #: views/admin-page.php:1407
 msgid "From"
-msgstr ""
+msgstr "از"
 
 #: views/admin-page.php:1408
 msgid "To"
-msgstr ""
+msgstr "تا"
 
 #: views/admin-page.php:1409
 msgid "Search"
-msgstr ""
+msgstr "جستجو"
 
 #: views/admin-page.php:1414
 msgid "Turns"
-msgstr ""
+msgstr "نوبت‌های گفتگو"
 
 #: views/admin-page.php:1414
 msgid "Summary"
-msgstr ""
+msgstr "خلاصه"
 
 #: views/admin-page.php:1414
 msgid "Actions"
-msgstr ""
+msgstr "عملیات"
 
 #: views/admin-page.php:1415
 msgid "Click Search to load sessions."
-msgstr ""
+msgstr "برای بارگذاری جلسات، روی «جستجو» کلیک کنید."
 
 #: views/admin-page.php:1423
 msgid "Session Transcript"
-msgstr ""
+msgstr "متن گفتگوی جلسه"
 
 #: views/admin-page.php:1429
 msgid "AI Summary"
-msgstr ""
+msgstr "خلاصه هوش مصنوعی"
 
 #: views/admin-page.php:1430
 msgid "Generate Summary"
-msgstr ""
+msgstr "تولید خلاصه"
 
 #: views/admin-page.php:1432
 msgid "No summary yet."
-msgstr ""
+msgstr "هنوز خلاصه‌ای وجود ندارد."
 
 #: views/admin-page.php:1443
 msgid "Lead Notifications"
-msgstr ""
+msgstr "اعلان‌های سرنخ"
 
 #: views/admin-page.php:1444
 msgid "email me new leads"
-msgstr ""
+msgstr "سرنخ‌های جدید را برایم ایمیل کن"
 
 #: views/admin-page.php:1448
 msgid "Email Alerts"
-msgstr ""
+msgstr "هشدارهای ایمیلی"
 
 #: views/admin-page.php:1449
 msgid "Email me when a new lead comes in"
-msgstr ""
+msgstr "وقتی سرنخ جدیدی می‌رسد برایم ایمیل بفرست"
 
 #: views/admin-page.php:1450
 msgid "Sent the moment a visitor shares an email or phone number — no automation setup required."
-msgstr ""
+msgstr "به‌محض اینکه بازدیدکننده‌ای ایمیل یا شماره تلفن خود را به اشتراک بگذارد ارسال می‌شود — نیازی به راه‌اندازی اتوماسیون نیست."
 
 #: views/admin-page.php:1453
 msgid "Send Notifications To"
-msgstr ""
+msgstr "ارسال اعلان‌ها به"
 
 #: views/admin-page.php:1455
 msgid "Leave blank to use your WordPress admin email."
-msgstr ""
+msgstr "برای استفاده از ایمیل مدیر وردپرس، خالی بگذارید."
 
 #: views/admin-page.php:1470
 msgid "Export CSV"
-msgstr ""
+msgstr "خروجی CSV"
 
 #: views/admin-page.php:1474
 msgid "Name"
-msgstr ""
+msgstr "نام"
 
 #: views/admin-page.php:1474
 msgid "Email"
-msgstr ""
+msgstr "ایمیل"
 
 #: views/admin-page.php:1474
 msgid "Phone"
-msgstr ""
+msgstr "تلفن"
 
 #: views/admin-page.php:1474
 msgid "Source"
-msgstr ""
+msgstr "منبع"
 
 #: views/admin-page.php:1474
 msgid "Notes"
-msgstr ""
+msgstr "یادداشت‌ها"
 
 #: views/admin-page.php:1490
 msgid "Choose Your Plan"
-msgstr ""
+msgstr "طرح خود را انتخاب کنید"
 
 #: views/admin-page.php:1491
 msgid "Upgrade to unlock full voice & chat capabilities"
-msgstr ""
+msgstr "برای دسترسی کامل به قابلیت‌های صدا و چت ارتقا دهید"
 
 #: views/admin-page.php:1498
 msgid "Loading plans..."
-msgstr ""
+msgstr "در حال بارگذاری طرح‌ها..."
 
 #: views/admin-page.php:1502
 msgid "Secure payment via Stripe · Cancel anytime · License key sent by email after payment"
-msgstr ""
+msgstr "پرداخت امن از طریق Stripe · لغو در هر زمان · کلید لایسنس پس از پرداخت با ایمیل ارسال می‌شود"
 
 #: views/admin-page.php:151
 msgid "Free Trial Active"
-msgstr ""
+msgstr "دوره آزمایشی رایگان فعال است"
 
 #: views/admin-page.php:152
 #: views/admin-page.php:186
 #: views/admin-page.php:368
 msgid "TRIAL"
-msgstr ""
+msgstr "آزمایشی"
 
 #: views/admin-page.php:158
 #. translators: %s: link to the Dashboard tab
 msgid "Upgrade to a paid plan to unlock full voice & chat. Usage details are in the %s."
-msgstr ""
+msgstr "برای دسترسی کامل به صدا و چت، به یک طرح پولی ارتقا دهید. جزئیات مصرف در %s موجود است."
 
 #: views/admin-page.php:16
 #: views/admin-page.php:1081
 msgid "Voice & Chat"
-msgstr ""
+msgstr "صدا و چت"
 
 #: views/admin-page.php:164
 #: views/admin-page.php:430
 msgid "Upgrade Plan"
-msgstr ""
+msgstr "ارتقای طرح"
 
 #: views/admin-page.php:178
 msgid "Your subscription has been cancelled or expired."
-msgstr ""
+msgstr "اشتراک شما لغو شده یا منقضی شده است."
 
 #: views/admin-page.php:179
 msgid "Renew your plan"
-msgstr ""
+msgstr "طرح خود را تمدید کنید"
 
 #: views/admin-page.php:179
 msgid "to restore access."
-msgstr ""
+msgstr "تا دسترسی بازگردد."
 
 #: views/admin-page.php:188
 #: views/admin-page.php:339
 #: views/admin-page.php:420
 msgid "Active"
-msgstr ""
+msgstr "فعال"
 
 #: views/admin-page.php:193
 msgid "Manage Subscription"
-msgstr ""
+msgstr "مدیریت اشتراک"
 
 #: views/admin-page.php:194
 msgid "Deactivate"
-msgstr ""
+msgstr "غیرفعال‌سازی"
 
 #: views/admin-page.php:200
 msgid "Plan"
-msgstr ""
+msgstr "طرح"
 
 #: views/admin-page.php:209
 msgid "AI Engine"
-msgstr ""
+msgstr "موتور هوش مصنوعی"
 
 #: views/admin-page.php:213
 msgid "StudioMeta AI Engine"
-msgstr ""
+msgstr "موتور هوش مصنوعی StudioMeta"
 
 #: views/admin-page.php:216
 msgid "Active Site"
-msgstr ""
+msgstr "سایت فعال"
 
 #: views/admin-page.php:220
 msgid "Each license is single-site. Activating elsewhere will deactivate the widget here."
-msgstr ""
+msgstr "هر لایسنس فقط برای یک سایت است. فعال‌سازی در جای دیگر، ویجت را در اینجا غیرفعال می‌کند."
 
 #: views/admin-page.php:224
 msgid "Already purchased?"
-msgstr ""
+msgstr "قبلاً خریداری کرده‌اید؟"
 
 #: views/admin-page.php:224
 msgid "Paste the license key from your email below to upgrade instantly."
-msgstr ""
+msgstr "کلید لایسنس را از ایمیل خود در کادر زیر بچسبانید تا فوراً ارتقا یابد."
 
 #: views/admin-page.php:227
 msgid "Upgrade"
-msgstr ""
+msgstr "ارتقا"
 
 #: views/admin-page.php:23
 msgid "Account"
-msgstr ""
+msgstr "حساب کاربری"
 
 #: views/admin-page.php:238
 msgid "Start your free trial."
-msgstr ""
+msgstr "دوره آزمایشی رایگان خود را شروع کنید."
 
 #: views/admin-page.php:239
 msgid "To activate the AI widget, StudioMeta will securely send your site URL, admin email, WordPress version, and plugin version to the StudioMeta licensing server."
-msgstr ""
+msgstr "برای فعال‌سازی ویجت هوش مصنوعی، StudioMeta آدرس سایت، ایمیل مدیر، نسخه وردپرس و نسخه افزونه شما را به‌صورت امن به سرور لایسنس StudioMeta ارسال می‌کند."
 
 #: views/admin-page.php:244
 #. translators: %s: human-readable time since the last trial-activation attempt, e.g. "3 hours"
 msgid " Last attempt: %s ago."
-msgstr ""
+msgstr " آخرین تلاش: %s پیش."
 
 #: views/admin-page.php:253
 msgid "Already have a license key? Enter it below."
-msgstr ""
+msgstr "از قبل کلید لایسنس دارید؟ آن را در کادر زیر وارد کنید."
 
 #: views/admin-page.php:26
 #: views/admin-page.php:174
 #: views/admin-page.php:339
 msgid "License"
-msgstr ""
+msgstr "لایسنس"
 
 #: views/admin-page.php:261
 msgid "Want to compare plans?"
-msgstr ""
+msgstr "می‌خواهید طرح‌ها را مقایسه کنید؟"
 
 #: views/admin-page.php:262
 msgid "View Pricing"
-msgstr ""
+msgstr "مشاهده قیمت‌ها"
 
 #: views/admin-page.php:30
 #: views/admin-page.php:159
 #. translators: %s: link to the Dashboard tab
 msgid "Dashboard"
-msgstr ""
+msgstr "پیشخوان"
 
 #: views/admin-page.php:305
 msgid "No"
-msgstr ""
+msgstr "هیچ"
 
 #: views/admin-page.php:306
 msgid "One"
-msgstr ""
+msgstr "یک"
 
 #: views/admin-page.php:307
 msgid "Two"
-msgstr ""
+msgstr "دو"
 
 #: views/admin-page.php:308
 msgid "Three"
-msgstr ""
+msgstr "سه"
 
 #: views/admin-page.php:309
 msgid "Four"
-msgstr ""
+msgstr "چهار"
 
 #: views/admin-page.php:314
 msgid "Finish setting up"
-msgstr ""
+msgstr "تکمیل راه‌اندازی"
 
 #: views/admin-page.php:318
 #. translators: %s: number word, e.g. "Two"
 msgid "%s of four steps done — run a system test to go live with confidence."
-msgstr ""
+msgstr "%s مرحله از چهار مرحله انجام شد — برای اطمینان از راه‌اندازی، یک آزمون سیستم اجرا کنید."
 
 #: views/admin-page.php:324
 msgid "Activate license"
-msgstr ""
+msgstr "فعال‌سازی لایسنس"
 
 #: views/admin-page.php:324
 msgid "Connected to StudioMeta."
-msgstr ""
+msgstr "به StudioMeta متصل شد."
 
 #: views/admin-page.php:324
 msgid "Connect this site to StudioMeta."
-msgstr ""
+msgstr "این سایت را به StudioMeta وصل کنید."
 
 #: views/admin-page.php:325
 msgid "Choose a voice"
-msgstr ""
+msgstr "انتخاب یک صدا"
 
 #: views/admin-page.php:328
 #. translators: %s: chosen voice name, e.g. "Aoede"
 msgid "%s, balanced tone."
-msgstr ""
+msgstr "%s، با لحن متعادل."
 
 #: views/admin-page.php:330
 #. translators: %s: chosen voice name, e.g. "Aoede"
 msgid "Pick gender, tone, and greeting."
-msgstr ""
+msgstr "جنسیت، لحن و پیام خوش‌آمد را انتخاب کنید."
 
 #: views/admin-page.php:333
 msgid "Customize widget"
-msgstr ""
+msgstr "سفارشی‌سازی ویجت"
 
 #: views/admin-page.php:333
 msgid "Set display mode and styling."
-msgstr ""
+msgstr "حالت نمایش و ظاهر را تعیین کنید."
 
 #: views/admin-page.php:334
 msgid "Test the system"
-msgstr ""
+msgstr "آزمون سیستم"
 
 #: views/admin-page.php:334
 msgid "Check health, chat and voice."
-msgstr ""
+msgstr "سلامت، چت و صدا را بررسی کنید."
 
 #: views/admin-page.php:339
 msgid "Ready to serve visitors."
-msgstr ""
+msgstr "آماده پاسخ‌گویی به بازدیدکنندگان."
 
 #: views/admin-page.php:339
 msgid "Activate to unlock chat and voice."
-msgstr ""
+msgstr "برای فعال شدن چت و صدا، لایسنس را فعال کنید."
 
 #: views/admin-page.php:34
 msgid "Configuration"
-msgstr ""
+msgstr "پیکربندی"
 
 #: views/admin-page.php:340
 #: views/admin-page.php:563
 #: views/admin-page.php:1087
 #: views/admin-page.php:1095
 msgid "Voice"
-msgstr ""
+msgstr "صدا"
 
 #: views/admin-page.php:340
 #: views/admin-page.php:348
 msgid "Enabled"
-msgstr ""
+msgstr "فعال"
 
 #: views/admin-page.php:340
 #: views/admin-page.php:348
 msgid "Disabled"
-msgstr ""
+msgstr "غیرفعال"
 
 #: views/admin-page.php:343
 #. translators: %s: chosen voice name, e.g. "Aoede"
 msgid "Voice profile: %s"
-msgstr ""
+msgstr "پروفایل صدا: %s"
 
 #: views/admin-page.php:345
 #. translators: %s: chosen voice name, e.g. "Aoede"
 msgid "Default voice profile"
-msgstr ""
+msgstr "پروفایل صدای پیش‌فرض"
 
 #: views/admin-page.php:348
 #: views/admin-page.php:1088
 #: views/admin-page.php:1096
 msgid "Chat"
-msgstr ""
+msgstr "چت"
 
 #: views/admin-page.php:348
 msgid "Text assistant available"
-msgstr ""
+msgstr "دستیار متنی در دسترس است"
 
 #: views/admin-page.php:348
 msgid "Text assistant is off"
-msgstr ""
+msgstr "دستیار متنی خاموش است"
 
 #: views/admin-page.php:349
 msgid "Shows on every page"
-msgstr ""
+msgstr "در همه صفحات نمایش داده می‌شود"
 
 #: views/admin-page.php:349
 msgid "Shown via [smva_widget] shortcode"
-msgstr ""
+msgstr "از طریق کد کوتاه [smva_widget] نمایش داده می‌شود"
 
 #: views/admin-page.php:366
 msgid "Usage This Month"
-msgstr ""
+msgstr "مصرف این ماه"
 
 #: views/admin-page.php:37
 msgid "General"
-msgstr ""
+msgstr "عمومی"
 
 #: views/admin-page.php:371
 msgid "Expires"
-msgstr ""
+msgstr "انقضا"
 
 #: views/admin-page.php:371
 msgid "Renews"
-msgstr ""
+msgstr "تمدید"
 
 #: views/admin-page.php:379
 msgid "Voice minutes"
-msgstr ""
+msgstr "دقایق صوتی"
 
 #: views/admin-page.php:382
 #. translators: %d: minutes limit
 msgid "of %d"
-msgstr ""
+msgstr "از %d"
 
 #: views/admin-page.php:387
 #: views/admin-page.php:402
 msgid "used"
-msgstr ""
+msgstr "مصرف‌شده"
 
 #: views/admin-page.php:394
 msgid "Chat messages"
-msgstr ""
+msgstr "پیام‌های چت"
 
 #: views/admin-page.php:397
 #. translators: %s: message limit, e.g. "1,000"
 msgid "of %s"
-msgstr ""
+msgstr "از %s"
 
 #: views/admin-page.php:41
 msgid "My Agent"
-msgstr ""
+msgstr "دستیار من"
 
 #: views/admin-page.php:420
 msgid "Inactive"
-msgstr ""
+msgstr "غیرفعال"
 
 #: views/admin-page.php:423
 msgid "sessions"
-msgstr ""
+msgstr "جلسه"
 
 #: views/admin-page.php:424
 msgid "days remaining"
-msgstr ""
+msgstr "روز باقی‌مانده"
 
 #: views/admin-page.php:425
 msgid "license status"
-msgstr ""
+msgstr "وضعیت لایسنس"
 
 #: views/admin-page.php:433
 msgid "Refreshes every 5 min."
-msgstr ""
+msgstr "هر ۵ دقیقه به‌روزرسانی می‌شود."
 
 #: views/admin-page.php:439
 #: views/admin-page.php:467
 msgid "Recent Sessions"
-msgstr ""
+msgstr "جلسات اخیر"
 
 #: views/admin-page.php:441
 #: views/admin-page.php:1414
 #: views/admin-page.php:1474
 msgid "Date"
-msgstr ""
+msgstr "تاریخ"
 
 #: views/admin-page.php:441
 msgid "Type"
-msgstr ""
+msgstr "نوع"
 
 #: views/admin-page.php:441
 #: views/admin-page.php:1414
 msgid "Duration"
-msgstr ""
+msgstr "مدت"
 
 #: views/admin-page.php:45
 #: views/admin-page.php:349
 msgid "Widget"
-msgstr ""
+msgstr "ویجت"
 
 #: views/admin-page.php:455
 #. translators: %s: duration in minutes, e.g. "3.5"
 msgid "%s min"
-msgstr ""
+msgstr "%s دقیقه"
 
 #: views/admin-page.php:468
 msgid "Chat usage was detected, but recent chat sessions were not returned by the backend yet."
-msgstr ""
+msgstr "مصرف چت شناسایی شد، اما جلسات چت اخیر هنوز از سرور دریافت نشده است."
 
 #: views/admin-page.php:49
 #: views/admin-page.php:115
 msgid "Automation"
-msgstr ""
+msgstr "اتوماسیون"
 
 #: views/admin-page.php:503
 msgid "Language"
-msgstr ""
+msgstr "زبان"
 
 #: views/admin-page.php:503
 msgid "widget UI & agent default"
-msgstr ""
+msgstr "رابط ویجت و پیش‌فرض دستیار"
 
 #: views/admin-page.php:509
 msgid "Agent auto-detects and switches to the user's language mid-conversation."
-msgstr ""
+msgstr "دستیار زبان کاربر را به‌صورت خودکار تشخیص داده و در میانه گفتگو به آن تغییر می‌کند."
 
 #: views/admin-page.php:513
 msgid "Business Name"
-msgstr ""
+msgstr "نام کسب‌وکار"
 
 #: views/admin-page.php:518
 msgid "Chat Greeting"
-msgstr ""
+msgstr "پیام خوش‌آمد چت"
 
 #: views/admin-page.php:518
 msgid "shown when chat widget opens"
-msgstr ""
+msgstr "هنگام باز شدن ویجت چت نمایش داده می‌شود"
 
 #: views/admin-page.php:519
 msgid "Hello! How can I help you?"
-msgstr ""
+msgstr "سلام! چطور می‌توانم کمکتان کنم؟"
 
 #: views/admin-page.php:523
 msgid "Primary Color"
-msgstr ""
+msgstr "رنگ اصلی"
 
 #: views/admin-page.php:53
 #: views/admin-page.php:116
 msgid "Appointments"
-msgstr ""
+msgstr "نوبت‌ها"
 
 #: views/admin-page.php:533
 msgid "Widget Position"
-msgstr ""
+msgstr "موقعیت ویجت"
 
 #: views/admin-page.php:535
 msgid "Bottom Right"
-msgstr ""
+msgstr "پایین راست"
 
 #: views/admin-page.php:536
 msgid "Bottom Left"
-msgstr ""
+msgstr "پایین چپ"
 
 #: views/admin-page.php:541
 msgid "Widget Style"
-msgstr ""
+msgstr "سبک ویجت"
 
 #: views/admin-page.php:543
 msgid "Floating Button (FAB)"
-msgstr ""
+msgstr "دکمه شناور (FAB)"
 
 #: views/admin-page.php:544
 msgid "Pill Button"
-msgstr ""
+msgstr "دکمه قرصی"
 
 #: views/admin-page.php:553
 msgid "Agent Identity"
-msgstr ""
+msgstr "هویت دستیار"
 
 #: views/admin-page.php:558
 msgid "Agent Name"
-msgstr ""
+msgstr "نام دستیار"
 
 #: views/admin-page.php:559
 msgid "AI Assistant"
-msgstr ""
+msgstr "دستیار هوش مصنوعی"
 
 #: views/admin-page.php:57
 msgid "History"
-msgstr ""
+msgstr "تاریخچه"
 
 #: views/admin-page.php:60
 #: views/admin-page.php:117
 #: views/admin-page.php:1366
 msgid "Chat History"
-msgstr ""
+msgstr "تاریخچه چت"
 
 #: views/admin-page.php:64
 #: views/admin-page.php:118
 #: views/admin-page.php:1404
 msgid "Voice Summary"
-msgstr ""
+msgstr "خلاصه تماس‌های صوتی"
 
 #: views/admin-page.php:640
 msgid "Your plan changed."
-msgstr ""
+msgstr "طرح شما تغییر کرد."
 
 #: views/admin-page.php:644
 #. translators: 1: previous voice name, 2: new voice name
 msgid "The %1$s voice is not available on your current engine, so the closest match (%2$s) was selected. Pick a different one below at any time."
-msgstr ""
+msgstr "صدای %1$s روی موتور فعلی شما در دسترس نیست، بنابراین نزدیک‌ترین گزینه (%2$s) انتخاب شد. هر زمان بخواهید می‌توانید از پایین صدای دیگری انتخاب کنید."
 
 #: views/admin-page.php:653
 msgid "Female"
-msgstr ""
+msgstr "زن"
 
 #: views/admin-page.php:656
 msgid "Male"
-msgstr ""
+msgstr "مرد"
 
 #: views/admin-page.php:666
 #: views/admin-page.php:715
 msgid "No description available for this voice yet."
-msgstr ""
+msgstr "هنوز توضیحی برای این صدا موجود نیست."
 
 #: views/admin-page.php:68
 #: views/admin-page.php:119
 #: views/admin-page.php:1467
 msgid "Leads"
-msgstr ""
+msgstr "سرنخ‌ها"
 
 #: views/admin-page.php:699
 #. translators: %s: AI engine label, e.g. "StudioMeta AI Engine"
 msgid "Filter by gender, then pick a voice. Preview uses the %s — same as the live widget."
-msgstr ""
+msgstr "بر اساس جنسیت فیلتر کنید، سپس یک صدا انتخاب نمایید. پیش‌نمایش از %s استفاده می‌کند — همان چیزی که در ویجت زنده به کار می‌رود."
 
 #: views/admin-page.php:713
 msgid "Voice profile"
-msgstr ""
+msgstr "پروفایل صدا"
 
 #: views/admin-page.php:719
 #. translators: %s: AI engine label, e.g. "StudioMeta AI Engine"
 msgid "Preview uses the %s with the selected voice — same as the live widget."
-msgstr ""
+msgstr "پیش‌نمایش از %s با صدای انتخاب‌شده استفاده می‌کند — همان چیزی که در ویجت زنده به کار می‌رود."
 
 #: views/admin-page.php:72
 msgid "System"
-msgstr ""
+msgstr "سیستم"
 
 #: views/admin-page.php:724
 msgid "Voice Greeting"
-msgstr ""
+msgstr "پیام خوش‌آمد صوتی"
 
 #: views/admin-page.php:724
 msgid "what the agent says when the voice call starts"
-msgstr ""
+msgstr "چیزی که دستیار هنگام شروع تماس صوتی می‌گوید"
 
 #: views/admin-page.php:726
 msgid "Hello! How can I help you today?"
-msgstr ""
+msgstr "سلام! امروز چطور می‌توانم کمکتان کنم؟"
 
 #: views/admin-page.php:727
 msgid "Preview Greeting"
-msgstr ""
+msgstr "پیش‌نمایش پیام خوش‌آمد"
 
 #: views/admin-page.php:728
 msgid "Stop"
-msgstr ""
+msgstr "توقف"
 
 #: views/admin-page.php:730
 msgid "Preview the selected greeting right under the chosen voice to make comparison easier."
-msgstr ""
+msgstr "پیام خوش‌آمد انتخاب‌شده را دقیقاً زیر صدای انتخابی پیش‌نمایش کنید تا مقایسه آسان‌تر شود."
 
 #: views/admin-page.php:736
 msgid "Timezone"
-msgstr ""
+msgstr "منطقه زمانی"
 
 #: views/admin-page.php:740
 msgid "UTC"
-msgstr ""
+msgstr "UTC"
 
 #: views/admin-page.php:741
 msgid "Eastern — Toronto"
-msgstr ""
+msgstr "شرقی — تورنتو"
 
 #: views/admin-page.php:742
 msgid "Central — Chicago"
-msgstr ""
+msgstr "مرکزی — شیکاگو"
 
 #: views/admin-page.php:743
 msgid "Mountain — Denver"
-msgstr ""
+msgstr "کوهستانی — دنور"
 
 #: views/admin-page.php:744
 msgid "Pacific — Vancouver"
-msgstr ""
+msgstr "آرام — ونکوور"
 
 #: views/admin-page.php:745
 msgid "GMT — London"
-msgstr ""
+msgstr "GMT — لندن"
 
 #: views/admin-page.php:746
 msgid "CET — Paris"
-msgstr ""
+msgstr "CET — پاریس"
 
 #: views/admin-page.php:747
 msgid "IRST — Tehran"
-msgstr ""
+msgstr "IRST — تهران"
 
 #: views/admin-page.php:748
 msgid "GST — Dubai"
-msgstr ""
+msgstr "GST — دبی"
 
 #: views/admin-page.php:749
 msgid "JST — Tokyo"
-msgstr ""
+msgstr "JST — توکیو"
 
 #: views/admin-page.php:75
 #: views/admin-page.php:1385
 msgid "Health Check"
-msgstr ""
+msgstr "بررسی سلامت"
 
 #: views/admin-page.php:750
 msgid "AEDT — Sydney"
-msgstr ""
+msgstr "AEDT — سیدنی"
 
 #: views/admin-page.php:759
 msgid "Response Style"
-msgstr ""
+msgstr "سبک پاسخ‌دهی"
 
 #: views/admin-page.php:763
 msgid "Precise"
-msgstr ""
+msgstr "دقیق"
 
 #: views/admin-page.php:763
 msgid "Consistent & factual"
-msgstr ""
+msgstr "یکدست و مبتنی بر واقعیت"
 
 #: views/admin-page.php:764
 msgid "Balanced"
-msgstr ""
+msgstr "متعادل"
 
 #: views/admin-page.php:764
 msgid "Default — works for most"
-msgstr ""
+msgstr "پیش‌فرض — برای بیشتر موارد مناسب است"
 
 #: views/admin-page.php:765
 msgid "Creative"
-msgstr ""
+msgstr "خلاقانه"
 
 #: views/admin-page.php:765
 msgid "Varied & expressive"
-msgstr ""
+msgstr "متنوع و بیان‌گرا"
 
 #: views/admin-page.php:784
 msgid "Test System"
-msgstr ""
+msgstr "آزمون سیستم"
 
 #: views/admin-page.php:785
 msgid "Test Voice"
-msgstr ""
+msgstr "آزمون صدا"
 
 #: views/admin-page.php:79
 #: views/admin-page.php:121
 msgid "Integrations"
-msgstr ""
+msgstr "یکپارچه‌سازی‌ها"
 
 #: views/admin-page.php:790
 msgid "Embed Shortcode"
-msgstr ""
+msgstr "کد کوتاه جاسازی"
 
 #: views/admin-page.php:792
 #: views/admin-page.php:1176
 msgid "Copied!"
-msgstr ""
+msgstr "کپی شد!"
 
 #: views/admin-page.php:793
 msgid "Click to copy — paste anywhere on your site"
-msgstr ""
+msgstr "برای کپی کلیک کنید — در هر جای سایت خود بچسبانید"
 
 #: views/admin-page.php:816
 msgid "Train My Agent automatically"
-msgstr ""
+msgstr "آموزش خودکار دستیار من"
 
 #: views/admin-page.php:817
 msgid "We'll read your website, build a knowledge base, write a system prompt, and suggest questions — all in one click."
-msgstr ""
+msgstr "ما سایت شما را می‌خوانیم، پایگاه دانش می‌سازیم، دستور سیستمی می‌نویسیم و سؤالات پیشنهادی ارائه می‌دهیم — همه با یک کلیک."
 
 #: views/admin-page.php:820
 #: views/admin-page.php:832
 msgid "Train My Agent"
-msgstr ""
+msgstr "آموزش دستیار من"
 
 #: views/admin-page.php:833
 msgid "We'll automatically read your website and set up your AI assistant in about 30 seconds."
-msgstr ""
+msgstr "ما به‌صورت خودکار سایت شما را می‌خوانیم و دستیار هوش مصنوعی‌تان را در حدود ۳۰ ثانیه راه‌اندازی می‌کنیم."
 
 #: views/admin-page.php:836
 msgid "Website URL to train from:"
-msgstr ""
+msgstr "آدرس سایتی که از آن آموزش داده شود:"
 
 #: views/admin-page.php:840
 msgid "What we'll do:"
-msgstr ""
+msgstr "کاری که انجام می‌دهیم:"
 
 #: views/admin-page.php:842
 msgid "Read up to 10 pages from your website"
-msgstr ""
+msgstr "خواندن تا ۱۰ صفحه از سایت شما"
 
 #: views/admin-page.php:843
 msgid "Write a system prompt for your agent"
-msgstr ""
+msgstr "نوشتن دستور سیستمی برای دستیار شما"
 
 #: views/admin-page.php:844
 msgid "Build a clean knowledge base"
-msgstr ""
+msgstr "ساخت یک پایگاه دانش تمیز"
 
 #: views/admin-page.php:845
 msgid "Suggest questions for your visitors"
-msgstr ""
+msgstr "پیشنهاد سؤالاتی برای بازدیدکنندگان شما"
 
 #: views/admin-page.php:849
 #: views/admin-page.php:891
@@ -1463,424 +1466,423 @@ msgstr ""
 #: views/admin-page.php:1289
 #: views/admin-page.php:1340
 msgid "Cancel"
-msgstr ""
+msgstr "لغو"
 
 #: views/admin-page.php:850
 msgid "Start Training"
-msgstr ""
+msgstr "شروع آموزش"
 
 #: views/admin-page.php:857
 msgid "Training in progress..."
-msgstr ""
+msgstr "آموزش در حال انجام است..."
 
 #: views/admin-page.php:858
 msgid "Reading your website..."
-msgstr ""
+msgstr "در حال خواندن سایت شما..."
 
 #: views/admin-page.php:862
 msgid "This may take 30-60 seconds..."
-msgstr ""
+msgstr "این کار ممکن است ۳۰ تا ۶۰ ثانیه طول بکشد..."
 
 #: views/admin-page.php:870
 msgid "Training complete!"
-msgstr ""
+msgstr "آموزش کامل شد!"
 
 #: views/admin-page.php:876
 #: views/admin-page.php:962
 msgid "System Prompt"
-msgstr ""
+msgstr "دستور سیستمی"
 
 #: views/admin-page.php:880
 #: views/admin-page.php:924
 msgid "Knowledge Base"
-msgstr ""
+msgstr "پایگاه دانش"
 
 #: views/admin-page.php:884
 #: views/admin-page.php:974
 msgid "Suggested Questions"
-msgstr ""
+msgstr "سؤالات پیشنهادی"
 
 #: views/admin-page.php:892
 msgid "Apply & Save"
-msgstr ""
+msgstr "اعمال و ذخیره"
 
 #: views/admin-page.php:902
 #: views/admin-page.php:939
 msgid "Select Pages to Train From"
-msgstr ""
+msgstr "انتخاب صفحات برای آموزش"
 
 #: views/admin-page.php:903
 msgid "Only the content you tick is read into the knowledge base. Pages are selected by default; posts are not, so news and blog archives stay out unless you add them."
-msgstr ""
+msgstr "فقط محتوایی که تیک می‌زنید وارد پایگاه دانش می‌شود. برگه‌ها به‌صورت پیش‌فرض انتخاب شده‌اند اما نوشته‌ها خیر، بنابراین اخبار و آرشیو وبلاگ وارد نمی‌شوند مگر آنکه خودتان اضافه کنید."
 
 #: views/admin-page.php:906
 msgid "Loading your content…"
-msgstr ""
+msgstr "در حال بارگذاری محتوای شما…"
 
 #: views/admin-page.php:914
 msgid "Build Knowledge Base"
-msgstr ""
+msgstr "ساخت پایگاه دانش"
 
 #: views/admin-page.php:92
 #. translators: %s: plan name, e.g. "Pro"
 msgid "%s Plan"
-msgstr ""
+msgstr "طرح %s"
 
 #: views/admin-page.php:925
 msgid "Step 1"
-msgstr ""
+msgstr "گام ۱"
 
 #: views/admin-page.php:927
 msgid "Add your business information here. The more detail, the better your agent will perform. You can import it automatically from your website."
-msgstr ""
+msgstr "اطلاعات کسب‌وکار خود را اینجا اضافه کنید. هرچه جزئیات بیشتر باشد، دستیار شما بهتر عمل می‌کند. می‌توانید آن را به‌صورت خودکار از سایتتان وارد کنید."
 
 #: views/admin-page.php:93
 #: views/admin-page.php:100
 #: views/admin-page.php:339
 #. translators: %s: plan name, e.g. "Pro"
 msgid "Not activated"
-msgstr ""
+msgstr "فعال نشده"
 
 #: views/admin-page.php:930
 msgid "Website URL to import from:"
-msgstr ""
+msgstr "آدرس سایتی که از آن وارد شود:"
 
 #: views/admin-page.php:933
 msgid "Crawl your website and build knowledge base automatically"
-msgstr ""
+msgstr "پیمایش سایت شما و ساخت خودکار پایگاه دانش"
 
 #: views/admin-page.php:934
 msgid "Import from Website"
-msgstr ""
+msgstr "ورود از سایت"
 
 #: views/admin-page.php:938
 msgid "Pick exactly which pages and posts feed the knowledge base"
-msgstr ""
+msgstr "دقیقاً انتخاب کنید کدام برگه‌ها و نوشته‌ها به پایگاه دانش وارد شوند"
 
 #: views/admin-page.php:941
 msgid "Choose specific content instead of crawling the whole site — useful if you publish news or blog posts the agent shouldn't quote."
-msgstr ""
+msgstr "به‌جای پیمایش کل سایت، محتوای مشخصی را انتخاب کنید — به‌ویژه اگر اخبار یا نوشته‌های وبلاگی منتشر می‌کنید که دستیار نباید به آن‌ها استناد کند."
 
 #: views/admin-page.php:945
 msgid "Upload a file to add to knowledge base:"
-msgstr ""
+msgstr "بارگذاری یک فایل برای افزودن به پایگاه دانش:"
 
 #: views/admin-page.php:949
 msgid "Upload File"
-msgstr ""
+msgstr "بارگذاری فایل"
 
 #: views/admin-page.php:950
 #: views/admin-page.php:990
 msgid "Processing..."
-msgstr ""
+msgstr "در حال پردازش..."
 
 #: views/admin-page.php:954
 msgid "Supported: PDF, DOCX, CSV, TXT — Max 10MB"
-msgstr ""
+msgstr "پشتیبانی‌شده: PDF، DOCX، CSV، TXT — حداکثر ۱۰ مگابایت"
 
 #: views/admin-page.php:957
 msgid "## Business Name"
-msgstr ""
+msgstr "## نام کسب‌وکار"
 
 #: views/admin-page.php:957
 msgid "Your Company"
-msgstr ""
+msgstr "شرکت شما"
 
 #: views/admin-page.php:957
 msgid "## Services"
-msgstr ""
+msgstr "## خدمات"
 
 #: views/admin-page.php:957
 msgid "Service 1"
-msgstr ""
+msgstr "خدمت ۱"
 
 #: views/admin-page.php:957
 msgid "Service 2"
-msgstr ""
+msgstr "خدمت ۲"
 
 #: views/admin-page.php:957
 msgid "## Hours"
-msgstr ""
+msgstr "## ساعات کاری"
 
 #: views/admin-page.php:957
 msgid "Mon-Fri: 9am-5pm"
-msgstr ""
+msgstr "دوشنبه تا جمعه: ۹ صبح تا ۵ عصر"
 
 #: views/admin-page.php:957
 msgid "## Contact"
-msgstr ""
+msgstr "## تماس"
 
 #: views/admin-page.php:963
 msgid "Step 2"
-msgstr ""
+msgstr "گام ۲"
 
 #: views/admin-page.php:965
 msgid "Instructions for how your agent should behave and respond. Fill in the Knowledge Base first, then generate or write your system prompt."
-msgstr ""
+msgstr "دستورالعمل‌هایی برای نحوه رفتار و پاسخ‌گویی دستیار شما. ابتدا پایگاه دانش را پر کنید، سپس دستور سیستمی را تولید یا بنویسید."
 
 #: views/admin-page.php:967
 msgid "You are a helpful assistant for [Business Name]. You help customers with questions about our services, pricing, and booking appointments. Always be friendly and professional."
-msgstr ""
+msgstr "شما دستیاری یاری‌رسان برای [نام کسب‌وکار] هستید. به مشتریان در مورد خدمات، قیمت‌ها و رزرو نوبت کمک می‌کنید. همیشه صمیمی و حرفه‌ای باشید."
 
 #: views/admin-page.php:975
 msgid "Step 3"
-msgstr ""
+msgstr "گام ۳"
 
 #: views/admin-page.php:977
 msgid "Quick question chips shown in the widget. One per line."
-msgstr ""
+msgstr "تراشه‌های سؤال سریع که در ویجت نمایش داده می‌شوند. هر خط یک مورد."
 
 #: views/admin-page.php:978
 msgid "What are your opening hours?"
-msgstr ""
+msgstr "ساعات کاری شما چیست؟"
 
 #: views/admin-page.php:978
 msgid "How can I book an appointment?"
-msgstr ""
+msgstr "چگونه می‌توانم نوبت رزرو کنم؟"
 
 #: views/admin-page.php:978
 msgid "What services do you offer?"
-msgstr ""
+msgstr "چه خدماتی ارائه می‌دهید؟"
 
 #: views/admin-page.php:996
 msgid "Optimize with AI"
-msgstr ""
+msgstr "بهینه‌سازی با هوش مصنوعی"
 
 #: views/admin-page.php:997
 msgid "Save & Sync Agent"
-msgstr ""
+msgstr "ذخیره و همگام‌سازی دستیار"
 
 #: views/appointments-tab.php:100
 #: views/appointments-tab.php:121
 msgid "1 hour"
-msgstr ""
+msgstr "۱ ساعت"
 
 #: views/appointments-tab.php:101
 msgid "1.5 hours"
-msgstr ""
+msgstr "۱.۵ ساعت"
 
 #: views/appointments-tab.php:102
 #: views/appointments-tab.php:122
 msgid "2 hours"
-msgstr ""
+msgstr "۲ ساعت"
 
 #: views/appointments-tab.php:107
 msgid "Gap between appointments"
-msgstr ""
+msgstr "فاصله بین نوبت‌ها"
 
 #: views/appointments-tab.php:109
 #: views/appointments-tab.php:120
 msgid "None"
-msgstr ""
+msgstr "بدون فاصله"
 
 #: views/appointments-tab.php:110
 msgid "5 minutes"
-msgstr ""
+msgstr "۵ دقیقه"
 
 #: views/appointments-tab.php:111
 msgid "10 minutes"
-msgstr ""
+msgstr "۱۰ دقیقه"
 
 #: views/appointments-tab.php:118
 msgid "Minimum notice"
-msgstr ""
+msgstr "حداقل زمان پیش‌اطلاع"
 
 #: views/appointments-tab.php:123
 msgid "4 hours"
-msgstr ""
+msgstr "۴ ساعت"
 
 #: views/appointments-tab.php:124
 msgid "1 day"
-msgstr ""
+msgstr "۱ روز"
 
 #: views/appointments-tab.php:125
 msgid "2 days"
-msgstr ""
+msgstr "۲ روز"
 
 #: views/appointments-tab.php:127
 msgid "How soon a visitor may book from now."
-msgstr ""
+msgstr "از این لحظه، بازدیدکننده چقدر زودتر می‌تواند نوبت بگیرد."
 
 #: views/appointments-tab.php:131
 msgid "Book up to"
-msgstr ""
+msgstr "امکان رزرو تا"
 
 #: views/appointments-tab.php:133
 msgid "1 week ahead"
-msgstr ""
+msgstr "۱ هفته آینده"
 
 #: views/appointments-tab.php:134
 msgid "2 weeks ahead"
-msgstr ""
+msgstr "۲ هفته آینده"
 
 #: views/appointments-tab.php:135
 msgid "1 month ahead"
-msgstr ""
+msgstr "۱ ماه آینده"
 
 #: views/appointments-tab.php:136
 msgid "2 months ahead"
-msgstr ""
+msgstr "۲ ماه آینده"
 
 #: views/appointments-tab.php:137
 msgid "3 months ahead"
-msgstr ""
+msgstr "۳ ماه آینده"
 
 #: views/appointments-tab.php:142
 msgid "Meeting type"
-msgstr ""
+msgstr "نوع جلسه"
 
 #: views/appointments-tab.php:144
 msgid "Phone call"
-msgstr ""
+msgstr "تماس تلفنی"
 
 #: views/appointments-tab.php:145
 msgid "Video call"
-msgstr ""
+msgstr "تماس تصویری"
 
 #: views/appointments-tab.php:146
 msgid "In person"
-msgstr ""
+msgstr "حضوری"
 
 #: views/appointments-tab.php:151
 msgid "Location or joining details"
-msgstr ""
+msgstr "مکان یا اطلاعات پیوستن"
 
 #: views/appointments-tab.php:152
 msgid "e.g. 12 High Street, or a meeting link"
-msgstr ""
+msgstr "مثلاً خیابان اصلی پلاک ۱۲، یا یک لینک جلسه"
 
 #: views/appointments-tab.php:158
 msgid "Save Working Hours"
-msgstr ""
+msgstr "ذخیره ساعات کاری"
 
 #: views/appointments-tab.php:16
 msgid "Monday"
-msgstr ""
+msgstr "دوشنبه"
 
 #: views/appointments-tab.php:167
 msgid "Calendar Sync"
-msgstr ""
+msgstr "همگام‌سازی تقویم"
 
 #: views/appointments-tab.php:169
 msgid "Connect a calendar so the agent never books over something you already have, and every appointment lands in your calendar automatically. Booking works without this."
-msgstr ""
+msgstr "یک تقویم متصل کنید تا دستیار هرگز روی برنامه‌های موجود شما نوبت نگذارد و هر نوبت به‌صورت خودکار در تقویمتان ثبت شود. رزرو بدون این هم کار می‌کند."
 
 #: views/appointments-tab.php:17
 msgid "Tuesday"
-msgstr ""
+msgstr "سه‌شنبه"
 
 #: views/appointments-tab.php:18
 msgid "Wednesday"
-msgstr ""
+msgstr "چهارشنبه"
 
 #: views/appointments-tab.php:184
 msgid "Google Calendar"
-msgstr ""
+msgstr "تقویم گوگل"
 
 #: views/appointments-tab.php:187
 msgid "Checking connection..."
-msgstr ""
+msgstr "در حال بررسی اتصال..."
 
 #: views/appointments-tab.php:19
 msgid "Thursday"
-msgstr ""
+msgstr "پنجشنبه"
 
 #: views/appointments-tab.php:194
 msgid "Connect Google Calendar"
-msgstr ""
+msgstr "اتصال تقویم گوگل"
 
 #: views/appointments-tab.php:197
 msgid "Disconnect"
-msgstr ""
+msgstr "قطع اتصال"
 
 #: views/appointments-tab.php:20
 msgid "Friday"
-msgstr ""
+msgstr "جمعه"
 
 #: views/appointments-tab.php:21
 msgid "Saturday"
-msgstr ""
+msgstr "شنبه"
 
 #: views/appointments-tab.php:214
 msgid "Outlook Calendar"
-msgstr ""
+msgstr "تقویم Outlook"
 
 #: views/appointments-tab.php:215
 msgid "Coming soon"
-msgstr ""
+msgstr "به‌زودی"
 
 #: views/appointments-tab.php:217
 msgid "Coming Soon"
-msgstr ""
+msgstr "به‌زودی"
 
 #: views/appointments-tab.php:22
 msgid "Sunday"
-msgstr ""
+msgstr "یکشنبه"
 
 #: views/appointments-tab.php:223
 msgid "Availability Preview"
-msgstr ""
+msgstr "پیش‌نمایش زمان‌های خالی"
 
 #: views/appointments-tab.php:225
 msgid "Exactly what the agent will offer over the next 7 days, after your hours, minimum notice and any calendar conflicts are applied."
-msgstr ""
+msgstr "دقیقاً همان چیزی که دستیار در ۷ روز آینده پیشنهاد می‌دهد، پس از اعمال ساعات کاری، حداقل زمان پیش‌اطلاع و تداخل‌های تقویم."
 
 #: views/appointments-tab.php:31
 msgid "Appointment Booking"
-msgstr ""
+msgstr "رزرو نوبت"
 
 #: views/appointments-tab.php:33
 msgid "Let the agent book real appointments during a conversation, using the hours you set below. Works with or without a connected calendar."
-msgstr ""
+msgstr "به دستیار اجازه دهید در حین گفتگو، با استفاده از ساعاتی که در پایین تعیین می‌کنید، نوبت واقعی رزرو کند. با یا بدون تقویم متصل کار می‌کند."
 
 #: views/appointments-tab.php:43
 msgid "Enable appointment booking"
-msgstr ""
+msgstr "فعال‌سازی رزرو نوبت"
 
 #: views/appointments-tab.php:44
 msgid "When off, the agent will not offer or accept appointments."
-msgstr ""
+msgstr "وقتی خاموش باشد، دستیار نوبتی پیشنهاد نمی‌دهد و نمی‌پذیرد."
 
 #: views/appointments-tab.php:51
 msgid "Working Hours"
-msgstr ""
+msgstr "ساعات کاری"
 
 #: views/appointments-tab.php:56
 #. translators: %s: IANA timezone name, e.g. Europe/Paris
 msgid "All times are in %s. Change it under General Settings."
-msgstr ""
+msgstr "همه زمان‌ها بر اساس %s است. آن را در «تنظیمات عمومی» تغییر دهید."
 
 #: views/appointments-tab.php:75
 msgid "Closed"
-msgstr ""
+msgstr "تعطیل"
 
 #: views/appointments-tab.php:82
 msgid "Copy Monday to all days"
-msgstr ""
+msgstr "کپی دوشنبه به همه روزها"
 
 #: views/appointments-tab.php:89
 msgid "Appointment Rules"
-msgstr ""
+msgstr "قواعد نوبت‌دهی"
 
 #: views/appointments-tab.php:94
 msgid "Appointment length"
-msgstr ""
+msgstr "مدت هر نوبت"
 
 #: views/appointments-tab.php:96
 #: views/appointments-tab.php:112
 msgid "15 minutes"
-msgstr ""
+msgstr "۱۵ دقیقه"
 
 #: views/appointments-tab.php:97
 msgid "20 minutes"
-msgstr ""
+msgstr "۲۰ دقیقه"
 
 #: views/appointments-tab.php:98
 #: views/appointments-tab.php:113
 msgid "30 minutes"
-msgstr ""
+msgstr "۳۰ دقیقه"
 
 #: views/appointments-tab.php:99
 msgid "45 minutes"
-msgstr ""
-
+msgstr "۴۵ دقیقه"
