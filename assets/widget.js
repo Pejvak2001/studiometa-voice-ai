@@ -36,6 +36,7 @@
         chatEnabled: cfg.chatEnabled !== false,
         defaultTab: cfg.defaultTab || 'voice',
         suggestedQuestions: cfg.suggestedQuestions || [],
+        workflowButtons: Array.isArray(cfg.workflowButtons) ? cfg.workflowButtons : [],
         callCooldown: parseInt(cfg.callCooldown) || 20,
         // Minutes, and 0 legitimately means "no site limit" — the admin field
         // allows it. A `|| 600` fallback here read as 600 *minutes* further
