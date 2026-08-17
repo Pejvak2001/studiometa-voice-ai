@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.7.2
+Stable tag: 1.7.3
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -244,6 +244,9 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.7.3 =
+* Changed: "Workflow Trigger Buttons" (Voice AI → Automation) renamed to "Quick Action Buttons" for clarity — no functional change, same setting
 
 = 1.7.2 =
 * Fixed: Workflow Trigger Buttons (Voice AI → Automation) never actually appeared in the chat widget, on any site — the frontend script read the saved buttons but dropped them before rendering, so only Suggested Questions ever showed up regardless of what was configured

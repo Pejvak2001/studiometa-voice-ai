@@ -845,7 +845,7 @@
         if (!caps.voice && !caps.chat) { buildCTA(); return; }
 
         const questions = Array.isArray(CONFIG.suggestedQuestions) ? CONFIG.suggestedQuestions : [];
-        // Workflow buttons (Voice AI → Automation) were seeded on activation —
+        // Quick Action buttons (Voice AI → Automation) were seeded on activation —
         // "Book Appointment" among them — but nothing ever rendered them; this
         // is the only discoverable way a visitor starts a booking conversation
         // rather than having to think to ask for one. Same chip, same click

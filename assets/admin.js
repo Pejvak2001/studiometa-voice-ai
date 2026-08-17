@@ -776,14 +776,14 @@ jQuery(function($) {
         .always(function() { $btn.prop('disabled', false).text('Save Webhook URL'); setTimeout(function() { $msg.text(''); }, 3000); });
     });
 
-    // Workflow Trigger Buttons
+    // Quick Action Buttons (option key smva_workflow_buttons is unchanged — only the admin-facing label was renamed)
     $('#smva-save-workflow-buttons-btn').on('click', function() {
         var $btn = $(this).prop('disabled', true).text('Saving...');
         var $msg = $('#smva-workflow-buttons-msg').text('').css('color', '');
         $.post(window.smvaAdmin.ajaxUrl, {action:'smva_save_settings', nonce:window.smvaAdmin.nonce, smva_workflow_buttons:$('#smva-workflow-buttons').val()})
         .done(function(res) { $msg.text(res.success ? 'Saved!' : 'Error').css('color', res.success ? '#059669' : '#dc2626'); })
         .fail(function() { $msg.text('Connection error.').css('color', '#dc2626'); })
-        .always(function() { $btn.prop('disabled', false).text('Save Workflow Buttons'); setTimeout(function() { $msg.text(''); }, 3000); });
+        .always(function() { $btn.prop('disabled', false).text('Save Quick Action Buttons'); setTimeout(function() { $msg.text(''); }, 3000); });
     });
 
     // Tools

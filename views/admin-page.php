@@ -1136,7 +1136,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     ?>
 
     <div class="smva-card" style="margin-bottom:16px">
-        <div class="smva-card-header"><h2 class="smva-card-title">Workflow Trigger Buttons</h2></div>
+        <div class="smva-card-header"><h2 class="smva-card-title">Quick Action Buttons</h2></div>
         <p class="smva-desc">Quick-action buttons shown in the widget that send a preset message to the agent — e.g. a visible &ldquo;Book Appointment&rdquo; shortcut.</p>
         <div class="smva-field smva-field-full">
             <label>Buttons <span>— one per line: Label | message sent to agent</span></label>
@@ -1148,7 +1148,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             ?></textarea>
         </div>
         <div class="smva-card-footer">
-            <button type="button" id="smva-save-workflow-buttons-btn" class="smva-btn smva-btn-primary">Save Workflow Buttons</button>
+            <button type="button" id="smva-save-workflow-buttons-btn" class="smva-btn smva-btn-primary">Save Quick Action Buttons</button>
             <span id="smva-workflow-buttons-msg" class="smva-save-msg"></span>
         </div>
     </div>
