@@ -859,7 +859,7 @@ jQuery(function($) {
             });
         }
         renderParams();
-        $('#smva-save-tool-btn').text('Update Tool');
+        $('#smva-save-tool-btn').text(smvaAdmin.i18n.updateTool);
         $('#smva-tool-modal').css('display', 'flex');
     };
 
@@ -979,11 +979,11 @@ jQuery(function($) {
                 window.location.href = res.data.url;
             } else {
                 alert('Could not start checkout. Please try again.');
-                $btn.prop('disabled', false).text('Select →');
+                $btn.prop('disabled', false).text(smvaAdmin.i18n.selectArrow);
             }
         }).fail(function() {
             alert('Connection error. Please try again.');
-            $btn.prop('disabled', false).text('Select →');
+            $btn.prop('disabled', false).text(smvaAdmin.i18n.selectArrow);
         });
     }
 
@@ -1217,8 +1217,8 @@ jQuery(function($) {
     var from = new Date(today.getTime() - (smvaVoiceSummaryRangeDays * 24 * 60 * 60 * 1000));
     $('#smva-vs-date-to').val(smvaLocalDateInputValue(today));
     $('#smva-vs-date-from').val(smvaLocalDateInputValue(from));
-    $('#smva-vs-timezone-label').text('Timezone: ' + smvaVoiceSummaryTimezone);
-    $('#smva-vs-range-label').text('Showing last ' + smvaVoiceSummaryRangeDays + ' days by default');
+    $('#smva-vs-timezone-label').text(smvaAdmin.i18n.timezoneLabel.replace('%s', smvaVoiceSummaryTimezone));
+    $('#smva-vs-range-label').text(smvaAdmin.i18n.showingLastDays.replace('%d', smvaVoiceSummaryRangeDays));
     window.SMVAAdminDebug.voiceSummary.timezone = smvaVoiceSummaryTimezone;
     window.SMVAAdminDebug.voiceSummary.rangeDays = smvaVoiceSummaryRangeDays;
     window.SMVAAdminDebug.voiceSummary.localToday = smvaLocalDateInputValue(today);
@@ -1933,7 +1933,7 @@ jQuery(function($) {
     function render() {
       if (!docs.length) {
         listEl.innerHTML = '<p style="color:#9ca3af;font-size:13px;text-align:center;padding:16px 0">' +
-          'Nothing yet. Until you add something, the agent will not offer to email anyone.</p>';
+          smvaAdmin.i18n.infodocEmpty + '</p>';
         return;
       }
       listEl.innerHTML = '';

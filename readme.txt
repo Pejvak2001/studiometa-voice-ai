@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.7.4
+Stable tag: 1.7.5
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -244,6 +244,9 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.7.5 =
+* Fixed: 5 more admin-panel strings found untranslated while testing 1.7.4 locally (the "no documents yet" empty state, Voice Summary's timezone/date-range labels, and two tool-editor button labels) — these were rendered by admin.js and were missed in the first localization pass
 
 = 1.7.4 =
 * New: **The admin panel is now translatable, and ships in Persian.** Text Domain + textdomain loading added, and the settings screens (Dashboard, License, General, Automation, Widget, Agent, History, Health, Voice Summary, Leads) are wrapped for translation — the widget shown to visitors was already localizable, this covers the screens you configure it from. Set your WordPress site language to فارسی and the panel follows. `.pot` template included for other locales.

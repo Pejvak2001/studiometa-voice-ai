@@ -936,6 +936,13 @@ class SMVA_Plugin {
                 'saveTool'                 => __( 'Save Tool', 'studiometa-voice-ai' ),
                 'saveSyncTools'            => __( 'Save & Sync Tools', 'studiometa-voice-ai' ),
                 'runCheck'                 => __( 'Run Check', 'studiometa-voice-ai' ),
+                'infodocEmpty'             => __( 'Nothing yet. Until you add something, the agent will not offer to email anyone.', 'studiometa-voice-ai' ),
+                'updateTool'               => __( 'Update Tool', 'studiometa-voice-ai' ),
+                'selectArrow'              => __( 'Select →', 'studiometa-voice-ai' ),
+                /* translators: %s: IANA timezone name, e.g. "America/Toronto" */
+                'timezoneLabel'            => __( 'Timezone: %s', 'studiometa-voice-ai' ),
+                /* translators: %d: number of days */
+                'showingLastDays'          => __( 'Showing last %d days by default', 'studiometa-voice-ai' ),
             ),
         ) );
     }

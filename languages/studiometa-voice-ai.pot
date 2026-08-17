@@ -9,54 +9,54 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Domain: studiometa-voice-ai\n"
 
-#: includes/class-smva.php:2145
-#: includes/class-smva.php:2177
-#: includes/class-smva.php:2237
-#: includes/class-smva.php:2270
-#: includes/class-smva.php:2328
-#: includes/class-smva.php:2365
-#: includes/class-smva.php:2399
-#: includes/class-smva.php:2425
+#: includes/class-smva.php:2152
+#: includes/class-smva.php:2184
+#: includes/class-smva.php:2244
+#: includes/class-smva.php:2277
+#: includes/class-smva.php:2335
+#: includes/class-smva.php:2372
+#: includes/class-smva.php:2406
+#: includes/class-smva.php:2432
 msgid "Activate your license first."
 msgstr ""
 
-#: includes/class-smva.php:2155
+#: includes/class-smva.php:2162
 msgid "Could not load your working hours."
 msgstr ""
 
-#: includes/class-smva.php:2186
+#: includes/class-smva.php:2193
 msgid "Invalid working hours."
 msgstr ""
 
-#: includes/class-smva.php:2206
+#: includes/class-smva.php:2213
 msgid "Could not save your working hours."
 msgstr ""
 
-#: includes/class-smva.php:2247
+#: includes/class-smva.php:2254
 msgid "Could not load your email settings."
 msgstr ""
 
-#: includes/class-smva.php:2292
+#: includes/class-smva.php:2299
 msgid "Invalid documents."
 msgstr ""
 
-#: includes/class-smva.php:2308
+#: includes/class-smva.php:2315
 msgid "Could not save your email settings."
 msgstr ""
 
-#: includes/class-smva.php:2349
+#: includes/class-smva.php:2356
 msgid "Could not calculate availability."
 msgstr ""
 
-#: includes/class-smva.php:2375
+#: includes/class-smva.php:2382
 msgid "Could not read the calendar status."
 msgstr ""
 
-#: includes/class-smva.php:2413
+#: includes/class-smva.php:2420
 msgid "Calendar connection is not available yet."
 msgstr ""
 
-#: includes/class-smva.php:2435
+#: includes/class-smva.php:2442
 msgid "Could not disconnect the calendar."
 msgstr ""
 
@@ -107,14 +107,14 @@ msgid "View all leads:"
 msgstr ""
 
 #: includes/class-smva.php:926
-#: includes/class-smva.php:2150
-#: includes/class-smva.php:2197
-#: includes/class-smva.php:2242
-#: includes/class-smva.php:2303
-#: includes/class-smva.php:2344
-#: includes/class-smva.php:2370
-#: includes/class-smva.php:2404
-#: includes/class-smva.php:2430
+#: includes/class-smva.php:2157
+#: includes/class-smva.php:2204
+#: includes/class-smva.php:2249
+#: includes/class-smva.php:2310
+#: includes/class-smva.php:2351
+#: includes/class-smva.php:2377
+#: includes/class-smva.php:2411
+#: includes/class-smva.php:2437
 msgid "Connection error."
 msgstr ""
 
@@ -179,6 +179,28 @@ msgstr ""
 #: includes/class-smva.php:938
 #: views/admin-page.php:1386
 msgid "Run Check"
+msgstr ""
+
+#: includes/class-smva.php:939
+msgid "Nothing yet. Until you add something, the agent will not offer to email anyone."
+msgstr ""
+
+#: includes/class-smva.php:940
+msgid "Update Tool"
+msgstr ""
+
+#: includes/class-smva.php:941
+msgid "Select →"
+msgstr ""
+
+#: includes/class-smva.php:943
+#. translators: %s: IANA timezone name, e.g. "America/Toronto"
+msgid "Timezone: %s"
+msgstr ""
+
+#: includes/class-smva.php:945
+#. translators: %d: number of days
+msgid "Showing last %d days by default"
 msgstr ""
 
 #: views/admin-page.php:1008
