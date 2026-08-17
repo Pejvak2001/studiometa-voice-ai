@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.7.5
+Stable tag: 1.7.6
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -244,6 +244,9 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.7.6 =
+* New: Widget now pushes a `smva_lead_captured` event to the page's GTM `dataLayer` (if present) whenever a lead is successfully saved, so site owners can wire ad-platform conversion tags to it themselves. No personal data (name/email/phone) is included in the event, only the capture source. No effect on sites without Google Tag Manager.
 
 = 1.7.5 =
 * Fixed: 5 more admin-panel strings found untranslated while testing 1.7.4 locally (the "no documents yet" empty state, Voice Summary's timezone/date-range labels, and two tool-editor button labels) — these were rendered by admin.js and were missed in the first localization pass

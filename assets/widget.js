@@ -601,6 +601,12 @@
             .then(function(json){
                 window.SMVAAudioDebug.lastLeadSavedAt = Date.now();
                 window.SMVAAudioDebug.lastLeadResponse = json;
+                // Push to GTM's dataLayer so ad platforms (Google Ads, etc.) can fire
+                // conversion tags off this event. The widget itself has no tag IDs —
+                // wiring the GTM trigger/tag is done in the GTM container, not here.
+                if (window.dataLayer && typeof window.dataLayer.push === 'function') {
+                    window.dataLayer.push({ event: 'smva_lead_captured', lead_source: source || 'Widget' });
+                }
             })
             .catch(function(err){
                 window.SMVAAudioDebug.lastLeadError = String(err && err.message || err);
