@@ -13,70 +13,70 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 <img class="smva-sb-logo" src="<?php echo esc_url( SMVA_URL . 'assets/logo.png' ); ?>" alt="" width="38" height="38">
                 <div>
                     <div class="smva-sb-name">StudioMeta AI</div>
-                    <div class="smva-sb-sub">Voice &amp; Chat</div>
+                    <div class="smva-sb-sub"><?php esc_html_e( 'Voice & Chat', 'studiometa-voice-ai' ); ?></div>
                 </div>
             </div>
         </div>
 
         <nav class="smva-sidenav">
             <div class="smva-sidenav-group">
-                <div class="smva-sidenav-label">Account</div>
+                <div class="smva-sidenav-label"><?php esc_html_e( 'Account', 'studiometa-voice-ai' ); ?></div>
                 <a href="?page=smva&tab=license" class="<?php echo $active_tab==='license' ? 'active' : ''; ?>">
                     <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M17 6l2.5 2.5M14.5 8.5 17 11"/></svg></span>
-                    <span class="smva-nav-label">License</span>
+                    <span class="smva-nav-label"><?php esc_html_e( 'License', 'studiometa-voice-ai' ); ?></span>
                 </a>
                 <a href="?page=smva&tab=dashboard" class="<?php echo $active_tab==='dashboard' ? 'active' : ''; ?>">
                     <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>
-                    <span class="smva-nav-label">Dashboard</span>
+                    <span class="smva-nav-label"><?php esc_html_e( 'Dashboard', 'studiometa-voice-ai' ); ?></span>
                 </a>
             </div>
             <div class="smva-sidenav-group">
-                <div class="smva-sidenav-label">Configuration</div>
+                <div class="smva-sidenav-label"><?php esc_html_e( 'Configuration', 'studiometa-voice-ai' ); ?></div>
                 <a href="?page=smva&tab=general" class="<?php echo $active_tab==='general' ? 'active' : ''; ?>">
                     <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg></span>
-                    <span class="smva-nav-label">General</span>
+                    <span class="smva-nav-label"><?php esc_html_e( 'General', 'studiometa-voice-ai' ); ?></span>
                 </a>
                 <a href="?page=smva&tab=agent" class="<?php echo $active_tab==='agent' ? 'active' : ''; ?>">
                     <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round"><rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 8V4M9 14h.01M15 14h.01M9.5 17.5h5"/><circle cx="12" cy="3" r="1.4"/></svg></span>
-                    <span class="smva-nav-label">My Agent</span>
+                    <span class="smva-nav-label"><?php esc_html_e( 'My Agent', 'studiometa-voice-ai' ); ?></span>
                 </a>
                 <a href="?page=smva&tab=widget" class="<?php echo $active_tab==='widget' ? 'active' : ''; ?>">
                     <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 0 18c.9 0 1.6-.7 1.6-1.6 0-.4-.2-.8-.5-1.1-.3-.3-.4-.6-.4-1 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5c0-4-4-7.7-9-7.7Z"/><circle cx="7.5" cy="11" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16.5" cy="11" r="1"/></svg></span>
-                    <span class="smva-nav-label">Widget</span>
+                    <span class="smva-nav-label"><?php esc_html_e( 'Widget', 'studiometa-voice-ai' ); ?></span>
                 </a>
                 <a href="?page=smva&tab=automation" class="<?php echo $active_tab==='automation' ? 'active' : ''; ?>">
                     <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg></span>
-                    <span class="smva-nav-label">Automation</span>
+                    <span class="smva-nav-label"><?php esc_html_e( 'Automation', 'studiometa-voice-ai' ); ?></span>
                 </a>
                 <a href="?page=smva&tab=appointments" class="<?php echo $active_tab==='appointments' ? 'active' : ''; ?>">
                     <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9.5 15.5 1.8 1.8 3.4-3.6"/></svg></span>
-                    <span class="smva-nav-label">Appointments</span>
+                    <span class="smva-nav-label"><?php esc_html_e( 'Appointments', 'studiometa-voice-ai' ); ?></span>
                 </a>
             </div>
             <div class="smva-sidenav-group">
-                <div class="smva-sidenav-label">History</div>
+                <div class="smva-sidenav-label"><?php esc_html_e( 'History', 'studiometa-voice-ai' ); ?></div>
                 <a href="?page=smva&tab=history" class="<?php echo $active_tab==='history' ? 'active' : ''; ?>">
                     <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round"><path d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3Z"/></svg></span>
-                    <span class="smva-nav-label">Chat History</span>
+                    <span class="smva-nav-label"><?php esc_html_e( 'Chat History', 'studiometa-voice-ai' ); ?></span>
                 </a>
                 <a href="?page=smva&tab=voice_summary" class="<?php echo $active_tab==='voice_summary' ? 'active' : ''; ?>">
                     <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span>
-                    <span class="smva-nav-label">Voice Summary</span>
+                    <span class="smva-nav-label"><?php esc_html_e( 'Voice Summary', 'studiometa-voice-ai' ); ?></span>
                 </a>
                 <a href="?page=smva&tab=leads" class="<?php echo $active_tab==='leads' ? 'active' : ''; ?>">
                     <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/></svg></span>
-                    <span class="smva-nav-label">Leads</span>
+                    <span class="smva-nav-label"><?php esc_html_e( 'Leads', 'studiometa-voice-ai' ); ?></span>
                 </a>
             </div>
             <div class="smva-sidenav-group">
-                <div class="smva-sidenav-label">System</div>
+                <div class="smva-sidenav-label"><?php esc_html_e( 'System', 'studiometa-voice-ai' ); ?></div>
                 <a href="?page=smva&tab=health" class="<?php echo $active_tab==='health' ? 'active' : ''; ?>">
                     <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l2.5-6 4 13L15 12h7"/></svg></span>
-                    <span class="smva-nav-label">Health Check</span>
+                    <span class="smva-nav-label"><?php esc_html_e( 'Health Check', 'studiometa-voice-ai' ); ?></span>
                 </a>
                 <a href="?page=smva&tab=integrations" class="<?php echo $active_tab==='integrations' ? 'active' : ''; ?>">
                     <span class="smva-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false" stroke-linecap="round"><path d="M10 13a4.5 4.5 0 0 0 6.6.4l2.6-2.6a4.6 4.6 0 0 0-6.5-6.5l-1.5 1.5"/><path d="M14 11a4.5 4.5 0 0 0-6.6-.4l-2.6 2.6a4.6 4.6 0 0 0 6.5 6.5l1.5-1.5"/></svg></span>
-                    <span class="smva-nav-label">Integrations</span>
+                    <span class="smva-nav-label"><?php esc_html_e( 'Integrations', 'studiometa-voice-ai' ); ?></span>
                 </a>
             </div>
         </nav>
@@ -88,15 +88,16 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             // So the sidebar said "Trial Plan" for every customer, paid or not.
             $sb_plan  = get_option( 'smva_plan', '' );
             $sb_label = $sb_plan
-                ? ucwords( str_replace( '_', ' ', $sb_plan ) ) . ' Plan'
-                : 'Not activated';
+                /* translators: %s: plan name, e.g. "Pro" */
+                ? sprintf( __( '%s Plan', 'studiometa-voice-ai' ), ucwords( str_replace( '_', ' ', $sb_plan ) ) )
+                : __( 'Not activated', 'studiometa-voice-ai' );
             $sb_key   = get_option('smva_license_key','');
             ?>
             <div class="smva-sb-plan">
                 <span class="smva-sb-plan-dot"></span>
                 <div class="smva-sb-plan-info">
                     <div class="smva-sb-plan-name"><?php echo esc_html( $sb_label ); ?></div>
-                    <div class="smva-sb-plan-sub"><?php echo $sb_key ? esc_html( substr($sb_key,0,16) ).'…' : 'Not activated'; ?></div>
+                    <div class="smva-sb-plan-sub"><?php echo $sb_key ? esc_html( substr($sb_key,0,16) ).'…' : esc_html__( 'Not activated', 'studiometa-voice-ai' ); ?></div>
                 </div>
             </div>
         </div>
@@ -106,20 +107,20 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     <div class="smva-main">
     <?php
         $smva_tab_titles = array(
-            'license'       => array( 'License Setup', 'Activate or manage your StudioMeta subscription.' ),
-            'dashboard'     => array( 'Command Center', 'Monitor usage, setup progress, system status, and recent activity.' ),
-            'general'       => array( 'General Settings', 'Choose the agent language, voice profile, timezone, and greeting.' ),
-            'agent'         => array( 'Agent Personality', 'Tune how your AI agent responds and represents your business.' ),
-            'widget'        => array( 'Widget Experience', 'Customize the floating widget, display behavior, and performance options.' ),
-            'automation'    => array( 'Automation', 'Connect your agent to external tools, define what it can do, and add quick-action buttons to the widget.' ),
-            'appointments'  => array( 'Appointments', 'Set your working hours and let the agent book visitors in.' ),
-            'history'       => array( 'Chat History', 'Review recent conversations and visitor interactions.' ),
-            'voice_summary' => array( 'Voice Summary', 'Review voice sessions and usage details.' ),
-            'leads'         => array( 'Leads', 'See captured visitor leads and contact requests.' ),
-            'health'        => array( 'System Health', 'Check license, quota API, WebSocket configuration, and plugin logs.' ),
-            'integrations'  => array( 'Integrations', 'Connect your CRM and external tools.' ),
+            'license'       => array( __( 'License Setup', 'studiometa-voice-ai' ), __( 'Activate or manage your StudioMeta subscription.', 'studiometa-voice-ai' ) ),
+            'dashboard'     => array( __( 'Command Center', 'studiometa-voice-ai' ), __( 'Monitor usage, setup progress, system status, and recent activity.', 'studiometa-voice-ai' ) ),
+            'general'       => array( __( 'General Settings', 'studiometa-voice-ai' ), __( 'Choose the agent language, voice profile, timezone, and greeting.', 'studiometa-voice-ai' ) ),
+            'agent'         => array( __( 'Agent Personality', 'studiometa-voice-ai' ), __( 'Tune how your AI agent responds and represents your business.', 'studiometa-voice-ai' ) ),
+            'widget'        => array( __( 'Widget Experience', 'studiometa-voice-ai' ), __( 'Customize the floating widget, display behavior, and performance options.', 'studiometa-voice-ai' ) ),
+            'automation'    => array( __( 'Automation', 'studiometa-voice-ai' ), __( 'Connect your agent to external tools, define what it can do, and add quick-action buttons to the widget.', 'studiometa-voice-ai' ) ),
+            'appointments'  => array( __( 'Appointments', 'studiometa-voice-ai' ), __( 'Set your working hours and let the agent book visitors in.', 'studiometa-voice-ai' ) ),
+            'history'       => array( __( 'Chat History', 'studiometa-voice-ai' ), __( 'Review recent conversations and visitor interactions.', 'studiometa-voice-ai' ) ),
+            'voice_summary' => array( __( 'Voice Summary', 'studiometa-voice-ai' ), __( 'Review voice sessions and usage details.', 'studiometa-voice-ai' ) ),
+            'leads'         => array( __( 'Leads', 'studiometa-voice-ai' ), __( 'See captured visitor leads and contact requests.', 'studiometa-voice-ai' ) ),
+            'health'        => array( __( 'System Health', 'studiometa-voice-ai' ), __( 'Check license, quota API, WebSocket configuration, and plugin logs.', 'studiometa-voice-ai' ) ),
+            'integrations'  => array( __( 'Integrations', 'studiometa-voice-ai' ), __( 'Connect your CRM and external tools.', 'studiometa-voice-ai' ) ),
         );
-        $smva_current_header = $smva_tab_titles[ $active_tab ] ?? array( 'StudioMeta Voice AI', 'Manage your voice and chat AI widget.' );
+        $smva_current_header = $smva_tab_titles[ $active_tab ] ?? array( __( 'StudioMeta Voice AI', 'studiometa-voice-ai' ), __( 'Manage your voice and chat AI widget.', 'studiometa-voice-ai' ) );
         $smva_voice_on = get_option( 'smva_voice_enabled', '1' ) === '1';
         $smva_chat_on  = get_option( 'smva_chat_enabled', '1' ) === '1';
     ?>
@@ -130,9 +131,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             <div class="smva-main-sub-pro"><?php echo esc_html( $smva_current_header[1] ); ?></div>
         </div>
         <div class="smva-main-actions">
-            <span class="smva-status-pill"><span class="smva-status-dot <?php echo $is_active ? '' : 'off'; ?>"></span><?php echo $is_active ? 'License active' : 'License inactive'; ?></span>
-            <span class="smva-status-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true" focusable="false" stroke-linecap="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg> <?php echo $smva_voice_on ? 'Voice on' : 'Voice off'; ?></span>
-            <span class="smva-status-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true" focusable="false" stroke-linecap="round"><path d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3Z"/></svg> <?php echo $smva_chat_on ? 'Chat on' : 'Chat off'; ?></span>
+            <span class="smva-status-pill"><span class="smva-status-dot <?php echo $is_active ? '' : 'off'; ?>"></span><?php echo $is_active ? esc_html__( 'License active', 'studiometa-voice-ai' ) : esc_html__( 'License inactive', 'studiometa-voice-ai' ); ?></span>
+            <span class="smva-status-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true" focusable="false" stroke-linecap="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg> <?php echo $smva_voice_on ? esc_html__( 'Voice on', 'studiometa-voice-ai' ) : esc_html__( 'Voice off', 'studiometa-voice-ai' ); ?></span>
+            <span class="smva-status-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true" focusable="false" stroke-linecap="round"><path d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3Z"/></svg> <?php echo $smva_chat_on ? esc_html__( 'Chat on', 'studiometa-voice-ai' ) : esc_html__( 'Chat off', 'studiometa-voice-ai' ); ?></span>
         </div>
     </div>
     <div class="smva-header-rule"></div>
@@ -147,12 +148,20 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     <?php if ( $is_trial && $has_quota ) : ?>
     <div class="smva-card smva-trial-card">
         <div class="smva-card-header">
-            <h2 class="smva-card-title">Free Trial Active</h2>
-            <span class="smva-badge smva-badge-trial">TRIAL</span>
+            <h2 class="smva-card-title"><?php esc_html_e( 'Free Trial Active', 'studiometa-voice-ai' ); ?></h2>
+            <span class="smva-badge smva-badge-trial"><?php esc_html_e( 'TRIAL', 'studiometa-voice-ai' ); ?></span>
         </div>
-        <p class="smva-desc">Upgrade to a paid plan to unlock full voice &amp; chat. Usage details are in the <a href="?page=smva&tab=dashboard">Dashboard</a>.</p>
+        <p class="smva-desc">
+            <?php
+            printf(
+                /* translators: %s: link to the Dashboard tab */
+                esc_html__( 'Upgrade to a paid plan to unlock full voice & chat. Usage details are in the %s.', 'studiometa-voice-ai' ),
+                '<a href="?page=smva&tab=dashboard">' . esc_html__( 'Dashboard', 'studiometa-voice-ai' ) . '</a>'
+            );
+            ?>
+        </p>
         <div class="smva-card-footer">
-            <button id="smva-upgrade-btn" class="smva-btn smva-btn-primary" type="button">Upgrade Plan</button>
+            <button id="smva-upgrade-btn" class="smva-btn smva-btn-primary" type="button"><?php esc_html_e( 'Upgrade Plan', 'studiometa-voice-ai' ); ?></button>
         </div>
     </div>
     <?php endif; ?>
@@ -162,33 +171,33 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 
     <div class="smva-card">
-        <div class="smva-card-header"><h2 class="smva-card-title">License</h2></div>
+        <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'License', 'studiometa-voice-ai' ); ?></h2></div>
 
         <?php if ( ! $is_active && ! empty( get_option('smva_license_key') ) ) : ?>
             <div class="smva-notice smva-notice-error" style="margin-bottom:16px">
-                ⚠️ Your subscription has been cancelled or expired. 
-                <strong><a href="?page=smva&tab=license" id="smva-upgrade-btn" style="color:inherit">Renew your plan</a></strong> to restore access.
+                ⚠️ <?php esc_html_e( 'Your subscription has been cancelled or expired.', 'studiometa-voice-ai' ); ?>
+                <strong><a href="?page=smva&tab=license" id="smva-upgrade-btn" style="color:inherit"><?php esc_html_e( 'Renew your plan', 'studiometa-voice-ai' ); ?></a></strong> <?php esc_html_e( 'to restore access.', 'studiometa-voice-ai' ); ?>
             </div>
         <?php endif; ?>
 
         <?php if ( $is_active ) : ?>
             <div class="smva-status-row" style="flex-wrap:wrap;gap:8px">
                 <?php if ( $is_trial ) : ?>
-                    <span class="smva-badge smva-badge-trial">TRIAL</span>
+                    <span class="smva-badge smva-badge-trial"><?php esc_html_e( 'TRIAL', 'studiometa-voice-ai' ); ?></span>
                 <?php else : ?>
-                    <span class="smva-badge smva-badge-success">✓ Active</span>
+                    <span class="smva-badge smva-badge-success">✓ <?php esc_html_e( 'Active', 'studiometa-voice-ai' ); ?></span>
                 <?php endif; ?>
                 <code style="font-size:13px;color:#374151;background:#f1f5f9;padding:4px 10px;border-radius:6px;letter-spacing:.03em"><?php echo esc_html( get_option( 'smva_license_key', '' ) ); ?></code>
                 <?php if ( ! $is_trial ) : ?>
                     <div style="margin-left:auto;display:flex;gap:8px">
-                        <button id="smva-manage-subscription-btn" class="smva-btn smva-btn-sm" type="button">⚙️ Manage Subscription</button>
-                        <button id="smva-deactivate-btn" class="smva-btn smva-btn-danger smva-btn-sm" type="button">Deactivate</button>
+                        <button id="smva-manage-subscription-btn" class="smva-btn smva-btn-sm" type="button">⚙️ <?php esc_html_e( 'Manage Subscription', 'studiometa-voice-ai' ); ?></button>
+                        <button id="smva-deactivate-btn" class="smva-btn smva-btn-danger smva-btn-sm" type="button"><?php esc_html_e( 'Deactivate', 'studiometa-voice-ai' ); ?></button>
                     </div>
                 <?php endif; ?>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px">
                 <div style="background:#f8fafc;border-radius:8px;padding:12px 14px">
-                    <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Plan</div>
+                    <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px"><?php esc_html_e( 'Plan', 'studiometa-voice-ai' ); ?></div>
                     <?php
                     // Fall back to the locally stored plan, but never invent one —
                     // telling a trial user they are on "Basic" is worse than "—".
@@ -197,25 +206,25 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     <div style="font-size:14px;font-weight:600;color:#0f172a"><?php echo $smva_plan_name ? esc_html( ucwords( str_replace( '_', ' ', $smva_plan_name ) ) ) : '—'; ?></div>
                 </div>
                 <div style="background:#f8fafc;border-radius:8px;padding:12px 14px">
-                    <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">AI Engine</div>
+                    <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px"><?php esc_html_e( 'AI Engine', 'studiometa-voice-ai' ); ?></div>
                     <?php
                     $smva_engine_name = $quota['engine_label'] ?? get_option( 'smva_engine_label', '' );
                     ?>
-                    <div style="font-size:13px;font-weight:600;color:#0f172a"><?php echo $smva_engine_name ? esc_html( $smva_engine_name ) : 'StudioMeta AI Engine'; ?></div>
+                    <div style="font-size:13px;font-weight:600;color:#0f172a"><?php echo $smva_engine_name ? esc_html( $smva_engine_name ) : esc_html__( 'StudioMeta AI Engine', 'studiometa-voice-ai' ); ?></div>
                 </div>
                 <div style="background:#f8fafc;border-radius:8px;padding:12px 14px">
-                    <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Active Site</div>
+                    <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px"><?php esc_html_e( 'Active Site', 'studiometa-voice-ai' ); ?></div>
                     <div style="font-size:12px;font-weight:500;color:#475569;word-break:break-all"><?php echo esc_html( get_site_url() ); ?></div>
                 </div>
             </div>
-            <p style="font-size:12px;color:#94a3b8;margin-top:12px">Each license is single-site. Activating elsewhere will deactivate the widget here.</p>
+            <p style="font-size:12px;color:#94a3b8;margin-top:12px"><?php esc_html_e( 'Each license is single-site. Activating elsewhere will deactivate the widget here.', 'studiometa-voice-ai' ); ?></p>
 
             <?php if ( $is_trial ) : ?>
                 <div style="border-top:1px solid #f3f4f6;margin-top:16px;padding-top:16px">
-                    <p class="smva-desc" style="margin-bottom:10px"><strong>Already purchased?</strong> Paste the license key from your email below to upgrade instantly.</p>
+                    <p class="smva-desc" style="margin-bottom:10px"><strong><?php esc_html_e( 'Already purchased?', 'studiometa-voice-ai' ); ?></strong> <?php esc_html_e( 'Paste the license key from your email below to upgrade instantly.', 'studiometa-voice-ai' ); ?></p>
                     <div style="display:flex;gap:8px">
                         <input type="text" id="smva-license-input" class="smva-input" placeholder="VOICEAI-XXXX-XXXX-XXXX" style="flex:1">
-                        <button id="smva-activate-btn" class="smva-btn smva-btn-primary" style="flex:none">Upgrade</button>
+                        <button id="smva-activate-btn" class="smva-btn smva-btn-primary" style="flex:none"><?php esc_html_e( 'Upgrade', 'studiometa-voice-ai' ); ?></button>
                     </div>
                     <span id="smva-license-msg" style="display:block;margin-top:8px;font-size:13px"></span>
                 </div>
@@ -226,23 +235,31 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             <?php // No internal token — ask the administrator to explicitly start a trial or paste a license key. ?>
             <?php $last_attempt = (int) get_option( 'smva_trial_last_attempt', 0 ); ?>
             <div class="smva-notice smva-notice-info">
-                <strong>Start your free trial.</strong>
-                To activate the AI widget, StudioMeta will securely send your site URL, admin email, WordPress version, and plugin version to the StudioMeta licensing server.
-                <?php echo $last_attempt ? ' Last attempt: ' . esc_html( human_time_diff( $last_attempt ) ) . ' ago.' : ''; ?>
+                <strong><?php esc_html_e( 'Start your free trial.', 'studiometa-voice-ai' ); ?></strong>
+                <?php esc_html_e( 'To activate the AI widget, StudioMeta will securely send your site URL, admin email, WordPress version, and plugin version to the StudioMeta licensing server.', 'studiometa-voice-ai' ); ?>
+                <?php
+                if ( $last_attempt ) {
+                    printf(
+                        /* translators: %s: human-readable time since the last trial-activation attempt, e.g. "3 hours" */
+                        esc_html__( ' Last attempt: %s ago.', 'studiometa-voice-ai' ),
+                        esc_html( human_time_diff( $last_attempt ) )
+                    );
+                }
+                ?>
             </div>
-            <button id="smva-start-trial-btn" class="smva-btn smva-btn-primary" style="margin-bottom:16px">Start Free Trial</button>
+            <button id="smva-start-trial-btn" class="smva-btn smva-btn-primary" style="margin-bottom:16px"><?php esc_html_e( 'Start Free Trial', 'studiometa-voice-ai' ); ?></button>
             <span id="smva-trial-msg" style="display:block;margin:0 0 14px;font-size:13px"></span>
 
-            <p style="color:#6b7280;font-size:13px;margin-bottom:16px">Already have a license key? Enter it below.</p>
+            <p style="color:#6b7280;font-size:13px;margin-bottom:16px"><?php esc_html_e( 'Already have a license key? Enter it below.', 'studiometa-voice-ai' ); ?></p>
             <div style="display:flex;gap:8px">
                 <input type="text" id="smva-license-input" class="smva-input" placeholder="VOICEAI-XXXX-XXXX-XXXX" style="flex:1">
-                <button id="smva-activate-btn" class="smva-btn smva-btn-primary" style="flex:none">Activate</button>
+                <button id="smva-activate-btn" class="smva-btn smva-btn-primary" style="flex:none"><?php esc_html_e( 'Activate', 'studiometa-voice-ai' ); ?></button>
             </div>
             <span id="smva-license-msg" style="display:block;margin-top:8px;font-size:13px"></span>
 
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid #f3f4f6">
-                <p style="font-size:13px;color:#6b7280;margin:0 0 8px">Want to compare plans?</p>
-                <a href="<?php echo esc_url( SMVA_PRICING_URL ); ?>" target="_blank" rel="noopener" class="smva-btn smva-btn-primary">💎 View Pricing</a>
+                <p style="font-size:13px;color:#6b7280;margin:0 0 8px"><?php esc_html_e( 'Want to compare plans?', 'studiometa-voice-ai' ); ?></p>
+                <a href="<?php echo esc_url( SMVA_PRICING_URL ); ?>" target="_blank" rel="noopener" class="smva-btn smva-btn-primary">💎 <?php esc_html_e( 'View Pricing', 'studiometa-voice-ai' ); ?></a>
             </div>
 
         <?php endif; ?>
@@ -284,24 +301,52 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         // Steps 1-3 are derived from saved settings; step 4 (system test) is never
         // auto-marked, so the wizard always leaves one explicit action to take.
         $smva_steps_done = ( $is_active ? 1 : 0 ) + ( $agent_voice ? 1 : 0 ) + ( $widget_mode ? 1 : 0 );
-        $smva_step_words = array( 'No', 'One', 'Two', 'Three', 'Four' );
+        $smva_step_words = array(
+            __( 'No', 'studiometa-voice-ai' ),
+            __( 'One', 'studiometa-voice-ai' ),
+            __( 'Two', 'studiometa-voice-ai' ),
+            __( 'Three', 'studiometa-voice-ai' ),
+            __( 'Four', 'studiometa-voice-ai' ),
+        );
         $smva_steps_word = $smva_step_words[ $smva_steps_done ] ?? (string) $smva_steps_done;
         ?>
         <div class="smva-card" style="margin-bottom:16px">
-            <div class="smva-card-header"><h2 class="smva-card-title">Finish setting up</h2><span class="smva-hint-inline"><?php echo esc_html( $smva_steps_word ); ?> of four steps done — run a system test to go live with confidence.</span></div>
+            <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'Finish setting up', 'studiometa-voice-ai' ); ?></h2><span class="smva-hint-inline">
+                <?php
+                printf(
+                    /* translators: %s: number word, e.g. "Two" */
+                    esc_html__( '%s of four steps done — run a system test to go live with confidence.', 'studiometa-voice-ai' ),
+                    esc_html( $smva_steps_word )
+                );
+                ?>
+            </span></div>
             <div class="smva-wizard">
-                <a class="smva-wizard-step <?php echo $is_active ? 'is-done' : ''; ?>" href="?page=smva&tab=license"><span class="smva-wizard-num"><?php echo $is_active ? '✓' : '1'; ?></span><span><span class="smva-wizard-title">Activate license</span><span class="smva-wizard-copy"><?php echo $is_active ? 'Connected to StudioMeta.' : 'Connect this site to StudioMeta.'; ?></span></span></a>
-                <a class="smva-wizard-step <?php echo $agent_voice ? 'is-done' : ''; ?>" href="?page=smva&tab=general"><span class="smva-wizard-num"><?php echo $agent_voice ? '✓' : '2'; ?></span><span><span class="smva-wizard-title">Choose a voice</span><span class="smva-wizard-copy"><?php echo $agent_voice ? esc_html( $agent_voice ) . ', balanced tone.' : 'Pick gender, tone, and greeting.'; ?></span></span></a>
-                <a class="smva-wizard-step <?php echo $widget_mode ? 'is-done' : ''; ?>" href="?page=smva&tab=widget"><span class="smva-wizard-num"><?php echo $widget_mode ? '✓' : '3'; ?></span><span><span class="smva-wizard-title">Customize widget</span><span class="smva-wizard-copy">Set display mode and styling.</span></span></a>
-                <a class="smva-wizard-step" href="?page=smva&tab=health"><span class="smva-wizard-num">4</span><span><span class="smva-wizard-title">Test the system</span><span class="smva-wizard-copy">Check health, chat and voice.</span></span></a>
+                <a class="smva-wizard-step <?php echo $is_active ? 'is-done' : ''; ?>" href="?page=smva&tab=license"><span class="smva-wizard-num"><?php echo $is_active ? '✓' : '1'; ?></span><span><span class="smva-wizard-title"><?php esc_html_e( 'Activate license', 'studiometa-voice-ai' ); ?></span><span class="smva-wizard-copy"><?php echo $is_active ? esc_html__( 'Connected to StudioMeta.', 'studiometa-voice-ai' ) : esc_html__( 'Connect this site to StudioMeta.', 'studiometa-voice-ai' ); ?></span></span></a>
+                <a class="smva-wizard-step <?php echo $agent_voice ? 'is-done' : ''; ?>" href="?page=smva&tab=general"><span class="smva-wizard-num"><?php echo $agent_voice ? '✓' : '2'; ?></span><span><span class="smva-wizard-title"><?php esc_html_e( 'Choose a voice', 'studiometa-voice-ai' ); ?></span><span class="smva-wizard-copy"><?php
+                    if ( $agent_voice ) {
+                        /* translators: %s: chosen voice name, e.g. "Aoede" */
+                        printf( esc_html__( '%s, balanced tone.', 'studiometa-voice-ai' ), esc_html( $agent_voice ) );
+                    } else {
+                        esc_html_e( 'Pick gender, tone, and greeting.', 'studiometa-voice-ai' );
+                    }
+                ?></span></span></a>
+                <a class="smva-wizard-step <?php echo $widget_mode ? 'is-done' : ''; ?>" href="?page=smva&tab=widget"><span class="smva-wizard-num"><?php echo $widget_mode ? '✓' : '3'; ?></span><span><span class="smva-wizard-title"><?php esc_html_e( 'Customize widget', 'studiometa-voice-ai' ); ?></span><span class="smva-wizard-copy"><?php esc_html_e( 'Set display mode and styling.', 'studiometa-voice-ai' ); ?></span></span></a>
+                <a class="smva-wizard-step" href="?page=smva&tab=health"><span class="smva-wizard-num">4</span><span><span class="smva-wizard-title"><?php esc_html_e( 'Test the system', 'studiometa-voice-ai' ); ?></span><span class="smva-wizard-copy"><?php esc_html_e( 'Check health, chat and voice.', 'studiometa-voice-ai' ); ?></span></span></a>
             </div>
         </div>
 
         <div class="smva-status-grid">
-            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label">License</div><span class="<?php echo $is_active ? 'smva-dot-ok' : 'smva-dot-bad'; ?>"></span></div><div class="smva-status-card-value"><?php echo $is_active ? 'Active' : 'Not activated'; ?></div><div class="smva-status-card-sub"><?php echo $is_active ? 'Ready to serve visitors.' : 'Activate to unlock chat and voice.'; ?></div></div>
-            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label">Voice</div><span class="<?php echo $voice_enabled ? 'smva-dot-ok' : 'smva-dot-warn'; ?>"></span></div><div class="smva-status-card-value"><?php echo $voice_enabled ? 'Enabled' : 'Disabled'; ?></div><div class="smva-status-card-sub"><?php echo $agent_voice ? 'Voice profile: ' . esc_html( $agent_voice ) : 'Default voice profile'; ?></div></div>
-            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label">Chat</div><span class="<?php echo $chat_enabled ? 'smva-dot-ok' : 'smva-dot-warn'; ?>"></span></div><div class="smva-status-card-value"><?php echo $chat_enabled ? 'Enabled' : 'Disabled'; ?></div><div class="smva-status-card-sub"><?php echo $chat_enabled ? 'Text assistant available' : 'Text assistant is off'; ?></div></div>
-            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label">Widget</div><span class="<?php echo $widget_mode ? 'smva-dot-ok' : 'smva-dot-warn'; ?>"></span></div><div class="smva-status-card-value"><?php echo esc_html( ucfirst( str_replace( '_', ' ', $widget_mode ?: 'shortcode' ) ) ); ?></div><div class="smva-status-card-sub"><?php echo $widget_mode === 'sitewide' ? 'Shows on every page' : 'Shown via [smva_widget] shortcode'; ?></div></div>
+            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label"><?php esc_html_e( 'License', 'studiometa-voice-ai' ); ?></div><span class="<?php echo $is_active ? 'smva-dot-ok' : 'smva-dot-bad'; ?>"></span></div><div class="smva-status-card-value"><?php echo $is_active ? esc_html__( 'Active', 'studiometa-voice-ai' ) : esc_html__( 'Not activated', 'studiometa-voice-ai' ); ?></div><div class="smva-status-card-sub"><?php echo $is_active ? esc_html__( 'Ready to serve visitors.', 'studiometa-voice-ai' ) : esc_html__( 'Activate to unlock chat and voice.', 'studiometa-voice-ai' ); ?></div></div>
+            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label"><?php esc_html_e( 'Voice', 'studiometa-voice-ai' ); ?></div><span class="<?php echo $voice_enabled ? 'smva-dot-ok' : 'smva-dot-warn'; ?>"></span></div><div class="smva-status-card-value"><?php echo $voice_enabled ? esc_html__( 'Enabled', 'studiometa-voice-ai' ) : esc_html__( 'Disabled', 'studiometa-voice-ai' ); ?></div><div class="smva-status-card-sub"><?php
+                if ( $agent_voice ) {
+                    /* translators: %s: chosen voice name, e.g. "Aoede" */
+                    printf( esc_html__( 'Voice profile: %s', 'studiometa-voice-ai' ), esc_html( $agent_voice ) );
+                } else {
+                    esc_html_e( 'Default voice profile', 'studiometa-voice-ai' );
+                }
+            ?></div></div>
+            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label"><?php esc_html_e( 'Chat', 'studiometa-voice-ai' ); ?></div><span class="<?php echo $chat_enabled ? 'smva-dot-ok' : 'smva-dot-warn'; ?>"></span></div><div class="smva-status-card-value"><?php echo $chat_enabled ? esc_html__( 'Enabled', 'studiometa-voice-ai' ) : esc_html__( 'Disabled', 'studiometa-voice-ai' ); ?></div><div class="smva-status-card-sub"><?php echo $chat_enabled ? esc_html__( 'Text assistant available', 'studiometa-voice-ai' ) : esc_html__( 'Text assistant is off', 'studiometa-voice-ai' ); ?></div></div>
+            <div class="smva-status-card"><div class="smva-status-card-top"><div class="smva-status-card-label"><?php esc_html_e( 'Widget', 'studiometa-voice-ai' ); ?></div><span class="<?php echo $widget_mode ? 'smva-dot-ok' : 'smva-dot-warn'; ?>"></span></div><div class="smva-status-card-value"><?php echo esc_html( ucfirst( str_replace( '_', ' ', $widget_mode ?: 'shortcode' ) ) ); ?></div><div class="smva-status-card-sub"><?php echo $widget_mode === 'sitewide' ? esc_html__( 'Shows on every page', 'studiometa-voice-ai' ) : esc_html__( 'Shown via [smva_widget] shortcode', 'studiometa-voice-ai' ); ?></div></div>
         </div>
 
         <?php
@@ -318,12 +363,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         ?>
         <div class="smva-card" style="margin-bottom:16px">
             <div class="smva-card-header">
-                <h2 class="smva-card-title">Usage This Month</h2>
+                <h2 class="smva-card-title"><?php esc_html_e( 'Usage This Month', 'studiometa-voice-ai' ); ?></h2>
                 <span class="smva-badge <?php echo $is_trial ? 'smva-badge-trial' : 'smva-badge-success'; ?>">
-                    <?php echo $is_trial ? 'TRIAL' : esc_html( $plan_label ? ucfirst(str_replace('_',' ',$plan_label)) : '—' ); ?>
+                    <?php echo $is_trial ? esc_html__( 'TRIAL', 'studiometa-voice-ai' ) : esc_html( $plan_label ? ucfirst(str_replace('_',' ',$plan_label)) : '—' ); ?>
                 </span>
                 <?php if ( $expires_at ) : ?>
-                <span class="smva-hint-inline"><?php echo $is_trial ? 'Expires' : 'Renews'; ?> <?php echo esc_html( $expires_at ); ?></span>
+                <span class="smva-hint-inline"><?php echo $is_trial ? esc_html__( 'Expires', 'studiometa-voice-ai' ) : esc_html__( 'Renews', 'studiometa-voice-ai' ); ?> <?php echo esc_html( $expires_at ); ?></span>
                 <?php endif; ?>
             </div>
 
@@ -331,24 +376,30 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 <?php if ( $dv_limit > 0 ) : ?>
                 <div class="smva-usage-metric">
                     <div class="smva-usage-top">
-                        <span class="smva-usage-name">Voice minutes</span>
-                        <span class="smva-usage-of" id="smva-voice-limit">of <?php echo (int) $dv_limit; ?></span>
+                        <span class="smva-usage-name"><?php esc_html_e( 'Voice minutes', 'studiometa-voice-ai' ); ?></span>
+                        <span class="smva-usage-of" id="smva-voice-limit"><?php
+                            /* translators: %d: minutes limit */
+                            printf( esc_html__( 'of %d', 'studiometa-voice-ai' ), (int) $dv_limit );
+                        ?></span>
                     </div>
                     <div class="smva-usage-figure">
                         <span class="smva-usage-big" id="smva-voice-num"><?php echo esc_html( number_format( $dv_used, 1 ) ); ?></span>
-                        <span class="smva-usage-of">used</span>
+                        <span class="smva-usage-of"><?php esc_html_e( 'used', 'studiometa-voice-ai' ); ?></span>
                     </div>
                     <div class="smva-usage-track"><div class="smva-usage-fill <?php echo $dv_pct > 90 ? 'danger' : ( $dv_pct > 70 ? 'warn' : '' ); ?>" id="smva-voice-fill" style="width:<?php echo esc_attr( $dv_pct ); ?>%"></div></div>
                 </div>
                 <?php endif; ?>
                 <div class="smva-usage-metric">
                     <div class="smva-usage-top">
-                        <span class="smva-usage-name">Chat messages</span>
-                        <span class="smva-usage-of" id="smva-chat-limit">of <?php echo esc_html( number_format( $dc_limit ) ); ?></span>
+                        <span class="smva-usage-name"><?php esc_html_e( 'Chat messages', 'studiometa-voice-ai' ); ?></span>
+                        <span class="smva-usage-of" id="smva-chat-limit"><?php
+                            /* translators: %s: message limit, e.g. "1,000" */
+                            printf( esc_html__( 'of %s', 'studiometa-voice-ai' ), esc_html( number_format( $dc_limit ) ) );
+                        ?></span>
                     </div>
                     <div class="smva-usage-figure">
                         <span class="smva-usage-big" id="smva-chat-num"><?php echo esc_html( number_format( $dc_used ) ); ?></span>
-                        <span class="smva-usage-of">used</span>
+                        <span class="smva-usage-of"><?php esc_html_e( 'used', 'studiometa-voice-ai' ); ?></span>
                     </div>
                     <div class="smva-usage-track"><div class="smva-usage-fill <?php echo $dc_pct > 90 ? 'danger' : ( $dc_pct > 70 ? 'warn' : '' ); ?>" id="smva-chat-fill" style="width:<?php echo esc_attr( $dc_pct ); ?>%"></div></div>
                 </div>
@@ -366,28 +417,28 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             // what this site knows for certain (whether it holds a valid token).
             $smva_lic_status = ! empty( $license['status'] )
                 ? ucfirst( $license['status'] )
-                : ( $is_active ? 'Active' : 'Inactive' );
+                : ( $is_active ? __( 'Active', 'studiometa-voice-ai' ) : __( 'Inactive', 'studiometa-voice-ai' ) );
             ?>
             <div class="smva-usage-mini-row">
-                <div class="smva-usage-mini"><span class="smva-usage-mini-v"><?php echo esc_html( $smva_sessions ); ?></span><span class="smva-usage-mini-l">sessions</span></div>
-                <div class="smva-usage-mini"><span class="smva-usage-mini-v"><?php echo esc_html( $usage['days_remaining'] ?? '∞' ); ?></span><span class="smva-usage-mini-l">days remaining</span></div>
-                <div class="smva-usage-mini"><span class="smva-usage-mini-v"><?php echo esc_html( $smva_lic_status ); ?></span><span class="smva-usage-mini-l">license status</span></div>
+                <div class="smva-usage-mini"><span class="smva-usage-mini-v"><?php echo esc_html( $smva_sessions ); ?></span><span class="smva-usage-mini-l"><?php esc_html_e( 'sessions', 'studiometa-voice-ai' ); ?></span></div>
+                <div class="smva-usage-mini"><span class="smva-usage-mini-v"><?php echo esc_html( $usage['days_remaining'] ?? '∞' ); ?></span><span class="smva-usage-mini-l"><?php esc_html_e( 'days remaining', 'studiometa-voice-ai' ); ?></span></div>
+                <div class="smva-usage-mini"><span class="smva-usage-mini-v"><?php echo esc_html( $smva_lic_status ); ?></span><span class="smva-usage-mini-l"><?php esc_html_e( 'license status', 'studiometa-voice-ai' ); ?></span></div>
             </div>
 
             <div class="smva-card-footer" style="border-top:1px solid var(--smva-border);padding-top:12px;margin-top:0">
                 <?php if ( $is_trial ) : ?>
-                <button id="smva-upgrade-btn" class="smva-btn smva-btn-primary" type="button">Upgrade Plan</button>
+                <button id="smva-upgrade-btn" class="smva-btn smva-btn-primary" type="button"><?php esc_html_e( 'Upgrade Plan', 'studiometa-voice-ai' ); ?></button>
                 <?php endif; ?>
-                <button id="smva-refresh-quota" class="smva-btn" type="button">Refresh</button>
-                <span class="smva-hint-inline">Refreshes every 5 min.</span>
+                <button id="smva-refresh-quota" class="smva-btn" type="button"><?php esc_html_e( 'Refresh', 'studiometa-voice-ai' ); ?></button>
+                <span class="smva-hint-inline"><?php esc_html_e( 'Refreshes every 5 min.', 'studiometa-voice-ai' ); ?></span>
             </div>
         </div>
 
         <?php if ( ! empty($sessions) ) : ?>
         <div class="smva-card" style="margin-top:16px">
-            <div class="smva-card-header"><h2 class="smva-card-title">Recent Sessions</h2></div>
+            <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'Recent Sessions', 'studiometa-voice-ai' ); ?></h2></div>
             <table class="smva-table">
-                <thead><tr><th>Date</th><th>Type</th><th>Duration</th></tr></thead>
+                <thead><tr><th><?php esc_html_e( 'Date', 'studiometa-voice-ai' ); ?></th><th><?php esc_html_e( 'Type', 'studiometa-voice-ai' ); ?></th><th><?php esc_html_e( 'Duration', 'studiometa-voice-ai' ); ?></th></tr></thead>
                 <tbody>
                 <?php foreach ( array_slice($sessions, 0, 10) as $s ) : ?>
                 <tr>
@@ -400,7 +451,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                         if ( $type === 'chat' ) {
                             echo '—'; // chat sessions have no duration by definition
                         } elseif ( isset( $s['duration_minutes'] ) ) {
-                            echo esc_html( number_format( $s['duration_minutes'], 1 ) . ' min' );
+                            /* translators: %s: duration in minutes, e.g. "3.5" */
+                            printf( esc_html__( '%s min', 'studiometa-voice-ai' ), esc_html( number_format( $s['duration_minutes'], 1 ) ) );
                         } else {
                             echo '—';
                         }
@@ -412,8 +464,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         </div>
         <?php elseif ( ! empty( $usage['chat_messages_used'] ) ) : ?>
         <div class="smva-card" style="margin-top:16px">
-            <div class="smva-card-header"><h2 class="smva-card-title">Recent Sessions</h2></div>
-            <div style="padding:16px;color:#6b7280">Chat usage was detected, but recent chat sessions were not returned by the backend yet.</div>
+            <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'Recent Sessions', 'studiometa-voice-ai' ); ?></h2></div>
+            <div style="padding:16px;color:#6b7280"><?php esc_html_e( 'Chat usage was detected, but recent chat sessions were not returned by the backend yet.', 'studiometa-voice-ai' ); ?></div>
         </div>
         <?php endif; ?>
 
@@ -443,32 +495,32 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
         <div class="smva-card">
             <div class="smva-card-header">
-                <h2 class="smva-card-title">General Settings</h2>
+                <h2 class="smva-card-title"><?php esc_html_e( 'General Settings', 'studiometa-voice-ai' ); ?></h2>
             </div>
             <div class="smva-form-grid">
 
                 <div class="smva-field">
-                    <label>Language <span>— widget UI &amp; agent default</span></label>
+                    <label><?php esc_html_e( 'Language', 'studiometa-voice-ai' ); ?> <span>— <?php esc_html_e( 'widget UI & agent default', 'studiometa-voice-ai' ); ?></span></label>
                     <select name="smva_lang" class="smva-select" id="smva-lang-select">
                         <?php foreach ( array( 'en' => '🇺🇸 English', 'fa' => '🇮🇷 فارسی', 'ar' => '🇸🇦 العربية', 'fr' => '🇫🇷 Français', 'es' => '🇪🇸 Español' ) as $val => $label ) : ?>
                         <option value="<?php echo esc_attr( $val ); ?>" <?php selected( get_option('smva_lang','en'), $val ); ?>><?php echo esc_html( $label ); ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <p class="smva-hint">Agent auto-detects and switches to the user's language mid-conversation.</p>
+                    <p class="smva-hint"><?php esc_html_e( "Agent auto-detects and switches to the user's language mid-conversation.", 'studiometa-voice-ai' ); ?></p>
                 </div>
 
                 <div class="smva-field">
-                    <label>Business Name</label>
+                    <label><?php esc_html_e( 'Business Name', 'studiometa-voice-ai' ); ?></label>
                     <input type="text" name="smva_business_name" class="smva-input" value="<?php echo esc_attr( get_option('smva_business_name','') ); ?>" placeholder="<?php echo esc_attr( get_bloginfo('name') ); ?>">
                 </div>
 
                 <div class="smva-field smva-field-full">
-                    <label>Chat Greeting <span>— shown when chat widget opens</span></label>
-                    <input type="text" name="smva_greeting" class="smva-input" value="<?php echo esc_attr( get_option('smva_greeting','Hello! How can I help you?') ); ?>">
+                    <label><?php esc_html_e( 'Chat Greeting', 'studiometa-voice-ai' ); ?> <span>— <?php esc_html_e( 'shown when chat widget opens', 'studiometa-voice-ai' ); ?></span></label>
+                    <input type="text" name="smva_greeting" class="smva-input" value="<?php echo esc_attr( get_option('smva_greeting', __( 'Hello! How can I help you?', 'studiometa-voice-ai' ) ) ); ?>">
                 </div>
 
                 <div class="smva-field">
-                    <label>Primary Color</label>
+                    <label><?php esc_html_e( 'Primary Color', 'studiometa-voice-ai' ); ?></label>
                     <div class="smva-color-row">
                         <div class="smva-color-swatch">
                             <input type="color" id="smva-color-input" name="smva_widget_color" value="<?php echo esc_attr( get_option('smva_widget_color','#2563eb') ); ?>">
@@ -478,18 +530,18 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 </div>
 
                 <div class="smva-field">
-                    <label>Widget Position</label>
+                    <label><?php esc_html_e( 'Widget Position', 'studiometa-voice-ai' ); ?></label>
                     <select name="smva_widget_position" class="smva-select">
-                        <option value="bottom-right" <?php selected( get_option('smva_widget_position','bottom-right'), 'bottom-right' ); ?>>Bottom Right</option>
-                        <option value="bottom-left"  <?php selected( get_option('smva_widget_position','bottom-right'), 'bottom-left' ); ?>>Bottom Left</option>
+                        <option value="bottom-right" <?php selected( get_option('smva_widget_position','bottom-right'), 'bottom-right' ); ?>><?php esc_html_e( 'Bottom Right', 'studiometa-voice-ai' ); ?></option>
+                        <option value="bottom-left"  <?php selected( get_option('smva_widget_position','bottom-right'), 'bottom-left' ); ?>><?php esc_html_e( 'Bottom Left', 'studiometa-voice-ai' ); ?></option>
                     </select>
                 </div>
 
                 <div class="smva-field">
-                    <label>Widget Style</label>
+                    <label><?php esc_html_e( 'Widget Style', 'studiometa-voice-ai' ); ?></label>
                     <select name="smva_widget_style" class="smva-select">
-                        <option value="fab"  <?php selected( get_option('smva_widget_style','fab'), 'fab' ); ?>>Floating Button (FAB)</option>
-                        <option value="pill" <?php selected( get_option('smva_widget_style','fab'), 'pill' ); ?>>Pill Button</option>
+                        <option value="fab"  <?php selected( get_option('smva_widget_style','fab'), 'fab' ); ?>><?php esc_html_e( 'Floating Button (FAB)', 'studiometa-voice-ai' ); ?></option>
+                        <option value="pill" <?php selected( get_option('smva_widget_style','fab'), 'pill' ); ?>><?php esc_html_e( 'Pill Button', 'studiometa-voice-ai' ); ?></option>
                     </select>
                 </div>
 
@@ -498,17 +550,17 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
         <div class="smva-card">
             <div class="smva-card-header">
-                <h2 class="smva-card-title">Agent Identity</h2>
+                <h2 class="smva-card-title"><?php esc_html_e( 'Agent Identity', 'studiometa-voice-ai' ); ?></h2>
             </div>
             <div class="smva-form-grid">
 
                 <div class="smva-field">
-                    <label>Agent Name</label>
-                    <input type="text" name="agent_name" class="smva-input" placeholder="AI Assistant" value="<?php echo esc_attr( $agent['agent_name'] ?? '' ); ?>">
+                    <label><?php esc_html_e( 'Agent Name', 'studiometa-voice-ai' ); ?></label>
+                    <input type="text" name="agent_name" class="smva-input" placeholder="<?php esc_attr_e( 'AI Assistant', 'studiometa-voice-ai' ); ?>" value="<?php echo esc_attr( $agent['agent_name'] ?? '' ); ?>">
                 </div>
 
                 <div class="smva-field smva-field-full">
-                    <label>🎤 Voice</label>
+                    <label>🎤 <?php esc_html_e( 'Voice', 'studiometa-voice-ai' ); ?></label>
                     <?php
                     $voices = array(
                         'Zephyr'        => array( 'label' => 'Zephyr',        'tone' => 'Bright',        'best_for' => 'Energetic welcomes and upbeat brands',         'preview_rate' => '1.02', 'preview_pitch' => '1.08' ),
@@ -585,7 +637,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     ?>
                     <?php if ( ! empty( $smva_catalog['remapped_from'] ) ) : ?>
                     <p class="smva-hint">
-                        <strong>Your plan changed.</strong>
+                        <strong><?php esc_html_e( 'Your plan changed.', 'studiometa-voice-ai' ); ?></strong>
                         <?php
                         printf(
                             /* translators: 1: previous voice name, 2: new voice name */
@@ -598,10 +650,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     <?php endif; ?>
                     <div class="smva-gender-tabs" id="smva-gender-tabs">
                         <button type="button" class="smva-gender-btn <?php echo $current_gender==='f'?'active':''; ?>" data-gender="f">
-                            <span>♀</span> Female
+                            <span>♀</span> <?php esc_html_e( 'Female', 'studiometa-voice-ai' ); ?>
                         </button>
                         <button type="button" class="smva-gender-btn <?php echo $current_gender==='m'?'active':''; ?>" data-gender="m">
-                            <span>♂</span> Male
+                            <span>♂</span> <?php esc_html_e( 'Male', 'studiometa-voice-ai' ); ?>
                         </button>
                     </div>
                     <select name="voice_id" class="smva-select" id="smva-voice-select">
@@ -611,7 +663,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                         // browser would silently select the first one — showing the wrong
                         // voice and overwriting the real one on save. Carry it explicitly.
                         if ( $current_voice && ! isset( $voices[ $current_voice ] ) ) : ?>
-                        <option value="<?php echo esc_attr( $current_voice ); ?>" data-label="<?php echo esc_attr( $current_voice ); ?>" data-tone="" data-best-for="No description available for this voice yet." data-preview-rate="1" data-preview-pitch="1" data-gender="<?php echo esc_attr( $current_gender ); ?>" selected>
+                        <option value="<?php echo esc_attr( $current_voice ); ?>" data-label="<?php echo esc_attr( $current_voice ); ?>" data-tone="" data-best-for="<?php esc_attr_e( 'No description available for this voice yet.', 'studiometa-voice-ai' ); ?>" data-preview-rate="1" data-preview-pitch="1" data-gender="<?php echo esc_attr( $current_gender ); ?>" selected>
                             <?php echo esc_html( $current_voice ); ?>
                         </option>
                         <?php endif; ?>
@@ -641,7 +693,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     $smva_engine_label = ( $smva_catalog['engine_label'] ?? '' )
                         ?: ( get_option( 'smva_engine_label', '' ) ?: 'StudioMeta AI Engine' );
                     ?>
-                    <p class="smva-hint">Filter by gender, then pick a voice. Preview uses the <?php echo esc_html( $smva_engine_label ); ?> — same as the live widget.</p>
+                    <p class="smva-hint">
+                        <?php
+                        /* translators: %s: AI engine label, e.g. "StudioMeta AI Engine" */
+                        printf( esc_html__( 'Filter by gender, then pick a voice. Preview uses the %s — same as the live widget.', 'studiometa-voice-ai' ), esc_html( $smva_engine_label ) );
+                        ?>
+                    </p>
                     <div class="smva-voice-meta-card" id="smva-voice-meta-card">
                         <div class="smva-voice-meta-top">
                             <div>
@@ -653,39 +710,44 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                                 <div class="smva-voice-meta-name" id="smva-voice-meta-name"><?php echo esc_html( $smva_voice_meta['label'] ?? $current_voice ); ?></div>
                                 <div class="smva-voice-meta-tone" id="smva-voice-meta-tone"><?php echo esc_html( $smva_voice_meta['tone'] ?? '—' ); ?></div>
                             </div>
-                            <span class="smva-voice-meta-badge">Voice profile</span>
+                            <span class="smva-voice-meta-badge"><?php esc_html_e( 'Voice profile', 'studiometa-voice-ai' ); ?></span>
                         </div>
-                        <div class="smva-voice-meta-best" id="smva-voice-meta-best"><?php echo esc_html( $smva_voice_meta['best_for'] ?? 'No description available for this voice yet.' ); ?></div>
-                        <div class="smva-voice-meta-note">Preview uses the <?php echo esc_html( $smva_engine_label ); ?> with the selected voice — same as the live widget.</div>
+                        <div class="smva-voice-meta-best" id="smva-voice-meta-best"><?php echo esc_html( $smva_voice_meta['best_for'] ?? __( 'No description available for this voice yet.', 'studiometa-voice-ai' ) ); ?></div>
+                        <div class="smva-voice-meta-note">
+                            <?php
+                            /* translators: %s: AI engine label, e.g. "StudioMeta AI Engine" */
+                            printf( esc_html__( 'Preview uses the %s with the selected voice — same as the live widget.', 'studiometa-voice-ai' ), esc_html( $smva_engine_label ) );
+                            ?>
+                        </div>
                     </div>
                     <div class="smva-voice-greeting-inline">
-                        <label>🎙️ Voice Greeting — <span style="color:#9ca3af;font-weight:400">what the agent says when the voice call starts</span></label>
+                        <label>🎙️ <?php esc_html_e( 'Voice Greeting', 'studiometa-voice-ai' ); ?> — <span style="color:#9ca3af;font-weight:400"><?php esc_html_e( 'what the agent says when the voice call starts', 'studiometa-voice-ai' ); ?></span></label>
                         <div class="smva-greeting-row">
-                            <input type="text" id="smva-first-message" name="first_message" class="smva-input" placeholder="Hello! How can I help you today?" value="<?php echo esc_attr( $agent['first_message'] ?? '' ); ?>">
-                            <button type="button" class="smva-btn" id="smva-preview-greeting-btn">▶ Preview Greeting</button>
-                            <button type="button" class="smva-btn" id="smva-stop-preview-btn" style="display:none">■ Stop</button>
+                            <input type="text" id="smva-first-message" name="first_message" class="smva-input" placeholder="<?php esc_attr_e( 'Hello! How can I help you today?', 'studiometa-voice-ai' ); ?>" value="<?php echo esc_attr( $agent['first_message'] ?? '' ); ?>">
+                            <button type="button" class="smva-btn" id="smva-preview-greeting-btn">▶ <?php esc_html_e( 'Preview Greeting', 'studiometa-voice-ai' ); ?></button>
+                            <button type="button" class="smva-btn" id="smva-stop-preview-btn" style="display:none">■ <?php esc_html_e( 'Stop', 'studiometa-voice-ai' ); ?></button>
                         </div>
-                        <p class="smva-hint">Preview the selected greeting right under the chosen voice to make comparison easier.</p>
+                        <p class="smva-hint"><?php esc_html_e( 'Preview the selected greeting right under the chosen voice to make comparison easier.', 'studiometa-voice-ai' ); ?></p>
                         <div class="smva-preview-status" id="smva-preview-status" aria-live="polite"></div>
                     </div>
                 </div>
 
                 <div class="smva-field">
-                    <label>🕐 Timezone</label>
+                    <label>🕐 <?php esc_html_e( 'Timezone', 'studiometa-voice-ai' ); ?></label>
                     <select name="agent_timezone" class="smva-select">
                         <?php
                         $tzones = array(
-                            'UTC'               => 'UTC',
-                            'America/Toronto'   => 'Eastern — Toronto',
-                            'America/Chicago'   => 'Central — Chicago',
-                            'America/Denver'    => 'Mountain — Denver',
-                            'America/Vancouver' => 'Pacific — Vancouver',
-                            'Europe/London'     => 'GMT — London',
-                            'Europe/Paris'      => 'CET — Paris',
-                            'Asia/Tehran'       => 'IRST — Tehran',
-                            'Asia/Dubai'        => 'GST — Dubai',
-                            'Asia/Tokyo'        => 'JST — Tokyo',
-                            'Australia/Sydney'  => 'AEDT — Sydney',
+                            'UTC'               => __( 'UTC', 'studiometa-voice-ai' ),
+                            'America/Toronto'   => __( 'Eastern — Toronto', 'studiometa-voice-ai' ),
+                            'America/Chicago'   => __( 'Central — Chicago', 'studiometa-voice-ai' ),
+                            'America/Denver'    => __( 'Mountain — Denver', 'studiometa-voice-ai' ),
+                            'America/Vancouver' => __( 'Pacific — Vancouver', 'studiometa-voice-ai' ),
+                            'Europe/London'     => __( 'GMT — London', 'studiometa-voice-ai' ),
+                            'Europe/Paris'      => __( 'CET — Paris', 'studiometa-voice-ai' ),
+                            'Asia/Tehran'       => __( 'IRST — Tehran', 'studiometa-voice-ai' ),
+                            'Asia/Dubai'        => __( 'GST — Dubai', 'studiometa-voice-ai' ),
+                            'Asia/Tokyo'        => __( 'JST — Tokyo', 'studiometa-voice-ai' ),
+                            'Australia/Sydney'  => __( 'AEDT — Sydney', 'studiometa-voice-ai' ),
                         );
                         foreach ( $tzones as $val => $label ) : ?>
                         <option value="<?php echo esc_attr( $val ); ?>" <?php selected( $agent['agent_timezone'] ?? 'UTC', $val ); ?>><?php echo esc_html( $label ); ?></option>
@@ -694,13 +756,13 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 </div>
 
                 <div class="smva-field">
-                    <label>🎯 Response Style</label>
+                    <label>🎯 <?php esc_html_e( 'Response Style', 'studiometa-voice-ai' ); ?></label>
                     <div style="display:flex;gap:10px;margin-top:6px">
                         <?php
                         $styles = array(
-                            'precise'  => array('icon'=>'🎯','title'=>'Precise','desc'=>'Consistent & factual'),
-                            'balanced' => array('icon'=>'⚖️','title'=>'Balanced','desc'=>'Default — works for most'),
-                            'creative' => array('icon'=>'🎨','title'=>'Creative','desc'=>'Varied & expressive'),
+                            'precise'  => array('icon'=>'🎯','title'=>__('Precise','studiometa-voice-ai'),'desc'=>__('Consistent & factual','studiometa-voice-ai')),
+                            'balanced' => array('icon'=>'⚖️','title'=>__('Balanced','studiometa-voice-ai'),'desc'=>__('Default — works for most','studiometa-voice-ai')),
+                            'creative' => array('icon'=>'🎨','title'=>__('Creative','studiometa-voice-ai'),'desc'=>__('Varied & expressive','studiometa-voice-ai')),
                         );
                         $cur = $agent['response_style'] ?? 'balanced';
                         foreach ( $styles as $val => $s ) : ?>
@@ -719,16 +781,16 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
         <div class="smva-action-bar">
             <span id="smva-save-msg" class="smva-save-msg"></span>
-            <a href="?page=smva&tab=health" class="smva-btn">🩺 Test System</a>
-            <button type="button" class="smva-btn" id="smva-preview-greeting-btn-quick">▶ Test Voice</button>
-            <button type="submit" class="smva-btn smva-btn-primary">💾 Save General Settings</button>
+            <a href="?page=smva&tab=health" class="smva-btn">🩺 <?php esc_html_e( 'Test System', 'studiometa-voice-ai' ); ?></a>
+            <button type="button" class="smva-btn" id="smva-preview-greeting-btn-quick">▶ <?php esc_html_e( 'Test Voice', 'studiometa-voice-ai' ); ?></button>
+            <button type="submit" class="smva-btn smva-btn-primary">💾 <?php esc_html_e( 'Save General Settings', 'studiometa-voice-ai' ); ?></button>
         </div>
 
         <div class="smva-card">
-            <div class="smva-card-header"><h2 class="smva-card-title">Embed Shortcode</h2></div>
+            <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'Embed Shortcode', 'studiometa-voice-ai' ); ?></h2></div>
             <div class="smva-shortcode-wrap">
-                <code class="smva-code" onclick="navigator.clipboard.writeText('[smva_widget]');this.textContent='Copied!';setTimeout(()=>this.textContent='[smva_widget]',2000)">[smva_widget]</code>
-                <span class="smva-hint">Click to copy — paste anywhere on your site</span>
+                <code class="smva-code" onclick="navigator.clipboard.writeText('[smva_widget]');this.textContent='<?php echo esc_js( __( 'Copied!', 'studiometa-voice-ai' ) ); ?>';setTimeout(()=>this.textContent='[smva_widget]',2000)">[smva_widget]</code>
+                <span class="smva-hint"><?php esc_html_e( 'Click to copy — paste anywhere on your site', 'studiometa-voice-ai' ); ?></span>
             </div>
         </div>
     </form>
@@ -751,11 +813,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     <!-- Auto-train wizard trigger -->
     <div style="margin-bottom:20px;background:linear-gradient(135deg,#eff6ff,#f5f3ff);border:1px solid #c7d2fe;border-radius:12px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
         <div>
-            <div style="font-size:15px;font-weight:600;color:#1e1b4b;margin-bottom:4px">🚀 Train My Agent automatically</div>
-            <div style="font-size:13px;color:#6b7280">We'll read your website, build a knowledge base, write a system prompt, and suggest questions — all in one click.</div>
+            <div style="font-size:15px;font-weight:600;color:#1e1b4b;margin-bottom:4px">🚀 <?php esc_html_e( 'Train My Agent automatically', 'studiometa-voice-ai' ); ?></div>
+            <div style="font-size:13px;color:#6b7280"><?php esc_html_e( "We'll read your website, build a knowledge base, write a system prompt, and suggest questions — all in one click.", 'studiometa-voice-ai' ); ?></div>
         </div>
         <button type="button" id="smva-auto-train-open" class="smva-btn smva-btn-primary" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;white-space:nowrap;flex-shrink:0">
-            🚀 Train My Agent
+            🚀 <?php esc_html_e( 'Train My Agent', 'studiometa-voice-ai' ); ?>
         </button>
     </div>
 
@@ -767,37 +829,37 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             <div id="smva-train-step1">
                 <div style="text-align:center;margin-bottom:24px">
                     <div style="font-size:40px;margin-bottom:12px">🚀</div>
-                    <h2 style="font-size:20px;font-weight:700;color:#0f172a;margin:0 0 8px">Train My Agent</h2>
-                    <p style="font-size:14px;color:#6b7280;margin:0">We'll automatically read your website and set up your AI assistant in about 30 seconds.</p>
+                    <h2 style="font-size:20px;font-weight:700;color:#0f172a;margin:0 0 8px"><?php esc_html_e( 'Train My Agent', 'studiometa-voice-ai' ); ?></h2>
+                    <p style="font-size:14px;color:#6b7280;margin:0"><?php esc_html_e( "We'll automatically read your website and set up your AI assistant in about 30 seconds.", 'studiometa-voice-ai' ); ?></p>
                 </div>
                 <div style="margin-bottom:20px">
-                    <label style="display:block;font-size:13px;font-weight:500;color:#374151;margin-bottom:6px">Website URL to train from:</label>
+                    <label style="display:block;font-size:13px;font-weight:500;color:#374151;margin-bottom:6px"><?php esc_html_e( 'Website URL to train from:', 'studiometa-voice-ai' ); ?></label>
                     <input type="text" id="smva-train-url" class="smva-input" value="<?php echo esc_attr( get_site_url() ); ?>" placeholder="https://yoursite.com" style="width:100%">
                 </div>
                 <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin-bottom:24px">
-                    <div style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">What we'll do:</div>
+                    <div style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em"><?php esc_html_e( "What we'll do:", 'studiometa-voice-ai' ); ?></div>
                     <div style="display:flex;flex-direction:column;gap:8px">
-                        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#374151"><span style="font-size:16px">📥</span> Read up to 10 pages from your website</div>
-                        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#374151"><span style="font-size:16px">🧠</span> Write a system prompt for your agent</div>
-                        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#374151"><span style="font-size:16px">📚</span> Build a clean knowledge base</div>
-                        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#374151"><span style="font-size:16px">💡</span> Suggest questions for your visitors</div>
+                        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#374151"><span style="font-size:16px">📥</span> <?php esc_html_e( 'Read up to 10 pages from your website', 'studiometa-voice-ai' ); ?></div>
+                        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#374151"><span style="font-size:16px">🧠</span> <?php esc_html_e( 'Write a system prompt for your agent', 'studiometa-voice-ai' ); ?></div>
+                        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#374151"><span style="font-size:16px">📚</span> <?php esc_html_e( 'Build a clean knowledge base', 'studiometa-voice-ai' ); ?></div>
+                        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#374151"><span style="font-size:16px">💡</span> <?php esc_html_e( 'Suggest questions for your visitors', 'studiometa-voice-ai' ); ?></div>
                     </div>
                 </div>
                 <div style="display:flex;gap:10px;justify-content:flex-end">
-                    <button type="button" id="smva-train-cancel1" class="smva-btn" style="background:#f3f4f6;color:#374151">Cancel</button>
-                    <button type="button" id="smva-train-start" class="smva-btn smva-btn-primary" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none">🚀 Start Training</button>
+                    <button type="button" id="smva-train-cancel1" class="smva-btn" style="background:#f3f4f6;color:#374151"><?php esc_html_e( 'Cancel', 'studiometa-voice-ai' ); ?></button>
+                    <button type="button" id="smva-train-start" class="smva-btn smva-btn-primary" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none">🚀 <?php esc_html_e( 'Start Training', 'studiometa-voice-ai' ); ?></button>
                 </div>
             </div>
 
             <!-- Step 2: Progress -->
             <div id="smva-train-step2" style="display:none;text-align:center;padding:16px 0">
                 <div style="font-size:40px;margin-bottom:16px">⚙️</div>
-                <h2 style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 8px">Training in progress...</h2>
-                <p id="smva-train-progress-text" style="font-size:14px;color:#6b7280;margin:0 0 24px">Reading your website...</p>
+                <h2 style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 8px"><?php esc_html_e( 'Training in progress...', 'studiometa-voice-ai' ); ?></h2>
+                <p id="smva-train-progress-text" style="font-size:14px;color:#6b7280;margin:0 0 24px"><?php esc_html_e( 'Reading your website...', 'studiometa-voice-ai' ); ?></p>
                 <div style="background:#f1f5f9;border-radius:99px;height:8px;overflow:hidden;margin-bottom:8px">
                     <div id="smva-train-progress-bar" style="height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:99px;width:10%;transition:width .5s ease"></div>
                 </div>
-                <p style="font-size:12px;color:#94a3b8">This may take 30-60 seconds...</p>
+                <p style="font-size:12px;color:#94a3b8"><?php esc_html_e( 'This may take 30-60 seconds...', 'studiometa-voice-ai' ); ?></p>
             </div>
 
             <!-- Step 3: Review -->
@@ -805,29 +867,29 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
                     <div style="width:40px;height:40px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">✓</div>
                     <div>
-                        <h2 style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 2px">Training complete!</h2>
+                        <h2 style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 2px"><?php esc_html_e( 'Training complete!', 'studiometa-voice-ai' ); ?></h2>
                         <p id="smva-train-pages-info" style="font-size:13px;color:#6b7280;margin:0"></p>
                     </div>
                 </div>
 
                 <div style="margin-bottom:16px">
-                    <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">🧠 System Prompt</label>
+                    <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">🧠 <?php esc_html_e( 'System Prompt', 'studiometa-voice-ai' ); ?></label>
                     <textarea id="smva-train-result-prompt" class="smva-textarea" rows="5" style="width:100%;font-size:13px"></textarea>
                 </div>
                 <div style="margin-bottom:16px">
-                    <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">📚 Knowledge Base</label>
+                    <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">📚 <?php esc_html_e( 'Knowledge Base', 'studiometa-voice-ai' ); ?></label>
                     <textarea id="smva-train-result-kb" class="smva-textarea" rows="6" style="width:100%;font-size:13px"></textarea>
                 </div>
                 <div style="margin-bottom:20px">
-                    <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:8px">💡 Suggested Questions</label>
+                    <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:8px">💡 <?php esc_html_e( 'Suggested Questions', 'studiometa-voice-ai' ); ?></label>
                     <div id="smva-train-result-questions" style="display:flex;flex-direction:column;gap:6px"></div>
                 </div>
 
                 <div id="smva-train-error" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px;font-size:13px;color:#dc2626;margin-bottom:16px"></div>
 
                 <div style="display:flex;gap:10px;justify-content:flex-end">
-                    <button type="button" id="smva-train-cancel3" class="smva-btn" style="background:#f3f4f6;color:#374151">Cancel</button>
-                    <button type="button" id="smva-train-apply" class="smva-btn smva-btn-primary" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none">✓ Apply & Save</button>
+                    <button type="button" id="smva-train-cancel3" class="smva-btn" style="background:#f3f4f6;color:#374151"><?php esc_html_e( 'Cancel', 'studiometa-voice-ai' ); ?></button>
+                    <button type="button" id="smva-train-apply" class="smva-btn smva-btn-primary" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none">✓ <?php esc_html_e( 'Apply & Save', 'studiometa-voice-ai' ); ?></button>
                 </div>
             </div>
         </div>
@@ -837,19 +899,19 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     <div id="smva-pages-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center">
         <div style="background:#fff;border-radius:16px;padding:32px;width:620px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.2)">
             <div style="margin-bottom:16px">
-                <h2 style="font-size:20px;font-weight:700;color:#0f172a;margin:0 0 8px">Select Pages to Train From</h2>
-                <p style="font-size:13px;color:#6b7280;margin:0">Only the content you tick is read into the knowledge base. Pages are selected by default; posts are not, so news and blog archives stay out unless you add them.</p>
+                <h2 style="font-size:20px;font-weight:700;color:#0f172a;margin:0 0 8px"><?php esc_html_e( 'Select Pages to Train From', 'studiometa-voice-ai' ); ?></h2>
+                <p style="font-size:13px;color:#6b7280;margin:0"><?php esc_html_e( 'Only the content you tick is read into the knowledge base. Pages are selected by default; posts are not, so news and blog archives stay out unless you add them.', 'studiometa-voice-ai' ); ?></p>
             </div>
 
-            <div id="smva-pages-loading" style="padding:32px 0;text-align:center;font-size:13px;color:#6b7280">Loading your content&hellip;</div>
+            <div id="smva-pages-loading" style="padding:32px 0;text-align:center;font-size:13px;color:#6b7280"><?php esc_html_e( 'Loading your content…', 'studiometa-voice-ai' ); ?></div>
             <div id="smva-pages-error" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px;font-size:13px;color:#dc2626;margin-bottom:12px"></div>
             <div id="smva-pages-list" style="flex:1;overflow-y:auto;min-height:120px;max-height:46vh;border:1px solid #e2e8f0;border-radius:8px;padding:12px;background:#f8fafc"></div>
 
             <div style="display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:16px">
                 <span id="smva-pages-count" style="font-size:12px;color:#6b7280"></span>
                 <div style="display:flex;gap:10px">
-                    <button type="button" id="smva-pages-cancel" class="smva-btn" style="background:#f3f4f6;color:#374151">Cancel</button>
-                    <button type="button" id="smva-pages-apply" class="smva-btn smva-btn-primary" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none">Build Knowledge Base</button>
+                    <button type="button" id="smva-pages-cancel" class="smva-btn" style="background:#f3f4f6;color:#374151"><?php esc_html_e( 'Cancel', 'studiometa-voice-ai' ); ?></button>
+                    <button type="button" id="smva-pages-apply" class="smva-btn smva-btn-primary" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none"><?php esc_html_e( 'Build Knowledge Base', 'studiometa-voice-ai' ); ?></button>
                 </div>
             </div>
         </div>
@@ -859,61 +921,61 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
         <div class="smva-card">
             <div class="smva-card-header">
-                <h2 class="smva-card-title">Knowledge Base</h2>
-                <span class="smva-step-badge">Step 1</span>
+                <h2 class="smva-card-title"><?php esc_html_e( 'Knowledge Base', 'studiometa-voice-ai' ); ?></h2>
+                <span class="smva-step-badge"><?php esc_html_e( 'Step 1', 'studiometa-voice-ai' ); ?></span>
             </div>
-            <p class="smva-desc">Add your business information here. The more detail, the better your agent will perform. You can import it automatically from your website.</p>
+            <p class="smva-desc"><?php esc_html_e( 'Add your business information here. The more detail, the better your agent will perform. You can import it automatically from your website.', 'studiometa-voice-ai' ); ?></p>
 
             <div class="smva-field smva-field-full" style="margin-bottom:12px">
-                <label style="font-size:12px;color:#6b7280;margin-bottom:4px;display:block">Website URL to import from:</label>
+                <label style="font-size:12px;color:#6b7280;margin-bottom:4px;display:block"><?php esc_html_e( 'Website URL to import from:', 'studiometa-voice-ai' ); ?></label>
                 <div style="display:flex;gap:8px">
                     <input type="text" id="smva-crawl-url" class="smva-input" placeholder="<?php echo esc_attr( get_site_url() ); ?>" value="<?php echo esc_attr( get_site_url() ); ?>" style="flex:1">
-                    <button type="button" id="smva-crawl-btn" class="smva-btn smva-btn-green" style="flex:none" title="Crawl your website and build knowledge base automatically">
-                        &#127760; Import from Website
+                    <button type="button" id="smva-crawl-btn" class="smva-btn smva-btn-green" style="flex:none" title="<?php esc_attr_e( 'Crawl your website and build knowledge base automatically', 'studiometa-voice-ai' ); ?>">
+                        &#127760; <?php esc_html_e( 'Import from Website', 'studiometa-voice-ai' ); ?>
                     </button>
                 </div>
                 <div style="margin-top:8px">
-                    <button type="button" id="smva-select-pages-btn" class="smva-btn" style="background:#f3f4f6;color:#374151" title="Pick exactly which pages and posts feed the knowledge base">
-                        &#128196; Select Pages to Train From
+                    <button type="button" id="smva-select-pages-btn" class="smva-btn" style="background:#f3f4f6;color:#374151" title="<?php esc_attr_e( 'Pick exactly which pages and posts feed the knowledge base', 'studiometa-voice-ai' ); ?>">
+                        &#128196; <?php esc_html_e( 'Select Pages to Train From', 'studiometa-voice-ai' ); ?>
                     </button>
-                    <span style="font-size:11px;color:#9ca3af;margin-left:8px">Choose specific content instead of crawling the whole site &mdash; useful if you publish news or blog posts the agent shouldn't quote.</span>
+                    <span style="font-size:11px;color:#9ca3af;margin-left:8px"><?php esc_html_e( "Choose specific content instead of crawling the whole site — useful if you publish news or blog posts the agent shouldn't quote.", 'studiometa-voice-ai' ); ?></span>
                 </div>
             </div>
             <div class="smva-field smva-field-full" style="margin-bottom:12px">
-                <label style="font-size:12px;color:#6b7280;margin-bottom:4px;display:block">Upload a file to add to knowledge base:</label>
+                <label style="font-size:12px;color:#6b7280;margin-bottom:4px;display:block"><?php esc_html_e( 'Upload a file to add to knowledge base:', 'studiometa-voice-ai' ); ?></label>
                 <div style="display:flex;gap:8px;align-items:center">
                     <input type="file" id="smva-kb-file" accept=".pdf,.docx,.csv,.txt" style="flex:1;font-size:13px;padding:6px;border:1px solid #d1d5db;border-radius:8px;background:#fff">
                     <button type="button" id="smva-kb-upload-btn" class="smva-btn smva-btn-primary" style="flex:none">
-                        <span id="smva-kb-upload-label">&#128196; Upload File</span>
-                        <span id="smva-kb-upload-spinner" style="display:none">Processing...</span>
+                        <span id="smva-kb-upload-label">&#128196; <?php esc_html_e( 'Upload File', 'studiometa-voice-ai' ); ?></span>
+                        <span id="smva-kb-upload-spinner" style="display:none"><?php esc_html_e( 'Processing...', 'studiometa-voice-ai' ); ?></span>
                     </button>
                 </div>
                 <div id="smva-kb-upload-msg" style="font-size:12px;margin-top:6px;display:none"></div>
-                <div style="font-size:11px;color:#9ca3af;margin-top:4px">Supported: PDF, DOCX, CSV, TXT &mdash; Max 10MB</div>
+                <div style="font-size:11px;color:#9ca3af;margin-top:4px"><?php esc_html_e( 'Supported: PDF, DOCX, CSV, TXT — Max 10MB', 'studiometa-voice-ai' ); ?></div>
             </div>
 
-            <textarea name="knowledge_base" class="smva-textarea" rows="8" placeholder="## Business Name&#10;Your Company&#10;&#10;## Services&#10;- Service 1&#10;- Service 2&#10;&#10;## Hours&#10;Mon-Fri: 9am-5pm&#10;&#10;## Contact&#10;Email: info@example.com"><?php echo esc_textarea( $agent['knowledge_base'] ?? '' ); ?></textarea>
+            <textarea name="knowledge_base" class="smva-textarea" rows="8" placeholder="<?php echo esc_attr( __( '## Business Name', 'studiometa-voice-ai' ) . "\n" . __( 'Your Company', 'studiometa-voice-ai' ) . "\n\n" . __( '## Services', 'studiometa-voice-ai' ) . "\n- " . __( 'Service 1', 'studiometa-voice-ai' ) . "\n- " . __( 'Service 2', 'studiometa-voice-ai' ) . "\n\n" . __( '## Hours', 'studiometa-voice-ai' ) . "\n" . __( 'Mon-Fri: 9am-5pm', 'studiometa-voice-ai' ) . "\n\n" . __( '## Contact', 'studiometa-voice-ai' ) . "\nEmail: info@example.com" ); ?>"><?php echo esc_textarea( $agent['knowledge_base'] ?? '' ); ?></textarea>
         </div>
 
         <div class="smva-card">
             <div class="smva-card-header">
-                <h2 class="smva-card-title">System Prompt</h2>
-                <span class="smva-step-badge">Step 2</span>
+                <h2 class="smva-card-title"><?php esc_html_e( 'System Prompt', 'studiometa-voice-ai' ); ?></h2>
+                <span class="smva-step-badge"><?php esc_html_e( 'Step 2', 'studiometa-voice-ai' ); ?></span>
             </div>
-            <p class="smva-desc">Instructions for how your agent should behave and respond. Fill in the Knowledge Base first, then generate or write your system prompt.</p>
+            <p class="smva-desc"><?php esc_html_e( 'Instructions for how your agent should behave and respond. Fill in the Knowledge Base first, then generate or write your system prompt.', 'studiometa-voice-ai' ); ?></p>
 
-            <textarea name="system_prompt" class="smva-textarea" rows="6" placeholder="You are a helpful assistant for [Business Name]. You help customers with questions about our services, pricing, and booking appointments. Always be friendly and professional."><?php echo esc_textarea( $agent['system_prompt'] ?? '' ); ?></textarea>
+            <textarea name="system_prompt" class="smva-textarea" rows="6" placeholder="<?php esc_attr_e( 'You are a helpful assistant for [Business Name]. You help customers with questions about our services, pricing, and booking appointments. Always be friendly and professional.', 'studiometa-voice-ai' ); ?>"><?php echo esc_textarea( $agent['system_prompt'] ?? '' ); ?></textarea>
 
 
         </div>
 
         <div class="smva-card">
             <div class="smva-card-header">
-                <h2 class="smva-card-title">Suggested Questions</h2>
-                <span class="smva-step-badge">Step 3</span>
+                <h2 class="smva-card-title"><?php esc_html_e( 'Suggested Questions', 'studiometa-voice-ai' ); ?></h2>
+                <span class="smva-step-badge"><?php esc_html_e( 'Step 3', 'studiometa-voice-ai' ); ?></span>
             </div>
-            <p class="smva-desc">Quick question chips shown in the widget. One per line.</p>
-            <textarea name="smva_suggested_questions" class="smva-textarea" rows="5" placeholder="What are your opening hours?&#10;How can I book an appointment?&#10;What services do you offer?"><?php
+            <p class="smva-desc"><?php esc_html_e( 'Quick question chips shown in the widget. One per line.', 'studiometa-voice-ai' ); ?></p>
+            <textarea name="smva_suggested_questions" class="smva-textarea" rows="5" placeholder="<?php echo esc_attr( __( 'What are your opening hours?', 'studiometa-voice-ai' ) . "\n" . __( 'How can I book an appointment?', 'studiometa-voice-ai' ) . "\n" . __( 'What services do you offer?', 'studiometa-voice-ai' ) ); ?>"><?php
                 $sq = get_option( 'smva_suggested_questions', '' );
                 $sq_arr = json_decode( $sq, true );
                 if ( is_array($sq_arr) ) echo esc_textarea( implode("\n", $sq_arr) );
@@ -925,14 +987,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         <div id="smva-agent-loading" class="smva-loading-bar">
             <div class="smva-loading-inner">
                 <div class="smva-spinner"></div>
-                <span id="smva-loading-text" class="smva-loading-text">Processing...</span>
+                <span id="smva-loading-text" class="smva-loading-text"><?php esc_html_e( 'Processing...', 'studiometa-voice-ai' ); ?></span>
             </div>
         </div>
 
         <div class="smva-action-bar">
             <span id="smva-agent-msg" class="smva-save-msg"></span>
-            <button type="button" id="smva-optimize-btn" class="smva-btn smva-btn-purple">✨ Optimize with AI</button>
-            <button type="submit" class="smva-btn smva-btn-primary">💾 Save &amp; Sync Agent</button>
+            <button type="button" id="smva-optimize-btn" class="smva-btn smva-btn-purple">✨ <?php esc_html_e( 'Optimize with AI', 'studiometa-voice-ai' ); ?></button>
+            <button type="submit" class="smva-btn smva-btn-primary">💾 <?php esc_html_e( 'Save & Sync Agent', 'studiometa-voice-ai' ); ?></button>
         </div>
 
     </form>
@@ -943,10 +1005,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     <form id="smva-widget-form">
 
         <div class="smva-card" style="margin-bottom:16px">
-            <div class="smva-card-header"><h2 class="smva-card-title">Agent Logo</h2></div>
+            <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'Agent Logo', 'studiometa-voice-ai' ); ?></h2></div>
             <div class="smva-card-body">
                 <div class="smva-field">
-                    <label>Agent Logo</label>
+                    <label><?php esc_html_e( 'Agent Logo', 'studiometa-voice-ai' ); ?></label>
                     <div style="display:flex;align-items:center;gap:12px;margin-top:6px;">
                         <div id="smva-logo-preview" style="width:52px;height:52px;border-radius:50%;border:2px solid #e5e7eb;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#f9fafb;flex-shrink:0;">
                             <?php $logo = get_option('smva_agent_logo',''); ?>
@@ -958,29 +1020,29 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                         </div>
                         <div style="flex:1">
                             <input type="hidden" name="smva_agent_logo" id="smva_agent_logo" value="<?php echo esc_attr( get_option('smva_agent_logo','') ); ?>">
-                            <button type="button" id="smva-logo-upload" class="button">📁 Choose from Media</button>
+                            <button type="button" id="smva-logo-upload" class="button">📁 <?php esc_html_e( 'Choose from Media', 'studiometa-voice-ai' ); ?></button>
                             <?php if ( get_option('smva_agent_logo','') ) : ?>
-                            <button type="button" id="smva-logo-remove" class="button" style="margin-left:6px;color:#dc2626;">Remove</button>
+                            <button type="button" id="smva-logo-remove" class="button" style="margin-left:6px;color:#dc2626;"><?php esc_html_e( 'Remove', 'studiometa-voice-ai' ); ?></button>
                             <?php endif; ?>
-                            <p style="margin-top:4px;font-size:12px;color:#6b7280">Square image recommended. Leave empty to use default icon.</p>
+                            <p style="margin-top:4px;font-size:12px;color:#6b7280"><?php esc_html_e( 'Square image recommended. Leave empty to use default icon.', 'studiometa-voice-ai' ); ?></p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="smva-card" style="margin-bottom:16px">
-            <div class="smva-card-header"><h2 class="smva-card-title">Widget Theme</h2></div>
-            <p class="smva-desc">Choose the visual style of your AI widget.</p>
+            <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'Widget Theme', 'studiometa-voice-ai' ); ?></h2></div>
+            <p class="smva-desc"><?php esc_html_e( 'Choose the visual style of your AI widget.', 'studiometa-voice-ai' ); ?></p>
             <div id="smva-theme-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px">
                 <?php
                 $current_theme = get_option('smva_widget_theme','classic');
                 $themes = [
-                    'classic'  => ['Classic',    '#2563eb', '#2563eb', '#fff',    '#f4f4f5'],
-                    'floating' => ['Floating',   '#2563eb', '#fff',    '#111827', '#f0f0f0'],
-                    'soft'     => ['Soft Round', '#3b82f6', '#fff',    '#111827', '#f0f0f0'],
-                    'dark'     => ['Dark Modern','#818cf8', '#0f172a', '#e0e7ff', '#ffffff12'],
-                    'glass'    => ['Glass',      '#2563eb', '#dbeafe', '#1e3a8a', '#ffffff80'],
-                    'gradient' => ['Gradient',   '#764ba2', '#667eea', '#fff',    '#f4f4f5'],
+                    'classic'  => [__('Classic','studiometa-voice-ai'),    '#2563eb', '#2563eb', '#fff',    '#f4f4f5'],
+                    'floating' => [__('Floating','studiometa-voice-ai'),   '#2563eb', '#fff',    '#111827', '#f0f0f0'],
+                    'soft'     => [__('Soft Round','studiometa-voice-ai'), '#3b82f6', '#fff',    '#111827', '#f0f0f0'],
+                    'dark'     => [__('Dark Modern','studiometa-voice-ai'),'#818cf8', '#0f172a', '#e0e7ff', '#ffffff12'],
+                    'glass'    => [__('Glass','studiometa-voice-ai'),      '#2563eb', '#dbeafe', '#1e3a8a', '#ffffff80'],
+                    'gradient' => [__('Gradient','studiometa-voice-ai'),   '#764ba2', '#667eea', '#fff',    '#f4f4f5'],
                 ];
                 foreach ($themes as $key => $info ) :
                     $is_active = $current_theme === $key;
@@ -999,8 +1061,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                             </div>
                         </div>
                         <div style="padding:6px 8px;background:<?php echo $key==='dark'?'#1e293b':'#f9fafb'; ?>;display:flex;flex-direction:column;gap:3px">
-                            <div style="background:<?php echo esc_attr($info[4]); ?>;border-radius:5px 5px 5px 1px;padding:3px 6px;font-size:8px;color:<?php echo $key==='dark'?'#e2e8f0':'#374151'; ?>;align-self:flex-start;max-width:80%">Hello!</div>
-                            <div style="background:<?php echo esc_attr($info[1]); ?>;border-radius:5px 5px 1px 5px;padding:3px 6px;font-size:8px;color:#fff;align-self:flex-end;max-width:70%">Hi there</div>
+                            <div style="background:<?php echo esc_attr($info[4]); ?>;border-radius:5px 5px 5px 1px;padding:3px 6px;font-size:8px;color:<?php echo $key==='dark'?'#e2e8f0':'#374151'; ?>;align-self:flex-start;max-width:80%"><?php esc_html_e( 'Hello!', 'studiometa-voice-ai' ); ?></div>
+                            <div style="background:<?php echo esc_attr($info[1]); ?>;border-radius:5px 5px 1px 5px;padding:3px 6px;font-size:8px;color:#fff;align-self:flex-end;max-width:70%"><?php esc_html_e( 'Hi there', 'studiometa-voice-ai' ); ?></div>
                         </div>
                         <div style="padding:4px 6px;background:<?php echo $key==='dark'?'#0f172a':'#fff'; ?>;display:flex;gap:3px;border-top:0.5px solid <?php echo $key==='dark'?'rgba(255,255,255,.06)':'#f0f0f0'; ?>">
                             <div style="flex:1;height:12px;background:<?php echo $key==='dark'?'rgba(255,255,255,.06)':'#f3f4f6'; ?>;border-radius:4px"></div>
@@ -1008,7 +1070,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                         </div>
                     </div>
                     <div style="font-size:11px;font-weight:500;color:#374151"><?php echo esc_html($info[0]); ?></div>
-                    <div class="smva-theme-check" style="font-size:10px;color:#2563eb;margin-top:2px;<?php echo $is_active?'':'display:none'; ?>">✓ Selected</div>
+                    <div class="smva-theme-check" style="font-size:10px;color:#2563eb;margin-top:2px;<?php echo $is_active?'':'display:none'; ?>">✓ <?php esc_html_e( 'Selected', 'studiometa-voice-ai' ); ?></div>
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -1016,22 +1078,22 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         </div>
 
         <div class="smva-card">
-            <div class="smva-card-header"><h2 class="smva-card-title">Voice &amp; Chat</h2></div>
+            <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'Voice & Chat', 'studiometa-voice-ai' ); ?></h2></div>
             <div class="smva-form-grid">
 
                 <div class="smva-field">
-                    <label>Default Tab</label>
+                    <label><?php esc_html_e( 'Default Tab', 'studiometa-voice-ai' ); ?></label>
                     <select name="smva_default_tab" class="smva-select">
-                        <option value="voice" <?php selected( get_option('smva_default_tab','voice'), 'voice' ); ?>>Voice</option>
-                        <option value="chat"  <?php selected( get_option('smva_default_tab','voice'), 'chat' ); ?>>Chat</option>
+                        <option value="voice" <?php selected( get_option('smva_default_tab','voice'), 'voice' ); ?>><?php esc_html_e( 'Voice', 'studiometa-voice-ai' ); ?></option>
+                        <option value="chat"  <?php selected( get_option('smva_default_tab','voice'), 'chat' ); ?>><?php esc_html_e( 'Chat', 'studiometa-voice-ai' ); ?></option>
                     </select>
                 </div>
 
                 <div class="smva-field">
-                    <label>Enabled Modes</label>
+                    <label><?php esc_html_e( 'Enabled Modes', 'studiometa-voice-ai' ); ?></label>
                     <div style="display:flex;gap:16px;margin-top:4px">
-                        <label class="smva-toggle-label"><input type="checkbox" name="smva_voice_enabled" value="1" <?php checked( get_option('smva_voice_enabled','1'), '1' ); ?>> 🎙️ Voice</label>
-                        <label class="smva-toggle-label"><input type="checkbox" name="smva_chat_enabled"  value="1" <?php checked( get_option('smva_chat_enabled','1'),  '1' ); ?>> 💬 Chat</label>
+                        <label class="smva-toggle-label"><input type="checkbox" name="smva_voice_enabled" value="1" <?php checked( get_option('smva_voice_enabled','1'), '1' ); ?>> 🎙️ <?php esc_html_e( 'Voice', 'studiometa-voice-ai' ); ?></label>
+                        <label class="smva-toggle-label"><input type="checkbox" name="smva_chat_enabled"  value="1" <?php checked( get_option('smva_chat_enabled','1'),  '1' ); ?>> 💬 <?php esc_html_e( 'Chat', 'studiometa-voice-ai' ); ?></label>
                     </div>
                 </div>
 
@@ -1039,68 +1101,68 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         </div>
 
         <div class="smva-card" style="margin-top:16px">
-            <div class="smva-card-header"><h2 class="smva-card-title">Performance</h2></div>
+            <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'Performance', 'studiometa-voice-ai' ); ?></h2></div>
             <div class="smva-form-grid">
                 <div class="smva-field">
-                    <label>Frontend Loading</label>
-                    <input type="hidden" name="smva_lazy_load_widget" value="0"><label class="smva-toggle-label"><input type="checkbox" name="smva_lazy_load_widget" value="1" <?php checked( get_option('smva_lazy_load_widget','1'), '1' ); ?>> Lazy-load interaction-heavy logic</label>
-                    <p class="smva-hint">Keeps the widget shell light. Voice/audio still starts only after the visitor clicks voice.</p>
+                    <label><?php esc_html_e( 'Frontend Loading', 'studiometa-voice-ai' ); ?></label>
+                    <input type="hidden" name="smva_lazy_load_widget" value="0"><label class="smva-toggle-label"><input type="checkbox" name="smva_lazy_load_widget" value="1" <?php checked( get_option('smva_lazy_load_widget','1'), '1' ); ?>> <?php esc_html_e( 'Lazy-load interaction-heavy logic', 'studiometa-voice-ai' ); ?></label>
+                    <p class="smva-hint"><?php esc_html_e( 'Keeps the widget shell light. Voice/audio still starts only after the visitor clicks voice.', 'studiometa-voice-ai' ); ?></p>
                 </div>
                 <div class="smva-field">
-                    <label>Event Debug Log</label>
-                    <input type="hidden" name="smva_debug_events" value="0"><label class="smva-toggle-label"><input type="checkbox" name="smva_debug_events" value="1" <?php checked( get_option('smva_debug_events','1'), '1' ); ?>> Keep recent plugin events</label>
-                    <p class="smva-hint">Stores last 50 non-sensitive plugin events for troubleshooting.</p>
+                    <label><?php esc_html_e( 'Event Debug Log', 'studiometa-voice-ai' ); ?></label>
+                    <input type="hidden" name="smva_debug_events" value="0"><label class="smva-toggle-label"><input type="checkbox" name="smva_debug_events" value="1" <?php checked( get_option('smva_debug_events','1'), '1' ); ?>> <?php esc_html_e( 'Keep recent plugin events', 'studiometa-voice-ai' ); ?></label>
+                    <p class="smva-hint"><?php esc_html_e( 'Stores last 50 non-sensitive plugin events for troubleshooting.', 'studiometa-voice-ai' ); ?></p>
                 </div>
             </div>
         </div>
 
         <div class="smva-card">
             <div class="smva-card-header">
-                <h2 class="smva-card-title">Call Limits</h2>
-                <span class="smva-hint-inline">prevent abuse</span>
+                <h2 class="smva-card-title"><?php esc_html_e( 'Call Limits', 'studiometa-voice-ai' ); ?></h2>
+                <span class="smva-hint-inline"><?php esc_html_e( 'prevent abuse', 'studiometa-voice-ai' ); ?></span>
             </div>
             <div class="smva-limits-grid">
                 <div class="smva-limit-item">
                     <div class="smva-limit-header">
-                        <label class="smva-limit-label">Max Call Duration</label>
-                        <span class="smva-limit-unit">minutes &middot; 0 = off</span>
+                        <label class="smva-limit-label"><?php esc_html_e( 'Max Call Duration', 'studiometa-voice-ai' ); ?></label>
+                        <span class="smva-limit-unit"><?php esc_html_e( 'minutes · 0 = off', 'studiometa-voice-ai' ); ?></span>
                     </div>
                     <div class="smva-limit-ctrl">
                         <button type="button" class="smva-lim-btn" onclick="smvaLimStep('smva_max_call_duration',-1)">&minus;</button>
                         <input type="number" name="smva_max_call_duration" id="smva_max_call_duration" class="smva-lim-input" min="0" max="60" value="<?php echo intval( get_option('smva_max_call_duration',10) ); ?>">
                         <button type="button" class="smva-lim-btn" onclick="smvaLimStep('smva_max_call_duration',1)">+</button>
                     </div>
-                    <p class="smva-hint">Auto-disconnect after this many minutes.</p>
+                    <p class="smva-hint"><?php esc_html_e( 'Auto-disconnect after this many minutes.', 'studiometa-voice-ai' ); ?></p>
                 </div>
                 <div class="smva-limit-item">
                     <div class="smva-limit-header">
-                        <label class="smva-limit-label">Silence Timeout</label>
-                        <span class="smva-limit-unit">seconds &middot; 0 = off</span>
+                        <label class="smva-limit-label"><?php esc_html_e( 'Silence Timeout', 'studiometa-voice-ai' ); ?></label>
+                        <span class="smva-limit-unit"><?php esc_html_e( 'seconds · 0 = off', 'studiometa-voice-ai' ); ?></span>
                     </div>
                     <div class="smva-limit-ctrl">
                         <button type="button" class="smva-lim-btn" onclick="smvaLimStep('smva_silence_timeout',-5)">&minus;</button>
                         <input type="number" name="smva_silence_timeout" id="smva_silence_timeout" class="smva-lim-input" min="0" max="300" value="<?php echo intval( get_option('smva_silence_timeout',60) ); ?>">
                         <button type="button" class="smva-lim-btn" onclick="smvaLimStep('smva_silence_timeout',5)">+</button>
                     </div>
-                    <p class="smva-hint">Auto-disconnect after this many seconds of silence.</p>
+                    <p class="smva-hint"><?php esc_html_e( 'Auto-disconnect after this many seconds of silence.', 'studiometa-voice-ai' ); ?></p>
                 </div>
                 <div class="smva-limit-item">
                     <div class="smva-limit-header">
-                        <label class="smva-limit-label">Call Cooldown</label>
-                        <span class="smva-limit-unit">seconds &middot; 0 = off</span>
+                        <label class="smva-limit-label"><?php esc_html_e( 'Call Cooldown', 'studiometa-voice-ai' ); ?></label>
+                        <span class="smva-limit-unit"><?php esc_html_e( 'seconds · 0 = off', 'studiometa-voice-ai' ); ?></span>
                     </div>
                     <div class="smva-limit-ctrl">
                         <button type="button" class="smva-lim-btn" onclick="smvaLimStep('smva_call_cooldown',-10)">&minus;</button>
                         <input type="number" name="smva_call_cooldown" id="smva_call_cooldown" class="smva-lim-input" min="0" max="3600" value="<?php echo intval( get_option('smva_call_cooldown',30) ); ?>">
                         <button type="button" class="smva-lim-btn" onclick="smvaLimStep('smva_call_cooldown',10)">+</button>
                     </div>
-                    <p class="smva-hint">Minimum wait between calls to prevent abuse.</p>
+                    <p class="smva-hint"><?php esc_html_e( 'Minimum wait between calls to prevent abuse.', 'studiometa-voice-ai' ); ?></p>
                 </div>
             </div>
-            
-            
+
+
             <div class="smva-card-footer">
-                <button type="submit" class="smva-btn smva-btn-primary">Save Widget Settings</button>
+                <button type="submit" class="smva-btn smva-btn-primary"><?php esc_html_e( 'Save Widget Settings', 'studiometa-voice-ai' ); ?></button>
                 <span id="smva-widget-save-msg" class="smva-save-msg"></span>
             </div>
         </div>
@@ -1108,11 +1170,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     </form>
 
     <div class="smva-card" style="margin-top:16px">
-        <div class="smva-card-header"><h2 class="smva-card-title">Embed</h2></div>
-        <p class="smva-desc">Add the widget to any page using the shortcode, or it loads automatically on all pages when the plugin is active.</p>
+        <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'Embed', 'studiometa-voice-ai' ); ?></h2></div>
+        <p class="smva-desc"><?php esc_html_e( 'Add the widget to any page using the shortcode, or it loads automatically on all pages when the plugin is active.', 'studiometa-voice-ai' ); ?></p>
         <div style="display:flex;align-items:center;gap:12px">
-            <code class="smva-code" onclick="navigator.clipboard.writeText('[smva_widget]');this.textContent='Copied!';setTimeout(()=>this.textContent='[smva_widget]',2000)">[smva_widget]</code>
-            <span class="smva-hint">Click to copy</span>
+            <code class="smva-code" onclick="navigator.clipboard.writeText('[smva_widget]');this.textContent='<?php echo esc_js( __( 'Copied!', 'studiometa-voice-ai' ) ); ?>';setTimeout(()=>this.textContent='[smva_widget]',2000)">[smva_widget]</code>
+            <span class="smva-hint"><?php esc_html_e( 'Click to copy', 'studiometa-voice-ai' ); ?></span>
         </div>
     </div>
 
@@ -1136,11 +1198,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     ?>
 
     <div class="smva-card" style="margin-bottom:16px">
-        <div class="smva-card-header"><h2 class="smva-card-title">Quick Action Buttons</h2></div>
-        <p class="smva-desc">Quick-action buttons shown in the widget that send a preset message to the agent — e.g. a visible &ldquo;Book Appointment&rdquo; shortcut.</p>
+        <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'Quick Action Buttons', 'studiometa-voice-ai' ); ?></h2></div>
+        <p class="smva-desc"><?php esc_html_e( 'Quick-action buttons shown in the widget that send a preset message to the agent — e.g. a visible "Book Appointment" shortcut.', 'studiometa-voice-ai' ); ?></p>
         <div class="smva-field smva-field-full">
-            <label>Buttons <span>— one per line: Label | message sent to agent</span></label>
-            <textarea name="smva_workflow_buttons" id="smva-workflow-buttons" class="smva-textarea" rows="4" placeholder="Book Appointment | I would like to book an appointment.&#10;Request Callback | Please help me request a callback."><?php
+            <label><?php esc_html_e( 'Buttons', 'studiometa-voice-ai' ); ?> <span>— <?php esc_html_e( 'one per line: Label | message sent to agent', 'studiometa-voice-ai' ); ?></span></label>
+            <textarea name="smva_workflow_buttons" id="smva-workflow-buttons" class="smva-textarea" rows="4" placeholder="<?php echo esc_attr( __( 'Book Appointment | I would like to book an appointment.', 'studiometa-voice-ai' ) . "\n" . __( 'Request Callback | Please help me request a callback.', 'studiometa-voice-ai' ) ); ?>"><?php
                 $wb = json_decode( get_option('smva_workflow_buttons','[]'), true );
                 if ( is_array( $wb ) ) {
                     echo esc_textarea( implode( "\n", array_map( function( $b ) { return ( $b['label'] ?? '' ) . ' | ' . ( $b['message'] ?? $b['label'] ?? '' ); }, $wb ) ) );
@@ -1148,45 +1210,45 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             ?></textarea>
         </div>
         <div class="smva-card-footer">
-            <button type="button" id="smva-save-workflow-buttons-btn" class="smva-btn smva-btn-primary">Save Quick Action Buttons</button>
+            <button type="button" id="smva-save-workflow-buttons-btn" class="smva-btn smva-btn-primary"><?php esc_html_e( 'Save Quick Action Buttons', 'studiometa-voice-ai' ); ?></button>
             <span id="smva-workflow-buttons-msg" class="smva-save-msg"></span>
         </div>
     </div>
 
     <div class="smva-card">
         <div class="smva-card-header">
-            <h2 class="smva-card-title">Automation Webhook</h2>
-            <span class="smva-badge" style="background:#e0f2fe;color:#0369a1">Agentic</span>
+            <h2 class="smva-card-title"><?php esc_html_e( 'Automation Webhook', 'studiometa-voice-ai' ); ?></h2>
+            <span class="smva-badge" style="background:#e0f2fe;color:#0369a1"><?php esc_html_e( 'Agentic', 'studiometa-voice-ai' ); ?></span>
         </div>
-        <p class="smva-desc">Connect your AI agent to any automation platform (n8n, Make, Zapier). When the agent needs to take an action, it will call your webhook URL and wait for a result.</p>
+        <p class="smva-desc"><?php esc_html_e( 'Connect your AI agent to any automation platform (n8n, Make, Zapier). When the agent needs to take an action, it will call your webhook URL and wait for a result.', 'studiometa-voice-ai' ); ?></p>
         <div class="smva-field smva-field-full" style="margin-bottom:12px">
-            <label>Webhook URL — <span style="color:#9ca3af;font-weight:400">your n8n / Make / Zapier webhook</span></label>
+            <label><?php esc_html_e( 'Webhook URL', 'studiometa-voice-ai' ); ?> — <span style="color:#9ca3af;font-weight:400"><?php esc_html_e( 'your n8n / Make / Zapier webhook', 'studiometa-voice-ai' ); ?></span></label>
             <input type="text" id="smva-webhook-url" class="smva-input" placeholder="https://your-n8n.io/webhook/your-unique-path" value="<?php echo esc_attr($webhook); ?>">
         </div>
         <div class="smva-info-box" style="margin-bottom:12px">
-            Your webhook receives: <code>tool_name</code>, <code>arguments</code>, <code>license_key</code>, <code>session_id</code>. Return: <code>{"result": "your response"}</code>
+            <?php esc_html_e( 'Your webhook receives:', 'studiometa-voice-ai' ); ?> <code>tool_name</code>, <code>arguments</code>, <code>license_key</code>, <code>session_id</code>. <?php esc_html_e( 'Return:', 'studiometa-voice-ai' ); ?> <code>{"result": "your response"}</code>
         </div>
         <div class="smva-card-footer">
-            <button type="button" id="smva-save-webhook-btn" class="smva-btn smva-btn-primary">Save Webhook URL</button>
+            <button type="button" id="smva-save-webhook-btn" class="smva-btn smva-btn-primary"><?php esc_html_e( 'Save Webhook URL', 'studiometa-voice-ai' ); ?></button>
             <span id="smva-webhook-msg" class="smva-save-msg"></span>
         </div>
     </div>
 
     <div class="smva-card" style="margin-top:16px">
-        <div class="smva-card-header"><h2 class="smva-card-title">Agent Tools</h2></div>
-        <p class="smva-desc">Define what actions your agent can perform. Each tool triggers your webhook with the tool name and collected parameters.</p>
+        <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'Agent Tools', 'studiometa-voice-ai' ); ?></h2></div>
+        <p class="smva-desc"><?php esc_html_e( 'Define what actions your agent can perform. Each tool triggers your webhook with the tool name and collected parameters.', 'studiometa-voice-ai' ); ?></p>
 
         <div id="smva-tools-list">
             <?php if ( empty($tools_arr) ) : ?>
-            <p style="color:#9ca3af;font-size:13px;text-align:center;padding:16px 0">No tools defined yet. Add a tool below.</p>
+            <p style="color:#9ca3af;font-size:13px;text-align:center;padding:16px 0"><?php esc_html_e( 'No tools defined yet. Add a tool below.', 'studiometa-voice-ai' ); ?></p>
             <?php else : ?>
             <?php foreach ( $tools_arr as $i => $tool ) : ?>
             <div class="smva-tool-item" style="background:#f9fafb;border-radius:8px;padding:12px;margin-bottom:8px">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
                     <code style="font-size:13px;font-weight:600"><?php echo esc_html($tool['name'] ?? ''); ?></code>
                     <div style="display:flex;gap:6px">
-                        <button type="button" class="smva-btn" style="padding:4px 10px;font-size:12px;flex:none;background:#e0f2fe;color:#0369a1" onclick="smvaEditTool(<?php echo (int) $i; ?>)">Edit</button>
-                        <button type="button" class="smva-btn smva-btn-danger" style="padding:4px 10px;font-size:12px;flex:none" onclick="smvaRemoveTool(<?php echo (int) $i; ?>)">Remove</button>
+                        <button type="button" class="smva-btn" style="padding:4px 10px;font-size:12px;flex:none;background:#e0f2fe;color:#0369a1" onclick="smvaEditTool(<?php echo (int) $i; ?>)"><?php esc_html_e( 'Edit', 'studiometa-voice-ai' ); ?></button>
+                        <button type="button" class="smva-btn smva-btn-danger" style="padding:4px 10px;font-size:12px;flex:none" onclick="smvaRemoveTool(<?php echo (int) $i; ?>)"><?php esc_html_e( 'Remove', 'studiometa-voice-ai' ); ?></button>
                     </div>
                 </div>
                 <div style="font-size:12px;color:#6b7280"><?php echo esc_html($tool['description'] ?? ''); ?></div>
@@ -1196,42 +1258,42 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         </div>
 
         <div style="margin-top:12px;text-align:center">
-            <button type="button" id="smva-add-tool-btn" class="smva-btn smva-btn-primary" style="flex:none">Add Tool +</button>
+            <button type="button" id="smva-add-tool-btn" class="smva-btn smva-btn-primary" style="flex:none"><?php esc_html_e( 'Add Tool +', 'studiometa-voice-ai' ); ?></button>
         </div>
 
         <!-- Add Tool Modal -->
         <div id="smva-tool-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:999999;align-items:center;justify-content:center">
             <div style="background:#fff;border-radius:14px;padding:28px;width:560px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.2)">
-                <h2 style="font-size:18px;font-weight:700;margin:0 0 20px;text-align:center" id="smva-modal-title">Add Tool</h2>
+                <h2 style="font-size:18px;font-weight:700;margin:0 0 20px;text-align:center" id="smva-modal-title"><?php esc_html_e( 'Add Tool', 'studiometa-voice-ai' ); ?></h2>
                 <div class="smva-field smva-field-full" style="margin-bottom:14px">
-                    <label style="text-align:right;display:block">Tool Name <span style="color:#9ca3af;font-weight:400">(lowercase, no spaces)</span></label>
-                    <input type="text" id="smva-tool-name" class="smva-input" placeholder="e.g. book_appointment">
+                    <label style="text-align:right;display:block"><?php esc_html_e( 'Tool Name', 'studiometa-voice-ai' ); ?> <span style="color:#9ca3af;font-weight:400">(<?php esc_html_e( 'lowercase, no spaces', 'studiometa-voice-ai' ); ?>)</span></label>
+                    <input type="text" id="smva-tool-name" class="smva-input" placeholder="<?php esc_attr_e( 'e.g. book_appointment', 'studiometa-voice-ai' ); ?>">
                 </div>
                 <div class="smva-field smva-field-full" style="margin-bottom:14px">
-                    <label style="text-align:right;display:block">Description <span style="color:#9ca3af;font-weight:400">(tell the agent when to use this tool)</span></label>
-                    <textarea id="smva-tool-desc" class="smva-textarea" rows="3" placeholder="Use this tool to book, update, or cancel an appointment..."></textarea>
+                    <label style="text-align:right;display:block"><?php esc_html_e( 'Description', 'studiometa-voice-ai' ); ?> <span style="color:#9ca3af;font-weight:400">(<?php esc_html_e( 'tell the agent when to use this tool', 'studiometa-voice-ai' ); ?>)</span></label>
+                    <textarea id="smva-tool-desc" class="smva-textarea" rows="3" placeholder="<?php esc_attr_e( 'Use this tool to book, update, or cancel an appointment...', 'studiometa-voice-ai' ); ?>"></textarea>
                 </div>
                 <div class="smva-field smva-field-full" style="margin-bottom:14px">
-                    <label style="text-align:right;display:block">Thinking Message <span style="color:#9ca3af;font-weight:400">(shown while processing)</span></label>
-                    <input type="text" id="smva-tool-thinking" class="smva-input" placeholder="Let me check availability...">
+                    <label style="text-align:right;display:block"><?php esc_html_e( 'Thinking Message', 'studiometa-voice-ai' ); ?> <span style="color:#9ca3af;font-weight:400">(<?php esc_html_e( 'shown while processing', 'studiometa-voice-ai' ); ?>)</span></label>
+                    <input type="text" id="smva-tool-thinking" class="smva-input" placeholder="<?php esc_attr_e( 'Let me check availability...', 'studiometa-voice-ai' ); ?>">
                 </div>
                 <div class="smva-field smva-field-full" style="margin-bottom:6px">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-                        <label style="margin:0">Parameters</label>
-                        <button type="button" id="smva-add-param-btn" class="smva-btn" style="background:#e0f2fe;color:#0369a1;padding:4px 12px;font-size:12px;flex:none">Add Parameter +</button>
+                        <label style="margin:0"><?php esc_html_e( 'Parameters', 'studiometa-voice-ai' ); ?></label>
+                        <button type="button" id="smva-add-param-btn" class="smva-btn" style="background:#e0f2fe;color:#0369a1;padding:4px 12px;font-size:12px;flex:none"><?php esc_html_e( 'Add Parameter +', 'studiometa-voice-ai' ); ?></button>
                     </div>
                     <div id="smva-params-list"></div>
                 </div>
                 <div style="display:flex;gap:10px;margin-top:20px">
-                    <button type="button" id="smva-save-tool-btn" class="smva-btn smva-btn-primary">Save Tool</button>
-                    <button type="button" id="smva-cancel-tool-btn" class="smva-btn" style="background:#f3f4f6;color:#374151">Cancel</button>
+                    <button type="button" id="smva-save-tool-btn" class="smva-btn smva-btn-primary"><?php esc_html_e( 'Save Tool', 'studiometa-voice-ai' ); ?></button>
+                    <button type="button" id="smva-cancel-tool-btn" class="smva-btn" style="background:#f3f4f6;color:#374151"><?php esc_html_e( 'Cancel', 'studiometa-voice-ai' ); ?></button>
                 </div>
             </div>
         </div>
 
         <input type="hidden" id="smva-tools-json" value="<?php echo esc_attr($tools); ?>">
         <div class="smva-card-footer" style="margin-top:12px">
-            <button type="button" id="smva-save-tools-btn" class="smva-btn smva-btn-primary">Save &amp; Sync Tools</button>
+            <button type="button" id="smva-save-tools-btn" class="smva-btn smva-btn-primary"><?php esc_html_e( 'Save & Sync Tools', 'studiometa-voice-ai' ); ?></button>
             <span id="smva-tools-msg" class="smva-save-msg"></span>
         </div>
     </div>
@@ -1248,34 +1310,34 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     }
     ?>
     <div class="smva-card" style="margin-top:16px">
-        <div class="smva-card-header"><h2 class="smva-card-title">Email a Caller</h2></div>
-        <p class="smva-desc">Write the things your agent is allowed to email someone who asks for them on a call &mdash; a price list, a brochure, your opening hours. The agent will only ever offer what you list here, and it will never claim it sent something unless it actually went out.</p>
+        <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'Email a Caller', 'studiometa-voice-ai' ); ?></h2></div>
+        <p class="smva-desc"><?php esc_html_e( 'Write the things your agent is allowed to email someone who asks for them on a call — a price list, a brochure, your opening hours. The agent will only ever offer what you list here, and it will never claim it sent something unless it actually went out.', 'studiometa-voice-ai' ); ?></p>
 
         <div id="smva-infodoc-list"></div>
 
         <div style="margin-top:12px;text-align:center">
-            <button type="button" id="smva-infodoc-add" class="smva-btn smva-btn-primary" style="flex:none">Add Document +</button>
+            <button type="button" id="smva-infodoc-add" class="smva-btn smva-btn-primary" style="flex:none"><?php esc_html_e( 'Add Document +', 'studiometa-voice-ai' ); ?></button>
         </div>
 
         <!-- Add / Edit Document Modal -->
         <div id="smva-infodoc-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:999999;align-items:center;justify-content:center">
             <div style="background:#fff;border-radius:14px;padding:28px;width:600px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)">
-                <h2 style="font-size:18px;font-weight:700;margin:0 0 20px;text-align:center" id="smva-infodoc-modal-title">Add Document</h2>
+                <h2 style="font-size:18px;font-weight:700;margin:0 0 20px;text-align:center" id="smva-infodoc-modal-title"><?php esc_html_e( 'Add Document', 'studiometa-voice-ai' ); ?></h2>
                 <div class="smva-field smva-field-full" style="margin-bottom:14px">
-                    <label style="text-align:right;display:block">Title <span style="color:#9ca3af;font-weight:400">(the agent says this out loud)</span></label>
-                    <input type="text" id="smva-infodoc-title" class="smva-input" placeholder="e.g. Price list">
+                    <label style="text-align:right;display:block"><?php esc_html_e( 'Title', 'studiometa-voice-ai' ); ?> <span style="color:#9ca3af;font-weight:400">(<?php esc_html_e( 'the agent says this out loud', 'studiometa-voice-ai' ); ?>)</span></label>
+                    <input type="text" id="smva-infodoc-title" class="smva-input" placeholder="<?php esc_attr_e( 'e.g. Price list', 'studiometa-voice-ai' ); ?>">
                 </div>
                 <div class="smva-field smva-field-full" style="margin-bottom:14px">
-                    <label style="text-align:right;display:block">Also matches <span style="color:#9ca3af;font-weight:400">(comma separated &mdash; other ways callers ask for this)</span></label>
-                    <input type="text" id="smva-infodoc-keywords" class="smva-input" placeholder="pricing, cost, how much, rates">
+                    <label style="text-align:right;display:block"><?php esc_html_e( 'Also matches', 'studiometa-voice-ai' ); ?> <span style="color:#9ca3af;font-weight:400">(<?php esc_html_e( 'comma separated — other ways callers ask for this', 'studiometa-voice-ai' ); ?>)</span></label>
+                    <input type="text" id="smva-infodoc-keywords" class="smva-input" placeholder="<?php esc_attr_e( 'pricing, cost, how much, rates', 'studiometa-voice-ai' ); ?>">
                 </div>
                 <div class="smva-field smva-field-full" style="margin-bottom:6px">
-                    <label style="text-align:right;display:block">What to send <span style="color:#9ca3af;font-weight:400">(plain text &mdash; line breaks are kept)</span></label>
-                    <textarea id="smva-infodoc-body" class="smva-textarea" rows="10" placeholder="Starter &mdash; $39/month&#10;100 minutes included&#10;&#10;Pro &mdash; $79/month&#10;300 minutes included"></textarea>
+                    <label style="text-align:right;display:block"><?php esc_html_e( 'What to send', 'studiometa-voice-ai' ); ?> <span style="color:#9ca3af;font-weight:400">(<?php esc_html_e( 'plain text — line breaks are kept', 'studiometa-voice-ai' ); ?>)</span></label>
+                    <textarea id="smva-infodoc-body" class="smva-textarea" rows="10" placeholder="<?php echo esc_attr( __( 'Starter — $39/month', 'studiometa-voice-ai' ) . "\n" . __( '100 minutes included', 'studiometa-voice-ai' ) . "\n\n" . __( 'Pro — $79/month', 'studiometa-voice-ai' ) . "\n" . __( '300 minutes included', 'studiometa-voice-ai' ) ); ?>"></textarea>
                 </div>
                 <div style="display:flex;gap:10px;margin-top:20px">
-                    <button type="button" id="smva-infodoc-modal-save" class="smva-btn smva-btn-primary">Save Document</button>
-                    <button type="button" id="smva-infodoc-modal-cancel" class="smva-btn" style="background:#f3f4f6;color:#374151">Cancel</button>
+                    <button type="button" id="smva-infodoc-modal-save" class="smva-btn smva-btn-primary"><?php esc_html_e( 'Save Document', 'studiometa-voice-ai' ); ?></button>
+                    <button type="button" id="smva-infodoc-modal-cancel" class="smva-btn" style="background:#f3f4f6;color:#374151"><?php esc_html_e( 'Cancel', 'studiometa-voice-ai' ); ?></button>
                 </div>
             </div>
         </div>
@@ -1284,15 +1346,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;margin:0">
                 <input type="checkbox" id="smva-caller-memory" style="margin-top:3px" <?php checked( $smva_caller_memory ); ?>>
                 <span>
-                    <span style="font-weight:600;display:block">Recognise returning callers <span style="color:#9ca3af;font-weight:400">(phone calls only)</span></span>
-                    <span style="font-size:12px;color:#6b7280">Matches the number they are calling from against past enquiries, so the agent has context. It will never greet someone by name before they say who they are &mdash; the person holding a phone today may not be who called last time. Leave this off if your callers share a line.</span>
+                    <span style="font-weight:600;display:block"><?php esc_html_e( 'Recognise returning callers', 'studiometa-voice-ai' ); ?> <span style="color:#9ca3af;font-weight:400">(<?php esc_html_e( 'phone calls only', 'studiometa-voice-ai' ); ?>)</span></span>
+                    <span style="font-size:12px;color:#6b7280"><?php esc_html_e( 'Matches the number they are calling from against past enquiries, so the agent has context. It will never greet someone by name before they say who they are — the person holding a phone today may not be who called last time. Leave this off if your callers share a line.', 'studiometa-voice-ai' ); ?></span>
                 </span>
             </label>
         </div>
 
         <input type="hidden" id="smva-infodoc-json" value="<?php echo esc_attr( wp_json_encode( $smva_info_docs_arr ) ); ?>">
         <div class="smva-card-footer" style="margin-top:12px">
-            <button type="button" id="smva-infodoc-save" class="smva-btn smva-btn-primary">Save</button>
+            <button type="button" id="smva-infodoc-save" class="smva-btn smva-btn-primary"><?php esc_html_e( 'Save', 'studiometa-voice-ai' ); ?></button>
             <span id="smva-infodoc-msg" class="smva-save-msg"></span>
         </div>
     </div>
@@ -1301,37 +1363,37 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
     <div class="smva-card">
         <div class="smva-card-header">
-            <h2 class="smva-card-title">Chat History</h2>
+            <h2 class="smva-card-title"><?php esc_html_e( 'Chat History', 'studiometa-voice-ai' ); ?></h2>
             <div style="display:flex;gap:8px;align-items:center">
-                <input type="text" id="smva-history-search" placeholder="Search..." style="border:1px solid #e2e8f0;border-radius:8px;padding:6px 12px;font-size:13px;width:200px">
-                <button id="smva-history-refresh" class="smva-btn smva-btn-secondary" style="padding:6px 14px;font-size:13px">↻ Refresh</button>
+                <input type="text" id="smva-history-search" placeholder="<?php esc_attr_e( 'Search...', 'studiometa-voice-ai' ); ?>" style="border:1px solid #e2e8f0;border-radius:8px;padding:6px 12px;font-size:13px;width:200px">
+                <button id="smva-history-refresh" class="smva-btn smva-btn-secondary" style="padding:6px 14px;font-size:13px">↻ <?php esc_html_e( 'Refresh', 'studiometa-voice-ai' ); ?></button>
             </div>
         </div>
-        <p class="smva-desc">All chat conversations from your AI widget.</p>
-        <div id="smva-history-loading" style="text-align:center;padding:40px;color:#9ca3af">Loading...</div>
-        <div id="smva-history-empty" style="display:none;text-align:center;padding:40px;color:#9ca3af">No chat history yet.</div>
+        <p class="smva-desc"><?php esc_html_e( 'All chat conversations from your AI widget.', 'studiometa-voice-ai' ); ?></p>
+        <div id="smva-history-loading" style="text-align:center;padding:40px;color:#9ca3af"><?php esc_html_e( 'Loading...', 'studiometa-voice-ai' ); ?></div>
+        <div id="smva-history-empty" style="display:none;text-align:center;padding:40px;color:#9ca3af"><?php esc_html_e( 'No chat history yet.', 'studiometa-voice-ai' ); ?></div>
         <div id="smva-history-list" style="display:none;flex-direction:column;gap:12px;margin-top:8px"></div>
     </div>
 
-    
 
-    
+
+
 
 <?php elseif ( $active_tab === 'health' ) : ?>
 <div class="smva-card">
     <div class="smva-card-header">
-        <h2 class="smva-card-title">🩺 Health Check</h2>
-        <button type="button" class="smva-btn smva-btn-primary" id="smva-run-health">Run Check</button>
+        <h2 class="smva-card-title">🩺 <?php esc_html_e( 'Health Check', 'studiometa-voice-ai' ); ?></h2>
+        <button type="button" class="smva-btn smva-btn-primary" id="smva-run-health"><?php esc_html_e( 'Run Check', 'studiometa-voice-ai' ); ?></button>
     </div>
-    <p class="smva-desc">Checks plugin configuration, license/quota API connectivity, and WebSocket configuration. Browser microphone playback still needs a frontend test.</p>
+    <p class="smva-desc"><?php esc_html_e( 'Checks plugin configuration, license/quota API connectivity, and WebSocket configuration. Browser microphone playback still needs a frontend test.', 'studiometa-voice-ai' ); ?></p>
     <div id="smva-health-results" style="display:grid;gap:10px;margin-top:14px">
-        <div style="padding:14px;border:1px solid #e5e7eb;border-radius:12px;color:#64748b">Click Run Check to start.</div>
+        <div style="padding:14px;border:1px solid #e5e7eb;border-radius:12px;color:#64748b"><?php esc_html_e( 'Click Run Check to start.', 'studiometa-voice-ai' ); ?></div>
     </div>
 </div>
 <div class="smva-card" style="margin-top:16px">
     <div class="smva-card-header">
-        <h2 class="smva-card-title">Recent Plugin Events</h2>
-        <div style="display:flex;gap:8px"><button type="button" class="smva-btn" id="smva-refresh-logs">Refresh</button><button type="button" class="smva-btn" id="smva-clear-logs">Clear</button></div>
+        <h2 class="smva-card-title"><?php esc_html_e( 'Recent Plugin Events', 'studiometa-voice-ai' ); ?></h2>
+        <div style="display:flex;gap:8px"><button type="button" class="smva-btn" id="smva-refresh-logs"><?php esc_html_e( 'Refresh', 'studiometa-voice-ai' ); ?></button><button type="button" class="smva-btn" id="smva-clear-logs"><?php esc_html_e( 'Clear', 'studiometa-voice-ai' ); ?></button></div>
     </div>
     <div id="smva-event-logs" style="display:grid;gap:8px;margin-top:10px"></div>
 </div>
@@ -1339,18 +1401,18 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 <?php elseif ( $active_tab === 'voice_summary' ) : ?>
 <div class="smva-card">
-    <div class="smva-card-header"><h2 class="smva-card-title">Voice Summary</h2></div>
-    <p class="smva-desc">Review voice sessions, play recordings, and generate AI summaries of what was discussed.</p>
+    <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'Voice Summary', 'studiometa-voice-ai' ); ?></h2></div>
+    <p class="smva-desc"><?php esc_html_e( 'Review voice sessions, play recordings, and generate AI summaries of what was discussed.', 'studiometa-voice-ai' ); ?></p>
     <div class="smva-vs-filter-row">
-        <label>From <input type="date" id="smva-vs-date-from" class="smva-input" /></label>
-        <label>To <input type="date" id="smva-vs-date-to" class="smva-input" /></label>
-        <button type="button" class="smva-btn smva-btn-primary" id="smva-vs-search-btn">Search</button>
+        <label><?php esc_html_e( 'From', 'studiometa-voice-ai' ); ?> <input type="date" id="smva-vs-date-from" class="smva-input" /></label>
+        <label><?php esc_html_e( 'To', 'studiometa-voice-ai' ); ?> <input type="date" id="smva-vs-date-to" class="smva-input" /></label>
+        <button type="button" class="smva-btn smva-btn-primary" id="smva-vs-search-btn"><?php esc_html_e( 'Search', 'studiometa-voice-ai' ); ?></button>
         <span id="smva-vs-timezone-label" class="smva-hint-inline"></span>
         <span id="smva-vs-range-label" class="smva-hint-inline"></span>
     </div>
     <table class="smva-table smva-vs-table">
-        <thead><tr><th>Date</th><th>Duration</th><th>Turns</th><th>Summary</th><th>Actions</th></tr></thead>
-        <tbody id="smva-vs-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;">Click Search to load sessions.</td></tr></tbody>
+        <thead><tr><th><?php esc_html_e( 'Date', 'studiometa-voice-ai' ); ?></th><th><?php esc_html_e( 'Duration', 'studiometa-voice-ai' ); ?></th><th><?php esc_html_e( 'Turns', 'studiometa-voice-ai' ); ?></th><th><?php esc_html_e( 'Summary', 'studiometa-voice-ai' ); ?></th><th><?php esc_html_e( 'Actions', 'studiometa-voice-ai' ); ?></th></tr></thead>
+        <tbody id="smva-vs-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;"><?php esc_html_e( 'Click Search to load sessions.', 'studiometa-voice-ai' ); ?></td></tr></tbody>
     </table>
     <div id="smva-vs-pagination"></div>
 </div>
@@ -1358,19 +1420,19 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 <div id="smva-vs-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center">
     <div style="background:#fff;border-radius:16px;width:min(90vw,720px);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.2)">
         <div style="display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--smva-border)">
-            <h2 id="smva-vs-modal-title" style="margin:0;font-size:16px;font-weight:700;color:var(--smva-text)">Session Transcript</h2>
+            <h2 id="smva-vs-modal-title" style="margin:0;font-size:16px;font-weight:700;color:var(--smva-text)"><?php esc_html_e( 'Session Transcript', 'studiometa-voice-ai' ); ?></h2>
             <button type="button" id="smva-vs-modal-close" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--smva-text-3);line-height:1">&times;</button>
         </div>
         <div style="padding:24px;overflow-y:auto;flex:1">
             <div style="margin-bottom:16px">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-                    <strong style="font-size:13px;color:var(--smva-text)">AI Summary</strong>
-                    <button type="button" class="smva-btn smva-btn-sm" id="smva-vs-summarize-btn">Generate Summary</button>
+                    <strong style="font-size:13px;color:var(--smva-text)"><?php esc_html_e( 'AI Summary', 'studiometa-voice-ai' ); ?></strong>
+                    <button type="button" class="smva-btn smva-btn-sm" id="smva-vs-summarize-btn"><?php esc_html_e( 'Generate Summary', 'studiometa-voice-ai' ); ?></button>
                 </div>
-                <div id="smva-vs-summary-text" style="background:var(--smva-bg);border-left:4px solid var(--smva-primary);padding:10px 14px;border-radius:0 8px 8px 0;font-size:13px;line-height:1.6;min-height:40px;color:var(--smva-text-2)"><em>No summary yet.</em></div>
+                <div id="smva-vs-summary-text" style="background:var(--smva-bg);border-left:4px solid var(--smva-primary);padding:10px 14px;border-radius:0 8px 8px 0;font-size:13px;line-height:1.6;min-height:40px;color:var(--smva-text-2)"><em><?php esc_html_e( 'No summary yet.', 'studiometa-voice-ai' ); ?></em></div>
             </div>
             <hr style="border:none;border-top:1px solid var(--smva-border);margin:16px 0" />
-            <div id="smva-vs-transcript-body"><p>Loading...</p></div>
+            <div id="smva-vs-transcript-body"><p><?php esc_html_e( 'Loading...', 'studiometa-voice-ai' ); ?></p></div>
         </div>
     </div>
 </div>
@@ -1378,23 +1440,23 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 <form id="smva-leads-settings-form">
     <div class="smva-card" style="margin-bottom:16px">
         <div class="smva-card-header">
-            <h2 class="smva-card-title">Lead Notifications</h2>
-            <span class="smva-hint-inline">email me new leads</span>
+            <h2 class="smva-card-title"><?php esc_html_e( 'Lead Notifications', 'studiometa-voice-ai' ); ?></h2>
+            <span class="smva-hint-inline"><?php esc_html_e( 'email me new leads', 'studiometa-voice-ai' ); ?></span>
         </div>
         <div class="smva-form-grid">
             <div class="smva-field">
-                <label>Email Alerts</label>
-                <input type="hidden" name="smva_lead_email_notify" value="0"><label class="smva-toggle-label"><input type="checkbox" name="smva_lead_email_notify" value="1" <?php checked( get_option('smva_lead_email_notify','1'), '1' ); ?>> Email me when a new lead comes in</label>
-                <p class="smva-hint">Sent the moment a visitor shares an email or phone number — no automation setup required.</p>
+                <label><?php esc_html_e( 'Email Alerts', 'studiometa-voice-ai' ); ?></label>
+                <input type="hidden" name="smva_lead_email_notify" value="0"><label class="smva-toggle-label"><input type="checkbox" name="smva_lead_email_notify" value="1" <?php checked( get_option('smva_lead_email_notify','1'), '1' ); ?>> <?php esc_html_e( 'Email me when a new lead comes in', 'studiometa-voice-ai' ); ?></label>
+                <p class="smva-hint"><?php esc_html_e( 'Sent the moment a visitor shares an email or phone number — no automation setup required.', 'studiometa-voice-ai' ); ?></p>
             </div>
             <div class="smva-field">
-                <label>Send Notifications To</label>
+                <label><?php esc_html_e( 'Send Notifications To', 'studiometa-voice-ai' ); ?></label>
                 <input type="email" name="smva_lead_email_to" class="smva-input" value="<?php echo esc_attr( get_option('smva_lead_email_to','') ); ?>" placeholder="<?php echo esc_attr( get_option('admin_email','') ); ?>">
-                <p class="smva-hint">Leave blank to use your WordPress admin email.</p>
+                <p class="smva-hint"><?php esc_html_e( 'Leave blank to use your WordPress admin email.', 'studiometa-voice-ai' ); ?></p>
             </div>
         </div>
         <div style="display:flex;align-items:center;gap:12px;margin-top:12px">
-            <button type="submit" class="smva-btn smva-btn-primary">Save Notification Settings</button>
+            <button type="submit" class="smva-btn smva-btn-primary"><?php esc_html_e( 'Save Notification Settings', 'studiometa-voice-ai' ); ?></button>
             <span id="smva-leads-settings-msg" style="font-size:13px"></span>
         </div>
     </div>
@@ -1402,15 +1464,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 <div class="smva-card">
     <div class="smva-card-header">
-        <h2 class="smva-card-title">🎯 Leads</h2>
+        <h2 class="smva-card-title">🎯 <?php esc_html_e( 'Leads', 'studiometa-voice-ai' ); ?></h2>
         <div style="display:flex;gap:8px;align-items:center">
             <span id="smva-leads-count" class="smva-hint-inline"></span>
-            <button type="button" class="smva-btn" id="smva-leads-export-btn">⬇ Export CSV</button>
+            <button type="button" class="smva-btn" id="smva-leads-export-btn">⬇ <?php esc_html_e( 'Export CSV', 'studiometa-voice-ai' ); ?></button>
         </div>
     </div>
     <table class="widefat striped" style="margin-top:12px">
-        <thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Phone</th><th>Source</th><th>Notes</th><th></th></tr></thead>
-        <tbody id="smva-leads-tbody"><tr><td colspan="7" style="text-align:center;padding:24px;color:#9ca3af">Loading...</td></tr></tbody>
+        <thead><tr><th><?php esc_html_e( 'Date', 'studiometa-voice-ai' ); ?></th><th><?php esc_html_e( 'Name', 'studiometa-voice-ai' ); ?></th><th><?php esc_html_e( 'Email', 'studiometa-voice-ai' ); ?></th><th><?php esc_html_e( 'Phone', 'studiometa-voice-ai' ); ?></th><th><?php esc_html_e( 'Source', 'studiometa-voice-ai' ); ?></th><th><?php esc_html_e( 'Notes', 'studiometa-voice-ai' ); ?></th><th></th></tr></thead>
+        <tbody id="smva-leads-tbody"><tr><td colspan="7" style="text-align:center;padding:24px;color:#9ca3af"><?php esc_html_e( 'Loading...', 'studiometa-voice-ai' ); ?></td></tr></tbody>
     </table>
     <div id="smva-leads-pagination" style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end"></div>
 </div>
@@ -1425,19 +1487,19 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         <div class="smva-modal" style="max-width:700px">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
                 <div>
-                    <h2 style="margin:0;font-size:18px;font-weight:700;color:#0f172a">Choose Your Plan</h2>
-                    <p style="margin:4px 0 0;font-size:13px;color:#64748b">Upgrade to unlock full voice &amp; chat capabilities</p>
+                    <h2 style="margin:0;font-size:18px;font-weight:700;color:#0f172a"><?php esc_html_e( 'Choose Your Plan', 'studiometa-voice-ai' ); ?></h2>
+                    <p style="margin:4px 0 0;font-size:13px;color:#64748b"><?php esc_html_e( 'Upgrade to unlock full voice & chat capabilities', 'studiometa-voice-ai' ); ?></p>
                 </div>
                 <button id="smva-upgrade-modal-close" style="background:none;border:none;cursor:pointer;font-size:20px;color:#94a3b8;padding:4px">✕</button>
             </div>
 
             <div id="smva-plans-grid" class="smva-plans-grid">
                 <!-- Plans loaded via JS -->
-                <div style="grid-column:1/-1;text-align:center;padding:20px;color:#94a3b8;font-size:13px">Loading plans...</div>
+                <div style="grid-column:1/-1;text-align:center;padding:20px;color:#94a3b8;font-size:13px"><?php esc_html_e( 'Loading plans...', 'studiometa-voice-ai' ); ?></div>
             </div>
 
             <p style="font-size:11px;color:#94a3b8;text-align:center;margin:0">
-                Secure payment via Stripe · Cancel anytime · License key sent by email after payment
+                <?php esc_html_e( 'Secure payment via Stripe · Cancel anytime · License key sent by email after payment', 'studiometa-voice-ai' ); ?>
             </p>
         </div>
     </div>

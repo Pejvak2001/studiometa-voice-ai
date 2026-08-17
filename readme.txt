@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.7.3
+Stable tag: 1.7.4
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -244,6 +244,9 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.7.4 =
+* New: **The admin panel is now translatable.** Text Domain + textdomain loading added, and the settings screens (Dashboard, License, General, Automation, Widget, Agent, History, Health, Voice Summary, Leads) are wrapped for translation — the widget shown to visitors was already localizable, this covers the screens you configure it from. Ship a `languages/studiometa-voice-ai-{locale}.mo` to translate; `.pot` template included.
 
 = 1.7.3 =
 * Changed: "Workflow Trigger Buttons" (Voice AI → Automation) renamed to "Quick Action Buttons" for clarity — no functional change, same setting

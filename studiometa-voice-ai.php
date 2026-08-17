@@ -3,17 +3,19 @@
  * Plugin Name: StudioMeta Voice AI
  * Plugin URI:  https://studiometa.io/
  * Description: Voice & Chat AI Widget with live voice and chat. Includes free trial (30 voice minutes + 100 chat messages).
- * Version:           1.7.3
+ * Version:           1.7.4
  * Author:      StudioMeta
  * Author URI:  https://studiometa.io
  * License:     GPL-2.0+
  * Requires PHP: 7.4
  * Requires at least: 6.0
+ * Text Domain: studiometa-voice-ai
+ * Domain Path: /languages
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SMVA_VERSION',        '1.7.3' );
+define( 'SMVA_VERSION',        '1.7.4' );
 define( 'SMVA_PATH',           plugin_dir_path( __FILE__ ) );
 define( 'SMVA_URL',            plugin_dir_url( __FILE__ ) );
 define( 'SMVA_WS_URL',         'wss://api2.studiometa.io/voice' );

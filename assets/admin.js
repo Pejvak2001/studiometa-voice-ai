@@ -48,7 +48,7 @@ jQuery(function($) {
                     // Backend asks for confirmation (license active elsewhere)
                     if (res.data && res.data.needs_confirmation) {
                         showReplaceConfirmDialog(key, res.data);
-                        $btn.text('Activate').prop('disabled', false);
+                        $btn.text(smvaAdmin.i18n.activate).prop('disabled', false);
                         return;
                     }
                     // Normal success
@@ -57,12 +57,12 @@ jQuery(function($) {
                 } else {
                     var errData = res.data || {};
                     $msg.addClass('smva-msg-error').text(errData.message || 'Error').show();
-                    $btn.text('Activate').prop('disabled', false);
+                    $btn.text(smvaAdmin.i18n.activate).prop('disabled', false);
                 }
             })
             .fail(function() {
-                $msg.addClass('smva-msg-error').text('Connection error.').show();
-                $btn.text('Activate').prop('disabled', false);
+                $msg.addClass('smva-msg-error').text(smvaAdmin.i18n.connectionError).show();
+                $btn.text(smvaAdmin.i18n.activate).prop('disabled', false);
             });
     }
 
@@ -84,12 +84,12 @@ jQuery(function($) {
                 } else {
                     var errData = res.data || {};
                     $msg.addClass('smva-msg-error').text(errData.message || 'Could not start trial.').show();
-                    $btn.text('Start Free Trial').prop('disabled', false);
+                    $btn.text(smvaAdmin.i18n.startFreeTrial).prop('disabled', false);
                 }
             })
             .fail(function() {
-                $msg.addClass('smva-msg-error').text('Connection error.').show();
-                $btn.text('Start Free Trial').prop('disabled', false);
+                $msg.addClass('smva-msg-error').text(smvaAdmin.i18n.connectionError).show();
+                $btn.text(smvaAdmin.i18n.startFreeTrial).prop('disabled', false);
             });
     });
 
@@ -178,7 +178,7 @@ jQuery(function($) {
                     location.reload();
                 }
             })
-            .always(function() { $btn.prop('disabled', false).text('Refresh'); });
+            .always(function() { $btn.prop('disabled', false).text(smvaAdmin.i18n.refresh); });
     });
 
     // Auto-refresh quota every 30s on Dashboard tab
@@ -421,7 +421,7 @@ jQuery(function($) {
     // Save Agent — never sends agent_tools, only Automation tab manages tools
     $('#smva-agent-form').on('submit', function(e) {
         e.preventDefault();
-        var $btn = $(this).find('button[type=submit]').prop('disabled', true).text('Saving...');
+        var $btn = $(this).find('button[type=submit]').prop('disabled', true).text(smvaAdmin.i18n.saving);
         var $msg = $('#smva-agent-msg').text('').css('color', '');
         $.post(window.smvaAdmin.ajaxUrl, {
             action: 'smva_save_agent',
@@ -438,14 +438,14 @@ jQuery(function($) {
         }).done(function(res) {
             if (res.success) $msg.text(res.data && res.data.message ? res.data.message : 'Saved').css('color', '#059669');
             else $msg.text(res.data && res.data.message ? res.data.message : 'Error').css('color', '#dc2626');
-        }).fail(function() { $msg.text('Connection error.').css('color', '#dc2626'); })
+        }).fail(function() { $msg.text(smvaAdmin.i18n.connectionError).css('color', '#dc2626'); })
         .always(function() { $btn.prop('disabled', false).text('💾 Save & Sync Agent'); setTimeout(function() { $msg.text('').css('color', ''); }, 4000); });
     });
 
     // Save General Settings — never sends agent_tools
     $('#smva-settings-form').on('submit', function(e) {
         e.preventDefault();
-        var $btn = $(this).find('button[type=submit]').prop('disabled', true).text('Saving...');
+        var $btn = $(this).find('button[type=submit]').prop('disabled', true).text(smvaAdmin.i18n.saving);
         var $msg = $('#smva-save-msg').text('').css('color', '');
 
         // Collect extra languages
@@ -479,14 +479,14 @@ jQuery(function($) {
             smva_extra_langs: JSON.stringify(extraLangs),
         }).done(function(res) {
             $msg.text(res.success ? 'Saved!' : 'Error').css('color', res.success ? '#059669' : '#dc2626');
-        }).fail(function() { $msg.text('Connection error.').css('color', '#dc2626'); })
-        .always(function() { $btn.prop('disabled', false).text('Save General Settings'); setTimeout(function() { $msg.text(''); }, 3000); });
+        }).fail(function() { $msg.text(smvaAdmin.i18n.connectionError).css('color', '#dc2626'); })
+        .always(function() { $btn.prop('disabled', false).text(smvaAdmin.i18n.saveGeneralSettings); setTimeout(function() { $msg.text(''); }, 3000); });
     });
 
     // Save Widget Settings
     $('#smva-widget-form').on('submit', function(e) {
         e.preventDefault();
-        var $btn = $(this).find('button[type=submit]').prop('disabled', true).text('Saving...');
+        var $btn = $(this).find('button[type=submit]').prop('disabled', true).text(smvaAdmin.i18n.saving);
         var $msg = $('#smva-widget-save-msg').text('').css('color', '');
         $.post(window.smvaAdmin.ajaxUrl, {
             action: 'smva_save_settings',
@@ -507,8 +507,8 @@ jQuery(function($) {
             smva_workflow_buttons: $('[name=smva_workflow_buttons]').val()
         }).done(function(res) {
             $msg.text(res.success ? 'Saved!' : 'Error').css('color', res.success ? '#059669' : '#dc2626');
-        }).fail(function() { $msg.text('Connection error.').css('color', '#dc2626'); })
-        .always(function() { $btn.prop('disabled', false).text('Save Widget Settings'); setTimeout(function() { $msg.text(''); }, 3000); });
+        }).fail(function() { $msg.text(smvaAdmin.i18n.connectionError).css('color', '#dc2626'); })
+        .always(function() { $btn.prop('disabled', false).text(smvaAdmin.i18n.saveWidgetSettings); setTimeout(function() { $msg.text(''); }, 3000); });
     });
 
     // Crawl Site
@@ -523,14 +523,14 @@ jQuery(function($) {
         .done(function(res) {
             if (res.success && res.data.knowledge_base) { $('[name=knowledge_base]').val(res.data.knowledge_base); $msg.text('Imported from ' + (res.data.pages_crawled||'?') + ' pages!').css('color', '#059669'); }
             else $msg.text('Error: ' + (res.data && res.data.message ? res.data.message : 'Failed')).css('color', '#dc2626');
-        }).fail(function() { hideLoading(); $msg.text('Connection error.').css('color', '#dc2626'); })
+        }).fail(function() { hideLoading(); $msg.text(smvaAdmin.i18n.connectionError).css('color', '#dc2626'); })
         .always(function() { hideLoading(); $btn.prop('disabled', false).text('🌐 Import KB from Website'); setTimeout(function() { $msg.text('').css('color', ''); }, 6000); });
     });
 
     // Save Lead Notification Settings (Leads tab)
     $('#smva-leads-settings-form').on('submit', function(e) {
         e.preventDefault();
-        var $btn = $(this).find('button[type=submit]').prop('disabled', true).text('Saving...');
+        var $btn = $(this).find('button[type=submit]').prop('disabled', true).text(smvaAdmin.i18n.saving);
         var $msg = $('#smva-leads-settings-msg').text('').css('color', '');
         $.post(ajaxUrl, {
             action: 'smva_save_settings',
@@ -539,8 +539,8 @@ jQuery(function($) {
             smva_lead_email_to: $('[name=smva_lead_email_to]').val()
         }).done(function(res) {
             $msg.text(res.success ? 'Saved!' : 'Error').css('color', res.success ? '#059669' : '#dc2626');
-        }).fail(function() { $msg.text('Connection error.').css('color', '#dc2626'); })
-        .always(function() { $btn.prop('disabled', false).text('Save Notification Settings'); setTimeout(function() { $msg.text(''); }, 3000); });
+        }).fail(function() { $msg.text(smvaAdmin.i18n.connectionError).css('color', '#dc2626'); })
+        .always(function() { $btn.prop('disabled', false).text(smvaAdmin.i18n.saveNotificationSettings); setTimeout(function() { $msg.text(''); }, 3000); });
     });
 
     // ── KB page picker ─────────────────────────────────────────────────────
@@ -590,7 +590,7 @@ jQuery(function($) {
             if (res.success && res.data) smvaRenderPagesList(res.data.groups);
             else $('#smva-pages-error').text(res.data && res.data.message ? res.data.message : 'Could not load your content.').show();
         })
-        .fail(function() { $('#smva-pages-error').text('Connection error.').show(); })
+        .fail(function() { $('#smva-pages-error').text(smvaAdmin.i18n.connectionError).show(); })
         .always(function() { $('#smva-pages-loading').hide(); });
     });
 
@@ -636,7 +636,7 @@ jQuery(function($) {
                 $('#smva-pages-error').text(res.data && res.data.message ? res.data.message : 'Failed to build knowledge base.').show();
             }
         })
-        .fail(function() { $('#smva-pages-error').text('Connection error.').show(); })
+        .fail(function() { $('#smva-pages-error').text(smvaAdmin.i18n.connectionError).show(); })
         .always(function() { hideLoading(); $btn.prop('disabled', false); smvaUpdatePagesCount(); });
     });
 
@@ -656,7 +656,7 @@ jQuery(function($) {
                 if (res.data.knowledge_base) $('[name=knowledge_base]').val(res.data.knowledge_base);
                 $msg.text('Optimized!').css('color', '#059669');
             } else $msg.text('Error: ' + (res.data && res.data.message ? res.data.message : 'Failed')).css('color', '#dc2626');
-        }).fail(function() { hideLoading(); $msg.text('Connection error.').css('color', '#dc2626'); })
+        }).fail(function() { hideLoading(); $msg.text(smvaAdmin.i18n.connectionError).css('color', '#dc2626'); })
         .always(function() { hideLoading(); $btn.prop('disabled', false).text('✨ Optimize System Prompt & KB'); setTimeout(function() { $msg.text('').css('color', ''); }, 6000); });
     });
 
@@ -745,7 +745,7 @@ jQuery(function($) {
     });
 
     $('#smva-train-apply').on('click', function() {
-        var $btn = $(this).prop('disabled', true).text('Saving...');
+        var $btn = $(this).prop('disabled', true).text(smvaAdmin.i18n.saving);
         // Apply to form fields
         var sp = $('#smva-train-result-prompt').val();
         var kb = $('#smva-train-result-kb').val();
@@ -768,22 +768,22 @@ jQuery(function($) {
 
     // Webhook
     $('#smva-save-webhook-btn').on('click', function() {
-        var $btn = $(this).prop('disabled', true).text('Saving...');
+        var $btn = $(this).prop('disabled', true).text(smvaAdmin.i18n.saving);
         var $msg = $('#smva-webhook-msg').text('').css('color', '');
         $.post(window.smvaAdmin.ajaxUrl, {action:'smva_save_agent', nonce:window.smvaAdmin.nonce, webhook_url:$('#smva-webhook-url').val()})
         .done(function(res) { $msg.text(res.success ? 'Saved!' : 'Error').css('color', res.success ? '#059669' : '#dc2626'); })
-        .fail(function() { $msg.text('Connection error.').css('color', '#dc2626'); })
-        .always(function() { $btn.prop('disabled', false).text('Save Webhook URL'); setTimeout(function() { $msg.text(''); }, 3000); });
+        .fail(function() { $msg.text(smvaAdmin.i18n.connectionError).css('color', '#dc2626'); })
+        .always(function() { $btn.prop('disabled', false).text(smvaAdmin.i18n.saveWebhookUrl); setTimeout(function() { $msg.text(''); }, 3000); });
     });
 
     // Quick Action Buttons (option key smva_workflow_buttons is unchanged — only the admin-facing label was renamed)
     $('#smva-save-workflow-buttons-btn').on('click', function() {
-        var $btn = $(this).prop('disabled', true).text('Saving...');
+        var $btn = $(this).prop('disabled', true).text(smvaAdmin.i18n.saving);
         var $msg = $('#smva-workflow-buttons-msg').text('').css('color', '');
         $.post(window.smvaAdmin.ajaxUrl, {action:'smva_save_settings', nonce:window.smvaAdmin.nonce, smva_workflow_buttons:$('#smva-workflow-buttons').val()})
         .done(function(res) { $msg.text(res.success ? 'Saved!' : 'Error').css('color', res.success ? '#059669' : '#dc2626'); })
-        .fail(function() { $msg.text('Connection error.').css('color', '#dc2626'); })
-        .always(function() { $btn.prop('disabled', false).text('Save Quick Action Buttons'); setTimeout(function() { $msg.text(''); }, 3000); });
+        .fail(function() { $msg.text(smvaAdmin.i18n.connectionError).css('color', '#dc2626'); })
+        .always(function() { $btn.prop('disabled', false).text(smvaAdmin.i18n.saveQuickActionButtons); setTimeout(function() { $msg.text(''); }, 3000); });
     });
 
     // Tools
@@ -865,14 +865,14 @@ jQuery(function($) {
 
     $('#smva-add-tool-btn').on('click', function() {
         editIndex = -1;
-        $('#smva-save-tool-btn').text('Save Tool');
+        $('#smva-save-tool-btn').text(smvaAdmin.i18n.saveTool);
         editParams = [];
         $('#smva-tool-name, #smva-tool-desc, #smva-tool-thinking').val('');
         renderParams();
         $('#smva-tool-modal').css('display', 'flex');
     });
 
-    $('#smva-cancel-tool-btn').on('click', function() { editIndex=-1; $('#smva-save-tool-btn').text('Save Tool'); $('#smva-tool-modal').css('display', 'none'); });
+    $('#smva-cancel-tool-btn').on('click', function() { editIndex=-1; $('#smva-save-tool-btn').text(smvaAdmin.i18n.saveTool); $('#smva-tool-modal').css('display', 'none'); });
     $('#smva-tool-modal').on('click', function(e) { if (e.target === this) $('#smva-tool-modal').css('display', 'none'); });
 
     $('#smva-add-param-btn').on('click', function() { editParams.push({name:'', type:'string'}); renderParams(); });
@@ -1100,7 +1100,7 @@ jQuery(function($) {
     });
 
     $('#smva-save-tools-btn').on('click', function() {
-        var $btn = $(this).prop('disabled', true).text('Saving...');
+        var $btn = $(this).prop('disabled', true).text(smvaAdmin.i18n.saving);
         var $msg = $('#smva-tools-msg').text('').css('color', '');
         $.post(window.smvaAdmin.ajaxUrl, {
             action: 'smva_save_agent',
@@ -1111,8 +1111,8 @@ jQuery(function($) {
             voice_id: $('[name=voice_id]').val() || '',
         })
         .done(function(res) { $msg.text(res.success ? 'Tools saved!' : 'Error').css('color', res.success ? '#059669' : '#dc2626'); })
-        .fail(function() { $msg.text('Connection error.').css('color', '#dc2626'); })
-        .always(function() { $btn.prop('disabled', false).text('Save & Sync Tools'); setTimeout(function() { $msg.text(''); }, 3000); });
+        .fail(function() { $msg.text(smvaAdmin.i18n.connectionError).css('color', '#dc2626'); })
+        .always(function() { $btn.prop('disabled', false).text(smvaAdmin.i18n.saveSyncTools); setTimeout(function() { $msg.text(''); }, 3000); });
     });
 
 });
@@ -2587,7 +2587,7 @@ jQuery(function($){
             $('#smva-event-logs').html(logs.map(function(l){return '<div style="border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px;direction:ltr!important;text-align:left!important;unicode-bidi:isolate"><div style="display:flex;justify-content:space-between;align-items:center;direction:ltr;text-align:left"><strong style="font-size:12px;color:#334155;font-family:monospace">'+esc(l.type)+'</strong><span style="color:#94a3b8;font-size:11px;font-family:monospace">'+esc(l.time)+'</span></div><div style="font-size:13px;color:#475569;margin-top:3px;direction:ltr;text-align:left">'+esc(l.message)+'</div></div>';}).join(''));
         });
     }
-    $('#smva-run-health').on('click',function(){var b=$(this);b.prop('disabled',true).text('Checking...');$.post(smvaAdmin.ajaxUrl,{action:'smva_health_check',nonce:smvaAdmin.nonce},function(r){if(r.success)renderHealth(r.data);else $('#smva-health-results').html('<div style="color:#b91c1c">Health check failed.</div>');loadLogs();}).always(function(){b.prop('disabled',false).text('Run Check');});});
+    $('#smva-run-health').on('click',function(){var b=$(this);b.prop('disabled',true).text('Checking...');$.post(smvaAdmin.ajaxUrl,{action:'smva_health_check',nonce:smvaAdmin.nonce},function(r){if(r.success)renderHealth(r.data);else $('#smva-health-results').html('<div style="color:#b91c1c">Health check failed.</div>');loadLogs();}).always(function(){b.prop('disabled',false).text(smvaAdmin.i18n.runCheck);});});
     $('#smva-refresh-logs').on('click',loadLogs);
     $('#smva-clear-logs').on('click',function(){if(!confirm('Clear event logs?'))return;$.post(smvaAdmin.ajaxUrl,{action:'smva_clear_event_logs',nonce:smvaAdmin.nonce},loadLogs);});
     loadLogs();

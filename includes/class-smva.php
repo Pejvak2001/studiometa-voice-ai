@@ -297,7 +297,17 @@ class SMVA_Plugin {
         }
     }
 
+    /**
+     * Without this, every __()/_e()/esc_html__() call in the plugin resolves
+     * to its English fallback regardless of site language — WordPress has no
+     * other way to find this plugin's .mo files.
+     */
+    public function load_textdomain() {
+        load_plugin_textdomain( 'studiometa-voice-ai', false, dirname( plugin_basename( SMVA_PATH . 'studiometa-voice-ai.php' ) ) . '/languages' );
+    }
+
     private function __construct() {
+        add_action( 'init',                  array( $this, 'load_textdomain' ) );
         add_action( 'admin_menu',            array( $this, 'admin_menu' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ) );
         add_action( 'wp_enqueue_scripts',    array( $this, 'widget_assets' ) );
@@ -909,6 +919,24 @@ class SMVA_Plugin {
             // before, which was never assigned, so the check never fired.
             'plan'          => get_option( 'smva_plan', '' ),
             'engine'        => get_option( 'smva_engine', '' ),
+            // admin.js resets a button's own label after every save/request —
+            // without these, that reset would silently overwrite the translated
+            // label PHP already rendered with a hardcoded English string.
+            'i18n'          => array(
+                'connectionError'          => __( 'Connection error.', 'studiometa-voice-ai' ),
+                'saving'                   => __( 'Saving...', 'studiometa-voice-ai' ),
+                'activate'                 => __( 'Activate', 'studiometa-voice-ai' ),
+                'startFreeTrial'           => __( 'Start Free Trial', 'studiometa-voice-ai' ),
+                'refresh'                  => __( 'Refresh', 'studiometa-voice-ai' ),
+                'saveGeneralSettings'      => __( 'Save General Settings', 'studiometa-voice-ai' ),
+                'saveWidgetSettings'       => __( 'Save Widget Settings', 'studiometa-voice-ai' ),
+                'saveNotificationSettings' => __( 'Save Notification Settings', 'studiometa-voice-ai' ),
+                'saveWebhookUrl'           => __( 'Save Webhook URL', 'studiometa-voice-ai' ),
+                'saveQuickActionButtons'   => __( 'Save Quick Action Buttons', 'studiometa-voice-ai' ),
+                'saveTool'                 => __( 'Save Tool', 'studiometa-voice-ai' ),
+                'saveSyncTools'            => __( 'Save & Sync Tools', 'studiometa-voice-ai' ),
+                'runCheck'                 => __( 'Run Check', 'studiometa-voice-ai' ),
+            ),
         ) );
     }
 
