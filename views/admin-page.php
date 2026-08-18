@@ -132,8 +132,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         </div>
         <div class="smva-main-actions">
             <span class="smva-status-pill"><span class="smva-status-dot <?php echo $is_active ? '' : 'off'; ?>"></span><?php echo $is_active ? esc_html__( 'License active', 'studiometa-voice-ai' ) : esc_html__( 'License inactive', 'studiometa-voice-ai' ); ?></span>
-            <span class="smva-status-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true" focusable="false" stroke-linecap="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg> <?php echo $smva_voice_on ? esc_html__( 'Voice on', 'studiometa-voice-ai' ) : esc_html__( 'Voice off', 'studiometa-voice-ai' ); ?></span>
-            <span class="smva-status-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true" focusable="false" stroke-linecap="round"><path d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3Z"/></svg> <?php echo $smva_chat_on ? esc_html__( 'Chat on', 'studiometa-voice-ai' ) : esc_html__( 'Chat off', 'studiometa-voice-ai' ); ?></span>
+            <span class="smva-status-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true" focusable="false" stroke-linecap="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg> <span class="smva-status-dot <?php echo $smva_voice_on ? '' : 'off'; ?>"></span><?php echo $smva_voice_on ? esc_html__( 'Voice on', 'studiometa-voice-ai' ) : esc_html__( 'Voice off', 'studiometa-voice-ai' ); ?></span>
+            <span class="smva-status-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true" focusable="false" stroke-linecap="round"><path d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3Z"/></svg> <span class="smva-status-dot <?php echo $smva_chat_on ? '' : 'off'; ?>"></span><?php echo $smva_chat_on ? esc_html__( 'Chat on', 'studiometa-voice-ai' ) : esc_html__( 'Chat off', 'studiometa-voice-ai' ); ?></span>
         </div>
     </div>
     <div class="smva-header-rule"></div>
@@ -786,13 +786,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             <button type="submit" class="smva-btn smva-btn-primary">💾 <?php esc_html_e( 'Save General Settings', 'studiometa-voice-ai' ); ?></button>
         </div>
 
-        <div class="smva-card">
-            <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'Embed Shortcode', 'studiometa-voice-ai' ); ?></h2></div>
-            <div class="smva-shortcode-wrap">
-                <code class="smva-code" onclick="navigator.clipboard.writeText('[smva_widget]');this.textContent='<?php echo esc_js( __( 'Copied!', 'studiometa-voice-ai' ) ); ?>';setTimeout(()=>this.textContent='[smva_widget]',2000)">[smva_widget]</code>
-                <span class="smva-hint"><?php esc_html_e( 'Click to copy — paste anywhere on your site', 'studiometa-voice-ai' ); ?></span>
-            </div>
-        </div>
     </form>
     
 
@@ -981,6 +974,24 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 if ( is_array($sq_arr) ) echo esc_textarea( implode("\n", $sq_arr) );
                 else echo esc_textarea( $sq );
             ?></textarea>
+        </div>
+
+        <div class="smva-card">
+            <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'Quick Action Buttons', 'studiometa-voice-ai' ); ?></h2></div>
+            <p class="smva-desc"><?php esc_html_e( 'Quick-action buttons shown in the widget that send a preset message to the agent — e.g. a visible "Book Appointment" shortcut.', 'studiometa-voice-ai' ); ?></p>
+            <div class="smva-field smva-field-full">
+                <label><?php esc_html_e( 'Buttons', 'studiometa-voice-ai' ); ?> <span>— <?php esc_html_e( 'one per line: Label | message sent to agent', 'studiometa-voice-ai' ); ?></span></label>
+                <textarea name="smva_workflow_buttons" id="smva-workflow-buttons" class="smva-textarea" rows="4" placeholder="<?php echo esc_attr( __( 'Book Appointment | I would like to book an appointment.', 'studiometa-voice-ai' ) . "\n" . __( 'Request Callback | Please help me request a callback.', 'studiometa-voice-ai' ) ); ?>"><?php
+                    $wb = json_decode( get_option('smva_workflow_buttons','[]'), true );
+                    if ( is_array( $wb ) ) {
+                        echo esc_textarea( implode( "\n", array_map( function( $b ) { return ( $b['label'] ?? '' ) . ' | ' . ( $b['message'] ?? $b['label'] ?? '' ); }, $wb ) ) );
+                    }
+                ?></textarea>
+            </div>
+            <div class="smva-card-footer">
+                <button type="button" id="smva-save-workflow-buttons-btn" class="smva-btn smva-btn-primary"><?php esc_html_e( 'Save Quick Action Buttons', 'studiometa-voice-ai' ); ?></button>
+                <span id="smva-workflow-buttons-msg" class="smva-save-msg"></span>
+            </div>
         </div>
 
         <!-- Loading indicator -->
@@ -1196,24 +1207,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         $tools_arr = json_decode( $tools, true ) ?: array();
         $webhook   = $adata['webhook_url'] ?? '';
     ?>
-
-    <div class="smva-card" style="margin-bottom:16px">
-        <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'Quick Action Buttons', 'studiometa-voice-ai' ); ?></h2></div>
-        <p class="smva-desc"><?php esc_html_e( 'Quick-action buttons shown in the widget that send a preset message to the agent — e.g. a visible "Book Appointment" shortcut.', 'studiometa-voice-ai' ); ?></p>
-        <div class="smva-field smva-field-full">
-            <label><?php esc_html_e( 'Buttons', 'studiometa-voice-ai' ); ?> <span>— <?php esc_html_e( 'one per line: Label | message sent to agent', 'studiometa-voice-ai' ); ?></span></label>
-            <textarea name="smva_workflow_buttons" id="smva-workflow-buttons" class="smva-textarea" rows="4" placeholder="<?php echo esc_attr( __( 'Book Appointment | I would like to book an appointment.', 'studiometa-voice-ai' ) . "\n" . __( 'Request Callback | Please help me request a callback.', 'studiometa-voice-ai' ) ); ?>"><?php
-                $wb = json_decode( get_option('smva_workflow_buttons','[]'), true );
-                if ( is_array( $wb ) ) {
-                    echo esc_textarea( implode( "\n", array_map( function( $b ) { return ( $b['label'] ?? '' ) . ' | ' . ( $b['message'] ?? $b['label'] ?? '' ); }, $wb ) ) );
-                }
-            ?></textarea>
-        </div>
-        <div class="smva-card-footer">
-            <button type="button" id="smva-save-workflow-buttons-btn" class="smva-btn smva-btn-primary"><?php esc_html_e( 'Save Quick Action Buttons', 'studiometa-voice-ai' ); ?></button>
-            <span id="smva-workflow-buttons-msg" class="smva-save-msg"></span>
-        </div>
-    </div>
 
     <div class="smva-card">
         <div class="smva-card-header">

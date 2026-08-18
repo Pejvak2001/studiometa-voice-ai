@@ -2349,17 +2349,28 @@ jQuery(function($) {
       }).join('');
     }
 
-    function refreshPreview() {
+    /**
+     * @param {boolean} live  true only when the owner pressed Refresh, which
+     *   is what makes the backend re-ask Google instead of serving its cache.
+     *   Every other caller here is an incidental redraw (page load, save,
+     *   calendar connect) and has no reason to spend a Google round trip.
+     */
+    function refreshPreview(live) {
       var el = document.getElementById('smva-appt-preview');
       if (el) el.innerHTML = '<div class="smva-appt-preview-empty">Loading...</div>';
-      post('smva_booking_slots', { booking_config: JSON.stringify(readConfigFromUI()) }).then(function (res) {
+      var args = { booking_config: JSON.stringify(readConfigFromUI()) };
+      if (live === true) args.refresh = '1';
+      post('smva_booking_slots', args).then(function (res) {
         if (res.success) renderPreview(res.data);
         else if (el) el.innerHTML = '<div class="smva-appt-preview-empty">Could not load availability.</div>';
       });
     }
 
     var refreshBtn = document.getElementById('smva-appt-refresh');
-    if (refreshBtn) refreshBtn.addEventListener('click', refreshPreview);
+    // Not `addEventListener('click', refreshPreview)`: that hands the click
+    // event itself in as the first argument, which is truthy, so every
+    // incidental redraw would look like a deliberate Refresh.
+    if (refreshBtn) refreshBtn.addEventListener('click', function () { refreshPreview(true); });
 
     // ── Google Calendar connection ──────────────────────────────────────────
     var gcalSub    = document.getElementById('smva-gcal-sub');

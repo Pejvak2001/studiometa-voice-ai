@@ -2357,6 +2357,14 @@ class SMVA_Plugin {
 
         $payload = array_merge( $creds, array( 'days' => 7 ) );
 
+        // Only an explicit press of Refresh bypasses the backend's busy-time
+        // cache. Without this the button could return a 90-second-old answer,
+        // which reads as "the plugin ignores my calendar" to an owner who has
+        // just blocked out an afternoon and pressed it to check.
+        if ( ! empty( $_POST['refresh'] ) ) {
+            $payload['refresh'] = true;
+        }
+
         // An unsaved config previews the effect of an edit before committing it.
         if ( ! empty( $_POST['booking_config'] ) ) {
             $raw     = sanitize_textarea_field( wp_unslash( $_POST['booking_config'] ) );
