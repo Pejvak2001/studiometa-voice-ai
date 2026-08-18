@@ -15,6 +15,7 @@
 
     const CONFIG = {
         pluginVersion: cfg.pluginVersion || 'unknown',
+        assetsUrl: cfg.assetsUrl || '',
         internalToken: cfg.internalToken,
         licenseKey: cfg.licenseKey || '',
         wsUrl: cfg.wsUrl || 'wss://api2.studiometa.io/voice',
@@ -661,7 +662,21 @@
     function injectStyles() {
         const s = document.createElement('style');
         s.textContent = [
-            '#smva{position:fixed!important;bottom:22px!important;'+side+':22px!important;z-index:999999!important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}',
+            /* Vazirmatn for Persian and Arabic, served from this plugin's own
+               directory -- never a font CDN, which would hand every visitor of
+               every customer site to a third party.
+
+               `unicode-range` is what makes this safe to ship to everyone: a
+               page with no Arabic-script text never requests the file, so an
+               English site carries zero extra bytes. The subset holds no Latin
+               glyphs either, so Latin keeps the system stack below.
+
+               Skipped entirely when assetsUrl is missing (an older PHP paired
+               with a newer widget.js), rather than emitting a broken url(). */
+            (CONFIG.assetsUrl
+                ? '@font-face{font-family:"Vazirmatn";src:url("' + CONFIG.assetsUrl + 'fonts/vazirmatn-nl-variable.woff2") format("woff2-variations");font-weight:100 900;font-style:normal;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}'
+                : ''),
+            '#smva{position:fixed!important;bottom:22px!important;'+side+':22px!important;z-index:999999!important;font-family:"Vazirmatn",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}',
             (CONFIG.widgetStyle==="pill" ? '#smva-fab{border:none;cursor:pointer;transition:all .2s;padding:0}' : '#smva-fab{width:54px;height:54px;border-radius:50%;background:'+c+';border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 16px '+c+'66;transition:all .2s;position:relative}'),
             '#smva-fab:hover{transform:scale(1.08);box-shadow:0 6px 20px '+c+'88}#smva-fab:active{transform:scale(.94)}',
 

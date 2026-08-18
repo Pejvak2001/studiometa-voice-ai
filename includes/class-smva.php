@@ -1028,6 +1028,9 @@ class SMVA_Plugin {
 
         wp_localize_script( 'smva-widget', 'smvaConfig', array(
             'pluginVersion'     => SMVA_VERSION,
+            // Absolute, because widget.js writes its own @font-face and runs on
+            // pages whose base URL has nothing to do with this directory.
+            'assetsUrl'         => SMVA_URL . 'assets/',
             'internalToken'     => $token,
             'licenseKey'        => get_option( 'smva_license_key', '' ),
             'wsUrl'             => SMVA_WS_URL,

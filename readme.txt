@@ -237,6 +237,15 @@ Visit [studiometa.io/contact](https://studiometa.io/contact/) or use the support
 4. Agent customization — knowledge base import, system prompt, and suggested questions
 5. Widget appearance — six visual themes to match your brand
 
+== Third-Party Assets ==
+
+Vazirmatn v33.003 by Saber Rastikerdar, used for Persian and Arabic text.
+Licensed under the SIL Open Font License 1.1 (see assets/fonts/OFL.txt) and
+distributed unmodified. Only the Non-Latin subset is bundled, and it is served
+from this plugin folder -- no font CDN is contacted, so no visitor or
+administrator IP address is sent to a third party.
+Source: https://github.com/rastikerdar/vazirmatn
+
 == Source Code ==
 
 The full source code of this plugin, including the unminified version of widget.js and all build tools, is publicly available on GitHub:

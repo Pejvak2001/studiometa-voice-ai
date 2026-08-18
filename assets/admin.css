@@ -1,8 +1,36 @@
 /* StudioMeta Voice AI — Admin Styles v2 */
-/* No webfont is fetched: loading one would send every administrator's IP address
-   to a third-party server on each admin page view, without disclosure or consent.
-   The stack below uses DM Sans when the system already has it, then falls back to
-   the native UI font, which matches the WordPress admin anyway. */
+/* No webfont is fetched from anyone else's server: that would send every
+   administrator's IP address to a third party on each admin page view, without
+   disclosure or consent. The one webfont here is served from this plugin's own
+   directory (see the @font-face below) and only for Arabic-script text.
+   For Latin, the stack uses DM Sans when the system already has it, then falls
+   back to the native UI font, which matches the WordPress admin anyway. */
+
+/* Vazirmatn, for Persian and Arabic text only.
+   Bundled rather than fetched from a font CDN: guideline 8 permits a font CDN,
+   but a webfont request hands every visitor's IP to a third party on every page
+   view, which is the same reason no webfont was loaded here before.
+
+   The file is the Non-Latin subset, so it carries no Latin glyphs at all --
+   English keeps the stack below, and nothing is downloaded twice. `unicode-range`
+   is what makes this free for everyone else: a page with no Arabic-script
+   characters never issues the request, so an English-only site pays zero bytes
+   for a font it cannot use. U+200C is in the range on purpose -- the zero-width
+   non-joiner is what makes Persian words like "می‌شود" render as one word, and
+   leaving it out would split it across two fonts.
+
+   Variable (wght 100-900) in one 47 KB file, which costs 4 KB more than the two
+   static weights this UI uses and saves a second request.
+   Vazirmatn v33.003 by Saber Rastikerdar, SIL Open Font License 1.1 -- see
+   fonts/OFL.txt. Distributed unmodified. */
+@font-face {
+    font-family: 'Vazirmatn';
+    src: url('fonts/vazirmatn-nl-variable.woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F;
+}
 
 :root {
     --smva-bg:        #f1f5f9;
@@ -25,7 +53,10 @@
     --smva-radius-lg: 14px;
     --smva-shadow:    0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
     --smva-shadow-md: 0 4px 12px rgba(15,23,42,.08), 0 1px 3px rgba(15,23,42,.05);
-    --font: 'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    /* Vazirmatn first, but it only ever claims Arabic-script characters (see
+       the @font-face unicode-range above), so Latin text still renders in
+       DM Sans or the native UI font exactly as before. */
+    --font: 'Vazirmatn', 'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     /* brand spectrum — taken from the logo ribbon */
     --smva-s1: #2fae4a;
     --smva-s2: #d4a017;
@@ -450,7 +481,7 @@
 
 /* ── Migrated from admin-page.php ── */
 /* ── SMVA Modern Admin Layout ── */
-.smva-admin-wrap{display:flex;min-height:100vh;background:#f0f2f5;margin:-20px -20px -20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;position:relative;z-index:1}
+.smva-admin-wrap{display:flex;min-height:100vh;background:#f0f2f5;margin:-20px -20px -20px;font-family:var(--font);position:relative;z-index:1}
 
 /* SIDEBAR */
 .smva-sidebar{width:220px;flex-shrink:0;background:#1e1f2e;display:flex;flex-direction:column;position:sticky;top:32px;height:calc(100vh - 32px);overflow-y:auto}
