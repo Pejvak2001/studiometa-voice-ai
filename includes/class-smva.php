@@ -382,6 +382,7 @@ class SMVA_Plugin {
         add_action( 'wp_ajax_smva_info_docs_get',           array( $this, 'ajax_info_docs_get' ) );
         add_action( 'wp_ajax_smva_info_docs_save',          array( $this, 'ajax_info_docs_save' ) );
         add_action( 'wp_ajax_smva_booking_slots',           array( $this, 'ajax_booking_slots' ) );
+        add_action( 'wp_ajax_smva_send_feedback',          array( $this, 'ajax_send_feedback' ) );
         add_action( 'wp_ajax_smva_calendar_status',         array( $this, 'ajax_calendar_status' ) );
         add_action( 'wp_ajax_smva_calendar_connect_url',    array( $this, 'ajax_calendar_connect_url' ) );
         add_action( 'wp_ajax_smva_calendar_disconnect',     array( $this, 'ajax_calendar_disconnect' ) );
@@ -986,6 +987,11 @@ class SMVA_Plugin {
                 'hoursOptional'            => __( 'Hours (optional)', 'studiometa-voice-ai' ),
                 'hoursOptionalPh'          => __( 'Mon-Fri 9-5', 'studiometa-voice-ai' ),
                 'savingEllipsis'           => __( 'Saving…', 'studiometa-voice-ai' ),
+
+                // Feedback card (Health tab).
+                'feedbackTooShort'         => __( 'Please describe it in a little more detail.', 'studiometa-voice-ai' ),
+                'feedbackSent'             => __( 'Thank you — your message is on its way.', 'studiometa-voice-ai' ),
+                'couldNotSend'             => __( 'Could not send your message.', 'studiometa-voice-ai' ),
             ),
         ) );
     }
@@ -2370,6 +2376,63 @@ class SMVA_Plugin {
             'info_documents'        => $saved,
             'caller_memory_enabled' => $memory,
         ) );
+    }
+
+    /**
+     * Send the owner's feedback to the backend, which mails it on.
+     *
+     * The diagnostics are assembled HERE rather than taken from the browser:
+     * the card shows the owner the exact values it will attach, and a client
+     * that could choose them itself would make that display a promise the
+     * plugin does not keep. The checkbox decides whether they are sent at all,
+     * and nothing else about this payload is caller-controlled except the
+     * message and the reply address.
+     */
+    public function ajax_send_feedback() {
+        check_ajax_referer( 'smva_nonce', 'nonce' );
+        $this->require_admin_capability();
+
+        $creds = $this->get_api_credentials();
+        if ( empty( $creds['license_key'] ) || empty( $creds['internal_token'] ) ) {
+            wp_send_json_error( array( 'message' => __( 'Activate your license first.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $message = isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '';
+        if ( mb_strlen( trim( $message ) ) < 10 ) {
+            wp_send_json_error( array( 'message' => __( 'Please describe it in a little more detail.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $type  = isset( $_POST['type'] ) ? sanitize_key( wp_unslash( $_POST['type'] ) ) : 'question';
+        $email = isset( $_POST['reply_to'] ) ? sanitize_email( wp_unslash( $_POST['reply_to'] ) ) : '';
+
+        $payload = array_merge( $creds, array(
+            'type'     => $type,
+            'message'  => $message,
+            'reply_to' => is_email( $email ) ? $email : '',
+        ) );
+
+        if ( ! empty( $_POST['include_diagnostics'] ) ) {
+            $payload['diagnostics'] = array(
+                'plugin_version' => SMVA_VERSION,
+                'wp_version'     => get_bloginfo( 'version' ),
+                'php_version'    => PHP_VERSION,
+                'site_url'       => get_site_url(),
+                'locale'         => get_locale(),
+                'plan'           => get_option( 'smva_plan', '' ),
+            );
+        }
+
+        $response = $this->api_post_json( '/plugin/feedback', $payload, 15 );
+        if ( is_wp_error( $response ) ) {
+            wp_send_json_error( array( 'message' => __( 'Connection error.', 'studiometa-voice-ai' ) ) );
+        }
+
+        $data = json_decode( wp_remote_retrieve_body( $response ), true );
+        if ( wp_remote_retrieve_response_code( $response ) !== 200 ) {
+            wp_send_json_error( array( 'message' => $data['error'] ?? __( 'Could not send your message.', 'studiometa-voice-ai' ) ) );
+        }
+
+        wp_send_json_success( array( 'message' => __( 'Thank you — your message is on its way.', 'studiometa-voice-ai' ) ) );
     }
 
     public function ajax_booking_slots() {

@@ -2080,6 +2080,70 @@ function tr(key, fallback) {
   })();
 
 
+  /* ── Feedback ────────────────────────────────────────────────────────────
+     Deliberately does NOT clear the textarea on failure: the owner has just
+     typed the only description of a bug that exists, and losing it to a
+     network blip would mean losing the report as well. It clears on success
+     only, which is also the only case where the text is safely elsewhere. */
+  (function () {
+    var sendBtn = document.getElementById('smva-fb-send');
+    if (!sendBtn) return;
+
+    var msgEl   = document.getElementById('smva-fb-msg');
+    var label   = sendBtn.querySelector('.smva-fb-label');
+    var spinner = sendBtn.querySelector('.smva-fb-spinner');
+    var diagBox = document.getElementById('smva-fb-diag');
+    var diagList = document.getElementById('smva-fb-diag-list');
+
+    function say(ok, text) {
+      msgEl.className = 'smva-int-msg' + (text ? (ok ? ' ok' : ' err') : '');
+      msgEl.textContent = text || '';
+    }
+
+    // Unticking hides the list rather than leaving a promise on screen about
+    // data that is no longer going anywhere.
+    if (diagBox && diagList) {
+      diagBox.addEventListener('change', function () {
+        diagList.classList.toggle('smva-hidden', !diagBox.checked);
+      });
+    }
+
+    sendBtn.addEventListener('click', function () {
+      var message = (document.getElementById('smva-fb-message').value || '').trim();
+      if (message.length < 10) {
+        say(false, tr('feedbackTooShort', 'Please describe it in a little more detail.'));
+        return;
+      }
+
+      sendBtn.disabled = true;
+      label.classList.add('smva-hidden');
+      spinner.classList.remove('smva-hidden');
+      say(true, '');
+
+      jQuery.post(window.smvaAdmin.ajaxUrl, {
+        action: 'smva_send_feedback',
+        nonce: window.smvaAdmin.nonce,
+        type: document.getElementById('smva-fb-type').value,
+        message: message,
+        reply_to: document.getElementById('smva-fb-email').value,
+        include_diagnostics: (diagBox && diagBox.checked) ? '1' : ''
+      }).done(function (res) {
+        if (res && res.success) {
+          document.getElementById('smva-fb-message').value = '';
+          say(true, (res.data && res.data.message) || tr('feedbackSent', 'Thank you — your message is on its way.'));
+        } else {
+          say(false, (res && res.data && res.data.message) || tr('couldNotSend', 'Could not send your message.'));
+        }
+      }).fail(function () {
+        say(false, tr('networkErrorRetry', 'Network error. Please try again.'));
+      }).always(function () {
+        sendBtn.disabled = false;
+        label.classList.remove('smva-hidden');
+        spinner.classList.add('smva-hidden');
+      });
+    });
+  })();
+
   // ── Appointments ──────────────────────────────────────────────────────────
   // Working hours are validated and stored on the backend — the availability
   // engine and the agent both read from there mid-call. What is built here is

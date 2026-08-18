@@ -13,54 +13,55 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Domain: studiometa-voice-ai\n"
 
-#: includes/class-smva.php:2198
-#: includes/class-smva.php:2230
-#: includes/class-smva.php:2290
-#: includes/class-smva.php:2323
-#: includes/class-smva.php:2381
-#: includes/class-smva.php:2426
-#: includes/class-smva.php:2460
-#: includes/class-smva.php:2486
+#: includes/class-smva.php:2204
+#: includes/class-smva.php:2236
+#: includes/class-smva.php:2296
+#: includes/class-smva.php:2329
+#: includes/class-smva.php:2397
+#: includes/class-smva.php:2444
+#: includes/class-smva.php:2489
+#: includes/class-smva.php:2523
+#: includes/class-smva.php:2549
 msgid "Activate your license first."
 msgstr "ابتدا لایسنس خود را فعال کنید."
 
-#: includes/class-smva.php:2208
+#: includes/class-smva.php:2214
 msgid "Could not load your working hours."
 msgstr "ساعات کاری شما بارگذاری نشد."
 
-#: includes/class-smva.php:2239
+#: includes/class-smva.php:2245
 msgid "Invalid working hours."
 msgstr "ساعات کاری نامعتبر است."
 
-#: includes/class-smva.php:2259
+#: includes/class-smva.php:2265
 msgid "Could not save your working hours."
 msgstr "ساعات کاری شما ذخیره نشد."
 
-#: includes/class-smva.php:2300
+#: includes/class-smva.php:2306
 msgid "Could not load your email settings."
 msgstr "تنظیمات ایمیل شما بارگذاری نشد."
 
-#: includes/class-smva.php:2345
+#: includes/class-smva.php:2351
 msgid "Invalid documents."
 msgstr "اسناد نامعتبر است."
 
-#: includes/class-smva.php:2361
+#: includes/class-smva.php:2367
 msgid "Could not save your email settings."
 msgstr "تنظیمات ایمیل شما ذخیره نشد."
 
-#: includes/class-smva.php:2410
+#: includes/class-smva.php:2473
 msgid "Could not calculate availability."
 msgstr "زمان‌های خالی محاسبه نشد."
 
-#: includes/class-smva.php:2436
+#: includes/class-smva.php:2499
 msgid "Could not read the calendar status."
 msgstr "وضعیت تقویم خوانده نشد."
 
-#: includes/class-smva.php:2474
+#: includes/class-smva.php:2537
 msgid "Calendar connection is not available yet."
 msgstr "اتصال تقویم هنوز در دسترس نیست."
 
-#: includes/class-smva.php:2496
+#: includes/class-smva.php:2559
 msgid "Could not disconnect the calendar."
 msgstr "قطع اتصال تقویم انجام نشد."
 
@@ -110,34 +111,35 @@ msgstr "دریافت‌شده:"
 msgid "View all leads:"
 msgstr "مشاهده همه سرنخ‌ها:"
 
-#: includes/class-smva.php:926
-#: includes/class-smva.php:2203
-#: includes/class-smva.php:2250
-#: includes/class-smva.php:2295
-#: includes/class-smva.php:2356
-#: includes/class-smva.php:2405
-#: includes/class-smva.php:2431
-#: includes/class-smva.php:2465
-#: includes/class-smva.php:2491
+#: includes/class-smva.php:927
+#: includes/class-smva.php:2209
+#: includes/class-smva.php:2256
+#: includes/class-smva.php:2301
+#: includes/class-smva.php:2362
+#: includes/class-smva.php:2427
+#: includes/class-smva.php:2468
+#: includes/class-smva.php:2494
+#: includes/class-smva.php:2528
+#: includes/class-smva.php:2554
 msgid "Connection error."
 msgstr "خطای اتصال."
 
-#: includes/class-smva.php:927
+#: includes/class-smva.php:928
 #: views/appointments-tab.php:166
 msgid "Saving..."
 msgstr "در حال ذخیره..."
 
-#: includes/class-smva.php:928
+#: includes/class-smva.php:929
 #: views/admin-page.php:256
 msgid "Activate"
 msgstr "فعال‌سازی"
 
-#: includes/class-smva.php:929
+#: includes/class-smva.php:930
 #: views/admin-page.php:250
 msgid "Start Free Trial"
 msgstr "شروع دوره آزمایشی رایگان"
 
-#: includes/class-smva.php:930
+#: includes/class-smva.php:931
 #: views/admin-page.php:432
 #: views/admin-page.php:1362
 #: views/admin-page.php:1389
@@ -145,66 +147,66 @@ msgstr "شروع دوره آزمایشی رایگان"
 msgid "Refresh"
 msgstr "بازخوانی"
 
-#: includes/class-smva.php:931
+#: includes/class-smva.php:932
 #: views/admin-page.php:786
 msgid "Save General Settings"
 msgstr "ذخیره تنظیمات عمومی"
 
-#: includes/class-smva.php:932
+#: includes/class-smva.php:933
 #: views/admin-page.php:1176
 msgid "Save Widget Settings"
 msgstr "ذخیره تنظیمات ویجت"
 
-#: includes/class-smva.php:933
-#: views/admin-page.php:1452
+#: includes/class-smva.php:934
+#: views/admin-page.php:1510
 msgid "Save Notification Settings"
 msgstr "ذخیره تنظیمات اعلان‌ها"
 
-#: includes/class-smva.php:934
+#: includes/class-smva.php:935
 #: views/admin-page.php:1225
 msgid "Save Webhook URL"
 msgstr "ذخیره آدرس وب‌هوک"
 
-#: includes/class-smva.php:935
+#: includes/class-smva.php:936
 #: views/admin-page.php:992
 msgid "Save Quick Action Buttons"
 msgstr "ذخیره دکمه‌های دسترسی سریع"
 
-#: includes/class-smva.php:936
+#: includes/class-smva.php:937
 #: views/admin-page.php:1281
 msgid "Save Tool"
 msgstr "ذخیره ابزار"
 
-#: includes/class-smva.php:937
+#: includes/class-smva.php:938
 #: views/admin-page.php:1289
 msgid "Save & Sync Tools"
 msgstr "ذخیره و همگام‌سازی ابزارها"
 
-#: includes/class-smva.php:938
+#: includes/class-smva.php:939
 #: views/admin-page.php:1379
 msgid "Run Check"
 msgstr "اجرای بررسی"
 
-#: includes/class-smva.php:939
+#: includes/class-smva.php:940
 msgid "Nothing yet. Until you add something, the agent will not offer to email anyone."
 msgstr "هنوز چیزی نیست. تا وقتی موردی اضافه نکنید، دستیار به کسی پیشنهاد ایمیل نمی‌دهد."
 
-#: includes/class-smva.php:940
+#: includes/class-smva.php:941
 msgid "Update Tool"
 msgstr "به‌روزرسانی ابزار"
 
-#: includes/class-smva.php:941
+#: includes/class-smva.php:942
 msgid "Select →"
 msgstr "انتخاب ←"
 
 #. translators: %s: IANA timezone name, e.g. "America/Toronto"
-#: includes/class-smva.php:943
+#: includes/class-smva.php:944
 #, php-format
 msgid "Timezone: %s"
 msgstr "منطقه زمانی: %s"
 
 #. translators: %d: number of days
-#: includes/class-smva.php:945
+#: includes/class-smva.php:946
 #, php-format
 msgid "Showing last %d days by default"
 msgstr "به‌طور پیش‌فرض %d روز اخیر نمایش داده می‌شود"
@@ -218,7 +220,7 @@ msgstr "لوگوی دستیار"
 msgid "Choose from Media"
 msgstr "انتخاب از رسانه"
 
-#: includes/class-smva.php:980
+#: includes/class-smva.php:981
 #: views/admin-page.php:1036
 #: views/admin-page.php:1244
 msgid "Remove"
@@ -681,8 +683,8 @@ msgid "All chat conversations from your AI widget."
 msgstr "همه گفتگوهای چت از ویجت هوش مصنوعی شما."
 
 #: views/admin-page.php:1366
-#: views/admin-page.php:1428
-#: views/admin-page.php:1468
+#: views/admin-page.php:1486
+#: views/admin-page.php:1526
 #: views/appointments-tab.php:243
 msgid "Loading..."
 msgstr "در حال بارگذاری..."
@@ -707,120 +709,120 @@ msgstr "رویدادهای اخیر افزونه"
 msgid "Clear"
 msgstr "پاک کردن"
 
-#: views/admin-page.php:1398
+#: views/admin-page.php:1456
 msgid "Review voice sessions, play recordings, and generate AI summaries of what was discussed."
 msgstr "جلسات صوتی را مرور کنید، ضبط‌ها را پخش کنید و خلاصه‌ای هوشمند از آنچه گفته شده تولید کنید."
 
-#: views/admin-page.php:1400
+#: views/admin-page.php:1458
 msgid "From"
 msgstr "از"
 
-#: views/admin-page.php:1401
+#: views/admin-page.php:1459
 msgid "To"
 msgstr "تا"
 
-#: views/admin-page.php:1402
+#: views/admin-page.php:1460
 msgid "Search"
 msgstr "جستجو"
 
-#: views/admin-page.php:1407
+#: views/admin-page.php:1465
 msgid "Turns"
 msgstr "نوبت‌های گفتگو"
 
-#: views/admin-page.php:1407
+#: views/admin-page.php:1465
 msgid "Summary"
 msgstr "خلاصه"
 
-#: views/admin-page.php:1407
+#: views/admin-page.php:1465
 msgid "Actions"
 msgstr "عملیات"
 
-#: views/admin-page.php:1408
+#: views/admin-page.php:1466
 msgid "Click Search to load sessions."
 msgstr "برای بارگذاری جلسات، روی «جستجو» کلیک کنید."
 
-#: views/admin-page.php:1416
+#: views/admin-page.php:1474
 msgid "Session Transcript"
 msgstr "متن گفتگوی جلسه"
 
-#: views/admin-page.php:1422
+#: views/admin-page.php:1480
 msgid "AI Summary"
 msgstr "خلاصه هوش مصنوعی"
 
-#: views/admin-page.php:1423
+#: views/admin-page.php:1481
 msgid "Generate Summary"
 msgstr "تولید خلاصه"
 
-#: views/admin-page.php:1425
+#: views/admin-page.php:1483
 msgid "No summary yet."
 msgstr "هنوز خلاصه‌ای وجود ندارد."
 
-#: views/admin-page.php:1436
+#: views/admin-page.php:1494
 msgid "Lead Notifications"
 msgstr "اعلان‌های سرنخ"
 
-#: views/admin-page.php:1437
+#: views/admin-page.php:1495
 msgid "email me new leads"
 msgstr "سرنخ‌های جدید را برایم ایمیل کن"
 
-#: views/admin-page.php:1441
+#: views/admin-page.php:1499
 msgid "Email Alerts"
 msgstr "هشدارهای ایمیلی"
 
-#: views/admin-page.php:1442
+#: views/admin-page.php:1500
 msgid "Email me when a new lead comes in"
 msgstr "وقتی سرنخ جدیدی می‌رسد برایم ایمیل بفرست"
 
-#: views/admin-page.php:1443
+#: views/admin-page.php:1501
 msgid "Sent the moment a visitor shares an email or phone number — no automation setup required."
 msgstr "به‌محض اینکه بازدیدکننده‌ای ایمیل یا شماره تلفن خود را به اشتراک بگذارد ارسال می‌شود — نیازی به راه‌اندازی اتوماسیون نیست."
 
-#: views/admin-page.php:1446
+#: views/admin-page.php:1504
 msgid "Send Notifications To"
 msgstr "ارسال اعلان‌ها به"
 
-#: views/admin-page.php:1448
+#: views/admin-page.php:1506
 msgid "Leave blank to use your WordPress admin email."
 msgstr "برای استفاده از ایمیل مدیر وردپرس، خالی بگذارید."
 
-#: views/admin-page.php:1463
+#: views/admin-page.php:1521
 msgid "Export CSV"
 msgstr "خروجی CSV"
 
-#: views/admin-page.php:1467
+#: views/admin-page.php:1525
 msgid "Name"
 msgstr "نام"
 
-#: views/admin-page.php:1467
+#: views/admin-page.php:1525
 msgid "Email"
 msgstr "ایمیل"
 
-#: views/admin-page.php:1467
+#: views/admin-page.php:1525
 #: views/integrations-tab.php:137
 msgid "Phone"
 msgstr "تلفن"
 
-#: views/admin-page.php:1467
+#: views/admin-page.php:1525
 msgid "Source"
 msgstr "منبع"
 
-#: views/admin-page.php:1467
+#: views/admin-page.php:1525
 msgid "Notes"
 msgstr "یادداشت‌ها"
 
-#: views/admin-page.php:1483
+#: views/admin-page.php:1541
 msgid "Choose Your Plan"
 msgstr "طرح خود را انتخاب کنید"
 
-#: views/admin-page.php:1484
+#: views/admin-page.php:1542
 msgid "Upgrade to unlock full voice & chat capabilities"
 msgstr "برای دسترسی کامل به قابلیت‌های صدا و چت ارتقا دهید"
 
-#: views/admin-page.php:1491
+#: views/admin-page.php:1549
 msgid "Loading plans..."
 msgstr "در حال بارگذاری طرح‌ها..."
 
-#: views/admin-page.php:1495
+#: views/admin-page.php:1553
 msgid "Secure payment via Stripe · Cancel anytime · License key sent by email after payment"
 msgstr "پرداخت امن از طریق Stripe · لغو در هر زمان · کلید لایسنس پس از پرداخت با ایمیل ارسال می‌شود"
 
@@ -877,6 +879,7 @@ msgid "Deactivate"
 msgstr "غیرفعال‌سازی"
 
 #: views/admin-page.php:200
+#: views/admin-page.php:1404
 msgid "Plan"
 msgstr "طرح"
 
@@ -1153,8 +1156,8 @@ msgid "Recent Sessions"
 msgstr "جلسات اخیر"
 
 #: views/admin-page.php:441
-#: views/admin-page.php:1407
-#: views/admin-page.php:1467
+#: views/admin-page.php:1465
+#: views/admin-page.php:1525
 msgid "Date"
 msgstr "تاریخ"
 
@@ -1163,7 +1166,7 @@ msgid "Type"
 msgstr "نوع"
 
 #: views/admin-page.php:441
-#: views/admin-page.php:1407
+#: views/admin-page.php:1465
 msgid "Duration"
 msgstr "مدت"
 
@@ -1272,7 +1275,7 @@ msgstr "تاریخچه چت"
 
 #: views/admin-page.php:64
 #: views/admin-page.php:118
-#: views/admin-page.php:1397
+#: views/admin-page.php:1455
 msgid "Voice Summary"
 msgstr "خلاصه تماس‌های صوتی"
 
@@ -1301,7 +1304,7 @@ msgstr "هنوز توضیحی برای این صدا موجود نیست."
 
 #: views/admin-page.php:68
 #: views/admin-page.php:119
-#: views/admin-page.php:1460
+#: views/admin-page.php:1518
 msgid "Leads"
 msgstr "سرنخ‌ها"
 
@@ -1772,7 +1775,7 @@ msgstr "تماس تصویری"
 msgid "In person"
 msgstr "حضوری"
 
-#: includes/class-smva.php:965
+#: includes/class-smva.php:966
 #: views/appointments-tab.php:165
 msgid "Save Working Hours"
 msgstr "ذخیره ساعات کاری"
@@ -1813,7 +1816,7 @@ msgstr "پنجشنبه"
 msgid "Connect Google Calendar"
 msgstr "اتصال تقویم گوگل"
 
-#: includes/class-smva.php:972
+#: includes/class-smva.php:973
 #: views/appointments-tab.php:204
 #: views/integrations-tab.php:77
 #: views/integrations-tab.php:194
@@ -1934,57 +1937,57 @@ msgstr "StudioMeta"
 msgid "https://studiometa.io"
 msgstr "https://studiometa.io"
 
-#: includes/class-smva.php:952
+#: includes/class-smva.php:953
 #: views/appointments-tab.php:151
 msgid "Address"
 msgstr "آدرس"
 
-#: includes/class-smva.php:953
+#: includes/class-smva.php:954
 #: views/appointments-tab.php:152
 msgid "e.g. 12 High Street, Toronto"
 msgstr "مثلاً خیابان ولیعصر، پلاک ۱۲"
 
-#: includes/class-smva.php:954
+#: includes/class-smva.php:955
 msgid "Required. This is what the agent tells the visitor and what goes on the calendar event."
 msgstr "الزامی است. دستیار همین را به مراجعه‌کننده می‌گوید و همین روی رویداد تقویم ثبت می‌شود."
 
-#: includes/class-smva.php:955
+#: includes/class-smva.php:956
 msgid "Fallback joining link"
 msgstr "لینک جایگزین برای ورود"
 
-#: includes/class-smva.php:956
+#: includes/class-smva.php:957
 msgid "e.g. https://zoom.us/j/your-room"
 msgstr "مثلاً https://zoom.us/j/your-room"
 
-#: includes/class-smva.php:957
+#: includes/class-smva.php:958
 msgid "Optional. With a calendar connected below, a Google Meet link is created per appointment and used instead of this."
 msgstr "اختیاری است. اگر تقویم را در پایین متصل کنید، برای هر قرار یک لینک Google Meet ساخته می‌شود و به‌جای این استفاده می‌شود."
 
-#: includes/class-smva.php:958
+#: includes/class-smva.php:959
 msgid "Location"
 msgstr "محل"
 
-#: includes/class-smva.php:959
+#: includes/class-smva.php:960
 msgid "Not needed for phone appointments"
 msgstr "برای قرارهای تلفنی لازم نیست"
 
-#: includes/class-smva.php:960
+#: includes/class-smva.php:961
 msgid "Nothing to fill in — the business calls the visitor on the number they leave."
 msgstr "چیزی برای پر کردن نیست — کسب‌وکار با شماره‌ای که مراجعه‌کننده می‌گذارد تماس می‌گیرد."
 
-#: includes/class-smva.php:961
+#: includes/class-smva.php:962
 msgid "Add the address visitors should come to, or change the meeting type."
 msgstr "آدرسی که مراجعه‌کننده باید به آن بیاید را وارد کنید، یا نوع جلسه را تغییر دهید."
 
-#: includes/class-smva.php:962
+#: includes/class-smva.php:963
 msgid "Saved."
 msgstr "ذخیره شد."
 
-#: includes/class-smva.php:963
+#: includes/class-smva.php:964
 msgid "Could not save."
 msgstr "ذخیره نشد."
 
-#: includes/class-smva.php:964
+#: includes/class-smva.php:965
 msgid "Network error. Please try again."
 msgstr "خطای شبکه. لطفاً دوباره تلاش کنید."
 
@@ -2000,76 +2003,76 @@ msgstr "مثلاً لطفاً ۵ دقیقه زودتر تشریف بیاورید
 msgid "Goes on the calendar event and into the confirmation email, alongside whatever the visitor told the agent."
 msgstr "روی رویداد تقویم و در ایمیل تأیید درج می‌شود، در کنار چیزی که مراجعه‌کننده به دستیار گفته است."
 
-#: includes/class-smva.php:970
+#: includes/class-smva.php:971
 #: views/integrations-tab.php:68
 #: views/integrations-tab.php:156
 msgid "Connected"
 msgstr "متصل"
 
-#: includes/class-smva.php:971
+#: includes/class-smva.php:972
 #: views/integrations-tab.php:85
 #: views/integrations-tab.php:215
 msgid "Connect"
 msgstr "اتصال"
 
-#: includes/class-smva.php:973
+#: includes/class-smva.php:974
 msgid "Disconnecting..."
 msgstr "در حال قطع اتصال..."
 
-#: includes/class-smva.php:974
+#: includes/class-smva.php:975
 #: views/integrations-tab.php:86
 msgid "Verifying..."
 msgstr "در حال بررسی..."
 
-#: includes/class-smva.php:975
+#: includes/class-smva.php:976
 msgid "Disconnect HubSpot? Leads will no longer sync automatically."
 msgstr "اتصال HubSpot قطع شود؟ دیگر سرنخ‌ها به‌صورت خودکار همگام‌سازی نمی‌شوند."
 
-#: includes/class-smva.php:976
+#: includes/class-smva.php:977
 msgid "Disconnect this number? Calls to it will no longer be answered by your agent."
 msgstr "اتصال این شماره قطع شود؟ دیگر تماس‌های آن توسط دستیار شما پاسخ داده نمی‌شود."
 
-#: includes/class-smva.php:977
+#: includes/class-smva.php:978
 msgid "Disconnect Google Calendar? Booking will keep working from your working hours alone."
 msgstr "اتصال تقویم گوگل قطع شود؟ نوبت‌دهی فقط بر اساس ساعات کاری شما به کار خود ادامه می‌دهد."
 
-#: includes/class-smva.php:978
+#: includes/class-smva.php:979
 msgid "No departments yet. Add one to let the agent transfer callers."
 msgstr "هنوز بخشی تعریف نشده است. یکی اضافه کنید تا دستیار بتواند تماس‌ها را منتقل کند."
 
-#: includes/class-smva.php:979
+#: includes/class-smva.php:980
 msgid "New department"
 msgstr "بخش جدید"
 
-#: includes/class-smva.php:981
+#: includes/class-smva.php:982
 msgid "Department"
 msgstr "بخش"
 
-#: includes/class-smva.php:982
+#: includes/class-smva.php:983
 msgid "Sales"
 msgstr "فروش"
 
-#: includes/class-smva.php:983
+#: includes/class-smva.php:984
 msgid "Phone number"
 msgstr "شمارهٔ تماس"
 
-#: includes/class-smva.php:984
+#: includes/class-smva.php:985
 msgid "When to transfer here"
 msgstr "چه زمانی به اینجا منتقل شود"
 
-#: includes/class-smva.php:985
+#: includes/class-smva.php:986
 msgid "pricing, quotes, new orders"
 msgstr "قیمت‌ها، پیش‌فاکتور، سفارش جدید"
 
-#: includes/class-smva.php:986
+#: includes/class-smva.php:987
 msgid "Hours (optional)"
 msgstr "ساعات کاری (اختیاری)"
 
-#: includes/class-smva.php:987
+#: includes/class-smva.php:988
 msgid "Mon-Fri 9-5"
 msgstr "شنبه تا چهارشنبه ۹ تا ۱۷"
 
-#: includes/class-smva.php:988
+#: includes/class-smva.php:989
 msgid "Saving…"
 msgstr "در حال ذخیره…"
 
@@ -2218,3 +2221,87 @@ msgstr "ذخیرهٔ تنظیمات انتقال"
 #: views/integrations-tab.php:306
 msgid "Saving&hellip;"
 msgstr "در حال ذخیره&hellip;"
+
+#: includes/class-smva.php:992
+#: includes/class-smva.php:2402
+msgid "Please describe it in a little more detail."
+msgstr "لطفاً کمی بیشتر توضیح دهید."
+
+#: includes/class-smva.php:993
+#: includes/class-smva.php:2435
+msgid "Thank you — your message is on its way."
+msgstr "ممنون — پیام شما در حال ارسال است."
+
+#: includes/class-smva.php:994
+#: includes/class-smva.php:2432
+msgid "Could not send your message."
+msgstr "پیام شما ارسال نشد."
+
+#: views/admin-page.php:1399
+msgid "Plugin version"
+msgstr "نسخهٔ افزونه"
+
+#: views/admin-page.php:1400
+msgid "WordPress version"
+msgstr "نسخهٔ وردپرس"
+
+#: views/admin-page.php:1401
+msgid "PHP version"
+msgstr "نسخهٔ PHP"
+
+#: views/admin-page.php:1402
+msgid "Site address"
+msgstr "آدرس سایت"
+
+#: views/admin-page.php:1403
+msgid "Site language"
+msgstr "زبان سایت"
+
+#: views/admin-page.php:1409
+#: views/admin-page.php:1446
+msgid "Send Feedback"
+msgstr "ارسال بازخورد"
+
+#: views/admin-page.php:1411
+msgid "Found something broken, or thought of something missing? This goes straight to the people who build the plugin."
+msgstr "به مشکلی برخوردید یا چیزی کم دارید؟ این پیام مستقیم به سازندگان افزونه می‌رسد."
+
+#: views/admin-page.php:1415
+msgid "What is this about?"
+msgstr "موضوع چیست؟"
+
+#: views/admin-page.php:1417
+msgid "Something is not working"
+msgstr "چیزی کار نمی‌کند"
+
+#: views/admin-page.php:1418
+msgid "An idea or request"
+msgstr "یک ایده یا درخواست"
+
+#: views/admin-page.php:1419
+msgid "A question"
+msgstr "یک پرسش"
+
+#: views/admin-page.php:1423
+msgid "Your email, if you would like a reply"
+msgstr "ایمیل شما، اگر پاسخ می‌خواهید"
+
+#: views/admin-page.php:1429
+msgid "Your message"
+msgstr "پیام شما"
+
+#: views/admin-page.php:1430
+msgid "What happened, and what did you expect instead? For an idea, what would you like to be able to do?"
+msgstr "چه اتفاقی افتاد و انتظار داشتید چه بشود؟ اگر ایده‌ای دارید، دوست داشتید بتوانید چه کاری انجام دهید؟"
+
+#: views/admin-page.php:1435
+msgid "Include technical details (recommended — most bugs cannot be traced without them)"
+msgstr "اطلاعات فنی هم فرستاده شود (توصیه می‌شود — بیشتر اشکال‌ها بدون آن‌ها قابل پیگیری نیستند)"
+
+#: views/admin-page.php:1441
+msgid "Exactly this, and nothing else. No customer data, no conversations, no recordings."
+msgstr "دقیقاً همین‌ها و نه چیز دیگری. نه اطلاعات مشتریان، نه گفتگوها، نه فایل‌های ضبط‌شده."
+
+#: views/admin-page.php:1447
+msgid "Sending..."
+msgstr "در حال ارسال..."

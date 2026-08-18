@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-18T22:52:45+00:00\n"
+"POT-Creation-Date: 2026-08-18T23:08:11+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: studiometa-voice-ai\n"
@@ -86,34 +86,35 @@ msgstr ""
 msgid "View all leads:"
 msgstr ""
 
-#: includes/class-smva.php:926
-#: includes/class-smva.php:2203
-#: includes/class-smva.php:2250
-#: includes/class-smva.php:2295
-#: includes/class-smva.php:2356
-#: includes/class-smva.php:2405
-#: includes/class-smva.php:2431
-#: includes/class-smva.php:2465
-#: includes/class-smva.php:2491
+#: includes/class-smva.php:927
+#: includes/class-smva.php:2209
+#: includes/class-smva.php:2256
+#: includes/class-smva.php:2301
+#: includes/class-smva.php:2362
+#: includes/class-smva.php:2427
+#: includes/class-smva.php:2468
+#: includes/class-smva.php:2494
+#: includes/class-smva.php:2528
+#: includes/class-smva.php:2554
 msgid "Connection error."
 msgstr ""
 
-#: includes/class-smva.php:927
+#: includes/class-smva.php:928
 #: views/appointments-tab.php:166
 msgid "Saving..."
 msgstr ""
 
-#: includes/class-smva.php:928
+#: includes/class-smva.php:929
 #: views/admin-page.php:256
 msgid "Activate"
 msgstr ""
 
-#: includes/class-smva.php:929
+#: includes/class-smva.php:930
 #: views/admin-page.php:250
 msgid "Start Free Trial"
 msgstr ""
 
-#: includes/class-smva.php:930
+#: includes/class-smva.php:931
 #: views/admin-page.php:432
 #: views/admin-page.php:1362
 #: views/admin-page.php:1389
@@ -121,263 +122,279 @@ msgstr ""
 msgid "Refresh"
 msgstr ""
 
-#: includes/class-smva.php:931
+#: includes/class-smva.php:932
 #: views/admin-page.php:786
 msgid "Save General Settings"
 msgstr ""
 
-#: includes/class-smva.php:932
+#: includes/class-smva.php:933
 #: views/admin-page.php:1176
 msgid "Save Widget Settings"
 msgstr ""
 
-#: includes/class-smva.php:933
-#: views/admin-page.php:1452
+#: includes/class-smva.php:934
+#: views/admin-page.php:1510
 msgid "Save Notification Settings"
 msgstr ""
 
-#: includes/class-smva.php:934
+#: includes/class-smva.php:935
 #: views/admin-page.php:1225
 msgid "Save Webhook URL"
 msgstr ""
 
-#: includes/class-smva.php:935
+#: includes/class-smva.php:936
 #: views/admin-page.php:992
 msgid "Save Quick Action Buttons"
 msgstr ""
 
-#: includes/class-smva.php:936
+#: includes/class-smva.php:937
 #: views/admin-page.php:1281
 msgid "Save Tool"
 msgstr ""
 
-#: includes/class-smva.php:937
+#: includes/class-smva.php:938
 #: views/admin-page.php:1289
 msgid "Save & Sync Tools"
 msgstr ""
 
-#: includes/class-smva.php:938
+#: includes/class-smva.php:939
 #: views/admin-page.php:1379
 msgid "Run Check"
 msgstr ""
 
-#: includes/class-smva.php:939
+#: includes/class-smva.php:940
 msgid "Nothing yet. Until you add something, the agent will not offer to email anyone."
 msgstr ""
 
-#: includes/class-smva.php:940
+#: includes/class-smva.php:941
 msgid "Update Tool"
 msgstr ""
 
-#: includes/class-smva.php:941
+#: includes/class-smva.php:942
 msgid "Select →"
 msgstr ""
 
 #. translators: %s: IANA timezone name, e.g. "America/Toronto"
-#: includes/class-smva.php:943
+#: includes/class-smva.php:944
 #, php-format
 msgid "Timezone: %s"
 msgstr ""
 
 #. translators: %d: number of days
-#: includes/class-smva.php:945
+#: includes/class-smva.php:946
 #, php-format
 msgid "Showing last %d days by default"
 msgstr ""
 
-#: includes/class-smva.php:952
+#: includes/class-smva.php:953
 #: views/appointments-tab.php:151
 msgid "Address"
 msgstr ""
 
-#: includes/class-smva.php:953
+#: includes/class-smva.php:954
 #: views/appointments-tab.php:152
 msgid "e.g. 12 High Street, Toronto"
 msgstr ""
 
-#: includes/class-smva.php:954
+#: includes/class-smva.php:955
 msgid "Required. This is what the agent tells the visitor and what goes on the calendar event."
 msgstr ""
 
-#: includes/class-smva.php:955
+#: includes/class-smva.php:956
 msgid "Fallback joining link"
 msgstr ""
 
-#: includes/class-smva.php:956
+#: includes/class-smva.php:957
 msgid "e.g. https://zoom.us/j/your-room"
 msgstr ""
 
-#: includes/class-smva.php:957
+#: includes/class-smva.php:958
 msgid "Optional. With a calendar connected below, a Google Meet link is created per appointment and used instead of this."
 msgstr ""
 
-#: includes/class-smva.php:958
+#: includes/class-smva.php:959
 msgid "Location"
 msgstr ""
 
-#: includes/class-smva.php:959
+#: includes/class-smva.php:960
 msgid "Not needed for phone appointments"
 msgstr ""
 
-#: includes/class-smva.php:960
+#: includes/class-smva.php:961
 msgid "Nothing to fill in — the business calls the visitor on the number they leave."
 msgstr ""
 
-#: includes/class-smva.php:961
+#: includes/class-smva.php:962
 msgid "Add the address visitors should come to, or change the meeting type."
 msgstr ""
 
-#: includes/class-smva.php:962
+#: includes/class-smva.php:963
 msgid "Saved."
 msgstr ""
 
-#: includes/class-smva.php:963
+#: includes/class-smva.php:964
 msgid "Could not save."
 msgstr ""
 
-#: includes/class-smva.php:964
+#: includes/class-smva.php:965
 msgid "Network error. Please try again."
 msgstr ""
 
-#: includes/class-smva.php:965
+#: includes/class-smva.php:966
 #: views/appointments-tab.php:165
 msgid "Save Working Hours"
 msgstr ""
 
-#: includes/class-smva.php:970
+#: includes/class-smva.php:971
 #: views/integrations-tab.php:68
 #: views/integrations-tab.php:156
 msgid "Connected"
 msgstr ""
 
-#: includes/class-smva.php:971
+#: includes/class-smva.php:972
 #: views/integrations-tab.php:85
 #: views/integrations-tab.php:215
 msgid "Connect"
 msgstr ""
 
-#: includes/class-smva.php:972
+#: includes/class-smva.php:973
 #: views/appointments-tab.php:204
 #: views/integrations-tab.php:77
 #: views/integrations-tab.php:194
 msgid "Disconnect"
 msgstr ""
 
-#: includes/class-smva.php:973
+#: includes/class-smva.php:974
 msgid "Disconnecting..."
 msgstr ""
 
-#: includes/class-smva.php:974
+#: includes/class-smva.php:975
 #: views/integrations-tab.php:86
 msgid "Verifying..."
 msgstr ""
 
-#: includes/class-smva.php:975
+#: includes/class-smva.php:976
 msgid "Disconnect HubSpot? Leads will no longer sync automatically."
 msgstr ""
 
-#: includes/class-smva.php:976
+#: includes/class-smva.php:977
 msgid "Disconnect this number? Calls to it will no longer be answered by your agent."
 msgstr ""
 
-#: includes/class-smva.php:977
+#: includes/class-smva.php:978
 msgid "Disconnect Google Calendar? Booking will keep working from your working hours alone."
 msgstr ""
 
-#: includes/class-smva.php:978
+#: includes/class-smva.php:979
 msgid "No departments yet. Add one to let the agent transfer callers."
 msgstr ""
 
-#: includes/class-smva.php:979
+#: includes/class-smva.php:980
 msgid "New department"
 msgstr ""
 
-#: includes/class-smva.php:980
+#: includes/class-smva.php:981
 #: views/admin-page.php:1036
 #: views/admin-page.php:1244
 msgid "Remove"
 msgstr ""
 
-#: includes/class-smva.php:981
+#: includes/class-smva.php:982
 msgid "Department"
 msgstr ""
 
-#: includes/class-smva.php:982
+#: includes/class-smva.php:983
 msgid "Sales"
 msgstr ""
 
-#: includes/class-smva.php:983
+#: includes/class-smva.php:984
 msgid "Phone number"
 msgstr ""
 
-#: includes/class-smva.php:984
+#: includes/class-smva.php:985
 msgid "When to transfer here"
 msgstr ""
 
-#: includes/class-smva.php:985
+#: includes/class-smva.php:986
 msgid "pricing, quotes, new orders"
 msgstr ""
 
-#: includes/class-smva.php:986
+#: includes/class-smva.php:987
 msgid "Hours (optional)"
 msgstr ""
 
-#: includes/class-smva.php:987
+#: includes/class-smva.php:988
 msgid "Mon-Fri 9-5"
 msgstr ""
 
-#: includes/class-smva.php:988
+#: includes/class-smva.php:989
 msgid "Saving…"
 msgstr ""
 
-#: includes/class-smva.php:2198
-#: includes/class-smva.php:2230
-#: includes/class-smva.php:2290
-#: includes/class-smva.php:2323
-#: includes/class-smva.php:2381
-#: includes/class-smva.php:2426
-#: includes/class-smva.php:2460
-#: includes/class-smva.php:2486
+#: includes/class-smva.php:992
+#: includes/class-smva.php:2402
+msgid "Please describe it in a little more detail."
+msgstr ""
+
+#: includes/class-smva.php:993
+#: includes/class-smva.php:2435
+msgid "Thank you — your message is on its way."
+msgstr ""
+
+#: includes/class-smva.php:994
+#: includes/class-smva.php:2432
+msgid "Could not send your message."
+msgstr ""
+
+#: includes/class-smva.php:2204
+#: includes/class-smva.php:2236
+#: includes/class-smva.php:2296
+#: includes/class-smva.php:2329
+#: includes/class-smva.php:2397
+#: includes/class-smva.php:2444
+#: includes/class-smva.php:2489
+#: includes/class-smva.php:2523
+#: includes/class-smva.php:2549
 msgid "Activate your license first."
 msgstr ""
 
-#: includes/class-smva.php:2208
+#: includes/class-smva.php:2214
 msgid "Could not load your working hours."
 msgstr ""
 
-#: includes/class-smva.php:2239
+#: includes/class-smva.php:2245
 msgid "Invalid working hours."
 msgstr ""
 
-#: includes/class-smva.php:2259
+#: includes/class-smva.php:2265
 msgid "Could not save your working hours."
 msgstr ""
 
-#: includes/class-smva.php:2300
+#: includes/class-smva.php:2306
 msgid "Could not load your email settings."
 msgstr ""
 
-#: includes/class-smva.php:2345
+#: includes/class-smva.php:2351
 msgid "Invalid documents."
 msgstr ""
 
-#: includes/class-smva.php:2361
+#: includes/class-smva.php:2367
 msgid "Could not save your email settings."
 msgstr ""
 
-#: includes/class-smva.php:2410
+#: includes/class-smva.php:2473
 msgid "Could not calculate availability."
 msgstr ""
 
-#: includes/class-smva.php:2436
+#: includes/class-smva.php:2499
 msgid "Could not read the calendar status."
 msgstr ""
 
-#: includes/class-smva.php:2474
+#: includes/class-smva.php:2537
 msgid "Calendar connection is not available yet."
 msgstr ""
 
-#: includes/class-smva.php:2496
+#: includes/class-smva.php:2559
 msgid "Could not disconnect the calendar."
 msgstr ""
 
@@ -440,13 +457,13 @@ msgstr ""
 
 #: views/admin-page.php:64
 #: views/admin-page.php:118
-#: views/admin-page.php:1397
+#: views/admin-page.php:1455
 msgid "Voice Summary"
 msgstr ""
 
 #: views/admin-page.php:68
 #: views/admin-page.php:119
-#: views/admin-page.php:1460
+#: views/admin-page.php:1518
 msgid "Leads"
 msgstr ""
 
@@ -625,6 +642,7 @@ msgid "Deactivate"
 msgstr ""
 
 #: views/admin-page.php:200
+#: views/admin-page.php:1404
 msgid "Plan"
 msgstr ""
 
@@ -874,8 +892,8 @@ msgid "Recent Sessions"
 msgstr ""
 
 #: views/admin-page.php:441
-#: views/admin-page.php:1407
-#: views/admin-page.php:1467
+#: views/admin-page.php:1465
+#: views/admin-page.php:1525
 msgid "Date"
 msgstr ""
 
@@ -884,7 +902,7 @@ msgid "Type"
 msgstr ""
 
 #: views/admin-page.php:441
-#: views/admin-page.php:1407
+#: views/admin-page.php:1465
 msgid "Duration"
 msgstr ""
 
@@ -1698,8 +1716,8 @@ msgid "All chat conversations from your AI widget."
 msgstr ""
 
 #: views/admin-page.php:1366
-#: views/admin-page.php:1428
-#: views/admin-page.php:1468
+#: views/admin-page.php:1486
+#: views/admin-page.php:1526
 #: views/appointments-tab.php:243
 msgid "Loading..."
 msgstr ""
@@ -1724,120 +1742,189 @@ msgstr ""
 msgid "Clear"
 msgstr ""
 
-#: views/admin-page.php:1398
-msgid "Review voice sessions, play recordings, and generate AI summaries of what was discussed."
+#: views/admin-page.php:1399
+msgid "Plugin version"
 msgstr ""
 
 #: views/admin-page.php:1400
-msgid "From"
+msgid "WordPress version"
 msgstr ""
 
 #: views/admin-page.php:1401
-msgid "To"
+msgid "PHP version"
 msgstr ""
 
 #: views/admin-page.php:1402
-msgid "Search"
+msgid "Site address"
 msgstr ""
 
-#: views/admin-page.php:1407
-msgid "Turns"
+#: views/admin-page.php:1403
+msgid "Site language"
 msgstr ""
 
-#: views/admin-page.php:1407
-msgid "Summary"
+#: views/admin-page.php:1409
+#: views/admin-page.php:1446
+msgid "Send Feedback"
 msgstr ""
 
-#: views/admin-page.php:1407
-msgid "Actions"
+#: views/admin-page.php:1411
+msgid "Found something broken, or thought of something missing? This goes straight to the people who build the plugin."
 msgstr ""
 
-#: views/admin-page.php:1408
-msgid "Click Search to load sessions."
+#: views/admin-page.php:1415
+msgid "What is this about?"
 msgstr ""
 
-#: views/admin-page.php:1416
-msgid "Session Transcript"
+#: views/admin-page.php:1417
+msgid "Something is not working"
 msgstr ""
 
-#: views/admin-page.php:1422
-msgid "AI Summary"
+#: views/admin-page.php:1418
+msgid "An idea or request"
+msgstr ""
+
+#: views/admin-page.php:1419
+msgid "A question"
 msgstr ""
 
 #: views/admin-page.php:1423
-msgid "Generate Summary"
+msgid "Your email, if you would like a reply"
 msgstr ""
 
-#: views/admin-page.php:1425
-msgid "No summary yet."
+#: views/admin-page.php:1429
+msgid "Your message"
 msgstr ""
 
-#: views/admin-page.php:1436
-msgid "Lead Notifications"
+#: views/admin-page.php:1430
+msgid "What happened, and what did you expect instead? For an idea, what would you like to be able to do?"
 msgstr ""
 
-#: views/admin-page.php:1437
-msgid "email me new leads"
+#: views/admin-page.php:1435
+msgid "Include technical details (recommended — most bugs cannot be traced without them)"
 msgstr ""
 
 #: views/admin-page.php:1441
+msgid "Exactly this, and nothing else. No customer data, no conversations, no recordings."
+msgstr ""
+
+#: views/admin-page.php:1447
+msgid "Sending..."
+msgstr ""
+
+#: views/admin-page.php:1456
+msgid "Review voice sessions, play recordings, and generate AI summaries of what was discussed."
+msgstr ""
+
+#: views/admin-page.php:1458
+msgid "From"
+msgstr ""
+
+#: views/admin-page.php:1459
+msgid "To"
+msgstr ""
+
+#: views/admin-page.php:1460
+msgid "Search"
+msgstr ""
+
+#: views/admin-page.php:1465
+msgid "Turns"
+msgstr ""
+
+#: views/admin-page.php:1465
+msgid "Summary"
+msgstr ""
+
+#: views/admin-page.php:1465
+msgid "Actions"
+msgstr ""
+
+#: views/admin-page.php:1466
+msgid "Click Search to load sessions."
+msgstr ""
+
+#: views/admin-page.php:1474
+msgid "Session Transcript"
+msgstr ""
+
+#: views/admin-page.php:1480
+msgid "AI Summary"
+msgstr ""
+
+#: views/admin-page.php:1481
+msgid "Generate Summary"
+msgstr ""
+
+#: views/admin-page.php:1483
+msgid "No summary yet."
+msgstr ""
+
+#: views/admin-page.php:1494
+msgid "Lead Notifications"
+msgstr ""
+
+#: views/admin-page.php:1495
+msgid "email me new leads"
+msgstr ""
+
+#: views/admin-page.php:1499
 msgid "Email Alerts"
 msgstr ""
 
-#: views/admin-page.php:1442
+#: views/admin-page.php:1500
 msgid "Email me when a new lead comes in"
 msgstr ""
 
-#: views/admin-page.php:1443
+#: views/admin-page.php:1501
 msgid "Sent the moment a visitor shares an email or phone number — no automation setup required."
 msgstr ""
 
-#: views/admin-page.php:1446
+#: views/admin-page.php:1504
 msgid "Send Notifications To"
 msgstr ""
 
-#: views/admin-page.php:1448
+#: views/admin-page.php:1506
 msgid "Leave blank to use your WordPress admin email."
 msgstr ""
 
-#: views/admin-page.php:1463
+#: views/admin-page.php:1521
 msgid "Export CSV"
 msgstr ""
 
-#: views/admin-page.php:1467
+#: views/admin-page.php:1525
 msgid "Name"
 msgstr ""
 
-#: views/admin-page.php:1467
+#: views/admin-page.php:1525
 msgid "Email"
 msgstr ""
 
-#: views/admin-page.php:1467
+#: views/admin-page.php:1525
 #: views/integrations-tab.php:137
 msgid "Phone"
 msgstr ""
 
-#: views/admin-page.php:1467
+#: views/admin-page.php:1525
 msgid "Source"
 msgstr ""
 
-#: views/admin-page.php:1467
+#: views/admin-page.php:1525
 msgid "Notes"
 msgstr ""
 
-#: views/admin-page.php:1483
+#: views/admin-page.php:1541
 msgid "Choose Your Plan"
 msgstr ""
 
-#: views/admin-page.php:1484
+#: views/admin-page.php:1542
 msgid "Upgrade to unlock full voice & chat capabilities"
 msgstr ""
 
-#: views/admin-page.php:1491
+#: views/admin-page.php:1549
 msgid "Loading plans..."
 msgstr ""
 
-#: views/admin-page.php:1495
+#: views/admin-page.php:1553
 msgid "Secure payment via Stripe · Cancel anytime · License key sent by email after payment"
 msgstr ""
 

@@ -752,6 +752,12 @@
 /* A standing note is a sentence or two, not a 210px column like the selects. */
 .smva-appt-grid .smva-field-wide{grid-column:1/-1}
 .smva-field-hint{font-size:11px;color:var(--smva-text-3)}
+.smva-fb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+/* The list of what gets attached is shown, not summarised: "technical details"
+   means nothing until you can see it is six harmless lines. */
+.smva-fb-diag-list{margin:8px 0 0 26px;padding:10px 12px;background:var(--smva-bg);border:1px solid var(--smva-border);border-radius:8px;font-size:12px;color:var(--smva-text-3);display:grid;gap:4px}
+.smva-fb-diag-list code{background:none;padding:0;font-size:12px;color:var(--smva-text)}
+.smva-fb-diag-list.smva-hidden{display:none}
 .smva-field-hint.smva-field-warn{color:#b45309}
 .smva-appt-grid input[type=text].smva-field-invalid{border-color:#dc2626}
 .smva-appt-save-row{display:flex;align-items:center;gap:12px;margin-top:20px;padding-top:18px;border-top:1px solid var(--smva-border);flex-wrap:wrap}

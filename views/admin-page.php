@@ -1392,6 +1392,64 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 </div>
 
 
+<?php
+// Feedback. Lives at the end of the Health tab because that is where someone
+// goes when something is wrong -- the moment they most want to tell us.
+$smva_fb_diag = array(
+    __( 'Plugin version', 'studiometa-voice-ai' ) => SMVA_VERSION,
+    __( 'WordPress version', 'studiometa-voice-ai' ) => get_bloginfo( 'version' ),
+    __( 'PHP version', 'studiometa-voice-ai' ) => PHP_VERSION,
+    __( 'Site address', 'studiometa-voice-ai' ) => get_site_url(),
+    __( 'Site language', 'studiometa-voice-ai' ) => get_locale(),
+    __( 'Plan', 'studiometa-voice-ai' ) => get_option( 'smva_plan', '' ) ?: '-',
+);
+?>
+<div class="smva-card" style="margin-top:16px">
+    <div class="smva-card-header">
+        <h2 class="smva-card-title">💬 <?php esc_html_e( 'Send Feedback', 'studiometa-voice-ai' ); ?></h2>
+    </div>
+    <p class="smva-desc"><?php esc_html_e( 'Found something broken, or thought of something missing? This goes straight to the people who build the plugin.', 'studiometa-voice-ai' ); ?></p>
+
+    <div class="smva-fb-grid">
+        <div class="smva-field">
+            <label for="smva-fb-type"><?php esc_html_e( 'What is this about?', 'studiometa-voice-ai' ); ?></label>
+            <select id="smva-fb-type" class="smva-select">
+                <option value="bug"><?php esc_html_e( 'Something is not working', 'studiometa-voice-ai' ); ?></option>
+                <option value="suggestion"><?php esc_html_e( 'An idea or request', 'studiometa-voice-ai' ); ?></option>
+                <option value="question"><?php esc_html_e( 'A question', 'studiometa-voice-ai' ); ?></option>
+            </select>
+        </div>
+        <div class="smva-field">
+            <label for="smva-fb-email"><?php esc_html_e( 'Your email, if you would like a reply', 'studiometa-voice-ai' ); ?></label>
+            <input type="email" id="smva-fb-email" class="smva-int-token-input" value="<?php echo esc_attr( get_option( 'admin_email', '' ) ); ?>">
+        </div>
+    </div>
+
+    <div class="smva-field smva-field-full" style="margin-top:14px">
+        <label for="smva-fb-message"><?php esc_html_e( 'Your message', 'studiometa-voice-ai' ); ?></label>
+        <textarea id="smva-fb-message" class="smva-textarea" rows="5" maxlength="5000" placeholder="<?php esc_attr_e( 'What happened, and what did you expect instead? For an idea, what would you like to be able to do?', 'studiometa-voice-ai' ); ?>"></textarea>
+    </div>
+
+    <label class="smva-transfer-toggle" style="margin-top:12px">
+        <input type="checkbox" id="smva-fb-diag" checked>
+        <span><?php esc_html_e( 'Include technical details (recommended — most bugs cannot be traced without them)', 'studiometa-voice-ai' ); ?></span>
+    </label>
+    <div class="smva-fb-diag-list" id="smva-fb-diag-list">
+        <?php foreach ( $smva_fb_diag as $smva_fb_k => $smva_fb_v ) : ?>
+            <div><span><?php echo esc_html( $smva_fb_k ); ?>:</span> <code><?php echo esc_html( $smva_fb_v ); ?></code></div>
+        <?php endforeach; ?>
+        <p class="smva-field-hint"><?php esc_html_e( 'Exactly this, and nothing else. No customer data, no conversations, no recordings.', 'studiometa-voice-ai' ); ?></p>
+    </div>
+
+    <div class="smva-card-footer">
+        <button type="button" class="smva-btn smva-btn-primary" id="smva-fb-send">
+            <span class="smva-fb-label"><?php esc_html_e( 'Send Feedback', 'studiometa-voice-ai' ); ?></span>
+            <span class="smva-fb-spinner smva-hidden"><?php esc_html_e( 'Sending...', 'studiometa-voice-ai' ); ?></span>
+        </button>
+        <span id="smva-fb-msg" class="smva-int-msg"></span>
+    </div>
+</div>
+
 <?php elseif ( $active_tab === 'voice_summary' ) : ?>
 <div class="smva-card">
     <div class="smva-card-header"><h2 class="smva-card-title"><?php esc_html_e( 'Voice Summary', 'studiometa-voice-ai' ); ?></h2></div>
