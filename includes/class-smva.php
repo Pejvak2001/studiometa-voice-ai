@@ -943,6 +943,26 @@ class SMVA_Plugin {
                 'timezoneLabel'            => __( 'Timezone: %s', 'studiometa-voice-ai' ),
                 /* translators: %d: number of days */
                 'showingLastDays'          => __( 'Showing last %d days by default', 'studiometa-voice-ai' ),
+
+                // Appointments -> the Address field, which means a different
+                // thing per meeting type and is relabelled by admin.js as the
+                // owner switches. PHP renders the resting label; every other
+                // state comes from here, so without these the field would drop
+                // back to English the moment it was touched.
+                'apptAddress'              => __( 'Address', 'studiometa-voice-ai' ),
+                'apptAddressPh'            => __( 'e.g. 12 High Street, Toronto', 'studiometa-voice-ai' ),
+                'apptAddressHint'          => __( 'Required. This is what the agent tells the visitor and what goes on the calendar event.', 'studiometa-voice-ai' ),
+                'apptJoinLink'             => __( 'Fallback joining link', 'studiometa-voice-ai' ),
+                'apptJoinLinkPh'           => __( 'e.g. https://zoom.us/j/your-room', 'studiometa-voice-ai' ),
+                'apptJoinLinkHint'         => __( 'Optional. With a calendar connected below, a Google Meet link is created per appointment and used instead of this.', 'studiometa-voice-ai' ),
+                'apptLocation'             => __( 'Location', 'studiometa-voice-ai' ),
+                'apptLocationPh'           => __( 'Not needed for phone appointments', 'studiometa-voice-ai' ),
+                'apptLocationHint'         => __( 'Nothing to fill in — the business calls the visitor on the number they leave.', 'studiometa-voice-ai' ),
+                'apptAddressRequired'      => __( 'Add the address visitors should come to, or change the meeting type.', 'studiometa-voice-ai' ),
+                'saved'                    => __( 'Saved.', 'studiometa-voice-ai' ),
+                'couldNotSave'             => __( 'Could not save.', 'studiometa-voice-ai' ),
+                'networkErrorRetry'        => __( 'Network error. Please try again.', 'studiometa-voice-ai' ),
+                'saveWorkingHours'         => __( 'Save Working Hours', 'studiometa-voice-ai' ),
             ),
         ) );
     }

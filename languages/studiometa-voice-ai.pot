@@ -2,71 +2,51 @@
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: StudioMeta Voice AI 1.7.3\n"
-"Report-Msgid-Bugs-To: https://studiometa.io/\n"
+"Project-Id-Version: StudioMeta Voice AI 1.7.7\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/studiometa-voice-ai\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-08-18T21:58:22+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: studiometa-voice-ai\n"
 
-#: includes/class-smva.php:2152
-#: includes/class-smva.php:2184
-#: includes/class-smva.php:2244
-#: includes/class-smva.php:2277
-#: includes/class-smva.php:2335
-#: includes/class-smva.php:2372
-#: includes/class-smva.php:2406
-#: includes/class-smva.php:2432
-msgid "Activate your license first."
+#. Plugin Name of the plugin
+#: studiometa-voice-ai.php
+#: views/admin-page.php:123
+msgid "StudioMeta Voice AI"
 msgstr ""
 
-#: includes/class-smva.php:2162
-msgid "Could not load your working hours."
+#. Plugin URI of the plugin
+#: studiometa-voice-ai.php
+msgid "https://studiometa.io/"
 msgstr ""
 
-#: includes/class-smva.php:2193
-msgid "Invalid working hours."
+#. Description of the plugin
+#: studiometa-voice-ai.php
+msgid "Voice & Chat AI Widget with live voice and chat. Includes free trial (30 voice minutes + 100 chat messages)."
 msgstr ""
 
-#: includes/class-smva.php:2213
-msgid "Could not save your working hours."
+#. Author of the plugin
+#: studiometa-voice-ai.php
+msgid "StudioMeta"
 msgstr ""
 
-#: includes/class-smva.php:2254
-msgid "Could not load your email settings."
+#. Author URI of the plugin
+#: studiometa-voice-ai.php
+msgid "https://studiometa.io"
 msgstr ""
 
-#: includes/class-smva.php:2299
-msgid "Invalid documents."
-msgstr ""
-
-#: includes/class-smva.php:2315
-msgid "Could not save your email settings."
-msgstr ""
-
-#: includes/class-smva.php:2356
-msgid "Could not calculate availability."
-msgstr ""
-
-#: includes/class-smva.php:2382
-msgid "Could not read the calendar status."
-msgstr ""
-
-#: includes/class-smva.php:2420
-msgid "Calendar connection is not available yet."
-msgstr ""
-
-#: includes/class-smva.php:2442
-msgid "Could not disconnect the calendar."
-msgstr ""
-
-#: includes/class-smva.php:270
 #. translators: %s: website name
+#: includes/class-smva.php:270
+#, php-format
 msgid "New lead from %s"
 msgstr ""
 
 #: includes/class-smva.php:273
-#. translators: %s: website name
 msgid "A visitor asked to be contacted through your Voice AI assistant."
 msgstr ""
 
@@ -107,19 +87,19 @@ msgid "View all leads:"
 msgstr ""
 
 #: includes/class-smva.php:926
-#: includes/class-smva.php:2157
-#: includes/class-smva.php:2204
-#: includes/class-smva.php:2249
-#: includes/class-smva.php:2310
-#: includes/class-smva.php:2351
-#: includes/class-smva.php:2377
-#: includes/class-smva.php:2411
-#: includes/class-smva.php:2437
+#: includes/class-smva.php:2177
+#: includes/class-smva.php:2224
+#: includes/class-smva.php:2269
+#: includes/class-smva.php:2330
+#: includes/class-smva.php:2371
+#: includes/class-smva.php:2397
+#: includes/class-smva.php:2431
+#: includes/class-smva.php:2457
 msgid "Connection error."
 msgstr ""
 
 #: includes/class-smva.php:927
-#: views/appointments-tab.php:159
+#: views/appointments-tab.php:166
 msgid "Saving..."
 msgstr ""
 
@@ -137,7 +117,7 @@ msgstr ""
 #: views/admin-page.php:432
 #: views/admin-page.php:1369
 #: views/admin-page.php:1396
-#: views/appointments-tab.php:232
+#: views/appointments-tab.php:239
 msgid "Refresh"
 msgstr ""
 
@@ -193,14 +173,1093 @@ msgstr ""
 msgid "Select →"
 msgstr ""
 
-#: includes/class-smva.php:943
 #. translators: %s: IANA timezone name, e.g. "America/Toronto"
+#: includes/class-smva.php:943
+#, php-format
 msgid "Timezone: %s"
 msgstr ""
 
-#: includes/class-smva.php:945
 #. translators: %d: number of days
+#: includes/class-smva.php:945
+#, php-format
 msgid "Showing last %d days by default"
+msgstr ""
+
+#: includes/class-smva.php:952
+#: views/appointments-tab.php:151
+msgid "Address"
+msgstr ""
+
+#: includes/class-smva.php:953
+#: views/appointments-tab.php:152
+msgid "e.g. 12 High Street, Toronto"
+msgstr ""
+
+#: includes/class-smva.php:954
+msgid "Required. This is what the agent tells the visitor and what goes on the calendar event."
+msgstr ""
+
+#: includes/class-smva.php:955
+msgid "Fallback joining link"
+msgstr ""
+
+#: includes/class-smva.php:956
+msgid "e.g. https://zoom.us/j/your-room"
+msgstr ""
+
+#: includes/class-smva.php:957
+msgid "Optional. With a calendar connected below, a Google Meet link is created per appointment and used instead of this."
+msgstr ""
+
+#: includes/class-smva.php:958
+msgid "Location"
+msgstr ""
+
+#: includes/class-smva.php:959
+msgid "Not needed for phone appointments"
+msgstr ""
+
+#: includes/class-smva.php:960
+msgid "Nothing to fill in — the business calls the visitor on the number they leave."
+msgstr ""
+
+#: includes/class-smva.php:961
+msgid "Add the address visitors should come to, or change the meeting type."
+msgstr ""
+
+#: includes/class-smva.php:962
+msgid "Saved."
+msgstr ""
+
+#: includes/class-smva.php:963
+msgid "Could not save."
+msgstr ""
+
+#: includes/class-smva.php:964
+msgid "Network error. Please try again."
+msgstr ""
+
+#: includes/class-smva.php:965
+#: views/appointments-tab.php:165
+msgid "Save Working Hours"
+msgstr ""
+
+#: includes/class-smva.php:2172
+#: includes/class-smva.php:2204
+#: includes/class-smva.php:2264
+#: includes/class-smva.php:2297
+#: includes/class-smva.php:2355
+#: includes/class-smva.php:2392
+#: includes/class-smva.php:2426
+#: includes/class-smva.php:2452
+msgid "Activate your license first."
+msgstr ""
+
+#: includes/class-smva.php:2182
+msgid "Could not load your working hours."
+msgstr ""
+
+#: includes/class-smva.php:2213
+msgid "Invalid working hours."
+msgstr ""
+
+#: includes/class-smva.php:2233
+msgid "Could not save your working hours."
+msgstr ""
+
+#: includes/class-smva.php:2274
+msgid "Could not load your email settings."
+msgstr ""
+
+#: includes/class-smva.php:2319
+msgid "Invalid documents."
+msgstr ""
+
+#: includes/class-smva.php:2335
+msgid "Could not save your email settings."
+msgstr ""
+
+#: includes/class-smva.php:2376
+msgid "Could not calculate availability."
+msgstr ""
+
+#: includes/class-smva.php:2402
+msgid "Could not read the calendar status."
+msgstr ""
+
+#: includes/class-smva.php:2440
+msgid "Calendar connection is not available yet."
+msgstr ""
+
+#: includes/class-smva.php:2462
+msgid "Could not disconnect the calendar."
+msgstr ""
+
+#: views/admin-page.php:16
+#: views/admin-page.php:1081
+msgid "Voice & Chat"
+msgstr ""
+
+#: views/admin-page.php:23
+msgid "Account"
+msgstr ""
+
+#: views/admin-page.php:26
+#: views/admin-page.php:174
+#: views/admin-page.php:339
+msgid "License"
+msgstr ""
+
+#: views/admin-page.php:30
+#: views/admin-page.php:159
+msgid "Dashboard"
+msgstr ""
+
+#: views/admin-page.php:34
+msgid "Configuration"
+msgstr ""
+
+#: views/admin-page.php:37
+msgid "General"
+msgstr ""
+
+#: views/admin-page.php:41
+msgid "My Agent"
+msgstr ""
+
+#: views/admin-page.php:45
+#: views/admin-page.php:349
+msgid "Widget"
+msgstr ""
+
+#: views/admin-page.php:49
+#: views/admin-page.php:115
+msgid "Automation"
+msgstr ""
+
+#: views/admin-page.php:53
+#: views/admin-page.php:116
+msgid "Appointments"
+msgstr ""
+
+#: views/admin-page.php:57
+msgid "History"
+msgstr ""
+
+#: views/admin-page.php:60
+#: views/admin-page.php:117
+#: views/admin-page.php:1366
+msgid "Chat History"
+msgstr ""
+
+#: views/admin-page.php:64
+#: views/admin-page.php:118
+#: views/admin-page.php:1404
+msgid "Voice Summary"
+msgstr ""
+
+#: views/admin-page.php:68
+#: views/admin-page.php:119
+#: views/admin-page.php:1467
+msgid "Leads"
+msgstr ""
+
+#: views/admin-page.php:72
+msgid "System"
+msgstr ""
+
+#: views/admin-page.php:75
+#: views/admin-page.php:1385
+msgid "Health Check"
+msgstr ""
+
+#: views/admin-page.php:79
+#: views/admin-page.php:121
+msgid "Integrations"
+msgstr ""
+
+#. translators: %s: plan name, e.g. "Pro"
+#: views/admin-page.php:92
+#, php-format
+msgid "%s Plan"
+msgstr ""
+
+#: views/admin-page.php:93
+#: views/admin-page.php:100
+#: views/admin-page.php:339
+msgid "Not activated"
+msgstr ""
+
+#: views/admin-page.php:110
+msgid "License Setup"
+msgstr ""
+
+#: views/admin-page.php:110
+msgid "Activate or manage your StudioMeta subscription."
+msgstr ""
+
+#: views/admin-page.php:111
+msgid "Command Center"
+msgstr ""
+
+#: views/admin-page.php:111
+msgid "Monitor usage, setup progress, system status, and recent activity."
+msgstr ""
+
+#: views/admin-page.php:112
+#: views/admin-page.php:498
+msgid "General Settings"
+msgstr ""
+
+#: views/admin-page.php:112
+msgid "Choose the agent language, voice profile, timezone, and greeting."
+msgstr ""
+
+#: views/admin-page.php:113
+msgid "Agent Personality"
+msgstr ""
+
+#: views/admin-page.php:113
+msgid "Tune how your AI agent responds and represents your business."
+msgstr ""
+
+#: views/admin-page.php:114
+msgid "Widget Experience"
+msgstr ""
+
+#: views/admin-page.php:114
+msgid "Customize the floating widget, display behavior, and performance options."
+msgstr ""
+
+#: views/admin-page.php:115
+msgid "Connect your agent to external tools, define what it can do, and add quick-action buttons to the widget."
+msgstr ""
+
+#: views/admin-page.php:116
+msgid "Set your working hours and let the agent book visitors in."
+msgstr ""
+
+#: views/admin-page.php:117
+msgid "Review recent conversations and visitor interactions."
+msgstr ""
+
+#: views/admin-page.php:118
+msgid "Review voice sessions and usage details."
+msgstr ""
+
+#: views/admin-page.php:119
+msgid "See captured visitor leads and contact requests."
+msgstr ""
+
+#: views/admin-page.php:120
+msgid "System Health"
+msgstr ""
+
+#: views/admin-page.php:120
+msgid "Check license, quota API, WebSocket configuration, and plugin logs."
+msgstr ""
+
+#: views/admin-page.php:121
+msgid "Connect your CRM and external tools."
+msgstr ""
+
+#: views/admin-page.php:123
+msgid "Manage your voice and chat AI widget."
+msgstr ""
+
+#: views/admin-page.php:134
+msgid "License active"
+msgstr ""
+
+#: views/admin-page.php:134
+msgid "License inactive"
+msgstr ""
+
+#: views/admin-page.php:135
+msgid "Voice on"
+msgstr ""
+
+#: views/admin-page.php:135
+msgid "Voice off"
+msgstr ""
+
+#: views/admin-page.php:136
+msgid "Chat on"
+msgstr ""
+
+#: views/admin-page.php:136
+msgid "Chat off"
+msgstr ""
+
+#: views/admin-page.php:151
+msgid "Free Trial Active"
+msgstr ""
+
+#: views/admin-page.php:152
+#: views/admin-page.php:186
+#: views/admin-page.php:368
+msgid "TRIAL"
+msgstr ""
+
+#. translators: %s: link to the Dashboard tab
+#: views/admin-page.php:158
+#, php-format
+msgid "Upgrade to a paid plan to unlock full voice & chat. Usage details are in the %s."
+msgstr ""
+
+#: views/admin-page.php:164
+#: views/admin-page.php:430
+msgid "Upgrade Plan"
+msgstr ""
+
+#: views/admin-page.php:178
+msgid "Your subscription has been cancelled or expired."
+msgstr ""
+
+#: views/admin-page.php:179
+msgid "Renew your plan"
+msgstr ""
+
+#: views/admin-page.php:179
+msgid "to restore access."
+msgstr ""
+
+#: views/admin-page.php:188
+#: views/admin-page.php:339
+#: views/admin-page.php:420
+msgid "Active"
+msgstr ""
+
+#: views/admin-page.php:193
+msgid "Manage Subscription"
+msgstr ""
+
+#: views/admin-page.php:194
+msgid "Deactivate"
+msgstr ""
+
+#: views/admin-page.php:200
+msgid "Plan"
+msgstr ""
+
+#: views/admin-page.php:209
+msgid "AI Engine"
+msgstr ""
+
+#: views/admin-page.php:213
+msgid "StudioMeta AI Engine"
+msgstr ""
+
+#: views/admin-page.php:216
+msgid "Active Site"
+msgstr ""
+
+#: views/admin-page.php:220
+msgid "Each license is single-site. Activating elsewhere will deactivate the widget here."
+msgstr ""
+
+#: views/admin-page.php:224
+msgid "Already purchased?"
+msgstr ""
+
+#: views/admin-page.php:224
+msgid "Paste the license key from your email below to upgrade instantly."
+msgstr ""
+
+#: views/admin-page.php:227
+msgid "Upgrade"
+msgstr ""
+
+#: views/admin-page.php:238
+msgid "Start your free trial."
+msgstr ""
+
+#: views/admin-page.php:239
+msgid "To activate the AI widget, StudioMeta will securely send your site URL, admin email, WordPress version, and plugin version to the StudioMeta licensing server."
+msgstr ""
+
+#. translators: %s: human-readable time since the last trial-activation attempt, e.g. "3 hours"
+#: views/admin-page.php:244
+#, php-format
+msgid " Last attempt: %s ago."
+msgstr ""
+
+#: views/admin-page.php:253
+msgid "Already have a license key? Enter it below."
+msgstr ""
+
+#: views/admin-page.php:261
+msgid "Want to compare plans?"
+msgstr ""
+
+#: views/admin-page.php:262
+msgid "View Pricing"
+msgstr ""
+
+#: views/admin-page.php:305
+msgid "No"
+msgstr ""
+
+#: views/admin-page.php:306
+msgid "One"
+msgstr ""
+
+#: views/admin-page.php:307
+msgid "Two"
+msgstr ""
+
+#: views/admin-page.php:308
+msgid "Three"
+msgstr ""
+
+#: views/admin-page.php:309
+msgid "Four"
+msgstr ""
+
+#: views/admin-page.php:314
+msgid "Finish setting up"
+msgstr ""
+
+#. translators: %s: number word, e.g. "Two"
+#: views/admin-page.php:318
+#, php-format
+msgid "%s of four steps done — run a system test to go live with confidence."
+msgstr ""
+
+#: views/admin-page.php:324
+msgid "Activate license"
+msgstr ""
+
+#: views/admin-page.php:324
+msgid "Connected to StudioMeta."
+msgstr ""
+
+#: views/admin-page.php:324
+msgid "Connect this site to StudioMeta."
+msgstr ""
+
+#: views/admin-page.php:325
+msgid "Choose a voice"
+msgstr ""
+
+#. translators: %s: chosen voice name, e.g. "Aoede"
+#: views/admin-page.php:328
+#, php-format
+msgid "%s, balanced tone."
+msgstr ""
+
+#: views/admin-page.php:330
+msgid "Pick gender, tone, and greeting."
+msgstr ""
+
+#: views/admin-page.php:333
+msgid "Customize widget"
+msgstr ""
+
+#: views/admin-page.php:333
+msgid "Set display mode and styling."
+msgstr ""
+
+#: views/admin-page.php:334
+msgid "Test the system"
+msgstr ""
+
+#: views/admin-page.php:334
+msgid "Check health, chat and voice."
+msgstr ""
+
+#: views/admin-page.php:339
+msgid "Ready to serve visitors."
+msgstr ""
+
+#: views/admin-page.php:339
+msgid "Activate to unlock chat and voice."
+msgstr ""
+
+#: views/admin-page.php:340
+#: views/admin-page.php:563
+#: views/admin-page.php:1087
+#: views/admin-page.php:1095
+msgid "Voice"
+msgstr ""
+
+#: views/admin-page.php:340
+#: views/admin-page.php:348
+msgid "Enabled"
+msgstr ""
+
+#: views/admin-page.php:340
+#: views/admin-page.php:348
+msgid "Disabled"
+msgstr ""
+
+#. translators: %s: chosen voice name, e.g. "Aoede"
+#: views/admin-page.php:343
+#, php-format
+msgid "Voice profile: %s"
+msgstr ""
+
+#: views/admin-page.php:345
+msgid "Default voice profile"
+msgstr ""
+
+#: views/admin-page.php:348
+#: views/admin-page.php:1088
+#: views/admin-page.php:1096
+msgid "Chat"
+msgstr ""
+
+#: views/admin-page.php:348
+msgid "Text assistant available"
+msgstr ""
+
+#: views/admin-page.php:348
+msgid "Text assistant is off"
+msgstr ""
+
+#: views/admin-page.php:349
+msgid "Shows on every page"
+msgstr ""
+
+#: views/admin-page.php:349
+msgid "Shown via [smva_widget] shortcode"
+msgstr ""
+
+#: views/admin-page.php:366
+msgid "Usage This Month"
+msgstr ""
+
+#: views/admin-page.php:371
+msgid "Expires"
+msgstr ""
+
+#: views/admin-page.php:371
+msgid "Renews"
+msgstr ""
+
+#: views/admin-page.php:379
+msgid "Voice minutes"
+msgstr ""
+
+#. translators: %d: minutes limit
+#: views/admin-page.php:382
+#, php-format
+msgid "of %d"
+msgstr ""
+
+#: views/admin-page.php:387
+#: views/admin-page.php:402
+msgid "used"
+msgstr ""
+
+#: views/admin-page.php:394
+msgid "Chat messages"
+msgstr ""
+
+#. translators: %s: message limit, e.g. "1,000"
+#: views/admin-page.php:397
+#, php-format
+msgid "of %s"
+msgstr ""
+
+#: views/admin-page.php:420
+msgid "Inactive"
+msgstr ""
+
+#: views/admin-page.php:423
+msgid "sessions"
+msgstr ""
+
+#: views/admin-page.php:424
+msgid "days remaining"
+msgstr ""
+
+#: views/admin-page.php:425
+msgid "license status"
+msgstr ""
+
+#: views/admin-page.php:433
+msgid "Refreshes every 5 min."
+msgstr ""
+
+#: views/admin-page.php:439
+#: views/admin-page.php:467
+msgid "Recent Sessions"
+msgstr ""
+
+#: views/admin-page.php:441
+#: views/admin-page.php:1414
+#: views/admin-page.php:1474
+msgid "Date"
+msgstr ""
+
+#: views/admin-page.php:441
+msgid "Type"
+msgstr ""
+
+#: views/admin-page.php:441
+#: views/admin-page.php:1414
+msgid "Duration"
+msgstr ""
+
+#. translators: %s: duration in minutes, e.g. "3.5"
+#: views/admin-page.php:455
+#, php-format
+msgid "%s min"
+msgstr ""
+
+#: views/admin-page.php:468
+msgid "Chat usage was detected, but recent chat sessions were not returned by the backend yet."
+msgstr ""
+
+#: views/admin-page.php:503
+msgid "Language"
+msgstr ""
+
+#: views/admin-page.php:503
+msgid "widget UI & agent default"
+msgstr ""
+
+#: views/admin-page.php:509
+msgid "Agent auto-detects and switches to the user's language mid-conversation."
+msgstr ""
+
+#: views/admin-page.php:513
+msgid "Business Name"
+msgstr ""
+
+#: views/admin-page.php:518
+msgid "Chat Greeting"
+msgstr ""
+
+#: views/admin-page.php:518
+msgid "shown when chat widget opens"
+msgstr ""
+
+#: views/admin-page.php:519
+msgid "Hello! How can I help you?"
+msgstr ""
+
+#: views/admin-page.php:523
+msgid "Primary Color"
+msgstr ""
+
+#: views/admin-page.php:533
+msgid "Widget Position"
+msgstr ""
+
+#: views/admin-page.php:535
+msgid "Bottom Right"
+msgstr ""
+
+#: views/admin-page.php:536
+msgid "Bottom Left"
+msgstr ""
+
+#: views/admin-page.php:541
+msgid "Widget Style"
+msgstr ""
+
+#: views/admin-page.php:543
+msgid "Floating Button (FAB)"
+msgstr ""
+
+#: views/admin-page.php:544
+msgid "Pill Button"
+msgstr ""
+
+#: views/admin-page.php:553
+msgid "Agent Identity"
+msgstr ""
+
+#: views/admin-page.php:558
+msgid "Agent Name"
+msgstr ""
+
+#: views/admin-page.php:559
+msgid "AI Assistant"
+msgstr ""
+
+#: views/admin-page.php:640
+msgid "Your plan changed."
+msgstr ""
+
+#. translators: 1: previous voice name, 2: new voice name
+#: views/admin-page.php:644
+#, php-format
+msgid "The %1$s voice is not available on your current engine, so the closest match (%2$s) was selected. Pick a different one below at any time."
+msgstr ""
+
+#: views/admin-page.php:653
+msgid "Female"
+msgstr ""
+
+#: views/admin-page.php:656
+msgid "Male"
+msgstr ""
+
+#: views/admin-page.php:666
+#: views/admin-page.php:715
+msgid "No description available for this voice yet."
+msgstr ""
+
+#. translators: %s: AI engine label, e.g. "StudioMeta AI Engine"
+#: views/admin-page.php:699
+#, php-format
+msgid "Filter by gender, then pick a voice. Preview uses the %s — same as the live widget."
+msgstr ""
+
+#: views/admin-page.php:713
+msgid "Voice profile"
+msgstr ""
+
+#. translators: %s: AI engine label, e.g. "StudioMeta AI Engine"
+#: views/admin-page.php:719
+#, php-format
+msgid "Preview uses the %s with the selected voice — same as the live widget."
+msgstr ""
+
+#: views/admin-page.php:724
+msgid "Voice Greeting"
+msgstr ""
+
+#: views/admin-page.php:724
+msgid "what the agent says when the voice call starts"
+msgstr ""
+
+#: views/admin-page.php:726
+msgid "Hello! How can I help you today?"
+msgstr ""
+
+#: views/admin-page.php:727
+msgid "Preview Greeting"
+msgstr ""
+
+#: views/admin-page.php:728
+msgid "Stop"
+msgstr ""
+
+#: views/admin-page.php:730
+msgid "Preview the selected greeting right under the chosen voice to make comparison easier."
+msgstr ""
+
+#: views/admin-page.php:736
+msgid "Timezone"
+msgstr ""
+
+#: views/admin-page.php:740
+msgid "UTC"
+msgstr ""
+
+#: views/admin-page.php:741
+msgid "Eastern — Toronto"
+msgstr ""
+
+#: views/admin-page.php:742
+msgid "Central — Chicago"
+msgstr ""
+
+#: views/admin-page.php:743
+msgid "Mountain — Denver"
+msgstr ""
+
+#: views/admin-page.php:744
+msgid "Pacific — Vancouver"
+msgstr ""
+
+#: views/admin-page.php:745
+msgid "GMT — London"
+msgstr ""
+
+#: views/admin-page.php:746
+msgid "CET — Paris"
+msgstr ""
+
+#: views/admin-page.php:747
+msgid "IRST — Tehran"
+msgstr ""
+
+#: views/admin-page.php:748
+msgid "GST — Dubai"
+msgstr ""
+
+#: views/admin-page.php:749
+msgid "JST — Tokyo"
+msgstr ""
+
+#: views/admin-page.php:750
+msgid "AEDT — Sydney"
+msgstr ""
+
+#: views/admin-page.php:759
+msgid "Response Style"
+msgstr ""
+
+#: views/admin-page.php:763
+msgid "Precise"
+msgstr ""
+
+#: views/admin-page.php:763
+msgid "Consistent & factual"
+msgstr ""
+
+#: views/admin-page.php:764
+msgid "Balanced"
+msgstr ""
+
+#: views/admin-page.php:764
+msgid "Default — works for most"
+msgstr ""
+
+#: views/admin-page.php:765
+msgid "Creative"
+msgstr ""
+
+#: views/admin-page.php:765
+msgid "Varied & expressive"
+msgstr ""
+
+#: views/admin-page.php:784
+msgid "Test System"
+msgstr ""
+
+#: views/admin-page.php:785
+msgid "Test Voice"
+msgstr ""
+
+#: views/admin-page.php:790
+msgid "Embed Shortcode"
+msgstr ""
+
+#: views/admin-page.php:792
+#: views/admin-page.php:1176
+msgid "Copied!"
+msgstr ""
+
+#: views/admin-page.php:793
+msgid "Click to copy — paste anywhere on your site"
+msgstr ""
+
+#: views/admin-page.php:816
+msgid "Train My Agent automatically"
+msgstr ""
+
+#: views/admin-page.php:817
+msgid "We'll read your website, build a knowledge base, write a system prompt, and suggest questions — all in one click."
+msgstr ""
+
+#: views/admin-page.php:820
+#: views/admin-page.php:832
+msgid "Train My Agent"
+msgstr ""
+
+#: views/admin-page.php:833
+msgid "We'll automatically read your website and set up your AI assistant in about 30 seconds."
+msgstr ""
+
+#: views/admin-page.php:836
+msgid "Website URL to train from:"
+msgstr ""
+
+#: views/admin-page.php:840
+msgid "What we'll do:"
+msgstr ""
+
+#: views/admin-page.php:842
+msgid "Read up to 10 pages from your website"
+msgstr ""
+
+#: views/admin-page.php:843
+msgid "Write a system prompt for your agent"
+msgstr ""
+
+#: views/admin-page.php:844
+msgid "Build a clean knowledge base"
+msgstr ""
+
+#: views/admin-page.php:845
+msgid "Suggest questions for your visitors"
+msgstr ""
+
+#: views/admin-page.php:849
+#: views/admin-page.php:891
+#: views/admin-page.php:913
+#: views/admin-page.php:1289
+#: views/admin-page.php:1340
+msgid "Cancel"
+msgstr ""
+
+#: views/admin-page.php:850
+msgid "Start Training"
+msgstr ""
+
+#: views/admin-page.php:857
+msgid "Training in progress..."
+msgstr ""
+
+#: views/admin-page.php:858
+msgid "Reading your website..."
+msgstr ""
+
+#: views/admin-page.php:862
+msgid "This may take 30-60 seconds..."
+msgstr ""
+
+#: views/admin-page.php:870
+msgid "Training complete!"
+msgstr ""
+
+#: views/admin-page.php:876
+#: views/admin-page.php:962
+msgid "System Prompt"
+msgstr ""
+
+#: views/admin-page.php:880
+#: views/admin-page.php:924
+msgid "Knowledge Base"
+msgstr ""
+
+#: views/admin-page.php:884
+#: views/admin-page.php:974
+msgid "Suggested Questions"
+msgstr ""
+
+#: views/admin-page.php:892
+msgid "Apply & Save"
+msgstr ""
+
+#: views/admin-page.php:902
+#: views/admin-page.php:939
+msgid "Select Pages to Train From"
+msgstr ""
+
+#: views/admin-page.php:903
+msgid "Only the content you tick is read into the knowledge base. Pages are selected by default; posts are not, so news and blog archives stay out unless you add them."
+msgstr ""
+
+#: views/admin-page.php:906
+msgid "Loading your content…"
+msgstr ""
+
+#: views/admin-page.php:914
+msgid "Build Knowledge Base"
+msgstr ""
+
+#: views/admin-page.php:925
+msgid "Step 1"
+msgstr ""
+
+#: views/admin-page.php:927
+msgid "Add your business information here. The more detail, the better your agent will perform. You can import it automatically from your website."
+msgstr ""
+
+#: views/admin-page.php:930
+msgid "Website URL to import from:"
+msgstr ""
+
+#: views/admin-page.php:933
+msgid "Crawl your website and build knowledge base automatically"
+msgstr ""
+
+#: views/admin-page.php:934
+msgid "Import from Website"
+msgstr ""
+
+#: views/admin-page.php:938
+msgid "Pick exactly which pages and posts feed the knowledge base"
+msgstr ""
+
+#: views/admin-page.php:941
+msgid "Choose specific content instead of crawling the whole site — useful if you publish news or blog posts the agent shouldn't quote."
+msgstr ""
+
+#: views/admin-page.php:945
+msgid "Upload a file to add to knowledge base:"
+msgstr ""
+
+#: views/admin-page.php:949
+msgid "Upload File"
+msgstr ""
+
+#: views/admin-page.php:950
+#: views/admin-page.php:990
+msgid "Processing..."
+msgstr ""
+
+#: views/admin-page.php:954
+msgid "Supported: PDF, DOCX, CSV, TXT — Max 10MB"
+msgstr ""
+
+#: views/admin-page.php:957
+msgid "## Business Name"
+msgstr ""
+
+#: views/admin-page.php:957
+msgid "Your Company"
+msgstr ""
+
+#: views/admin-page.php:957
+msgid "## Services"
+msgstr ""
+
+#: views/admin-page.php:957
+msgid "Service 1"
+msgstr ""
+
+#: views/admin-page.php:957
+msgid "Service 2"
+msgstr ""
+
+#: views/admin-page.php:957
+msgid "## Hours"
+msgstr ""
+
+#: views/admin-page.php:957
+msgid "Mon-Fri: 9am-5pm"
+msgstr ""
+
+#: views/admin-page.php:957
+msgid "## Contact"
+msgstr ""
+
+#: views/admin-page.php:963
+msgid "Step 2"
+msgstr ""
+
+#: views/admin-page.php:965
+msgid "Instructions for how your agent should behave and respond. Fill in the Knowledge Base first, then generate or write your system prompt."
+msgstr ""
+
+#: views/admin-page.php:967
+msgid "You are a helpful assistant for [Business Name]. You help customers with questions about our services, pricing, and booking appointments. Always be friendly and professional."
+msgstr ""
+
+#: views/admin-page.php:975
+msgid "Step 3"
+msgstr ""
+
+#: views/admin-page.php:977
+msgid "Quick question chips shown in the widget. One per line."
+msgstr ""
+
+#: views/admin-page.php:978
+msgid "What are your opening hours?"
+msgstr ""
+
+#: views/admin-page.php:978
+msgid "How can I book an appointment?"
+msgstr ""
+
+#: views/admin-page.php:978
+msgid "What services do you offer?"
+msgstr ""
+
+#: views/admin-page.php:996
+msgid "Optimize with AI"
+msgstr ""
+
+#: views/admin-page.php:997
+msgid "Save & Sync Agent"
 msgstr ""
 
 #: views/admin-page.php:1008
@@ -273,14 +1332,6 @@ msgstr ""
 msgid "Enabled Modes"
 msgstr ""
 
-#: views/admin-page.php:110
-msgid "License Setup"
-msgstr ""
-
-#: views/admin-page.php:110
-msgid "Activate or manage your StudioMeta subscription."
-msgstr ""
-
 #: views/admin-page.php:1104
 msgid "Performance"
 msgstr ""
@@ -297,14 +1348,6 @@ msgstr ""
 msgid "Keeps the widget shell light. Voice/audio still starts only after the visitor clicks voice."
 msgstr ""
 
-#: views/admin-page.php:111
-msgid "Command Center"
-msgstr ""
-
-#: views/admin-page.php:111
-msgid "Monitor usage, setup progress, system status, and recent activity."
-msgstr ""
-
 #: views/admin-page.php:1112
 msgid "Event Debug Log"
 msgstr ""
@@ -315,15 +1358,6 @@ msgstr ""
 
 #: views/admin-page.php:1114
 msgid "Stores last 50 non-sensitive plugin events for troubleshooting."
-msgstr ""
-
-#: views/admin-page.php:112
-#: views/admin-page.php:498
-msgid "General Settings"
-msgstr ""
-
-#: views/admin-page.php:112
-msgid "Choose the agent language, voice profile, timezone, and greeting."
 msgstr ""
 
 #: views/admin-page.php:1121
@@ -342,28 +1376,12 @@ msgstr ""
 msgid "minutes · 0 = off"
 msgstr ""
 
-#: views/admin-page.php:113
-msgid "Agent Personality"
-msgstr ""
-
-#: views/admin-page.php:113
-msgid "Tune how your AI agent responds and represents your business."
-msgstr ""
-
 #: views/admin-page.php:1135
 msgid "Auto-disconnect after this many minutes."
 msgstr ""
 
 #: views/admin-page.php:1139
 msgid "Silence Timeout"
-msgstr ""
-
-#: views/admin-page.php:114
-msgid "Widget Experience"
-msgstr ""
-
-#: views/admin-page.php:114
-msgid "Customize the floating widget, display behavior, and performance options."
 msgstr ""
 
 #: views/admin-page.php:1140
@@ -375,24 +1393,12 @@ msgstr ""
 msgid "Auto-disconnect after this many seconds of silence."
 msgstr ""
 
-#: views/admin-page.php:115
-msgid "Connect your agent to external tools, define what it can do, and add quick-action buttons to the widget."
-msgstr ""
-
 #: views/admin-page.php:1151
 msgid "Call Cooldown"
 msgstr ""
 
 #: views/admin-page.php:1159
 msgid "Minimum wait between calls to prevent abuse."
-msgstr ""
-
-#: views/admin-page.php:116
-msgid "Set your working hours and let the agent book visitors in."
-msgstr ""
-
-#: views/admin-page.php:117
-msgid "Review recent conversations and visitor interactions."
 msgstr ""
 
 #: views/admin-page.php:1173
@@ -405,22 +1411,6 @@ msgstr ""
 
 #: views/admin-page.php:1177
 msgid "Click to copy"
-msgstr ""
-
-#: views/admin-page.php:118
-msgid "Review voice sessions and usage details."
-msgstr ""
-
-#: views/admin-page.php:119
-msgid "See captured visitor leads and contact requests."
-msgstr ""
-
-#: views/admin-page.php:120
-msgid "System Health"
-msgstr ""
-
-#: views/admin-page.php:120
-msgid "Check license, quota API, WebSocket configuration, and plugin logs."
 msgstr ""
 
 #: views/admin-page.php:1201
@@ -445,10 +1435,6 @@ msgstr ""
 
 #: views/admin-page.php:1205
 msgid "Request Callback | Please help me request a callback."
-msgstr ""
-
-#: views/admin-page.php:121
-msgid "Connect your CRM and external tools."
 msgstr ""
 
 #: views/admin-page.php:1220
@@ -477,14 +1463,6 @@ msgstr ""
 
 #: views/admin-page.php:1229
 msgid "Return:"
-msgstr ""
-
-#: views/admin-page.php:123
-msgid "StudioMeta Voice AI"
-msgstr ""
-
-#: views/admin-page.php:123
-msgid "Manage your voice and chat AI widget."
 msgstr ""
 
 #: views/admin-page.php:1238
@@ -623,14 +1601,6 @@ msgstr ""
 msgid "Save Document"
 msgstr ""
 
-#: views/admin-page.php:134
-msgid "License active"
-msgstr ""
-
-#: views/admin-page.php:134
-msgid "License inactive"
-msgstr ""
-
 #: views/admin-page.php:1349
 msgid "Recognise returning callers"
 msgstr ""
@@ -639,28 +1609,12 @@ msgstr ""
 msgid "phone calls only"
 msgstr ""
 
-#: views/admin-page.php:135
-msgid "Voice on"
-msgstr ""
-
-#: views/admin-page.php:135
-msgid "Voice off"
-msgstr ""
-
 #: views/admin-page.php:1350
 msgid "Matches the number they are calling from against past enquiries, so the agent has context. It will never greet someone by name before they say who they are — the person holding a phone today may not be who called last time. Leave this off if your callers share a line."
 msgstr ""
 
 #: views/admin-page.php:1357
 msgid "Save"
-msgstr ""
-
-#: views/admin-page.php:136
-msgid "Chat on"
-msgstr ""
-
-#: views/admin-page.php:136
-msgid "Chat off"
 msgstr ""
 
 #: views/admin-page.php:1368
@@ -674,7 +1628,7 @@ msgstr ""
 #: views/admin-page.php:1373
 #: views/admin-page.php:1435
 #: views/admin-page.php:1475
-#: views/appointments-tab.php:236
+#: views/appointments-tab.php:243
 msgid "Loading..."
 msgstr ""
 
@@ -814,862 +1768,92 @@ msgstr ""
 msgid "Secure payment via Stripe · Cancel anytime · License key sent by email after payment"
 msgstr ""
 
-#: views/admin-page.php:151
-msgid "Free Trial Active"
+#: views/appointments-tab.php:16
+msgid "Monday"
 msgstr ""
 
-#: views/admin-page.php:152
-#: views/admin-page.php:186
-#: views/admin-page.php:368
-msgid "TRIAL"
+#: views/appointments-tab.php:17
+msgid "Tuesday"
 msgstr ""
 
-#: views/admin-page.php:158
-#. translators: %s: link to the Dashboard tab
-msgid "Upgrade to a paid plan to unlock full voice & chat. Usage details are in the %s."
+#: views/appointments-tab.php:18
+msgid "Wednesday"
 msgstr ""
 
-#: views/admin-page.php:16
-#: views/admin-page.php:1081
-msgid "Voice & Chat"
+#: views/appointments-tab.php:19
+msgid "Thursday"
 msgstr ""
 
-#: views/admin-page.php:164
-#: views/admin-page.php:430
-msgid "Upgrade Plan"
+#: views/appointments-tab.php:20
+msgid "Friday"
 msgstr ""
 
-#: views/admin-page.php:178
-msgid "Your subscription has been cancelled or expired."
+#: views/appointments-tab.php:21
+msgid "Saturday"
 msgstr ""
 
-#: views/admin-page.php:179
-msgid "Renew your plan"
+#: views/appointments-tab.php:22
+msgid "Sunday"
 msgstr ""
 
-#: views/admin-page.php:179
-msgid "to restore access."
+#: views/appointments-tab.php:31
+msgid "Appointment Booking"
 msgstr ""
 
-#: views/admin-page.php:188
-#: views/admin-page.php:339
-#: views/admin-page.php:420
-msgid "Active"
+#: views/appointments-tab.php:33
+msgid "Let the agent book real appointments during a conversation, using the hours you set below. Works with or without a connected calendar."
 msgstr ""
 
-#: views/admin-page.php:193
-msgid "Manage Subscription"
+#: views/appointments-tab.php:43
+msgid "Enable appointment booking"
 msgstr ""
 
-#: views/admin-page.php:194
-msgid "Deactivate"
+#: views/appointments-tab.php:44
+msgid "When off, the agent will not offer or accept appointments."
 msgstr ""
 
-#: views/admin-page.php:200
-msgid "Plan"
+#: views/appointments-tab.php:51
+msgid "Working Hours"
 msgstr ""
 
-#: views/admin-page.php:209
-msgid "AI Engine"
+#. translators: %s: IANA timezone name, e.g. Europe/Paris
+#: views/appointments-tab.php:56
+#, php-format
+msgid "All times are in %s. Change it under General Settings."
 msgstr ""
 
-#: views/admin-page.php:213
-msgid "StudioMeta AI Engine"
+#: views/appointments-tab.php:75
+msgid "Closed"
 msgstr ""
 
-#: views/admin-page.php:216
-msgid "Active Site"
+#: views/appointments-tab.php:82
+msgid "Copy Monday to all days"
 msgstr ""
 
-#: views/admin-page.php:220
-msgid "Each license is single-site. Activating elsewhere will deactivate the widget here."
+#: views/appointments-tab.php:89
+msgid "Appointment Rules"
 msgstr ""
 
-#: views/admin-page.php:224
-msgid "Already purchased?"
+#: views/appointments-tab.php:94
+msgid "Appointment length"
 msgstr ""
 
-#: views/admin-page.php:224
-msgid "Paste the license key from your email below to upgrade instantly."
+#: views/appointments-tab.php:96
+#: views/appointments-tab.php:112
+msgid "15 minutes"
 msgstr ""
 
-#: views/admin-page.php:227
-msgid "Upgrade"
+#: views/appointments-tab.php:97
+msgid "20 minutes"
 msgstr ""
 
-#: views/admin-page.php:23
-msgid "Account"
+#: views/appointments-tab.php:98
+#: views/appointments-tab.php:113
+msgid "30 minutes"
 msgstr ""
 
-#: views/admin-page.php:238
-msgid "Start your free trial."
-msgstr ""
-
-#: views/admin-page.php:239
-msgid "To activate the AI widget, StudioMeta will securely send your site URL, admin email, WordPress version, and plugin version to the StudioMeta licensing server."
-msgstr ""
-
-#: views/admin-page.php:244
-#. translators: %s: human-readable time since the last trial-activation attempt, e.g. "3 hours"
-msgid " Last attempt: %s ago."
-msgstr ""
-
-#: views/admin-page.php:253
-msgid "Already have a license key? Enter it below."
-msgstr ""
-
-#: views/admin-page.php:26
-#: views/admin-page.php:174
-#: views/admin-page.php:339
-msgid "License"
-msgstr ""
-
-#: views/admin-page.php:261
-msgid "Want to compare plans?"
-msgstr ""
-
-#: views/admin-page.php:262
-msgid "View Pricing"
-msgstr ""
-
-#: views/admin-page.php:30
-#: views/admin-page.php:159
-#. translators: %s: link to the Dashboard tab
-msgid "Dashboard"
-msgstr ""
-
-#: views/admin-page.php:305
-msgid "No"
-msgstr ""
-
-#: views/admin-page.php:306
-msgid "One"
-msgstr ""
-
-#: views/admin-page.php:307
-msgid "Two"
-msgstr ""
-
-#: views/admin-page.php:308
-msgid "Three"
-msgstr ""
-
-#: views/admin-page.php:309
-msgid "Four"
-msgstr ""
-
-#: views/admin-page.php:314
-msgid "Finish setting up"
-msgstr ""
-
-#: views/admin-page.php:318
-#. translators: %s: number word, e.g. "Two"
-msgid "%s of four steps done — run a system test to go live with confidence."
-msgstr ""
-
-#: views/admin-page.php:324
-msgid "Activate license"
-msgstr ""
-
-#: views/admin-page.php:324
-msgid "Connected to StudioMeta."
-msgstr ""
-
-#: views/admin-page.php:324
-msgid "Connect this site to StudioMeta."
-msgstr ""
-
-#: views/admin-page.php:325
-msgid "Choose a voice"
-msgstr ""
-
-#: views/admin-page.php:328
-#. translators: %s: chosen voice name, e.g. "Aoede"
-msgid "%s, balanced tone."
-msgstr ""
-
-#: views/admin-page.php:330
-#. translators: %s: chosen voice name, e.g. "Aoede"
-msgid "Pick gender, tone, and greeting."
-msgstr ""
-
-#: views/admin-page.php:333
-msgid "Customize widget"
-msgstr ""
-
-#: views/admin-page.php:333
-msgid "Set display mode and styling."
-msgstr ""
-
-#: views/admin-page.php:334
-msgid "Test the system"
-msgstr ""
-
-#: views/admin-page.php:334
-msgid "Check health, chat and voice."
-msgstr ""
-
-#: views/admin-page.php:339
-msgid "Ready to serve visitors."
-msgstr ""
-
-#: views/admin-page.php:339
-msgid "Activate to unlock chat and voice."
-msgstr ""
-
-#: views/admin-page.php:34
-msgid "Configuration"
-msgstr ""
-
-#: views/admin-page.php:340
-#: views/admin-page.php:563
-#: views/admin-page.php:1087
-#: views/admin-page.php:1095
-msgid "Voice"
-msgstr ""
-
-#: views/admin-page.php:340
-#: views/admin-page.php:348
-msgid "Enabled"
-msgstr ""
-
-#: views/admin-page.php:340
-#: views/admin-page.php:348
-msgid "Disabled"
-msgstr ""
-
-#: views/admin-page.php:343
-#. translators: %s: chosen voice name, e.g. "Aoede"
-msgid "Voice profile: %s"
-msgstr ""
-
-#: views/admin-page.php:345
-#. translators: %s: chosen voice name, e.g. "Aoede"
-msgid "Default voice profile"
-msgstr ""
-
-#: views/admin-page.php:348
-#: views/admin-page.php:1088
-#: views/admin-page.php:1096
-msgid "Chat"
-msgstr ""
-
-#: views/admin-page.php:348
-msgid "Text assistant available"
-msgstr ""
-
-#: views/admin-page.php:348
-msgid "Text assistant is off"
-msgstr ""
-
-#: views/admin-page.php:349
-msgid "Shows on every page"
-msgstr ""
-
-#: views/admin-page.php:349
-msgid "Shown via [smva_widget] shortcode"
-msgstr ""
-
-#: views/admin-page.php:366
-msgid "Usage This Month"
-msgstr ""
-
-#: views/admin-page.php:37
-msgid "General"
-msgstr ""
-
-#: views/admin-page.php:371
-msgid "Expires"
-msgstr ""
-
-#: views/admin-page.php:371
-msgid "Renews"
-msgstr ""
-
-#: views/admin-page.php:379
-msgid "Voice minutes"
-msgstr ""
-
-#: views/admin-page.php:382
-#. translators: %d: minutes limit
-msgid "of %d"
-msgstr ""
-
-#: views/admin-page.php:387
-#: views/admin-page.php:402
-msgid "used"
-msgstr ""
-
-#: views/admin-page.php:394
-msgid "Chat messages"
-msgstr ""
-
-#: views/admin-page.php:397
-#. translators: %s: message limit, e.g. "1,000"
-msgid "of %s"
-msgstr ""
-
-#: views/admin-page.php:41
-msgid "My Agent"
-msgstr ""
-
-#: views/admin-page.php:420
-msgid "Inactive"
-msgstr ""
-
-#: views/admin-page.php:423
-msgid "sessions"
-msgstr ""
-
-#: views/admin-page.php:424
-msgid "days remaining"
-msgstr ""
-
-#: views/admin-page.php:425
-msgid "license status"
-msgstr ""
-
-#: views/admin-page.php:433
-msgid "Refreshes every 5 min."
-msgstr ""
-
-#: views/admin-page.php:439
-#: views/admin-page.php:467
-msgid "Recent Sessions"
-msgstr ""
-
-#: views/admin-page.php:441
-#: views/admin-page.php:1414
-#: views/admin-page.php:1474
-msgid "Date"
-msgstr ""
-
-#: views/admin-page.php:441
-msgid "Type"
-msgstr ""
-
-#: views/admin-page.php:441
-#: views/admin-page.php:1414
-msgid "Duration"
-msgstr ""
-
-#: views/admin-page.php:45
-#: views/admin-page.php:349
-msgid "Widget"
-msgstr ""
-
-#: views/admin-page.php:455
-#. translators: %s: duration in minutes, e.g. "3.5"
-msgid "%s min"
-msgstr ""
-
-#: views/admin-page.php:468
-msgid "Chat usage was detected, but recent chat sessions were not returned by the backend yet."
-msgstr ""
-
-#: views/admin-page.php:49
-#: views/admin-page.php:115
-msgid "Automation"
-msgstr ""
-
-#: views/admin-page.php:503
-msgid "Language"
-msgstr ""
-
-#: views/admin-page.php:503
-msgid "widget UI & agent default"
-msgstr ""
-
-#: views/admin-page.php:509
-msgid "Agent auto-detects and switches to the user's language mid-conversation."
-msgstr ""
-
-#: views/admin-page.php:513
-msgid "Business Name"
-msgstr ""
-
-#: views/admin-page.php:518
-msgid "Chat Greeting"
-msgstr ""
-
-#: views/admin-page.php:518
-msgid "shown when chat widget opens"
-msgstr ""
-
-#: views/admin-page.php:519
-msgid "Hello! How can I help you?"
-msgstr ""
-
-#: views/admin-page.php:523
-msgid "Primary Color"
-msgstr ""
-
-#: views/admin-page.php:53
-#: views/admin-page.php:116
-msgid "Appointments"
-msgstr ""
-
-#: views/admin-page.php:533
-msgid "Widget Position"
-msgstr ""
-
-#: views/admin-page.php:535
-msgid "Bottom Right"
-msgstr ""
-
-#: views/admin-page.php:536
-msgid "Bottom Left"
-msgstr ""
-
-#: views/admin-page.php:541
-msgid "Widget Style"
-msgstr ""
-
-#: views/admin-page.php:543
-msgid "Floating Button (FAB)"
-msgstr ""
-
-#: views/admin-page.php:544
-msgid "Pill Button"
-msgstr ""
-
-#: views/admin-page.php:553
-msgid "Agent Identity"
-msgstr ""
-
-#: views/admin-page.php:558
-msgid "Agent Name"
-msgstr ""
-
-#: views/admin-page.php:559
-msgid "AI Assistant"
-msgstr ""
-
-#: views/admin-page.php:57
-msgid "History"
-msgstr ""
-
-#: views/admin-page.php:60
-#: views/admin-page.php:117
-#: views/admin-page.php:1366
-msgid "Chat History"
-msgstr ""
-
-#: views/admin-page.php:64
-#: views/admin-page.php:118
-#: views/admin-page.php:1404
-msgid "Voice Summary"
-msgstr ""
-
-#: views/admin-page.php:640
-msgid "Your plan changed."
-msgstr ""
-
-#: views/admin-page.php:644
-#. translators: 1: previous voice name, 2: new voice name
-msgid "The %1$s voice is not available on your current engine, so the closest match (%2$s) was selected. Pick a different one below at any time."
-msgstr ""
-
-#: views/admin-page.php:653
-msgid "Female"
-msgstr ""
-
-#: views/admin-page.php:656
-msgid "Male"
-msgstr ""
-
-#: views/admin-page.php:666
-#: views/admin-page.php:715
-msgid "No description available for this voice yet."
-msgstr ""
-
-#: views/admin-page.php:68
-#: views/admin-page.php:119
-#: views/admin-page.php:1467
-msgid "Leads"
-msgstr ""
-
-#: views/admin-page.php:699
-#. translators: %s: AI engine label, e.g. "StudioMeta AI Engine"
-msgid "Filter by gender, then pick a voice. Preview uses the %s — same as the live widget."
-msgstr ""
-
-#: views/admin-page.php:713
-msgid "Voice profile"
-msgstr ""
-
-#: views/admin-page.php:719
-#. translators: %s: AI engine label, e.g. "StudioMeta AI Engine"
-msgid "Preview uses the %s with the selected voice — same as the live widget."
-msgstr ""
-
-#: views/admin-page.php:72
-msgid "System"
-msgstr ""
-
-#: views/admin-page.php:724
-msgid "Voice Greeting"
-msgstr ""
-
-#: views/admin-page.php:724
-msgid "what the agent says when the voice call starts"
-msgstr ""
-
-#: views/admin-page.php:726
-msgid "Hello! How can I help you today?"
-msgstr ""
-
-#: views/admin-page.php:727
-msgid "Preview Greeting"
-msgstr ""
-
-#: views/admin-page.php:728
-msgid "Stop"
-msgstr ""
-
-#: views/admin-page.php:730
-msgid "Preview the selected greeting right under the chosen voice to make comparison easier."
-msgstr ""
-
-#: views/admin-page.php:736
-msgid "Timezone"
-msgstr ""
-
-#: views/admin-page.php:740
-msgid "UTC"
-msgstr ""
-
-#: views/admin-page.php:741
-msgid "Eastern — Toronto"
-msgstr ""
-
-#: views/admin-page.php:742
-msgid "Central — Chicago"
-msgstr ""
-
-#: views/admin-page.php:743
-msgid "Mountain — Denver"
-msgstr ""
-
-#: views/admin-page.php:744
-msgid "Pacific — Vancouver"
-msgstr ""
-
-#: views/admin-page.php:745
-msgid "GMT — London"
-msgstr ""
-
-#: views/admin-page.php:746
-msgid "CET — Paris"
-msgstr ""
-
-#: views/admin-page.php:747
-msgid "IRST — Tehran"
-msgstr ""
-
-#: views/admin-page.php:748
-msgid "GST — Dubai"
-msgstr ""
-
-#: views/admin-page.php:749
-msgid "JST — Tokyo"
-msgstr ""
-
-#: views/admin-page.php:75
-#: views/admin-page.php:1385
-msgid "Health Check"
-msgstr ""
-
-#: views/admin-page.php:750
-msgid "AEDT — Sydney"
-msgstr ""
-
-#: views/admin-page.php:759
-msgid "Response Style"
-msgstr ""
-
-#: views/admin-page.php:763
-msgid "Precise"
-msgstr ""
-
-#: views/admin-page.php:763
-msgid "Consistent & factual"
-msgstr ""
-
-#: views/admin-page.php:764
-msgid "Balanced"
-msgstr ""
-
-#: views/admin-page.php:764
-msgid "Default — works for most"
-msgstr ""
-
-#: views/admin-page.php:765
-msgid "Creative"
-msgstr ""
-
-#: views/admin-page.php:765
-msgid "Varied & expressive"
-msgstr ""
-
-#: views/admin-page.php:784
-msgid "Test System"
-msgstr ""
-
-#: views/admin-page.php:785
-msgid "Test Voice"
-msgstr ""
-
-#: views/admin-page.php:79
-#: views/admin-page.php:121
-msgid "Integrations"
-msgstr ""
-
-#: views/admin-page.php:790
-msgid "Embed Shortcode"
-msgstr ""
-
-#: views/admin-page.php:792
-#: views/admin-page.php:1176
-msgid "Copied!"
-msgstr ""
-
-#: views/admin-page.php:793
-msgid "Click to copy — paste anywhere on your site"
-msgstr ""
-
-#: views/admin-page.php:816
-msgid "Train My Agent automatically"
-msgstr ""
-
-#: views/admin-page.php:817
-msgid "We'll read your website, build a knowledge base, write a system prompt, and suggest questions — all in one click."
-msgstr ""
-
-#: views/admin-page.php:820
-#: views/admin-page.php:832
-msgid "Train My Agent"
-msgstr ""
-
-#: views/admin-page.php:833
-msgid "We'll automatically read your website and set up your AI assistant in about 30 seconds."
-msgstr ""
-
-#: views/admin-page.php:836
-msgid "Website URL to train from:"
-msgstr ""
-
-#: views/admin-page.php:840
-msgid "What we'll do:"
-msgstr ""
-
-#: views/admin-page.php:842
-msgid "Read up to 10 pages from your website"
-msgstr ""
-
-#: views/admin-page.php:843
-msgid "Write a system prompt for your agent"
-msgstr ""
-
-#: views/admin-page.php:844
-msgid "Build a clean knowledge base"
-msgstr ""
-
-#: views/admin-page.php:845
-msgid "Suggest questions for your visitors"
-msgstr ""
-
-#: views/admin-page.php:849
-#: views/admin-page.php:891
-#: views/admin-page.php:913
-#: views/admin-page.php:1289
-#: views/admin-page.php:1340
-msgid "Cancel"
-msgstr ""
-
-#: views/admin-page.php:850
-msgid "Start Training"
-msgstr ""
-
-#: views/admin-page.php:857
-msgid "Training in progress..."
-msgstr ""
-
-#: views/admin-page.php:858
-msgid "Reading your website..."
-msgstr ""
-
-#: views/admin-page.php:862
-msgid "This may take 30-60 seconds..."
-msgstr ""
-
-#: views/admin-page.php:870
-msgid "Training complete!"
-msgstr ""
-
-#: views/admin-page.php:876
-#: views/admin-page.php:962
-msgid "System Prompt"
-msgstr ""
-
-#: views/admin-page.php:880
-#: views/admin-page.php:924
-msgid "Knowledge Base"
-msgstr ""
-
-#: views/admin-page.php:884
-#: views/admin-page.php:974
-msgid "Suggested Questions"
-msgstr ""
-
-#: views/admin-page.php:892
-msgid "Apply & Save"
-msgstr ""
-
-#: views/admin-page.php:902
-#: views/admin-page.php:939
-msgid "Select Pages to Train From"
-msgstr ""
-
-#: views/admin-page.php:903
-msgid "Only the content you tick is read into the knowledge base. Pages are selected by default; posts are not, so news and blog archives stay out unless you add them."
-msgstr ""
-
-#: views/admin-page.php:906
-msgid "Loading your content…"
-msgstr ""
-
-#: views/admin-page.php:914
-msgid "Build Knowledge Base"
-msgstr ""
-
-#: views/admin-page.php:92
-#. translators: %s: plan name, e.g. "Pro"
-msgid "%s Plan"
-msgstr ""
-
-#: views/admin-page.php:925
-msgid "Step 1"
-msgstr ""
-
-#: views/admin-page.php:927
-msgid "Add your business information here. The more detail, the better your agent will perform. You can import it automatically from your website."
-msgstr ""
-
-#: views/admin-page.php:93
-#: views/admin-page.php:100
-#: views/admin-page.php:339
-#. translators: %s: plan name, e.g. "Pro"
-msgid "Not activated"
-msgstr ""
-
-#: views/admin-page.php:930
-msgid "Website URL to import from:"
-msgstr ""
-
-#: views/admin-page.php:933
-msgid "Crawl your website and build knowledge base automatically"
-msgstr ""
-
-#: views/admin-page.php:934
-msgid "Import from Website"
-msgstr ""
-
-#: views/admin-page.php:938
-msgid "Pick exactly which pages and posts feed the knowledge base"
-msgstr ""
-
-#: views/admin-page.php:941
-msgid "Choose specific content instead of crawling the whole site — useful if you publish news or blog posts the agent shouldn't quote."
-msgstr ""
-
-#: views/admin-page.php:945
-msgid "Upload a file to add to knowledge base:"
-msgstr ""
-
-#: views/admin-page.php:949
-msgid "Upload File"
-msgstr ""
-
-#: views/admin-page.php:950
-#: views/admin-page.php:990
-msgid "Processing..."
-msgstr ""
-
-#: views/admin-page.php:954
-msgid "Supported: PDF, DOCX, CSV, TXT — Max 10MB"
-msgstr ""
-
-#: views/admin-page.php:957
-msgid "## Business Name"
-msgstr ""
-
-#: views/admin-page.php:957
-msgid "Your Company"
-msgstr ""
-
-#: views/admin-page.php:957
-msgid "## Services"
-msgstr ""
-
-#: views/admin-page.php:957
-msgid "Service 1"
-msgstr ""
-
-#: views/admin-page.php:957
-msgid "Service 2"
-msgstr ""
-
-#: views/admin-page.php:957
-msgid "## Hours"
-msgstr ""
-
-#: views/admin-page.php:957
-msgid "Mon-Fri: 9am-5pm"
-msgstr ""
-
-#: views/admin-page.php:957
-msgid "## Contact"
-msgstr ""
-
-#: views/admin-page.php:963
-msgid "Step 2"
-msgstr ""
-
-#: views/admin-page.php:965
-msgid "Instructions for how your agent should behave and respond. Fill in the Knowledge Base first, then generate or write your system prompt."
-msgstr ""
-
-#: views/admin-page.php:967
-msgid "You are a helpful assistant for [Business Name]. You help customers with questions about our services, pricing, and booking appointments. Always be friendly and professional."
-msgstr ""
-
-#: views/admin-page.php:975
-msgid "Step 3"
-msgstr ""
-
-#: views/admin-page.php:977
-msgid "Quick question chips shown in the widget. One per line."
-msgstr ""
-
-#: views/admin-page.php:978
-msgid "What are your opening hours?"
-msgstr ""
-
-#: views/admin-page.php:978
-msgid "How can I book an appointment?"
-msgstr ""
-
-#: views/admin-page.php:978
-msgid "What services do you offer?"
-msgstr ""
-
-#: views/admin-page.php:996
-msgid "Optimize with AI"
-msgstr ""
-
-#: views/admin-page.php:997
-msgid "Save & Sync Agent"
+#: views/appointments-tab.php:99
+msgid "45 minutes"
 msgstr ""
 
 #: views/appointments-tab.php:100
@@ -1763,146 +1947,58 @@ msgstr ""
 msgid "In person"
 msgstr ""
 
-#: views/appointments-tab.php:151
-msgid "Location or joining details"
-msgstr ""
-
-#: views/appointments-tab.php:152
-msgid "e.g. 12 High Street, or a meeting link"
+#: views/appointments-tab.php:157
+msgid "Add to every appointment"
 msgstr ""
 
 #: views/appointments-tab.php:158
-msgid "Save Working Hours"
+msgid "e.g. Please arrive 5 minutes early. Parking is behind the building."
 msgstr ""
 
-#: views/appointments-tab.php:16
-msgid "Monday"
+#: views/appointments-tab.php:159
+msgid "Goes on the calendar event and into the confirmation email, alongside whatever the visitor told the agent."
 msgstr ""
 
-#: views/appointments-tab.php:167
+#: views/appointments-tab.php:174
 msgid "Calendar Sync"
 msgstr ""
 
-#: views/appointments-tab.php:169
+#: views/appointments-tab.php:176
 msgid "Connect a calendar so the agent never books over something you already have, and every appointment lands in your calendar automatically. Booking works without this."
 msgstr ""
 
-#: views/appointments-tab.php:17
-msgid "Tuesday"
-msgstr ""
-
-#: views/appointments-tab.php:18
-msgid "Wednesday"
-msgstr ""
-
-#: views/appointments-tab.php:184
+#: views/appointments-tab.php:191
 msgid "Google Calendar"
 msgstr ""
 
-#: views/appointments-tab.php:187
+#: views/appointments-tab.php:194
 msgid "Checking connection..."
 msgstr ""
 
-#: views/appointments-tab.php:19
-msgid "Thursday"
-msgstr ""
-
-#: views/appointments-tab.php:194
+#: views/appointments-tab.php:201
 msgid "Connect Google Calendar"
 msgstr ""
 
-#: views/appointments-tab.php:197
+#: views/appointments-tab.php:204
 msgid "Disconnect"
 msgstr ""
 
-#: views/appointments-tab.php:20
-msgid "Friday"
-msgstr ""
-
-#: views/appointments-tab.php:21
-msgid "Saturday"
-msgstr ""
-
-#: views/appointments-tab.php:214
+#: views/appointments-tab.php:221
 msgid "Outlook Calendar"
 msgstr ""
 
-#: views/appointments-tab.php:215
+#: views/appointments-tab.php:222
 msgid "Coming soon"
 msgstr ""
 
-#: views/appointments-tab.php:217
+#: views/appointments-tab.php:224
 msgid "Coming Soon"
 msgstr ""
 
-#: views/appointments-tab.php:22
-msgid "Sunday"
-msgstr ""
-
-#: views/appointments-tab.php:223
+#: views/appointments-tab.php:230
 msgid "Availability Preview"
 msgstr ""
 
-#: views/appointments-tab.php:225
+#: views/appointments-tab.php:232
 msgid "Exactly what the agent will offer over the next 7 days, after your hours, minimum notice and any calendar conflicts are applied."
 msgstr ""
-
-#: views/appointments-tab.php:31
-msgid "Appointment Booking"
-msgstr ""
-
-#: views/appointments-tab.php:33
-msgid "Let the agent book real appointments during a conversation, using the hours you set below. Works with or without a connected calendar."
-msgstr ""
-
-#: views/appointments-tab.php:43
-msgid "Enable appointment booking"
-msgstr ""
-
-#: views/appointments-tab.php:44
-msgid "When off, the agent will not offer or accept appointments."
-msgstr ""
-
-#: views/appointments-tab.php:51
-msgid "Working Hours"
-msgstr ""
-
-#: views/appointments-tab.php:56
-#. translators: %s: IANA timezone name, e.g. Europe/Paris
-msgid "All times are in %s. Change it under General Settings."
-msgstr ""
-
-#: views/appointments-tab.php:75
-msgid "Closed"
-msgstr ""
-
-#: views/appointments-tab.php:82
-msgid "Copy Monday to all days"
-msgstr ""
-
-#: views/appointments-tab.php:89
-msgid "Appointment Rules"
-msgstr ""
-
-#: views/appointments-tab.php:94
-msgid "Appointment length"
-msgstr ""
-
-#: views/appointments-tab.php:96
-#: views/appointments-tab.php:112
-msgid "15 minutes"
-msgstr ""
-
-#: views/appointments-tab.php:97
-msgid "20 minutes"
-msgstr ""
-
-#: views/appointments-tab.php:98
-#: views/appointments-tab.php:113
-msgid "30 minutes"
-msgstr ""
-
-#: views/appointments-tab.php:99
-msgid "45 minutes"
-msgstr ""
-

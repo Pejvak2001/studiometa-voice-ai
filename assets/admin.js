@@ -2165,19 +2165,33 @@ jQuery(function($) {
       if (!input || !hint || !labelEl) return;
 
       if (type === 'in_person') {
-        labelEl.textContent = 'Address';
-        input.placeholder   = 'e.g. 12 High Street, Toronto';
-        hint.textContent    = 'Required. This is what the agent tells the visitor and what goes on the calendar event.';
+        labelEl.textContent = tr('apptAddress', 'Address');
+        input.placeholder   = tr('apptAddressPh', 'e.g. 12 High Street, Toronto');
+        hint.textContent    = tr('apptAddressHint', 'Required. This is what the agent tells the visitor and what goes on the calendar event.');
       } else if (type === 'video') {
-        labelEl.textContent = 'Fallback joining link';
-        input.placeholder   = 'e.g. https://zoom.us/j/your-room';
-        hint.textContent    = 'Optional. With a calendar connected below, a Google Meet link is created per appointment and used instead of this.';
+        labelEl.textContent = tr('apptJoinLink', 'Fallback joining link');
+        input.placeholder   = tr('apptJoinLinkPh', 'e.g. https://zoom.us/j/your-room');
+        hint.textContent    = tr('apptJoinLinkHint', 'Optional. With a calendar connected below, a Google Meet link is created per appointment and used instead of this.');
       } else {
-        labelEl.textContent = 'Location';
-        input.placeholder   = 'Not needed for phone appointments';
-        hint.textContent    = 'Nothing to fill in — the business calls the visitor on the number they leave.';
+        labelEl.textContent = tr('apptLocation', 'Location');
+        input.placeholder   = tr('apptLocationPh', 'Not needed for phone appointments');
+        hint.textContent    = tr('apptLocationHint', 'Nothing to fill in — the business calls the visitor on the number they leave.');
       }
       if (type !== 'in_person') clearLocationError();
+    }
+
+    /**
+     * A localized string, falling back to the English it was written in.
+     *
+     * The fallback is not decoration: wp_localize_script runs only when the
+     * admin script is enqueued with its data, and a stale cached admin.js
+     * paired with a newer PHP (or the reverse) leaves keys missing. An
+     * undefined label here would blank the field's name rather than show it
+     * untranslated, which is the worse of the two failures.
+     */
+    function tr(key, fallback) {
+      var d = window.smvaAdmin && window.smvaAdmin.i18n;
+      return (d && d[key]) ? d[key] : fallback;
     }
 
     function clearLocationError() {
@@ -2254,7 +2268,7 @@ jQuery(function($) {
           var hint  = document.getElementById('smva-appt-location-hint');
           if (input) { input.classList.add('smva-field-invalid'); input.focus(); }
           if (hint) hint.classList.add('smva-field-warn');
-          setMsg(msg, false, 'Add the address visitors should come to, or change the meeting type.');
+          setMsg(msg, false, tr('apptAddressRequired', 'Add the address visitors should come to, or change the meeting type.'));
           return;
         }
 
@@ -2271,17 +2285,17 @@ jQuery(function($) {
           saveLabel.classList.remove('smva-hidden');
           saveSpin.classList.add('smva-hidden');
           if (res.success) {
-            setMsg(msg, true, 'Saved.');
+            setMsg(msg, true, tr('saved', 'Saved.'));
             refreshPreview();
           } else {
             var detail = res.data && res.data.details ? ' (' + res.data.details + ')' : '';
-            setMsg(msg, false, ((res.data && res.data.message) || 'Could not save.') + detail);
+            setMsg(msg, false, ((res.data && res.data.message) || tr('couldNotSave', 'Could not save.')) + detail);
           }
         }).catch(function () {
           saveBtn.disabled = false;
           saveLabel.classList.remove('smva-hidden');
           saveSpin.classList.add('smva-hidden');
-          setMsg(msg, false, 'Network error. Please try again.');
+          setMsg(msg, false, tr('networkErrorRetry', 'Network error. Please try again.'));
         });
       });
     }
