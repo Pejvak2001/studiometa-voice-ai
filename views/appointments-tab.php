@@ -148,8 +148,15 @@ $smva_appt_timezone = get_option( 'smva_agent_timezone', 'UTC' );
 				</div>
 
 				<div class="smva-field">
-					<label for="smva-appt-location"><?php esc_html_e( 'Location or joining details', 'studiometa-voice-ai' ); ?></label>
-					<input type="text" id="smva-appt-location" maxlength="300" placeholder="<?php esc_attr_e( 'e.g. 12 High Street, or a meeting link', 'studiometa-voice-ai' ); ?>">
+					<label for="smva-appt-location"><?php esc_html_e( 'Address', 'studiometa-voice-ai' ); ?></label>
+					<input type="text" id="smva-appt-location" maxlength="300" placeholder="<?php esc_attr_e( 'e.g. 12 High Street, Toronto', 'studiometa-voice-ai' ); ?>">
+					<div class="smva-field-hint" id="smva-appt-location-hint"></div>
+				</div>
+
+				<div class="smva-field smva-field-wide">
+					<label for="smva-appt-description"><?php esc_html_e( 'Add to every appointment', 'studiometa-voice-ai' ); ?></label>
+					<textarea id="smva-appt-description" rows="2" maxlength="1000" placeholder="<?php esc_attr_e( 'e.g. Please arrive 5 minutes early. Parking is behind the building.', 'studiometa-voice-ai' ); ?>"></textarea>
+					<div class="smva-field-hint"><?php esc_html_e( 'Goes on the calendar event and into the confirmation email, alongside whatever the visitor told the agent.', 'studiometa-voice-ai' ); ?></div>
 				</div>
 			</div>
 

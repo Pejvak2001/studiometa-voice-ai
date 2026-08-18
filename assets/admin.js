@@ -2121,6 +2121,7 @@ jQuery(function($) {
         horizon_days: parseInt(document.getElementById('smva-appt-horizon').value, 10) || 30,
         meeting_type: document.getElementById('smva-appt-meeting-type').value || 'phone',
         location: document.getElementById('smva-appt-location').value || '',
+        description: document.getElementById('smva-appt-description').value || '',
         hours: hours,
       };
     }
@@ -2142,7 +2143,56 @@ jQuery(function($) {
       if (config.horizon_days) document.getElementById('smva-appt-horizon').value = String(config.horizon_days);
       if (config.meeting_type) document.getElementById('smva-appt-meeting-type').value = config.meeting_type;
       document.getElementById('smva-appt-location').value = config.location || '';
+      document.getElementById('smva-appt-description').value = config.description || '';
+      applyMeetingType();
     }
+
+    /**
+     * What the Address field means depends entirely on the meeting type, and
+     * one static label cannot say it. In person it is the only thing that gets
+     * the visitor to the door; for video the joining link is minted by Google
+     * per appointment and anything typed here is a fallback at best; on a phone
+     * appointment there is nothing to fill in at all.
+     *
+     * Relabelling rather than hiding: an owner who switches to Phone should
+     * still see the address they typed is still stored, not watch it vanish.
+     */
+    function applyMeetingType() {
+      var type    = (document.getElementById('smva-appt-meeting-type') || {}).value || 'phone';
+      var input   = document.getElementById('smva-appt-location');
+      var hint    = document.getElementById('smva-appt-location-hint');
+      var labelEl = document.querySelector('label[for="smva-appt-location"]');
+      if (!input || !hint || !labelEl) return;
+
+      if (type === 'in_person') {
+        labelEl.textContent = 'Address';
+        input.placeholder   = 'e.g. 12 High Street, Toronto';
+        hint.textContent    = 'Required. This is what the agent tells the visitor and what goes on the calendar event.';
+      } else if (type === 'video') {
+        labelEl.textContent = 'Fallback joining link';
+        input.placeholder   = 'e.g. https://zoom.us/j/your-room';
+        hint.textContent    = 'Optional. With a calendar connected below, a Google Meet link is created per appointment and used instead of this.';
+      } else {
+        labelEl.textContent = 'Location';
+        input.placeholder   = 'Not needed for phone appointments';
+        hint.textContent    = 'Nothing to fill in — the business calls the visitor on the number they leave.';
+      }
+      if (type !== 'in_person') clearLocationError();
+    }
+
+    function clearLocationError() {
+      var input = document.getElementById('smva-appt-location');
+      var hint  = document.getElementById('smva-appt-location-hint');
+      if (input) input.classList.remove('smva-field-invalid');
+      if (hint) hint.classList.remove('smva-field-warn');
+    }
+
+    var meetingTypeEl = document.getElementById('smva-appt-meeting-type');
+    if (meetingTypeEl) meetingTypeEl.addEventListener('change', applyMeetingType);
+    var locationEl = document.getElementById('smva-appt-location');
+    if (locationEl) locationEl.addEventListener('input', function () {
+      if (locationEl.value.trim()) clearLocationError();
+    });
 
     // Day-row open/closed toggle.
     root.addEventListener('change', function (e) {
@@ -2194,6 +2244,20 @@ jQuery(function($) {
       var msg       = document.getElementById('smva-appt-msg');
 
       saveBtn.addEventListener('click', function () {
+        // Caught here rather than by the backend, which accepts an empty
+        // location for any meeting type: an in-person business that saves
+        // without an address gets a booking flow that confirms a time and
+        // never tells anyone where to go, and nothing anywhere reports it.
+        var cfg = readConfigFromUI();
+        if (cfg.meeting_type === 'in_person' && !String(cfg.location).trim()) {
+          var input = document.getElementById('smva-appt-location');
+          var hint  = document.getElementById('smva-appt-location-hint');
+          if (input) { input.classList.add('smva-field-invalid'); input.focus(); }
+          if (hint) hint.classList.add('smva-field-warn');
+          setMsg(msg, false, 'Add the address visitors should come to, or change the meeting type.');
+          return;
+        }
+
         saveBtn.disabled = true;
         saveLabel.classList.add('smva-hidden');
         saveSpin.classList.remove('smva-hidden');
@@ -2201,7 +2265,7 @@ jQuery(function($) {
 
         post('smva_booking_save_config', {
           booking_enabled: document.getElementById('smva-booking-enabled').checked ? '1' : '0',
-          booking_config: JSON.stringify(readConfigFromUI()),
+          booking_config: JSON.stringify(cfg),
         }).then(function (res) {
           saveBtn.disabled = false;
           saveLabel.classList.remove('smva-hidden');
@@ -2378,6 +2442,11 @@ jQuery(function($) {
       url.searchParams.delete('calendar');
       window.history.replaceState({}, '', url.toString());
     }
+
+    // Before loadConfig answers, and whatever it answers: a site with no
+    // license yet keeps the resting defaults, and those still need the Address
+    // field to say which of its three meanings is in force.
+    applyMeetingType();
 
     loadConfig();
     loadCalendarStatus();

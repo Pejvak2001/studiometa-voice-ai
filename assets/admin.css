@@ -709,7 +709,13 @@
 .smva-appt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px}
 .smva-appt-grid select,.smva-appt-grid input[type=text]{border:1.5px solid var(--smva-border-lg);border-radius:var(--smva-radius);padding:9px 12px;font-size:13px;color:var(--smva-text);width:100%;box-sizing:border-box;background:var(--smva-surface);font-family:var(--font)}
 .smva-appt-grid select:focus,.smva-appt-grid input[type=text]:focus{outline:none;border-color:var(--smva-primary);box-shadow:0 0 0 3px var(--smva-primary-m)}
+.smva-appt-grid textarea{border:1.5px solid var(--smva-border-lg);border-radius:var(--smva-radius);padding:9px 12px;font-size:13px;color:var(--smva-text);width:100%;box-sizing:border-box;background:var(--smva-surface);font-family:var(--font);resize:vertical}
+.smva-appt-grid textarea:focus{outline:none;border-color:var(--smva-primary);box-shadow:0 0 0 3px var(--smva-primary-m)}
+/* A standing note is a sentence or two, not a 210px column like the selects. */
+.smva-appt-grid .smva-field-wide{grid-column:1/-1}
 .smva-field-hint{font-size:11px;color:var(--smva-text-3)}
+.smva-field-hint.smva-field-warn{color:#b45309}
+.smva-appt-grid input[type=text].smva-field-invalid{border-color:#dc2626}
 .smva-appt-save-row{display:flex;align-items:center;gap:12px;margin-top:20px;padding-top:18px;border-top:1px solid var(--smva-border);flex-wrap:wrap}
 .smva-appt-save-row .smva-int-msg{margin-top:0}
 
