@@ -1979,6 +1979,28 @@
      * Only when there is no live call is it safe to fall through to the
      * ordinary chat path.
      */
+    /**
+     * Add a non-text card (options, display_text) to the transcript.
+     *
+     * The bridge that lets the two globals outside this closure put something
+     * in chatMessages, which is the only array updateChatUI rebuilds from and
+     * therefore the only place a card survives the next message.
+     *
+     * Dedupe lives here rather than on a DOM attribute, as it used to: the
+     * nodes are transient now, so "have I already shown this?" cannot be
+     * answered by looking at the panel. Providers do re-deliver a tool result
+     * on a reconnect, and two identical slot pickers stacked in the transcript
+     * is the visible symptom.
+     */
+    window.__smvaPushCard = function (kind, payload) {
+        const sig = kind === 'options'
+            ? (payload.title || '') + '|' + payload.options.map(function (o) { return o.label; }).join('|')
+            : String(payload.text);
+        if (chatMessages.some(function (m) { return m.kind === kind && m.sig === sig; })) return;
+        chatMessages.push({ kind: kind, payload: payload, sig: sig, picked: null });
+        updateChatUI();
+    };
+
     window.__smvaOptionTap = function (label) {
         addChatMessage('user', label);
         chatHistory.push({ role: 'user', content: label });
@@ -2035,7 +2057,7 @@
 
     function addChatMessage(role, text) {
         if (chatMessages.length > 0) { const last = chatMessages[chatMessages.length - 1]; if (last.role === role && last.text === text) return; }
-        chatMessages.push({ role, text });
+        chatMessages.push({ kind: 'text', role, text });
         updateChatUI();
     }
 
@@ -2091,7 +2113,16 @@
         const container = h('smva-msgs');
         if (!container) return;
         let html = '';
-        chatMessages.forEach(msg => {
+        chatMessages.forEach((msg, idx) => {
+            // Cards -- booking's slot picker, and display_text -- live in this
+            // array rather than being appendChild'd straight into the panel.
+            // This function rebuilds the panel with innerHTML on every new
+            // message, so a card that was not in chatMessages survived only
+            // until the agent's next reply: the slot chips appeared and then
+            // vanished a second later, as soon as the model said "I've put the
+            // rest on screen". Anything rendered here survives every rebuild.
+            if (msg.kind === 'options') { html += smvaOptionsCardHtml(msg.payload, idx, msg.picked); return; }
+            if (msg.kind === 'display_text') { html += smvaDisplayTextCardHtml(msg.payload); return; }
             const cls = msg.role === 'user' ? 'smva-msg-user' : 'smva-msg-bot';
             // Per-message, not the widget-wide isRTL: the agent replies in
             // whatever language the visitor used, per turn, so a Persian
@@ -2106,6 +2137,41 @@
         if (isTyping) html += '<div class="smva-typing"><span></span><span></span><span></span></div>';
         container.innerHTML = html;
         container.scrollTop = container.scrollHeight;
+        bindCards(container);
+    }
+
+    /**
+     * Card clicks, delegated once onto the panel itself.
+     *
+     * Per-button listeners cannot work here: innerHTML above destroys every
+     * node it replaces, listeners included, so a chip bound at render time is
+     * dead the moment anything else is said. The panel element is never itself
+     * replaced, so one listener on it outlives every rebuild.
+     */
+    function bindCards(container) {
+        if (container.__smvaCardsBound) return;
+        container.__smvaCardsBound = true;
+        container.addEventListener('click', function (e) {
+            if (!e.target || !e.target.closest) return;
+
+            const chip = e.target.closest('.smva-opt-chip');
+            if (chip) {
+                const entry = chatMessages[Number(chip.getAttribute('data-smva-card'))];
+                if (!entry || entry.picked) return;
+                const opt = entry.payload.options[Number(chip.getAttribute('data-smva-opt'))];
+                if (!opt) return;
+                // Recorded on the entry, not as a class on the button: the
+                // re-render that follows the tap rebuilds these chips from
+                // scratch, and the picked/disabled state has to come back with
+                // them or every slot becomes tappable again.
+                entry.picked = opt.label;
+                if (typeof window.__smvaOptionTap === 'function') window.__smvaOptionTap(opt.label);
+                return;
+            }
+
+            const copyBtn = e.target.closest('.smva-dt-copy');
+            if (copyBtn) smvaCopyCardValue(copyBtn);
+        });
     }
 
     injectStyles();
@@ -2266,97 +2332,106 @@
 })();
 
 
-/* === Feature C: display_text === */
+/* === Feature C: display_text ===
+ * And Feature D: options (the tappable slot picker).
+ *
+ * These two are the widget's only non-text messages, and both used to render
+ * by appendChild into .smva-msgs. That panel is rebuilt wholesale by
+ * updateChatUI (innerHTML from the chatMessages array) on every new message,
+ * so a card appended directly lasted exactly until the agent's next sentence.
+ * For booking that was ~one second: the slot chips arrived with the tool
+ * result, the model's reply followed immediately, and the visitor watched the
+ * times disappear.
+ *
+ * So these entry points no longer touch the DOM. They surface the panel, then
+ * hand the payload to the closure via __smvaPushCard, which appends it to
+ * chatMessages like any other message. The Html builders below are what
+ * updateChatUI calls while rebuilding, and they are pure string functions on
+ * purpose: they run again on every rebuild, so they must hold no state and
+ * bind no listeners (clicks are delegated once, in bindCards).
+ */
+
+function smvaEscHtml(x){return String(x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+/** Bring the chat tab forward so a card is not rendered into a hidden panel. */
+function smvaSurfaceChatPanel(){
+  var panel=document.querySelector('.smva-msgs')||document.querySelector('.smva-chat-messages')||document.querySelector('.smva-messages');
+  if(!panel)return null;
+  var tabs=document.querySelectorAll('.smva-tab-btn');
+  var contents=document.querySelectorAll('.smva-tab-content');
+  var chatTabIdx=-1;
+  contents.forEach(function(c,i){if(c.contains(panel)||c.querySelector('.smva-msgs'))chatTabIdx=i;});
+  var smvaPanel=document.getElementById('smva-panel');
+  if(smvaPanel&&smvaPanel.classList.contains('hide')){smvaPanel.classList.remove('hide');}
+  if(chatTabIdx>=0){
+    tabs.forEach(function(t){t.classList.remove('active');});
+    contents.forEach(function(c){c.classList.remove('active');});
+    if(tabs[chatTabIdx])tabs[chatTabIdx].classList.add('active');
+    contents[chatTabIdx].classList.add('active');
+  }
+  return panel;
+}
+
 function renderDisplayText(p){
   if(!p||!p.text)return;
-  var existing=document.querySelector('.smva-msgs');
-  if(existing&&existing.querySelector('[data-smva-dt="'+String(p.text).replace(/"/g,'&quot;')+'"]'))return;
-  var panel=document.querySelector('.smva-msgs')||document.querySelector('.smva-chat-messages')||document.querySelector('.smva-messages');
-  if(!panel)return;
-  var tabs=document.querySelectorAll('.smva-tab-btn');
-  var contents=document.querySelectorAll('.smva-tab-content');
-  var chatTabIdx=-1;
-  contents.forEach(function(c,i){if(c.contains(panel)||c.querySelector('.smva-msgs'))chatTabIdx=i;});
-  var smvaPanel=document.getElementById('smva-panel');
-  if(smvaPanel&&smvaPanel.classList.contains('hide')){smvaPanel.classList.remove('hide');}
-  if(chatTabIdx>=0){
-    tabs.forEach(function(t){t.classList.remove('active');});
-    contents.forEach(function(c){c.classList.remove('active');});
-    if(tabs[chatTabIdx])tabs[chatTabIdx].classList.add('active');
-    contents[chatTabIdx].classList.add('active');
-  }
-  var text=String(p.text), kind=(p.kind||'text').toLowerCase();
-  var label=p.label||({email:'Email',phone:'Phone',url:'Link',address:'Address',text:'Info'}[kind]||'Info');
-  var href=null,icon='📋',primary='';
-  if(kind==='email'){href='mailto:'+text;icon='✉️';primary='Email';}
-  else if(kind==='phone'){href='tel:'+text.replace(/[^\d+]/g,'');icon='📞';primary='Call';}
-  else if(kind==='url'){href=/^https?:\/\//i.test(text)?text:'https://'+text;icon='🔗';primary='Open';}
-  else if(kind==='address'){href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(text);icon='📍';primary='Map';}
-  var esc=function(x){return String(x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
-  var card=document.createElement('div');
-  card.className='smva-dt smva-dt-'+kind;
-  card.setAttribute('data-smva-dt', text);
-  card.innerHTML='<div class="smva-dt-icon">'+icon+'</div>'+
-    '<div class="smva-dt-body"><div class="smva-dt-label">'+esc(label)+'</div><div class="smva-dt-value">'+esc(text)+'</div></div>'+
-    '<div class="smva-dt-actions">'+
-      (href?'<a class="smva-dt-btn smva-dt-primary" href="'+href+'" target="_blank" rel="noopener">'+primary+'</a>':'')+
-      '<button class="smva-dt-btn smva-dt-copy" type="button">Copy</button>'+
-    '</div>';
-  panel.appendChild(card);
-  panel.scrollTop=panel.scrollHeight;
-  card.querySelector('.smva-dt-copy').addEventListener('click',function(){
-    var btn=card.querySelector('.smva-dt-copy'),orig=btn.textContent;
-    var done=function(){btn.textContent='Copied!';setTimeout(function(){btn.textContent=orig;},1500);};
-    if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(done).catch(function(){smvaDtFallbackCopy(text,done);});}
-    else{smvaDtFallbackCopy(text,done);}
-  });
+  if(!smvaSurfaceChatPanel())return;
+  if(typeof window.__smvaPushCard==='function')window.__smvaPushCard('display_text',p);
 }
-function smvaDtFallbackCopy(t,done){try{var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);done();}catch(e){}}
 
-/* === Feature D: options (tappable slot picker) ===
- * Modelled on renderDisplayText above: same panel lookup, same tab switch,
- * same dedupe-by-signature guard. Declared outside the main closure the same
- * way, so tapping a chip goes through window.__smvaOptionTap — the bridge the
- * main closure defines next to sendChatMessage(), since only that closure can
- * see ws/chatWs and route the tap onto the correct connection. */
 function renderOptions(p){
   if(!p||!Array.isArray(p.options)||!p.options.length)return;
-  var panel=document.querySelector('.smva-msgs')||document.querySelector('.smva-chat-messages')||document.querySelector('.smva-messages');
-  if(!panel)return;
-  var esc=function(x){return String(x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
-  var sig=(p.title||'')+'|'+p.options.map(function(o){return o.label;}).join('|');
-  if(panel.querySelector('[data-smva-opts="'+sig.replace(/"/g,'&quot;')+'"]'))return;
-  var tabs=document.querySelectorAll('.smva-tab-btn');
-  var contents=document.querySelectorAll('.smva-tab-content');
-  var chatTabIdx=-1;
-  contents.forEach(function(c,i){if(c.contains(panel)||c.querySelector('.smva-msgs'))chatTabIdx=i;});
-  var smvaPanel=document.getElementById('smva-panel');
-  if(smvaPanel&&smvaPanel.classList.contains('hide')){smvaPanel.classList.remove('hide');}
-  if(chatTabIdx>=0){
-    tabs.forEach(function(t){t.classList.remove('active');});
-    contents.forEach(function(c){c.classList.remove('active');});
-    if(tabs[chatTabIdx])tabs[chatTabIdx].classList.add('active');
-    contents[chatTabIdx].classList.add('active');
-  }
-  var card=document.createElement('div');
-  card.className='smva-opts';
-  card.setAttribute('data-smva-opts', sig);
-  var title=p.title?('<div class="smva-opts-title">'+esc(p.title)+'</div>'):'';
-  card.innerHTML=title+'<div class="smva-opts-row">'+p.options.map(function(o,i){
-    return '<button type="button" class="smva-chip smva-opt-chip" data-idx="'+i+'">'+esc(o.label)+'</button>';
-  }).join('')+'</div>';
-  panel.appendChild(card);
-  panel.scrollTop=panel.scrollHeight;
-  var buttons=card.querySelectorAll('.smva-opt-chip');
-  buttons.forEach(function(btn,i){
-    btn.addEventListener('click',function(){
-      if(btn.disabled)return;
-      buttons.forEach(function(b){b.disabled=true;});
-      btn.classList.add('smva-opt-picked');
-      if(typeof window.__smvaOptionTap==='function')window.__smvaOptionTap(p.options[i].label);
-    });
-  });
+  if(!smvaSurfaceChatPanel())return;
+  if(typeof window.__smvaPushCard==='function')window.__smvaPushCard('options',p);
 }
+
+function smvaDisplayTextCardHtml(p){
+  var text=String(p.text), kind=(p.kind||'text').toLowerCase();
+  var label=p.label||({email:'Email',phone:'Phone',url:'Link',address:'Address',text:'Info'}[kind]||'Info');
+  var href=null,icon='\ud83d\udccb',primary='';
+  if(kind==='email'){href='mailto:'+text;icon='\u2709\ufe0f';primary='Email';}
+  else if(kind==='phone'){href='tel:'+text.replace(/[^\d+]/g,'');icon='\ud83d\udcde';primary='Call';}
+  else if(kind==='url'){href=/^https?:\/\//i.test(text)?text:'https://'+text;icon='\ud83d\udd17';primary='Open';}
+  else if(kind==='address'){href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(text);icon='\ud83d\udccd';primary='Map';}
+  var esc=smvaEscHtml;
+  // The value rides on the element as a data attribute rather than in a
+  // closure, because the copy handler is delegated and only ever sees the DOM.
+  return '<div class="smva-dt smva-dt-'+esc(kind)+'" data-smva-dt="'+esc(text)+'">'+
+    '<div class="smva-dt-icon">'+icon+'</div>'+
+    '<div class="smva-dt-body"><div class="smva-dt-label">'+esc(label)+'</div><div class="smva-dt-value">'+esc(text)+'</div></div>'+
+    '<div class="smva-dt-actions">'+
+      (href?'<a class="smva-dt-btn smva-dt-primary" href="'+esc(href)+'" target="_blank" rel="noopener">'+esc(primary)+'</a>':'')+
+      '<button class="smva-dt-btn smva-dt-copy" type="button">Copy</button>'+
+    '</div>'+
+  '</div>';
+}
+
+function smvaOptionsCardHtml(p,cardIdx,picked){
+  var esc=smvaEscHtml;
+  var title=p.title?('<div class="smva-opts-title">'+esc(p.title)+'</div>'):'';
+  return '<div class="smva-opts">'+title+'<div class="smva-opts-row">'+p.options.map(function(o,i){
+    // Once one slot is taken the rest are spent: re-offering them would let a
+    // visitor book twice from one list, and the second slot_id may well be
+    // stale by then.
+    var isPicked=picked!=null&&o.label===picked;
+    return '<button type="button" class="smva-chip smva-opt-chip'+(isPicked?' smva-opt-picked':'')+'"'+
+      ' data-smva-card="'+cardIdx+'" data-smva-opt="'+i+'"'+(picked!=null?' disabled':'')+'>'+
+      esc(o.label)+'</button>';
+  }).join('')+'</div></div>';
+}
+
+/** Copy handler for a display_text card, reached through the delegated listener. */
+function smvaCopyCardValue(btn){
+  var card=btn.closest('.smva-dt');
+  if(!card)return;
+  var text=card.getAttribute('data-smva-dt')||'';
+  var orig=btn.textContent;
+  var done=function(){btn.textContent='Copied!';setTimeout(function(){btn.textContent=orig;},1500);};
+  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(done).catch(function(){smvaDtFallbackCopy(text,done);});}
+  else{smvaDtFallbackCopy(text,done);}
+}
+
+function smvaDtFallbackCopy(t,done){try{var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);done();}catch(e){}}
+
 (function(){if(document.getElementById('smva-opts-css'))return;var s=document.createElement('style');s.id='smva-opts-css';
 s.textContent='.smva-opts{margin:8px 0}.smva-opts-title{font-size:12px;color:#6b7280;margin-bottom:6px}.smva-opts-row{display:flex;flex-wrap:wrap;gap:6px}.smva-opt-chip:disabled{opacity:.5;cursor:default}.smva-opt-picked{background:var(--smva-accent,#2563eb)!important;color:#fff!important;border-color:transparent!important}';
 (document.head||document.documentElement).appendChild(s);})();
