@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.7.7
+Stable tag: 1.7.8
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -253,6 +253,15 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.7.8 =
+* New: **Send Feedback** — a form at the bottom of Voice AI → Health for reporting a problem or suggesting something. Technical details (plugin, WordPress and PHP versions, site address, language, plan) are listed with their actual values before you send, and can be left out with one tick. No customer data, conversations or recordings are ever included.
+* New: **Vazirmatn** is now used for Persian and Arabic text, in the admin panel and in the widget. The font is served from the plugin itself, never a font CDN, and is only downloaded on pages that actually contain Arabic-script text — a site in English or French downloads nothing.
+* New: The Integrations tab is now translatable, and translated into Persian. It was the one screen the earlier localization pass missed.
+* Fixed: **Refresh** in the Appointments availability preview now re-reads your connected calendar instead of possibly showing a cached answer for up to 90 seconds — blocking out an afternoon in Google Calendar and pressing Refresh now shows the effect immediately.
+* Fixed: The Voice and Chat indicators in the panel header now show a green or red dot, like the licence indicator. Before, "on" and "off" differed only by one word of text.
+* Changed: **Quick Action Buttons** moved from Automation to My Agent, below Suggested Questions — both control what the visitor sees, while Automation is for what the agent can do.
+* Changed: The embed shortcode was shown twice, in General and in Widget. It now appears once, in Widget.
 
 = 1.7.7 =
 * Fixed: The list of available appointment times vanished a second after it appeared — the chips were wiped by the next thing the agent said, so visitors saw the times flash past and had nothing left to tap. Contact details shared by the agent (the phone/email/address card) were being lost the same way.
