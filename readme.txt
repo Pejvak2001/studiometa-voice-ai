@@ -4,7 +4,7 @@ Donate link: https://studiometa.io/
 Tags: chatbot, live chat, voice assistant, ai chatbot, chat widget
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.7.6
+Stable tag: 1.7.7
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -244,6 +244,11 @@ The full source code of this plugin, including the unminified version of widget.
 https://github.com/Pejvak2001/studiometa-voice-ai
 
 == Changelog ==
+
+= 1.7.7 =
+* Fixed: The list of available appointment times vanished a second after it appeared — the chips were wiped by the next thing the agent said, so visitors saw the times flash past and had nothing left to tap. Contact details shared by the agent (the phone/email/address card) were being lost the same way.
+* New: Appointments → the Address field now explains itself per meeting type: the address visitors must find (in person), a fallback joining link (video, where a Google Meet link is created per appointment), or nothing to fill in (phone). Saving an in-person setup with no address is now refused rather than silently producing bookings with no place to go.
+* New: Appointments → "Add to every appointment", a standing note (what to bring, where to park) that goes on the calendar event and into the confirmation email alongside whatever the visitor told the agent.
 
 = 1.7.6 =
 * New: Widget now pushes a `smva_lead_captured` event to the page's GTM `dataLayer` (if present) whenever a lead is successfully saved, so site owners can wire ad-platform conversion tags to it themselves. No personal data (name/email/phone) is included in the event, only the capture source. No effect on sites without Google Tag Manager.
