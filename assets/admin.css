@@ -482,6 +482,13 @@
 /* ── Migrated from admin-page.php ── */
 /* ── SMVA Modern Admin Layout ── */
 .smva-admin-wrap{display:flex;min-height:100vh;background:#f0f2f5;margin:-20px -20px -20px;font-family:var(--font);position:relative;z-index:1}
+/* WordPress sets a font-family on h1-h4 in its own admin stylesheet (Arial in
+   the RTL build), and an explicit rule beats inheritance from the wrapper --
+   so every heading in this panel stayed on the browser fallback while the text
+   around it had already switched. Scoped to this wrapper so nothing outside
+   the plugin's own screens is touched. Code and monospace elements set their
+   own family later in this file and are unaffected. */
+.smva-admin-wrap h1,.smva-admin-wrap h2,.smva-admin-wrap h3,.smva-admin-wrap h4{font-family:var(--font)}
 
 /* SIDEBAR */
 .smva-sidebar{width:220px;flex-shrink:0;background:#1e1f2e;display:flex;flex-direction:column;position:sticky;top:32px;height:calc(100vh - 32px);overflow-y:auto}

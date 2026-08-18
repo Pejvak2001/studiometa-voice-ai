@@ -963,6 +963,29 @@ class SMVA_Plugin {
                 'couldNotSave'             => __( 'Could not save.', 'studiometa-voice-ai' ),
                 'networkErrorRetry'        => __( 'Network error. Please try again.', 'studiometa-voice-ai' ),
                 'saveWorkingHours'         => __( 'Save Working Hours', 'studiometa-voice-ai' ),
+
+                // Integrations -> the parts of the tab JavaScript builds: the
+                // transfer-department editor, the confirm dialogs, and the
+                // labels swapped in while a request is in flight.
+                'connected'                => __( 'Connected', 'studiometa-voice-ai' ),
+                'connect'                  => __( 'Connect', 'studiometa-voice-ai' ),
+                'disconnect'               => __( 'Disconnect', 'studiometa-voice-ai' ),
+                'disconnecting'            => __( 'Disconnecting...', 'studiometa-voice-ai' ),
+                'verifying'                => __( 'Verifying...', 'studiometa-voice-ai' ),
+                'confirmDisconnectHubspot' => __( 'Disconnect HubSpot? Leads will no longer sync automatically.', 'studiometa-voice-ai' ),
+                'confirmDisconnectPhone'   => __( 'Disconnect this number? Calls to it will no longer be answered by your agent.', 'studiometa-voice-ai' ),
+                'confirmDisconnectGcal'    => __( 'Disconnect Google Calendar? Booking will keep working from your working hours alone.', 'studiometa-voice-ai' ),
+                'noDepartments'            => __( 'No departments yet. Add one to let the agent transfer callers.', 'studiometa-voice-ai' ),
+                'newDepartment'            => __( 'New department', 'studiometa-voice-ai' ),
+                'remove'                   => __( 'Remove', 'studiometa-voice-ai' ),
+                'department'               => __( 'Department', 'studiometa-voice-ai' ),
+                'departmentPh'             => __( 'Sales', 'studiometa-voice-ai' ),
+                'phoneNumber'              => __( 'Phone number', 'studiometa-voice-ai' ),
+                'whenToTransfer'           => __( 'When to transfer here', 'studiometa-voice-ai' ),
+                'whenToTransferPh'         => __( 'pricing, quotes, new orders', 'studiometa-voice-ai' ),
+                'hoursOptional'            => __( 'Hours (optional)', 'studiometa-voice-ai' ),
+                'hoursOptionalPh'          => __( 'Mon-Fri 9-5', 'studiometa-voice-ai' ),
+                'savingEllipsis'           => __( 'Saving…', 'studiometa-voice-ai' ),
             ),
         ) );
     }

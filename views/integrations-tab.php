@@ -51,8 +51,8 @@ $smva_transfer_json = wp_json_encode( $smva_transfer );
 ?>
 <div class="smva-tab-content">
     <div class="smva-section">
-        <div class="smva-section-title">CRM Integrations</div>
-        <p class="smva-section-desc">Connect your CRM to automatically sync leads captured by the voice and chat widget.</p>
+        <div class="smva-section-title"><?php esc_html_e( 'CRM Integrations', 'studiometa-voice-ai' ); ?></div>
+        <p class="smva-section-desc"><?php esc_html_e( 'Connect your CRM to automatically sync leads captured by the voice and chat widget.', 'studiometa-voice-ai' ); ?></p>
         <div class="smva-integration-card">
             <div class="smva-int-header">
                 <div class="smva-int-logo">
@@ -65,31 +65,52 @@ $smva_transfer_json = wp_json_encode( $smva_transfer );
                     <div class="smva-int-name">
                         HubSpot
                         <?php if ( $smva_hs_connected ) : ?>
-                            <span class="smva-int-badge-connected">&#10003; Connected</span>
+                            <span class="smva-int-badge-connected">&#10003; <?php esc_html_e( 'Connected', 'studiometa-voice-ai' ); ?></span>
                         <?php endif; ?>
                     </div>
-                    <div style="font-size:12px;color:#6b7280;margin-top:2px">Sync leads to HubSpot Contacts automatically</div>
+                    <div style="font-size:12px;color:#6b7280;margin-top:2px"><?php esc_html_e( 'Sync leads to HubSpot Contacts automatically', 'studiometa-voice-ai' ); ?></div>
                 </div>
             </div>
             <?php if ( $smva_hs_connected ) : ?>
                 <div class="smva-int-connected-row">
-                    <span style="font-size:13px;color:#374151">Leads are syncing to your HubSpot account.</span>
-                    <button class="smva-btn smva-btn-ghost smva-btn-sm" id="smva-hubspot-disconnect">Disconnect</button>
+                    <span style="font-size:13px;color:#374151"><?php esc_html_e( 'Leads are syncing to your HubSpot account.', 'studiometa-voice-ai' ); ?></span>
+                    <button class="smva-btn smva-btn-ghost smva-btn-sm" id="smva-hubspot-disconnect"><?php esc_html_e( 'Disconnect', 'studiometa-voice-ai' ); ?></button>
                 </div>
             <?php else : ?>
                 <div>
-                    <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">Private App Token</label>
+                    <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px"><?php esc_html_e( 'Private App Token', 'studiometa-voice-ai' ); ?></label>
                     <div class="smva-int-token-row">
                         <input type="password" id="smva-hubspot-token" class="smva-int-token-input" placeholder="pat-na1-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
                         <button class="smva-btn smva-btn-primary smva-btn-sm" id="smva-hubspot-save">
-                            <span class="smva-hs-label">Connect</span>
-                            <span class="smva-hs-spinner" style="display:none">Verifying...</span>
+                            <span class="smva-hs-label"><?php esc_html_e( 'Connect', 'studiometa-voice-ai' ); ?></span>
+                            <span class="smva-hs-spinner" style="display:none"><?php esc_html_e( 'Verifying...', 'studiometa-voice-ai' ); ?></span>
                         </button>
                     </div>
                     <div class="smva-int-hint">
-                        Get your token from HubSpot:
-                        <a href="https://app.hubspot.com/private-apps" target="_blank">Settings &rarr; Integrations &rarr; Private Apps &rarr; Create a private app</a><br>
-                        Required scopes: <code>crm.objects.contacts.write</code> and <code>crm.objects.contacts.read</code>
+                        <?php
+                        echo wp_kses(
+                            sprintf(
+                                /* translators: %s: link to the HubSpot private-apps page, with its own label */
+                                __( 'Get your token from HubSpot: %s', 'studiometa-voice-ai' ),
+                                '<a href="https://app.hubspot.com/private-apps" target="_blank">'
+                                    . esc_html__( 'Settings &rarr; Integrations &rarr; Private Apps &rarr; Create a private app', 'studiometa-voice-ai' )
+                                    . '</a>'
+                            ),
+                            array( 'a' => array( 'href' => array(), 'target' => array() ) )
+                        );
+                        ?><br>
+                        <?php
+                        // The scope names are API identifiers, never translated.
+                        echo wp_kses(
+                            sprintf(
+                                /* translators: 1: first required API scope, 2: second required API scope */
+                                __( 'Required scopes: %1$s and %2$s', 'studiometa-voice-ai' ),
+                                '<code>crm.objects.contacts.write</code>',
+                                '<code>crm.objects.contacts.read</code>'
+                            ),
+                            array( 'code' => array() )
+                        );
+                        ?>
                     </div>
                     <div id="smva-hs-msg" class="smva-int-msg"></div>
                 </div>
@@ -105,16 +126,16 @@ $smva_transfer_json = wp_json_encode( $smva_transfer );
                 </div>
                 <div style="flex:1">
                     <div class="smva-int-name" style="opacity:.5">Salesforce</div>
-                    <div style="font-size:12px;color:#9ca3af;margin-top:2px">Coming soon</div>
+                    <div style="font-size:12px;color:#9ca3af;margin-top:2px"><?php esc_html_e( 'Coming soon', 'studiometa-voice-ai' ); ?></div>
                 </div>
-                <span class="smva-int-badge-soon">Coming Soon</span>
+                <span class="smva-int-badge-soon"><?php esc_html_e( 'Coming Soon', 'studiometa-voice-ai' ); ?></span>
             </div>
         </div>
     </div>
 
     <div class="smva-section">
-        <div class="smva-section-title">Phone</div>
-        <p class="smva-section-desc">Let your agent answer real calls to a phone number you own. You connect your own Twilio account and pay Twilio directly for call minutes and number rental &mdash; StudioMeta never bills you for those. Talk time counts against the same monthly voice minutes as the widget.</p>
+        <div class="smva-section-title"><?php esc_html_e( 'Phone', 'studiometa-voice-ai' ); ?></div>
+        <p class="smva-section-desc"><?php esc_html_e( 'Let your agent answer real calls to a phone number you own. You connect your own Twilio account and pay Twilio directly for call minutes and number rental &mdash; StudioMeta never bills you for those. Talk time counts against the same monthly voice minutes as the widget.', 'studiometa-voice-ai' ); ?></p>
 
         <div class="smva-integration-card">
             <div class="smva-int-header">
@@ -132,66 +153,106 @@ $smva_transfer_json = wp_json_encode( $smva_transfer );
                     <div class="smva-int-name">
                         Twilio
                         <?php if ( $smva_phone_connected ) : ?>
-                            <span class="smva-int-badge-connected">&#10003; Connected</span>
+                            <span class="smva-int-badge-connected">&#10003; <?php esc_html_e( 'Connected', 'studiometa-voice-ai' ); ?></span>
                         <?php endif; ?>
                     </div>
-                    <div class="smva-int-sub">Answer inbound calls to your own phone number</div>
+                    <div class="smva-int-sub"><?php esc_html_e( 'Answer inbound calls to your own phone number', 'studiometa-voice-ai' ); ?></div>
                 </div>
             </div>
 
             <?php if ( $smva_is_trial && ! $smva_phone_connected ) : ?>
                 <div class="smva-int-msg smva-int-msg-static err">
-                    Phone answering is available on paid plans. <a href="<?php echo esc_url( admin_url( 'admin.php?page=smva&tab=license' ) ); ?>">Upgrade your plan</a> to connect a number.
+                    <?php
+                    echo wp_kses(
+                        sprintf(
+                            /* translators: %s: link to the License tab, with its own label */
+                            __( 'Phone answering is available on paid plans. %s to connect a number.', 'studiometa-voice-ai' ),
+                            '<a href="' . esc_url( admin_url( 'admin.php?page=smva&tab=license' ) ) . '">'
+                                . esc_html__( 'Upgrade your plan', 'studiometa-voice-ai' )
+                                . '</a>'
+                        ),
+                        array( 'a' => array( 'href' => array() ) )
+                    );
+                    ?>
                 </div>
             <?php endif; ?>
 
             <div id="smva-phone-connected" class="<?php echo $smva_phone_connected ? '' : 'smva-hidden'; ?>">
                 <div class="smva-int-connected-row">
                     <span class="smva-phone-status-text">
-                        Answering calls to <strong id="smva-phone-number-label"><?php echo esc_html( $smva_phone_number ); ?></strong><?php if ( $smva_phone_sid_mask ) : ?> &middot; <span class="smva-phone-sid"><?php echo esc_html( $smva_phone_sid_mask ); ?></span><?php endif; ?>
+                        <?php
+                        echo wp_kses(
+                            sprintf(
+                                /* translators: %s: the connected phone number */
+                                __( 'Answering calls to %s', 'studiometa-voice-ai' ),
+                                '<strong id="smva-phone-number-label">' . esc_html( $smva_phone_number ) . '</strong>'
+                            ),
+                            array( 'strong' => array( 'id' => array() ) )
+                        );
+                        ?><?php if ( $smva_phone_sid_mask ) : ?> &middot; <span class="smva-phone-sid"><?php echo esc_html( $smva_phone_sid_mask ); ?></span><?php endif; ?>
                     </span>
-                    <button type="button" class="smva-btn smva-btn-ghost smva-btn-sm" id="smva-phone-disconnect">Disconnect</button>
+                    <button type="button" class="smva-btn smva-btn-ghost smva-btn-sm" id="smva-phone-disconnect"><?php esc_html_e( 'Disconnect', 'studiometa-voice-ai' ); ?></button>
                 </div>
             </div>
 
             <div id="smva-phone-form" class="<?php echo $smva_phone_connected ? 'smva-hidden' : ''; ?>">
                 <div class="smva-phone-fields">
                     <div class="smva-phone-field">
-                        <label class="smva-phone-label" for="smva-phone-sid">Account SID</label>
+                        <label class="smva-phone-label" for="smva-phone-sid"><?php esc_html_e( 'Account SID', 'studiometa-voice-ai' ); ?></label>
                         <input type="text" id="smva-phone-sid" class="smva-int-token-input" placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off">
                     </div>
                     <div class="smva-phone-field">
-                        <label class="smva-phone-label" for="smva-phone-token">Auth Token</label>
-                        <input type="password" id="smva-phone-token" class="smva-int-token-input" placeholder="Your Twilio auth token" autocomplete="new-password">
+                        <label class="smva-phone-label" for="smva-phone-token"><?php esc_html_e( 'Auth Token', 'studiometa-voice-ai' ); ?></label>
+                        <input type="password" id="smva-phone-token" class="smva-int-token-input" placeholder="<?php esc_attr_e( 'Your Twilio auth token', 'studiometa-voice-ai' ); ?>" autocomplete="new-password">
                     </div>
                     <div class="smva-phone-field">
-                        <label class="smva-phone-label" for="smva-phone-number">Phone Number</label>
+                        <label class="smva-phone-label" for="smva-phone-number"><?php esc_html_e( 'Phone Number', 'studiometa-voice-ai' ); ?></label>
                         <input type="text" id="smva-phone-number" class="smva-int-token-input" placeholder="+15551234567" autocomplete="off">
                     </div>
                 </div>
                 <div class="smva-phone-actions">
                     <button type="button" class="smva-btn smva-btn-primary smva-btn-sm" id="smva-phone-save">
-                        <span class="smva-phone-label-text">Connect</span>
-                        <span class="smva-phone-spinner smva-hidden">Verifying&hellip;</span>
+                        <span class="smva-phone-label-text"><?php esc_html_e( 'Connect', 'studiometa-voice-ai' ); ?></span>
+                        <span class="smva-phone-spinner smva-hidden"><?php esc_html_e( 'Verifying&hellip;', 'studiometa-voice-ai' ); ?></span>
                     </button>
                 </div>
                 <div class="smva-int-hint">
-                    Find your Account SID and Auth Token on the
-                    <a href="https://console.twilio.com/" target="_blank" rel="noopener noreferrer">Twilio Console</a> dashboard.
-                    Enter the number in E.164 format, e.g. <code>+15551234567</code>.
+                    <?php
+                    echo wp_kses(
+                        sprintf(
+                            /* translators: 1: link to the Twilio Console, 2: example phone number in E.164 format */
+                            __( 'Find your Account SID and Auth Token on the %1$s dashboard. Enter the number in E.164 format, e.g. %2$s.', 'studiometa-voice-ai' ),
+                            '<a href="https://console.twilio.com/" target="_blank" rel="noopener noreferrer">'
+                                . esc_html__( 'Twilio Console', 'studiometa-voice-ai' ) . '</a>',
+                            '<code>+15551234567</code>'
+                        ),
+                        array( 'a' => array( 'href' => array(), 'target' => array(), 'rel' => array() ), 'code' => array() )
+                    );
+                    ?>
                 </div>
             </div>
 
             <div id="smva-phone-msg" class="smva-int-msg"></div>
 
             <div class="smva-phone-webhook">
-                <label class="smva-phone-label" for="smva-phone-webhook-url">Webhook URL &mdash; paste this into Twilio</label>
+                <label class="smva-phone-label" for="smva-phone-webhook-url"><?php esc_html_e( 'Webhook URL &mdash; paste this into Twilio', 'studiometa-voice-ai' ); ?></label>
                 <div class="smva-int-token-row">
                     <input type="text" id="smva-phone-webhook-url" class="smva-int-token-input" value="<?php echo esc_attr( $smva_phone_webhook ); ?>" readonly>
-                    <button type="button" class="smva-btn smva-btn-ghost smva-btn-sm" id="smva-phone-copy-webhook">Copy</button>
+                    <button type="button" class="smva-btn smva-btn-ghost smva-btn-sm" id="smva-phone-copy-webhook"><?php esc_html_e( 'Copy', 'studiometa-voice-ai' ); ?></button>
                 </div>
                 <div class="smva-int-hint">
-                    In the Twilio Console open your number, and under <em>Voice &rarr; A call comes in</em> choose <strong>Webhook</strong>, paste this URL, and set the method to <strong>HTTP POST</strong>.
+                    <?php
+                    echo wp_kses(
+                        sprintf(
+                            /* translators: 1: the Twilio setting's name, 2: the "Webhook" option, 3: the "HTTP POST" method */
+                            __( 'In the Twilio Console open your number, and under %1$s choose %2$s, paste this URL, and set the method to %3$s.', 'studiometa-voice-ai' ),
+                            '<em>' . esc_html__( 'Voice &rarr; A call comes in', 'studiometa-voice-ai' ) . '</em>',
+                            '<strong>Webhook</strong>',
+                            '<strong>HTTP POST</strong>'
+                        ),
+                        array( 'em' => array(), 'strong' => array() )
+                    );
+                    ?>
                 </div>
             </div>
         </div>
@@ -200,40 +261,49 @@ $smva_transfer_json = wp_json_encode( $smva_transfer );
         <div class="smva-integration-card <?php echo $smva_phone_connected ? '' : 'smva-hidden'; ?>" id="smva-transfer-card">
             <div class="smva-int-header">
                 <div class="smva-int-grow">
-                    <div class="smva-int-name">Transfer to a human</div>
-                    <div class="smva-int-sub">Let the agent hand a call to a person when the caller asks for one</div>
+                    <div class="smva-int-name"><?php esc_html_e( 'Transfer to a human', 'studiometa-voice-ai' ); ?></div>
+                    <div class="smva-int-sub"><?php esc_html_e( 'Let the agent hand a call to a person when the caller asks for one', 'studiometa-voice-ai' ); ?></div>
                 </div>
             </div>
 
             <label class="smva-transfer-toggle">
                 <input type="checkbox" id="smva-transfer-enabled" <?php checked( $smva_transfer['enabled'] ); ?>>
-                <span>Allow the agent to transfer calls</span>
+                <span><?php esc_html_e( 'Allow the agent to transfer calls', 'studiometa-voice-ai' ); ?></span>
             </label>
 
             <div id="smva-transfer-body" class="<?php echo $smva_transfer['enabled'] ? '' : 'smva-hidden'; ?>">
                 <div id="smva-transfer-list" class="smva-transfer-list"></div>
 
                 <div class="smva-transfer-actions">
-                    <button type="button" class="smva-btn smva-btn-ghost smva-btn-sm" id="smva-transfer-add">Add department +</button>
+                    <button type="button" class="smva-btn smva-btn-ghost smva-btn-sm" id="smva-transfer-add"><?php esc_html_e( 'Add department +', 'studiometa-voice-ai' ); ?></button>
                 </div>
 
                 <div class="smva-transfer-field">
-                    <label class="smva-phone-label" for="smva-transfer-timeout">Ring for</label>
+                    <label class="smva-phone-label" for="smva-transfer-timeout"><?php esc_html_e( 'Ring for', 'studiometa-voice-ai' ); ?></label>
                     <div class="smva-transfer-timeout-row">
                         <input type="number" id="smva-transfer-timeout" class="smva-int-token-input smva-transfer-timeout" min="10" max="60" step="1" value="<?php echo esc_attr( $smva_transfer['ring_timeout'] ); ?>">
-                        <span class="smva-int-sub">seconds before giving up and returning the caller to the agent</span>
+                        <span class="smva-int-sub"><?php esc_html_e( 'seconds before giving up and returning the caller to the agent', 'studiometa-voice-ai' ); ?></span>
                     </div>
                 </div>
 
                 <div class="smva-int-hint">
-                    Calls are dialled out on your own Twilio account and billed by Twilio. The person picking up sees your Twilio number, not the caller&rsquo;s &mdash; the agent is told to capture the caller&rsquo;s details first. Enter every number in E.164 format, e.g. <code>+15551234567</code>.
+                    <?php
+                    echo wp_kses(
+                        sprintf(
+                            /* translators: %s: example phone number in E.164 format */
+                            __( 'Calls are dialled out on your own Twilio account and billed by Twilio. The person picking up sees your Twilio number, not the caller&rsquo;s &mdash; the agent is told to capture the caller&rsquo;s details first. Enter every number in E.164 format, e.g. %s.', 'studiometa-voice-ai' ),
+                            '<code>+15551234567</code>'
+                        ),
+                        array( 'code' => array() )
+                    );
+                    ?>
                 </div>
             </div>
 
             <div class="smva-transfer-footer">
                 <button type="button" class="smva-btn smva-btn-primary smva-btn-sm" id="smva-transfer-save">
-                    <span class="smva-transfer-label-text">Save transfer settings</span>
-                    <span class="smva-transfer-spinner smva-hidden">Saving&hellip;</span>
+                    <span class="smva-transfer-label-text"><?php esc_html_e( 'Save transfer settings', 'studiometa-voice-ai' ); ?></span>
+                    <span class="smva-transfer-spinner smva-hidden"><?php esc_html_e( 'Saving&hellip;', 'studiometa-voice-ai' ); ?></span>
                 </button>
                 <span id="smva-transfer-msg" class="smva-int-msg"></span>
             </div>

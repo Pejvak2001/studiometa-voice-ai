@@ -1153,6 +1153,20 @@ jQuery(function($) {
 }(jQuery));
 
 /* ── Voice Summary Tab ────────────────────────────────────────────────────── */
+/**
+ * A localized string, falling back to the English it was written in.
+ *
+ * The fallback is not decoration: wp_localize_script runs only when the admin
+ * script is enqueued with its data, and a stale cached admin.js paired with a
+ * newer PHP (or the reverse) leaves keys missing. An undefined label here
+ * would blank a field's name rather than show it untranslated, which is the
+ * worse of the two failures.
+ */
+function tr(key, fallback) {
+  var d = window.smvaAdmin && window.smvaAdmin.i18n;
+  return (d && d[key]) ? d[key] : fallback;
+}
+
 (function ($) {
   'use strict';
 
@@ -1547,8 +1561,8 @@ jQuery(function($) {
     var disconnectBtn = document.getElementById('smva-hubspot-disconnect');
     if (disconnectBtn) {
       disconnectBtn.addEventListener('click', function () {
-        if (!confirm('Disconnect HubSpot? Leads will no longer sync automatically.')) return;
-        disconnectBtn.textContent = 'Disconnecting...';
+        if (!confirm(tr('confirmDisconnectHubspot', 'Disconnect HubSpot? Leads will no longer sync automatically.'))) return;
+        disconnectBtn.textContent = tr('disconnecting', 'Disconnecting...');
         disconnectBtn.disabled    = true;
         fetch(smvaAdmin.ajaxUrl, {
           method: 'POST',
@@ -1560,7 +1574,7 @@ jQuery(function($) {
           if (data.success) { window.location.reload(); }
           else {
             alert('Error disconnecting. Please try again.');
-            disconnectBtn.textContent = 'Disconnect';
+            disconnectBtn.textContent = tr('disconnect', 'Disconnect');
             disconnectBtn.disabled    = false;
           }
         });
@@ -1645,8 +1659,8 @@ jQuery(function($) {
     var disconnectBtn = document.getElementById('smva-phone-disconnect');
     if (disconnectBtn) {
       disconnectBtn.addEventListener('click', function () {
-        if (!confirm('Disconnect this number? Calls to it will no longer be answered by your agent.')) return;
-        disconnectBtn.textContent = 'Disconnecting...';
+        if (!confirm(tr('confirmDisconnectPhone', 'Disconnect this number? Calls to it will no longer be answered by your agent.'))) return;
+        disconnectBtn.textContent = tr('disconnecting', 'Disconnecting...');
         disconnectBtn.disabled    = true;
         fetch(smvaAdmin.ajaxUrl, {
           method: 'POST',
@@ -1658,13 +1672,13 @@ jQuery(function($) {
           if (data.success) { window.location.reload(); }
           else {
             setMsg('err', (data.data && data.data.message) || 'Error disconnecting. Please try again.');
-            disconnectBtn.textContent = 'Disconnect';
+            disconnectBtn.textContent = tr('disconnect', 'Disconnect');
             disconnectBtn.disabled    = false;
           }
         })
         .catch(function () {
           setMsg('err', 'Network error. Please try again.');
-          disconnectBtn.textContent = 'Disconnect';
+          disconnectBtn.textContent = tr('disconnect', 'Disconnect');
           disconnectBtn.disabled    = false;
         });
       });
@@ -1756,7 +1770,7 @@ jQuery(function($) {
       if (!departments.length) {
         var empty = document.createElement('p');
         empty.className = 'smva-transfer-empty';
-        empty.textContent = 'No departments yet. Add one to let the agent transfer callers.';
+        empty.textContent = tr('noDepartments', 'No departments yet. Add one to let the agent transfer callers.');
         listEl.appendChild(empty);
         return;
       }
@@ -1768,11 +1782,11 @@ jQuery(function($) {
         var head = document.createElement('div');
         head.className = 'smva-transfer-row-head';
         var title = document.createElement('strong');
-        title.textContent = dept.name || 'New department';
+        title.textContent = dept.name || tr('newDepartment', 'New department');
         var remove = document.createElement('button');
         remove.type = 'button';
         remove.className = 'smva-btn smva-btn-ghost smva-btn-sm';
-        remove.textContent = 'Remove';
+        remove.textContent = tr('remove', 'Remove');
         remove.addEventListener('click', function () { departments.splice(i, 1); render(); });
         head.appendChild(title);
         head.appendChild(remove);
@@ -1780,16 +1794,16 @@ jQuery(function($) {
 
         var grid = document.createElement('div');
         grid.className = 'smva-transfer-grid';
-        var nameIn = field(grid, 'smva-transfer-name', 'Department', 'Sales', dept.name);
-        var numIn  = field(grid, 'smva-transfer-number', 'Phone number', '+15551234567', dept.number);
+        var nameIn = field(grid, 'smva-transfer-name', tr('department', 'Department'), tr('departmentPh', 'Sales'), dept.name);
+        var numIn  = field(grid, 'smva-transfer-number', tr('phoneNumber', 'Phone number'), '+15551234567', dept.number);
         row.appendChild(grid);
 
-        var descIn = field(row, 'smva-transfer-desc', 'When to transfer here',
-          'pricing, quotes, new orders', dept.description);
-        var hoursIn = field(row, 'smva-transfer-hours', 'Hours (optional)',
-          'Mon-Fri 9-5', dept.hours);
+        var descIn = field(row, 'smva-transfer-desc', tr('whenToTransfer', 'When to transfer here'),
+          tr('whenToTransferPh', 'pricing, quotes, new orders'), dept.description);
+        var hoursIn = field(row, 'smva-transfer-hours', tr('hoursOptional', 'Hours (optional)'),
+          tr('hoursOptionalPh', 'Mon-Fri 9-5'), dept.hours);
 
-        nameIn.addEventListener('input',  function () { dept.name = this.value; title.textContent = this.value || 'New department'; });
+        nameIn.addEventListener('input',  function () { dept.name = this.value; title.textContent = this.value || tr('newDepartment', 'New department'); });
         numIn.addEventListener('input',   function () { dept.number = this.value; });
         descIn.addEventListener('input',  function () { dept.description = this.value; });
         hoursIn.addEventListener('input', function () { dept.hours = this.value; });
@@ -2032,7 +2046,7 @@ jQuery(function($) {
 
     saveBtn.addEventListener('click', function () {
       saveBtn.disabled = true;
-      setMsg(true, 'Saving…');
+      setMsg(true, tr('savingEllipsis', 'Saving…'));
       post('smva_info_docs_save', {
         info_documents: JSON.stringify(docs),
         caller_memory_enabled: memoryEl.checked ? '1' : '0',
@@ -2180,19 +2194,7 @@ jQuery(function($) {
       if (type !== 'in_person') clearLocationError();
     }
 
-    /**
-     * A localized string, falling back to the English it was written in.
-     *
-     * The fallback is not decoration: wp_localize_script runs only when the
-     * admin script is enqueued with its data, and a stale cached admin.js
-     * paired with a newer PHP (or the reverse) leaves keys missing. An
-     * undefined label here would blank the field's name rather than show it
-     * untranslated, which is the worse of the two failures.
-     */
-    function tr(key, fallback) {
-      var d = window.smvaAdmin && window.smvaAdmin.i18n;
-      return (d && d[key]) ? d[key] : fallback;
-    }
+    // Defined once at file level (see tr() near the top of this file).
 
     function clearLocationError() {
       var input = document.getElementById('smva-appt-location');
@@ -2401,7 +2403,7 @@ jQuery(function($) {
         gcalBadge.className   = 'smva-int-badge-connected';
         gcalBadge.textContent = '✓ Connected';
         gcalBadge.classList.remove('smva-hidden');
-        gcalSub.textContent = d.account_email || 'Connected';
+        gcalSub.textContent = d.account_email || tr('connected', 'Connected');
         gcalHint.textContent = 'New appointments are added to this calendar, and busy times are kept off the availability shown to visitors.';
       } else {
         gcalBadge.classList.add('smva-hidden');
@@ -2437,12 +2439,12 @@ jQuery(function($) {
 
     if (gcalDisc) {
       gcalDisc.addEventListener('click', function () {
-        if (!confirm('Disconnect Google Calendar? Booking will keep working from your working hours alone.')) return;
+        if (!confirm(tr('confirmDisconnectGcal', 'Disconnect Google Calendar? Booking will keep working from your working hours alone.'))) return;
         gcalDisc.disabled = true;
-        gcalDisc.textContent = 'Disconnecting...';
+        gcalDisc.textContent = tr('disconnecting', 'Disconnecting...');
         post('smva_calendar_disconnect').then(function (res) {
           gcalDisc.disabled = false;
-          gcalDisc.textContent = 'Disconnect';
+          gcalDisc.textContent = tr('disconnect', 'Disconnect');
           if (res.success) { loadCalendarStatus(); refreshPreview(); }
           else setMsg(gcalMsg, false, (res.data && res.data.message) || 'Could not disconnect.');
         });

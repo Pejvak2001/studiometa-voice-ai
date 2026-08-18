@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-18T21:58:22+00:00\n"
+"POT-Creation-Date: 2026-08-18T22:52:45+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: studiometa-voice-ai\n"
@@ -87,14 +87,14 @@ msgid "View all leads:"
 msgstr ""
 
 #: includes/class-smva.php:926
-#: includes/class-smva.php:2177
-#: includes/class-smva.php:2224
-#: includes/class-smva.php:2269
-#: includes/class-smva.php:2330
-#: includes/class-smva.php:2371
-#: includes/class-smva.php:2397
+#: includes/class-smva.php:2203
+#: includes/class-smva.php:2250
+#: includes/class-smva.php:2295
+#: includes/class-smva.php:2356
+#: includes/class-smva.php:2405
 #: includes/class-smva.php:2431
-#: includes/class-smva.php:2457
+#: includes/class-smva.php:2465
+#: includes/class-smva.php:2491
 msgid "Connection error."
 msgstr ""
 
@@ -115,8 +115,8 @@ msgstr ""
 
 #: includes/class-smva.php:930
 #: views/admin-page.php:432
-#: views/admin-page.php:1369
-#: views/admin-page.php:1396
+#: views/admin-page.php:1362
+#: views/admin-page.php:1389
 #: views/appointments-tab.php:239
 msgid "Refresh"
 msgstr ""
@@ -127,37 +127,37 @@ msgid "Save General Settings"
 msgstr ""
 
 #: includes/class-smva.php:932
-#: views/admin-page.php:1165
+#: views/admin-page.php:1176
 msgid "Save Widget Settings"
 msgstr ""
 
 #: includes/class-smva.php:933
-#: views/admin-page.php:1459
+#: views/admin-page.php:1452
 msgid "Save Notification Settings"
 msgstr ""
 
 #: includes/class-smva.php:934
-#: views/admin-page.php:1232
+#: views/admin-page.php:1225
 msgid "Save Webhook URL"
 msgstr ""
 
 #: includes/class-smva.php:935
-#: views/admin-page.php:1213
+#: views/admin-page.php:992
 msgid "Save Quick Action Buttons"
 msgstr ""
 
 #: includes/class-smva.php:936
-#: views/admin-page.php:1288
+#: views/admin-page.php:1281
 msgid "Save Tool"
 msgstr ""
 
 #: includes/class-smva.php:937
-#: views/admin-page.php:1296
+#: views/admin-page.php:1289
 msgid "Save & Sync Tools"
 msgstr ""
 
 #: includes/class-smva.php:938
-#: views/admin-page.php:1386
+#: views/admin-page.php:1379
 msgid "Run Check"
 msgstr ""
 
@@ -244,59 +244,145 @@ msgstr ""
 msgid "Save Working Hours"
 msgstr ""
 
-#: includes/class-smva.php:2172
-#: includes/class-smva.php:2204
-#: includes/class-smva.php:2264
-#: includes/class-smva.php:2297
-#: includes/class-smva.php:2355
-#: includes/class-smva.php:2392
+#: includes/class-smva.php:970
+#: views/integrations-tab.php:68
+#: views/integrations-tab.php:156
+msgid "Connected"
+msgstr ""
+
+#: includes/class-smva.php:971
+#: views/integrations-tab.php:85
+#: views/integrations-tab.php:215
+msgid "Connect"
+msgstr ""
+
+#: includes/class-smva.php:972
+#: views/appointments-tab.php:204
+#: views/integrations-tab.php:77
+#: views/integrations-tab.php:194
+msgid "Disconnect"
+msgstr ""
+
+#: includes/class-smva.php:973
+msgid "Disconnecting..."
+msgstr ""
+
+#: includes/class-smva.php:974
+#: views/integrations-tab.php:86
+msgid "Verifying..."
+msgstr ""
+
+#: includes/class-smva.php:975
+msgid "Disconnect HubSpot? Leads will no longer sync automatically."
+msgstr ""
+
+#: includes/class-smva.php:976
+msgid "Disconnect this number? Calls to it will no longer be answered by your agent."
+msgstr ""
+
+#: includes/class-smva.php:977
+msgid "Disconnect Google Calendar? Booking will keep working from your working hours alone."
+msgstr ""
+
+#: includes/class-smva.php:978
+msgid "No departments yet. Add one to let the agent transfer callers."
+msgstr ""
+
+#: includes/class-smva.php:979
+msgid "New department"
+msgstr ""
+
+#: includes/class-smva.php:980
+#: views/admin-page.php:1036
+#: views/admin-page.php:1244
+msgid "Remove"
+msgstr ""
+
+#: includes/class-smva.php:981
+msgid "Department"
+msgstr ""
+
+#: includes/class-smva.php:982
+msgid "Sales"
+msgstr ""
+
+#: includes/class-smva.php:983
+msgid "Phone number"
+msgstr ""
+
+#: includes/class-smva.php:984
+msgid "When to transfer here"
+msgstr ""
+
+#: includes/class-smva.php:985
+msgid "pricing, quotes, new orders"
+msgstr ""
+
+#: includes/class-smva.php:986
+msgid "Hours (optional)"
+msgstr ""
+
+#: includes/class-smva.php:987
+msgid "Mon-Fri 9-5"
+msgstr ""
+
+#: includes/class-smva.php:988
+msgid "Saving…"
+msgstr ""
+
+#: includes/class-smva.php:2198
+#: includes/class-smva.php:2230
+#: includes/class-smva.php:2290
+#: includes/class-smva.php:2323
+#: includes/class-smva.php:2381
 #: includes/class-smva.php:2426
-#: includes/class-smva.php:2452
+#: includes/class-smva.php:2460
+#: includes/class-smva.php:2486
 msgid "Activate your license first."
 msgstr ""
 
-#: includes/class-smva.php:2182
+#: includes/class-smva.php:2208
 msgid "Could not load your working hours."
 msgstr ""
 
-#: includes/class-smva.php:2213
+#: includes/class-smva.php:2239
 msgid "Invalid working hours."
 msgstr ""
 
-#: includes/class-smva.php:2233
+#: includes/class-smva.php:2259
 msgid "Could not save your working hours."
 msgstr ""
 
-#: includes/class-smva.php:2274
+#: includes/class-smva.php:2300
 msgid "Could not load your email settings."
 msgstr ""
 
-#: includes/class-smva.php:2319
+#: includes/class-smva.php:2345
 msgid "Invalid documents."
 msgstr ""
 
-#: includes/class-smva.php:2335
+#: includes/class-smva.php:2361
 msgid "Could not save your email settings."
 msgstr ""
 
-#: includes/class-smva.php:2376
+#: includes/class-smva.php:2410
 msgid "Could not calculate availability."
 msgstr ""
 
-#: includes/class-smva.php:2402
+#: includes/class-smva.php:2436
 msgid "Could not read the calendar status."
 msgstr ""
 
-#: includes/class-smva.php:2440
+#: includes/class-smva.php:2474
 msgid "Calendar connection is not available yet."
 msgstr ""
 
-#: includes/class-smva.php:2462
+#: includes/class-smva.php:2496
 msgid "Could not disconnect the calendar."
 msgstr ""
 
 #: views/admin-page.php:16
-#: views/admin-page.php:1081
+#: views/admin-page.php:1092
 msgid "Voice & Chat"
 msgstr ""
 
@@ -348,19 +434,19 @@ msgstr ""
 
 #: views/admin-page.php:60
 #: views/admin-page.php:117
-#: views/admin-page.php:1366
+#: views/admin-page.php:1359
 msgid "Chat History"
 msgstr ""
 
 #: views/admin-page.php:64
 #: views/admin-page.php:118
-#: views/admin-page.php:1404
+#: views/admin-page.php:1397
 msgid "Voice Summary"
 msgstr ""
 
 #: views/admin-page.php:68
 #: views/admin-page.php:119
-#: views/admin-page.php:1467
+#: views/admin-page.php:1460
 msgid "Leads"
 msgstr ""
 
@@ -369,7 +455,7 @@ msgid "System"
 msgstr ""
 
 #: views/admin-page.php:75
-#: views/admin-page.php:1385
+#: views/admin-page.php:1378
 msgid "Health Check"
 msgstr ""
 
@@ -678,8 +764,8 @@ msgstr ""
 
 #: views/admin-page.php:340
 #: views/admin-page.php:563
-#: views/admin-page.php:1087
-#: views/admin-page.php:1095
+#: views/admin-page.php:1098
+#: views/admin-page.php:1106
 msgid "Voice"
 msgstr ""
 
@@ -704,8 +790,8 @@ msgid "Default voice profile"
 msgstr ""
 
 #: views/admin-page.php:348
-#: views/admin-page.php:1088
-#: views/admin-page.php:1096
+#: views/admin-page.php:1099
+#: views/admin-page.php:1107
 msgid "Chat"
 msgstr ""
 
@@ -788,8 +874,8 @@ msgid "Recent Sessions"
 msgstr ""
 
 #: views/admin-page.php:441
-#: views/admin-page.php:1414
-#: views/admin-page.php:1474
+#: views/admin-page.php:1407
+#: views/admin-page.php:1467
 msgid "Date"
 msgstr ""
 
@@ -798,7 +884,7 @@ msgid "Type"
 msgstr ""
 
 #: views/admin-page.php:441
-#: views/admin-page.php:1414
+#: views/admin-page.php:1407
 msgid "Duration"
 msgstr ""
 
@@ -1027,744 +1113,731 @@ msgstr ""
 msgid "Test Voice"
 msgstr ""
 
-#: views/admin-page.php:790
-msgid "Embed Shortcode"
-msgstr ""
-
-#: views/admin-page.php:792
-#: views/admin-page.php:1176
-msgid "Copied!"
-msgstr ""
-
-#: views/admin-page.php:793
-msgid "Click to copy — paste anywhere on your site"
-msgstr ""
-
-#: views/admin-page.php:816
+#: views/admin-page.php:809
 msgid "Train My Agent automatically"
 msgstr ""
 
-#: views/admin-page.php:817
+#: views/admin-page.php:810
 msgid "We'll read your website, build a knowledge base, write a system prompt, and suggest questions — all in one click."
 msgstr ""
 
-#: views/admin-page.php:820
-#: views/admin-page.php:832
+#: views/admin-page.php:813
+#: views/admin-page.php:825
 msgid "Train My Agent"
 msgstr ""
 
-#: views/admin-page.php:833
+#: views/admin-page.php:826
 msgid "We'll automatically read your website and set up your AI assistant in about 30 seconds."
 msgstr ""
 
-#: views/admin-page.php:836
+#: views/admin-page.php:829
 msgid "Website URL to train from:"
 msgstr ""
 
-#: views/admin-page.php:840
+#: views/admin-page.php:833
 msgid "What we'll do:"
 msgstr ""
 
-#: views/admin-page.php:842
+#: views/admin-page.php:835
 msgid "Read up to 10 pages from your website"
 msgstr ""
 
-#: views/admin-page.php:843
+#: views/admin-page.php:836
 msgid "Write a system prompt for your agent"
 msgstr ""
 
-#: views/admin-page.php:844
+#: views/admin-page.php:837
 msgid "Build a clean knowledge base"
 msgstr ""
 
-#: views/admin-page.php:845
+#: views/admin-page.php:838
 msgid "Suggest questions for your visitors"
 msgstr ""
 
-#: views/admin-page.php:849
-#: views/admin-page.php:891
-#: views/admin-page.php:913
-#: views/admin-page.php:1289
-#: views/admin-page.php:1340
+#: views/admin-page.php:842
+#: views/admin-page.php:884
+#: views/admin-page.php:906
+#: views/admin-page.php:1282
+#: views/admin-page.php:1333
 msgid "Cancel"
 msgstr ""
 
-#: views/admin-page.php:850
+#: views/admin-page.php:843
 msgid "Start Training"
 msgstr ""
 
-#: views/admin-page.php:857
+#: views/admin-page.php:850
 msgid "Training in progress..."
 msgstr ""
 
-#: views/admin-page.php:858
+#: views/admin-page.php:851
 msgid "Reading your website..."
 msgstr ""
 
-#: views/admin-page.php:862
+#: views/admin-page.php:855
 msgid "This may take 30-60 seconds..."
 msgstr ""
 
-#: views/admin-page.php:870
+#: views/admin-page.php:863
 msgid "Training complete!"
 msgstr ""
 
-#: views/admin-page.php:876
-#: views/admin-page.php:962
+#: views/admin-page.php:869
+#: views/admin-page.php:955
 msgid "System Prompt"
 msgstr ""
 
-#: views/admin-page.php:880
-#: views/admin-page.php:924
+#: views/admin-page.php:873
+#: views/admin-page.php:917
 msgid "Knowledge Base"
 msgstr ""
 
-#: views/admin-page.php:884
-#: views/admin-page.php:974
+#: views/admin-page.php:877
+#: views/admin-page.php:967
 msgid "Suggested Questions"
 msgstr ""
 
-#: views/admin-page.php:892
+#: views/admin-page.php:885
 msgid "Apply & Save"
 msgstr ""
 
-#: views/admin-page.php:902
-#: views/admin-page.php:939
+#: views/admin-page.php:895
+#: views/admin-page.php:932
 msgid "Select Pages to Train From"
 msgstr ""
 
-#: views/admin-page.php:903
+#: views/admin-page.php:896
 msgid "Only the content you tick is read into the knowledge base. Pages are selected by default; posts are not, so news and blog archives stay out unless you add them."
 msgstr ""
 
-#: views/admin-page.php:906
+#: views/admin-page.php:899
 msgid "Loading your content…"
 msgstr ""
 
-#: views/admin-page.php:914
+#: views/admin-page.php:907
 msgid "Build Knowledge Base"
 msgstr ""
 
-#: views/admin-page.php:925
+#: views/admin-page.php:918
 msgid "Step 1"
 msgstr ""
 
-#: views/admin-page.php:927
+#: views/admin-page.php:920
 msgid "Add your business information here. The more detail, the better your agent will perform. You can import it automatically from your website."
 msgstr ""
 
-#: views/admin-page.php:930
+#: views/admin-page.php:923
 msgid "Website URL to import from:"
 msgstr ""
 
-#: views/admin-page.php:933
+#: views/admin-page.php:926
 msgid "Crawl your website and build knowledge base automatically"
 msgstr ""
 
-#: views/admin-page.php:934
+#: views/admin-page.php:927
 msgid "Import from Website"
 msgstr ""
 
-#: views/admin-page.php:938
+#: views/admin-page.php:931
 msgid "Pick exactly which pages and posts feed the knowledge base"
 msgstr ""
 
-#: views/admin-page.php:941
+#: views/admin-page.php:934
 msgid "Choose specific content instead of crawling the whole site — useful if you publish news or blog posts the agent shouldn't quote."
 msgstr ""
 
-#: views/admin-page.php:945
+#: views/admin-page.php:938
 msgid "Upload a file to add to knowledge base:"
 msgstr ""
 
-#: views/admin-page.php:949
+#: views/admin-page.php:942
 msgid "Upload File"
 msgstr ""
 
-#: views/admin-page.php:950
-#: views/admin-page.php:990
+#: views/admin-page.php:943
+#: views/admin-page.php:1001
 msgid "Processing..."
 msgstr ""
 
-#: views/admin-page.php:954
+#: views/admin-page.php:947
 msgid "Supported: PDF, DOCX, CSV, TXT — Max 10MB"
 msgstr ""
 
-#: views/admin-page.php:957
+#: views/admin-page.php:950
 msgid "## Business Name"
 msgstr ""
 
-#: views/admin-page.php:957
+#: views/admin-page.php:950
 msgid "Your Company"
 msgstr ""
 
-#: views/admin-page.php:957
+#: views/admin-page.php:950
 msgid "## Services"
 msgstr ""
 
-#: views/admin-page.php:957
+#: views/admin-page.php:950
 msgid "Service 1"
 msgstr ""
 
-#: views/admin-page.php:957
+#: views/admin-page.php:950
 msgid "Service 2"
 msgstr ""
 
-#: views/admin-page.php:957
+#: views/admin-page.php:950
 msgid "## Hours"
 msgstr ""
 
-#: views/admin-page.php:957
+#: views/admin-page.php:950
 msgid "Mon-Fri: 9am-5pm"
 msgstr ""
 
-#: views/admin-page.php:957
+#: views/admin-page.php:950
 msgid "## Contact"
 msgstr ""
 
-#: views/admin-page.php:963
+#: views/admin-page.php:956
 msgid "Step 2"
 msgstr ""
 
-#: views/admin-page.php:965
+#: views/admin-page.php:958
 msgid "Instructions for how your agent should behave and respond. Fill in the Knowledge Base first, then generate or write your system prompt."
 msgstr ""
 
-#: views/admin-page.php:967
+#: views/admin-page.php:960
 msgid "You are a helpful assistant for [Business Name]. You help customers with questions about our services, pricing, and booking appointments. Always be friendly and professional."
 msgstr ""
 
-#: views/admin-page.php:975
+#: views/admin-page.php:968
 msgid "Step 3"
 msgstr ""
 
-#: views/admin-page.php:977
+#: views/admin-page.php:970
 msgid "Quick question chips shown in the widget. One per line."
 msgstr ""
 
-#: views/admin-page.php:978
+#: views/admin-page.php:971
 msgid "What are your opening hours?"
 msgstr ""
 
-#: views/admin-page.php:978
+#: views/admin-page.php:971
 msgid "How can I book an appointment?"
 msgstr ""
 
-#: views/admin-page.php:978
+#: views/admin-page.php:971
 msgid "What services do you offer?"
 msgstr ""
 
-#: views/admin-page.php:996
-msgid "Optimize with AI"
-msgstr ""
-
-#: views/admin-page.php:997
-msgid "Save & Sync Agent"
-msgstr ""
-
-#: views/admin-page.php:1008
-#: views/admin-page.php:1011
-msgid "Agent Logo"
-msgstr ""
-
-#: views/admin-page.php:1023
-msgid "Choose from Media"
-msgstr ""
-
-#: views/admin-page.php:1025
-#: views/admin-page.php:1251
-msgid "Remove"
-msgstr ""
-
-#: views/admin-page.php:1027
-msgid "Square image recommended. Leave empty to use default icon."
-msgstr ""
-
-#: views/admin-page.php:1034
-msgid "Widget Theme"
-msgstr ""
-
-#: views/admin-page.php:1035
-msgid "Choose the visual style of your AI widget."
-msgstr ""
-
-#: views/admin-page.php:1040
-msgid "Classic"
-msgstr ""
-
-#: views/admin-page.php:1041
-msgid "Floating"
-msgstr ""
-
-#: views/admin-page.php:1042
-msgid "Soft Round"
-msgstr ""
-
-#: views/admin-page.php:1043
-msgid "Dark Modern"
-msgstr ""
-
-#: views/admin-page.php:1044
-msgid "Glass"
-msgstr ""
-
-#: views/admin-page.php:1045
-msgid "Gradient"
-msgstr ""
-
-#: views/admin-page.php:1064
-msgid "Hello!"
-msgstr ""
-
-#: views/admin-page.php:1065
-msgid "Hi there"
-msgstr ""
-
-#: views/admin-page.php:1073
-msgid "Selected"
-msgstr ""
-
-#: views/admin-page.php:1085
-msgid "Default Tab"
-msgstr ""
-
-#: views/admin-page.php:1093
-msgid "Enabled Modes"
-msgstr ""
-
-#: views/admin-page.php:1104
-msgid "Performance"
-msgstr ""
-
-#: views/admin-page.php:1107
-msgid "Frontend Loading"
-msgstr ""
-
-#: views/admin-page.php:1108
-msgid "Lazy-load interaction-heavy logic"
-msgstr ""
-
-#: views/admin-page.php:1109
-msgid "Keeps the widget shell light. Voice/audio still starts only after the visitor clicks voice."
-msgstr ""
-
-#: views/admin-page.php:1112
-msgid "Event Debug Log"
-msgstr ""
-
-#: views/admin-page.php:1113
-msgid "Keep recent plugin events"
-msgstr ""
-
-#: views/admin-page.php:1114
-msgid "Stores last 50 non-sensitive plugin events for troubleshooting."
-msgstr ""
-
-#: views/admin-page.php:1121
-msgid "Call Limits"
-msgstr ""
-
-#: views/admin-page.php:1122
-msgid "prevent abuse"
-msgstr ""
-
-#: views/admin-page.php:1127
-msgid "Max Call Duration"
-msgstr ""
-
-#: views/admin-page.php:1128
-msgid "minutes · 0 = off"
-msgstr ""
-
-#: views/admin-page.php:1135
-msgid "Auto-disconnect after this many minutes."
-msgstr ""
-
-#: views/admin-page.php:1139
-msgid "Silence Timeout"
-msgstr ""
-
-#: views/admin-page.php:1140
-#: views/admin-page.php:1152
-msgid "seconds · 0 = off"
-msgstr ""
-
-#: views/admin-page.php:1147
-msgid "Auto-disconnect after this many seconds of silence."
-msgstr ""
-
-#: views/admin-page.php:1151
-msgid "Call Cooldown"
-msgstr ""
-
-#: views/admin-page.php:1159
-msgid "Minimum wait between calls to prevent abuse."
-msgstr ""
-
-#: views/admin-page.php:1173
-msgid "Embed"
-msgstr ""
-
-#: views/admin-page.php:1174
-msgid "Add the widget to any page using the shortcode, or it loads automatically on all pages when the plugin is active."
-msgstr ""
-
-#: views/admin-page.php:1177
-msgid "Click to copy"
-msgstr ""
-
-#: views/admin-page.php:1201
+#: views/admin-page.php:980
 msgid "Quick Action Buttons"
 msgstr ""
 
-#: views/admin-page.php:1202
+#: views/admin-page.php:981
 msgid "Quick-action buttons shown in the widget that send a preset message to the agent — e.g. a visible \"Book Appointment\" shortcut."
 msgstr ""
 
-#: views/admin-page.php:1204
+#: views/admin-page.php:983
 msgid "Buttons"
 msgstr ""
 
-#: views/admin-page.php:1204
+#: views/admin-page.php:983
 msgid "one per line: Label | message sent to agent"
 msgstr ""
 
-#: views/admin-page.php:1205
+#: views/admin-page.php:984
 msgid "Book Appointment | I would like to book an appointment."
 msgstr ""
 
-#: views/admin-page.php:1205
+#: views/admin-page.php:984
 msgid "Request Callback | Please help me request a callback."
 msgstr ""
 
-#: views/admin-page.php:1220
+#: views/admin-page.php:1007
+msgid "Optimize with AI"
+msgstr ""
+
+#: views/admin-page.php:1008
+msgid "Save & Sync Agent"
+msgstr ""
+
+#: views/admin-page.php:1019
+#: views/admin-page.php:1022
+msgid "Agent Logo"
+msgstr ""
+
+#: views/admin-page.php:1034
+msgid "Choose from Media"
+msgstr ""
+
+#: views/admin-page.php:1038
+msgid "Square image recommended. Leave empty to use default icon."
+msgstr ""
+
+#: views/admin-page.php:1045
+msgid "Widget Theme"
+msgstr ""
+
+#: views/admin-page.php:1046
+msgid "Choose the visual style of your AI widget."
+msgstr ""
+
+#: views/admin-page.php:1051
+msgid "Classic"
+msgstr ""
+
+#: views/admin-page.php:1052
+msgid "Floating"
+msgstr ""
+
+#: views/admin-page.php:1053
+msgid "Soft Round"
+msgstr ""
+
+#: views/admin-page.php:1054
+msgid "Dark Modern"
+msgstr ""
+
+#: views/admin-page.php:1055
+msgid "Glass"
+msgstr ""
+
+#: views/admin-page.php:1056
+msgid "Gradient"
+msgstr ""
+
+#: views/admin-page.php:1075
+msgid "Hello!"
+msgstr ""
+
+#: views/admin-page.php:1076
+msgid "Hi there"
+msgstr ""
+
+#: views/admin-page.php:1084
+msgid "Selected"
+msgstr ""
+
+#: views/admin-page.php:1096
+msgid "Default Tab"
+msgstr ""
+
+#: views/admin-page.php:1104
+msgid "Enabled Modes"
+msgstr ""
+
+#: views/admin-page.php:1115
+msgid "Performance"
+msgstr ""
+
+#: views/admin-page.php:1118
+msgid "Frontend Loading"
+msgstr ""
+
+#: views/admin-page.php:1119
+msgid "Lazy-load interaction-heavy logic"
+msgstr ""
+
+#: views/admin-page.php:1120
+msgid "Keeps the widget shell light. Voice/audio still starts only after the visitor clicks voice."
+msgstr ""
+
+#: views/admin-page.php:1123
+msgid "Event Debug Log"
+msgstr ""
+
+#: views/admin-page.php:1124
+msgid "Keep recent plugin events"
+msgstr ""
+
+#: views/admin-page.php:1125
+msgid "Stores last 50 non-sensitive plugin events for troubleshooting."
+msgstr ""
+
+#: views/admin-page.php:1132
+msgid "Call Limits"
+msgstr ""
+
+#: views/admin-page.php:1133
+msgid "prevent abuse"
+msgstr ""
+
+#: views/admin-page.php:1138
+msgid "Max Call Duration"
+msgstr ""
+
+#: views/admin-page.php:1139
+msgid "minutes · 0 = off"
+msgstr ""
+
+#: views/admin-page.php:1146
+msgid "Auto-disconnect after this many minutes."
+msgstr ""
+
+#: views/admin-page.php:1150
+msgid "Silence Timeout"
+msgstr ""
+
+#: views/admin-page.php:1151
+#: views/admin-page.php:1163
+msgid "seconds · 0 = off"
+msgstr ""
+
+#: views/admin-page.php:1158
+msgid "Auto-disconnect after this many seconds of silence."
+msgstr ""
+
+#: views/admin-page.php:1162
+msgid "Call Cooldown"
+msgstr ""
+
+#: views/admin-page.php:1170
+msgid "Minimum wait between calls to prevent abuse."
+msgstr ""
+
+#: views/admin-page.php:1184
+msgid "Embed"
+msgstr ""
+
+#: views/admin-page.php:1185
+msgid "Add the widget to any page using the shortcode, or it loads automatically on all pages when the plugin is active."
+msgstr ""
+
+#: views/admin-page.php:1187
+msgid "Copied!"
+msgstr ""
+
+#: views/admin-page.php:1188
+msgid "Click to copy"
+msgstr ""
+
+#: views/admin-page.php:1213
 msgid "Automation Webhook"
 msgstr ""
 
-#: views/admin-page.php:1221
+#: views/admin-page.php:1214
 msgid "Agentic"
 msgstr ""
 
-#: views/admin-page.php:1223
+#: views/admin-page.php:1216
 msgid "Connect your AI agent to any automation platform (n8n, Make, Zapier). When the agent needs to take an action, it will call your webhook URL and wait for a result."
 msgstr ""
 
-#: views/admin-page.php:1225
+#: views/admin-page.php:1218
 msgid "Webhook URL"
 msgstr ""
 
-#: views/admin-page.php:1225
+#: views/admin-page.php:1218
 msgid "your n8n / Make / Zapier webhook"
 msgstr ""
 
-#: views/admin-page.php:1229
+#: views/admin-page.php:1222
 msgid "Your webhook receives:"
 msgstr ""
 
-#: views/admin-page.php:1229
+#: views/admin-page.php:1222
 msgid "Return:"
 msgstr ""
 
-#: views/admin-page.php:1238
+#: views/admin-page.php:1231
 msgid "Agent Tools"
 msgstr ""
 
-#: views/admin-page.php:1239
+#: views/admin-page.php:1232
 msgid "Define what actions your agent can perform. Each tool triggers your webhook with the tool name and collected parameters."
 msgstr ""
 
-#: views/admin-page.php:1243
+#: views/admin-page.php:1236
 msgid "No tools defined yet. Add a tool below."
 msgstr ""
 
-#: views/admin-page.php:1250
+#: views/admin-page.php:1243
 msgid "Edit"
 msgstr ""
 
-#: views/admin-page.php:1261
+#: views/admin-page.php:1254
 msgid "Add Tool +"
 msgstr ""
 
-#: views/admin-page.php:1267
+#: views/admin-page.php:1260
 msgid "Add Tool"
 msgstr ""
 
-#: views/admin-page.php:1269
+#: views/admin-page.php:1262
 msgid "Tool Name"
 msgstr ""
 
-#: views/admin-page.php:1269
+#: views/admin-page.php:1262
 msgid "lowercase, no spaces"
 msgstr ""
 
-#: views/admin-page.php:1270
+#: views/admin-page.php:1263
 msgid "e.g. book_appointment"
 msgstr ""
 
-#: views/admin-page.php:1273
+#: views/admin-page.php:1266
 msgid "Description"
 msgstr ""
 
-#: views/admin-page.php:1273
+#: views/admin-page.php:1266
 msgid "tell the agent when to use this tool"
 msgstr ""
 
-#: views/admin-page.php:1274
+#: views/admin-page.php:1267
 msgid "Use this tool to book, update, or cancel an appointment..."
 msgstr ""
 
-#: views/admin-page.php:1277
+#: views/admin-page.php:1270
 msgid "Thinking Message"
 msgstr ""
 
-#: views/admin-page.php:1277
+#: views/admin-page.php:1270
 msgid "shown while processing"
 msgstr ""
 
-#: views/admin-page.php:1278
+#: views/admin-page.php:1271
 msgid "Let me check availability..."
 msgstr ""
 
-#: views/admin-page.php:1282
+#: views/admin-page.php:1275
 msgid "Parameters"
 msgstr ""
 
-#: views/admin-page.php:1283
+#: views/admin-page.php:1276
 msgid "Add Parameter +"
 msgstr ""
 
-#: views/admin-page.php:1313
+#: views/admin-page.php:1306
 msgid "Email a Caller"
 msgstr ""
 
-#: views/admin-page.php:1314
+#: views/admin-page.php:1307
 msgid "Write the things your agent is allowed to email someone who asks for them on a call — a price list, a brochure, your opening hours. The agent will only ever offer what you list here, and it will never claim it sent something unless it actually went out."
 msgstr ""
 
-#: views/admin-page.php:1319
+#: views/admin-page.php:1312
 msgid "Add Document +"
 msgstr ""
 
-#: views/admin-page.php:1325
+#: views/admin-page.php:1318
 msgid "Add Document"
 msgstr ""
 
-#: views/admin-page.php:1327
+#: views/admin-page.php:1320
 msgid "Title"
 msgstr ""
 
-#: views/admin-page.php:1327
+#: views/admin-page.php:1320
 msgid "the agent says this out loud"
 msgstr ""
 
-#: views/admin-page.php:1328
+#: views/admin-page.php:1321
 msgid "e.g. Price list"
 msgstr ""
 
-#: views/admin-page.php:1331
+#: views/admin-page.php:1324
 msgid "Also matches"
 msgstr ""
 
-#: views/admin-page.php:1331
+#: views/admin-page.php:1324
 msgid "comma separated — other ways callers ask for this"
 msgstr ""
 
-#: views/admin-page.php:1332
+#: views/admin-page.php:1325
 msgid "pricing, cost, how much, rates"
 msgstr ""
 
-#: views/admin-page.php:1335
+#: views/admin-page.php:1328
 msgid "What to send"
 msgstr ""
 
-#: views/admin-page.php:1335
+#: views/admin-page.php:1328
 msgid "plain text — line breaks are kept"
 msgstr ""
 
-#: views/admin-page.php:1336
+#: views/admin-page.php:1329
 msgid "Starter — $39/month"
 msgstr ""
 
-#: views/admin-page.php:1336
+#: views/admin-page.php:1329
 msgid "100 minutes included"
 msgstr ""
 
-#: views/admin-page.php:1336
+#: views/admin-page.php:1329
 msgid "Pro — $79/month"
 msgstr ""
 
-#: views/admin-page.php:1336
+#: views/admin-page.php:1329
 msgid "300 minutes included"
 msgstr ""
 
-#: views/admin-page.php:1339
+#: views/admin-page.php:1332
 msgid "Save Document"
 msgstr ""
 
-#: views/admin-page.php:1349
+#: views/admin-page.php:1342
 msgid "Recognise returning callers"
 msgstr ""
 
-#: views/admin-page.php:1349
+#: views/admin-page.php:1342
 msgid "phone calls only"
 msgstr ""
 
-#: views/admin-page.php:1350
+#: views/admin-page.php:1343
 msgid "Matches the number they are calling from against past enquiries, so the agent has context. It will never greet someone by name before they say who they are — the person holding a phone today may not be who called last time. Leave this off if your callers share a line."
 msgstr ""
 
-#: views/admin-page.php:1357
+#: views/admin-page.php:1350
 msgid "Save"
 msgstr ""
 
-#: views/admin-page.php:1368
+#: views/admin-page.php:1361
 msgid "Search..."
 msgstr ""
 
-#: views/admin-page.php:1372
+#: views/admin-page.php:1365
 msgid "All chat conversations from your AI widget."
 msgstr ""
 
-#: views/admin-page.php:1373
-#: views/admin-page.php:1435
-#: views/admin-page.php:1475
+#: views/admin-page.php:1366
+#: views/admin-page.php:1428
+#: views/admin-page.php:1468
 #: views/appointments-tab.php:243
 msgid "Loading..."
 msgstr ""
 
-#: views/admin-page.php:1374
+#: views/admin-page.php:1367
 msgid "No chat history yet."
 msgstr ""
 
-#: views/admin-page.php:1388
+#: views/admin-page.php:1381
 msgid "Checks plugin configuration, license/quota API connectivity, and WebSocket configuration. Browser microphone playback still needs a frontend test."
 msgstr ""
 
-#: views/admin-page.php:1390
+#: views/admin-page.php:1383
 msgid "Click Run Check to start."
 msgstr ""
 
-#: views/admin-page.php:1395
+#: views/admin-page.php:1388
 msgid "Recent Plugin Events"
 msgstr ""
 
-#: views/admin-page.php:1396
+#: views/admin-page.php:1389
 msgid "Clear"
 msgstr ""
 
-#: views/admin-page.php:1405
+#: views/admin-page.php:1398
 msgid "Review voice sessions, play recordings, and generate AI summaries of what was discussed."
 msgstr ""
 
-#: views/admin-page.php:1407
+#: views/admin-page.php:1400
 msgid "From"
 msgstr ""
 
-#: views/admin-page.php:1408
+#: views/admin-page.php:1401
 msgid "To"
 msgstr ""
 
-#: views/admin-page.php:1409
+#: views/admin-page.php:1402
 msgid "Search"
 msgstr ""
 
-#: views/admin-page.php:1414
+#: views/admin-page.php:1407
 msgid "Turns"
 msgstr ""
 
-#: views/admin-page.php:1414
+#: views/admin-page.php:1407
 msgid "Summary"
 msgstr ""
 
-#: views/admin-page.php:1414
+#: views/admin-page.php:1407
 msgid "Actions"
 msgstr ""
 
-#: views/admin-page.php:1415
+#: views/admin-page.php:1408
 msgid "Click Search to load sessions."
 msgstr ""
 
-#: views/admin-page.php:1423
+#: views/admin-page.php:1416
 msgid "Session Transcript"
 msgstr ""
 
-#: views/admin-page.php:1429
+#: views/admin-page.php:1422
 msgid "AI Summary"
 msgstr ""
 
-#: views/admin-page.php:1430
+#: views/admin-page.php:1423
 msgid "Generate Summary"
 msgstr ""
 
-#: views/admin-page.php:1432
+#: views/admin-page.php:1425
 msgid "No summary yet."
 msgstr ""
 
-#: views/admin-page.php:1443
+#: views/admin-page.php:1436
 msgid "Lead Notifications"
 msgstr ""
 
-#: views/admin-page.php:1444
+#: views/admin-page.php:1437
 msgid "email me new leads"
 msgstr ""
 
-#: views/admin-page.php:1448
+#: views/admin-page.php:1441
 msgid "Email Alerts"
 msgstr ""
 
-#: views/admin-page.php:1449
+#: views/admin-page.php:1442
 msgid "Email me when a new lead comes in"
 msgstr ""
 
-#: views/admin-page.php:1450
+#: views/admin-page.php:1443
 msgid "Sent the moment a visitor shares an email or phone number — no automation setup required."
 msgstr ""
 
-#: views/admin-page.php:1453
+#: views/admin-page.php:1446
 msgid "Send Notifications To"
 msgstr ""
 
-#: views/admin-page.php:1455
+#: views/admin-page.php:1448
 msgid "Leave blank to use your WordPress admin email."
 msgstr ""
 
-#: views/admin-page.php:1470
+#: views/admin-page.php:1463
 msgid "Export CSV"
 msgstr ""
 
-#: views/admin-page.php:1474
+#: views/admin-page.php:1467
 msgid "Name"
 msgstr ""
 
-#: views/admin-page.php:1474
+#: views/admin-page.php:1467
 msgid "Email"
 msgstr ""
 
-#: views/admin-page.php:1474
+#: views/admin-page.php:1467
+#: views/integrations-tab.php:137
 msgid "Phone"
 msgstr ""
 
-#: views/admin-page.php:1474
+#: views/admin-page.php:1467
 msgid "Source"
 msgstr ""
 
-#: views/admin-page.php:1474
+#: views/admin-page.php:1467
 msgid "Notes"
 msgstr ""
 
-#: views/admin-page.php:1490
+#: views/admin-page.php:1483
 msgid "Choose Your Plan"
 msgstr ""
 
-#: views/admin-page.php:1491
+#: views/admin-page.php:1484
 msgid "Upgrade to unlock full voice & chat capabilities"
 msgstr ""
 
-#: views/admin-page.php:1498
+#: views/admin-page.php:1491
 msgid "Loading plans..."
 msgstr ""
 
-#: views/admin-page.php:1502
+#: views/admin-page.php:1495
 msgid "Secure payment via Stripe · Cancel anytime · License key sent by email after payment"
 msgstr ""
 
@@ -1979,19 +2052,17 @@ msgstr ""
 msgid "Connect Google Calendar"
 msgstr ""
 
-#: views/appointments-tab.php:204
-msgid "Disconnect"
-msgstr ""
-
 #: views/appointments-tab.php:221
 msgid "Outlook Calendar"
 msgstr ""
 
 #: views/appointments-tab.php:222
+#: views/integrations-tab.php:129
 msgid "Coming soon"
 msgstr ""
 
 #: views/appointments-tab.php:224
+#: views/integrations-tab.php:131
 msgid "Coming Soon"
 msgstr ""
 
@@ -2001,4 +2072,150 @@ msgstr ""
 
 #: views/appointments-tab.php:232
 msgid "Exactly what the agent will offer over the next 7 days, after your hours, minimum notice and any calendar conflicts are applied."
+msgstr ""
+
+#: views/integrations-tab.php:54
+msgid "CRM Integrations"
+msgstr ""
+
+#: views/integrations-tab.php:55
+msgid "Connect your CRM to automatically sync leads captured by the voice and chat widget."
+msgstr ""
+
+#: views/integrations-tab.php:71
+msgid "Sync leads to HubSpot Contacts automatically"
+msgstr ""
+
+#: views/integrations-tab.php:76
+msgid "Leads are syncing to your HubSpot account."
+msgstr ""
+
+#: views/integrations-tab.php:81
+msgid "Private App Token"
+msgstr ""
+
+#. translators: %s: link to the HubSpot private-apps page, with its own label
+#: views/integrations-tab.php:94
+#, php-format
+msgid "Get your token from HubSpot: %s"
+msgstr ""
+
+#: views/integrations-tab.php:96
+msgid "Settings &rarr; Integrations &rarr; Private Apps &rarr; Create a private app"
+msgstr ""
+
+#. translators: 1: first required API scope, 2: second required API scope
+#: views/integrations-tab.php:107
+#, php-format
+msgid "Required scopes: %1$s and %2$s"
+msgstr ""
+
+#: views/integrations-tab.php:138
+msgid "Let your agent answer real calls to a phone number you own. You connect your own Twilio account and pay Twilio directly for call minutes and number rental &mdash; StudioMeta never bills you for those. Talk time counts against the same monthly voice minutes as the widget."
+msgstr ""
+
+#: views/integrations-tab.php:159
+msgid "Answer inbound calls to your own phone number"
+msgstr ""
+
+#. translators: %s: link to the License tab, with its own label
+#: views/integrations-tab.php:169
+#, php-format
+msgid "Phone answering is available on paid plans. %s to connect a number."
+msgstr ""
+
+#: views/integrations-tab.php:171
+msgid "Upgrade your plan"
+msgstr ""
+
+#. translators: %s: the connected phone number
+#: views/integrations-tab.php:187
+#, php-format
+msgid "Answering calls to %s"
+msgstr ""
+
+#: views/integrations-tab.php:201
+msgid "Account SID"
+msgstr ""
+
+#: views/integrations-tab.php:205
+msgid "Auth Token"
+msgstr ""
+
+#: views/integrations-tab.php:206
+msgid "Your Twilio auth token"
+msgstr ""
+
+#: views/integrations-tab.php:209
+msgid "Phone Number"
+msgstr ""
+
+#: views/integrations-tab.php:216
+msgid "Verifying&hellip;"
+msgstr ""
+
+#. translators: 1: link to the Twilio Console, 2: example phone number in E.164 format
+#: views/integrations-tab.php:224
+#, php-format
+msgid "Find your Account SID and Auth Token on the %1$s dashboard. Enter the number in E.164 format, e.g. %2$s."
+msgstr ""
+
+#: views/integrations-tab.php:226
+msgid "Twilio Console"
+msgstr ""
+
+#: views/integrations-tab.php:238
+msgid "Webhook URL &mdash; paste this into Twilio"
+msgstr ""
+
+#: views/integrations-tab.php:241
+msgid "Copy"
+msgstr ""
+
+#. translators: 1: the Twilio setting's name, 2: the "Webhook" option, 3: the "HTTP POST" method
+#: views/integrations-tab.php:248
+#, php-format
+msgid "In the Twilio Console open your number, and under %1$s choose %2$s, paste this URL, and set the method to %3$s."
+msgstr ""
+
+#: views/integrations-tab.php:249
+msgid "Voice &rarr; A call comes in"
+msgstr ""
+
+#: views/integrations-tab.php:264
+msgid "Transfer to a human"
+msgstr ""
+
+#: views/integrations-tab.php:265
+msgid "Let the agent hand a call to a person when the caller asks for one"
+msgstr ""
+
+#: views/integrations-tab.php:271
+msgid "Allow the agent to transfer calls"
+msgstr ""
+
+#: views/integrations-tab.php:278
+msgid "Add department +"
+msgstr ""
+
+#: views/integrations-tab.php:282
+msgid "Ring for"
+msgstr ""
+
+#: views/integrations-tab.php:285
+msgid "seconds before giving up and returning the caller to the agent"
+msgstr ""
+
+#. translators: %s: example phone number in E.164 format
+#: views/integrations-tab.php:294
+#, php-format
+msgid "Calls are dialled out on your own Twilio account and billed by Twilio. The person picking up sees your Twilio number, not the caller&rsquo;s &mdash; the agent is told to capture the caller&rsquo;s details first. Enter every number in E.164 format, e.g. %s."
+msgstr ""
+
+#: views/integrations-tab.php:305
+msgid "Save transfer settings"
+msgstr ""
+
+#: views/integrations-tab.php:306
+msgid "Saving&hellip;"
 msgstr ""
